@@ -1,10 +1,135 @@
 <!doctype html>
 <html>
   <head>
+      <script src="bower_components/d3/d3.min.js"></script>
+      <style>
+        body {
+          margin:0;
+          padding:0;
+          font-family:Oswald;
+        }
+      </style>
+
+      <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet">
 
   </head>
 
   <body>
-    <h1>Hello, World!</h1>
+    <script>
+      var size = {
+        "height":window.innerHeight,
+        "width":window.innerWidth
+      };
+
+      var x = d3.scaleLinear()
+        .domain([0,4])
+        .range([0,size.width]);
+
+      var y = d3.scaleLinear()
+        .domain([0,3])
+        .range([0,size.height]);
+
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width",size.width)
+        .attr("height",size.height);
+
+      var defs = svg
+        .append("defs");
+
+      addFrame({x:0,y:0,height:2,width:2});
+
+      addFrame({x:0,y:2});
+
+      addFrame({x:1,y:2});
+
+      addFrame({x:2,y:0});
+      addFrame({x:2,y:1});
+      addFrame({x:2,y:2});
+
+      addFrame({x:3,y:0});
+      addFrame({x:3,y:1});
+
+      svg
+        .append("rect")
+        .attr("x",x(3))
+        .attr("y",y(2))
+        .attr("width",x(1))
+        .attr("height",y(1))
+        .attr("fill","#995e22");
+
+      var gradient = defs
+        .append("radialGradient")
+        .attr("id","radialGradient");
+
+      var stopOne = gradient
+        .append("stop")
+        .attr("offset","10%")
+        .attr("stop-color","rgba(255,255,255,0.25)");
+
+      gradient
+        .append("stop")
+        .attr("offset","100%")
+        .attr("stop-color","white");
+
+      var filter = defs.append("filter")
+        .attr("id","turbFilter");
+
+      var turbulentAttribute = filter.append("feTurbulence")
+        .attr("type","turbulence")
+        .attr("baseFrequency","0.01")
+        .attr("numOctaves",4)
+        .attr("result","turbulence")
+        .attr("seed",3);
+
+
+      filter.append("feDisplacementMap")
+        .attr("in2","turbulence")
+        .attr("in","SourceGraphic")
+        .attr("scale",50);
+
+
+      svg
+        .on('mousemove',function() {
+          turbulentAttribute
+            .attr("baseFrequency",x.invert(d3.event.x) / 20);
+
+          stopOne
+            .attr("offset",y.invert(d3.event.y) / 8);
+        });
+
+
+
+      function addFrame(options) {
+
+        if(!options.width) { options.width = 1};
+        if(!options.height) { options.height = 1};
+
+        var group = svg.append("g")
+          .attr("transform","translate("+x(options.x)+","+y(options.y)+")");
+
+
+
+        group
+          .append("rect")
+          .attr("x",0)
+          .attr("y",0)
+          .attr("width",x(options.width))
+          .attr("height",y(options.height))
+          .attr("fill","#222299")
+          .attr("stroke","#aaa")
+          .attr("stroke-width",1);
+
+        group
+          .append("circle")
+          .attr("cx",x(options.width / 2))
+          .attr("cy",y(options.height / 2))
+          .attr("r",x(options.width / 5))
+          .attr("fill","url(#radialGradient)")
+          .attr("filter","url(#turbFilter)");
+
+
+      }
+    </script>
   </body>
 </html>
