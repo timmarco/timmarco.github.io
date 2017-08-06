@@ -28,6 +28,7 @@ gulp.task('jshint', function() {
 
 // configure which files to watch and what tasks to use on file changes
 gulp.task('watch', function() {
+  console.log("I AM THE ONE WHO WATCHES");
   gulp.watch('js/**/*.js', ['build-js']);
   gulp.watch('js/**/*.js', ['jshint']);
 });

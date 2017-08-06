@@ -9,6 +9,39 @@
     <script src="dist/bundle.js"></script>
 
     <style>
+      .overlay {
+        display:none;
+        position:absolute;
+        top:0;
+        left:0;
+        height:100vh;
+        width:100vw;
+        background-color:#e9f6f5;
+        padding-left:4em;
+        padding-right:4em;
+      }
+
+      .overlay h1 {
+        font-size:7em;
+        font-family:Oswald;
+      }
+
+      .overlay p {
+        margin-top:2em;
+        font-size:3em;
+      }
+
+      #showAnyway {
+        width:80%;
+        margin:auto;
+        font-size:4em;
+        margin-top:2em;
+        border:4px solid rgb(224,115,90);
+        color:4px solid rgb(224,115,90);
+        font-family:Oswald;
+        font-weight:300;
+      }
+
       svg {
         font-family:Poppins;
         font-weight:600;
@@ -56,15 +89,64 @@
       <p>If you're interested, you can check out all of the Javascript for this in the <a href="https://www.github.com/timmarco/d3StrangerThings" target="_new">Github Repo</a>.</p>
     </div>
 
+    <div class="overlay">
+      <h1>Aw Crap!</h1>
+      <p>This is annoying, I know, but this experience doesn't really work well on mobile devices. You can try, but you're much better off trying this on a desktop or laptop.</p>
+      <p>You can try by clicking the button below, but don't say I didn't warn ya.</p>
+      <button id="showAnyway">Show Anyway</button>
+    </div>
+
     <script>
 
-      initialize();
+      if(detectmob()) {
+        d3.select(".overlay")
+          .style("display","block");
+
+        d3.select("#showAnyway")
+          .on('click',function() {
+            d3.select(".overlay")
+              .remove();
+
+            initialize();
+          });
+      } else {
+        initialize();
+      }
 
       function initialize() {
-        var soundTrack = new Audio("audiotrack.mp3");
-        var svg = addSvg();
+        var soundTrack,
+          svg;
+
+        soundTrack = new Audio("audiotrack.mp3");
+        soundTrack.onended = clear;
+        svg = addSvg();
         addPlayCard(svg,soundTrack);
       }
+
+      function clear() {
+        d3.select("#container").selectAll("*")
+          .remove();
+
+        initialize();
+      }
+
+
+      function detectmob() {
+       if( navigator.userAgent.match(/Android/i)
+       || navigator.userAgent.match(/webOS/i)
+       || navigator.userAgent.match(/iPhone/i)
+       || navigator.userAgent.match(/iPad/i)
+       || navigator.userAgent.match(/iPod/i)
+       || navigator.userAgent.match(/BlackBerry/i)
+       || navigator.userAgent.match(/Windows Phone/i)
+       ){
+          return true;
+        }
+       else {
+          return false;
+        }
+      }
+
 
 
 
@@ -80,6 +162,6 @@
       ga('send', 'pageview');
 
     </script>
-        
+
   </body>
 </html>
