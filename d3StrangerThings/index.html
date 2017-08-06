@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,400,600,700" rel="stylesheet">
     <script src="bower_components/d3/d3.min.js"></script>
     <script src="./js/createSvg.js"></script>
     <script src="./js/titleLine.js"></script>
@@ -30,10 +30,16 @@
   </head>
 
   <body>
-    <h1>Stranger Things Title Re-Created in d3.js</h1>
-    <div id="container"></div>
+    <div style="width:75%" id="container"></div>
 
     <script>
+
+      var soundTrack = new Audio("audiotrack.mp3");
+      console.time("audioload");
+      soundTrack.oncanplay = function() {
+        console.log("IT CAN PLAY YEAH!");
+        console.timeEnd("audioLoad");
+      }
 
       var size = {
         height:720,
@@ -41,8 +47,80 @@
       }
       var svg = addSvg();
       var frameLength = 1000/24;
+
+
+      var bigRGradient = svg.defs
+        .append("linearGradient")
+        .attr("id","screenGradient");
+
+      bigRGradient
+        .append("stop")
+        .attr("stop-color","rgb(111,19,19)")
+        .attr("offset","0%");
+
+      bigRGradient
+        .append("stop")
+        .attr("offset","100%")
+        .attr("stop-color","rgb(221,66,44)");
+
+
+      var bigSGradient = svg.defs
+        .append("linearGradient")
+        .attr("id","bigSGradent");
+
+        bigSGradient
+          .append("stop")
+          .attr("stop-color","rgb(111,19,19)")
+          .attr("offset","0%");
+
+        bigSGradient
+          .append("stop")
+          .attr("offset","35%")
+          .attr("stop-color","rgb(221,66,44)");
+
+      bigSGradient
+        .append("stop")
+        .attr("stop-color","rgb(111,19,19)")
+        .attr("offset","100%");
+
+
+
+        function radialGradient(options) {
+          var gradientToAdd;
+
+          gradientToAdd = svg.defs
+            .append("radialGradient")
+            .attr("id",options.id)
+            .attr("cx",options.cx)
+            .attr("cy",options.cy);
+
+          options.stops.forEach(function(stop) {
+            gradientToAdd
+              .append("stop")
+              .attr("offset",stop.offset)
+              .attr("stop-color",stop.color);
+          });
+
+        }
+
+
+          var bigTGradient = svg.defs
+            .append("linearGradient")
+            .attr("id","bigTGradient");
+
+          bigTGradient
+            .append("stop")
+            .attr("stop-color","rgb(127,24,24)")
+            .attr("offset","0%");
+
+          bigTGradient
+            .append("stop")
+            .attr("offset","100%")
+            .attr("stop-color","rgb(221,39,39)");
+
+
       svg.frame
-        .attr("transform","scale(0.75)");
+//        .attr("transform","translate(-100) scale(0.75)");
 
             var darken = svg.frame.append("rect")
               .attr("x",0)
@@ -73,33 +151,109 @@
                 });
             }
 
+
       var playLayer = svg.frame.append("g");
 
       playLayer
         .append("rect")
         .attr("x",0)
         .attr("y",0)
-        .attr("height",720)
         .attr("width",1280)
-        .attr("fill","black")
-        .attr("cursor","pointer")
-        .on('click',playTitle);
+        .attr("height",240)
+        .attr("fill","#333");
 
       playLayer
         .append("text")
-        .attr("x",640)
-        .attr("y",360)
-        .attr("font-size","2em")
-        .attr("fill","white")
+        .attr("x",71)
+        .attr("y",80)
+        .attr("text-anchor","central")
+        .text("Stranger Things Main Title Recreation")
+        .attr("font-weight","400")
+        .attr("fill","white");
+
+      playLayer
+        .append("text")
+        .attr("x",71)
+        .attr("y",140)
+        .attr("text-anchor","central")
+        .text("A d3.js / SVG Experiment by Tim Marco")
+        .attr("font-size","0.5em")
+        .attr("font-weight","200")
+        .attr("fill","white");
+
+      playLayer
+        .append("text")
+        .attr("x",71)
+        .attr("y",200)
+        .attr("text-anchor","central")
+        .text("Original title design by Imaginary Forces for Netflix")
+        .attr("font-size","0.5em")
+        .attr("font-weight","200")
+        .attr("fill","white");
+
+      playLayer
+        .append("rect")
+        .attr("x",0)
+        .attr("y",240)
+        .attr("width",640)
+        .attr("height",480)
+        .attr("fill","#222")
+
+      playLayer
+        .append("text")
+        .attr("x",320)
+        .attr("y",340)
         .attr("text-anchor","middle")
-        .attr("alignment-baseline","central")
-        .text("Click To Play");
+        .attr("font-size","0.33em")
+        .text("Click Here To Watch The Re-Creation")
+        .attr("fill","white");
+
+      playLayer
+        .append("image")
+        .attr("xlink:href","recreated.gif")
+        .attr("x",80)
+        .attr("y",360);
+
+      playLayer
+        .append("text")
+        .attr("x",960)
+        .attr("y",340)
+        .attr("text-anchor","middle")
+        .attr("font-size","0.33em")
+        .text("Click Here To Watch The Real Video")
+        .attr("fill","white");
+
+      playLayer
+        .append("image")
+        .attr("xlink:href","original.gif")
+        .attr("x",720)
+        .attr("y",360);
 
 
+      playLayer
+        .append("rect")
+        .attr("x",0)
+        .attr("y",240)
+        .attr("width",640)
+        .attr("height",780)
+        .attr("cursor","pointer")
+        .attr("fill","rgba(0,0,0,0)")
+        .on('click',playTitle);
 
+      playLayer
+        .append("rect")
+        .attr("x",640)
+        .attr("y",240)
+        .attr("width",640)
+        .attr("height",780)
+        .attr("cursor","pointer")
+        .attr("fill","rgba(0,0,0,0)")
+        .on('click',function() {
+          window.open("https://vimeo.com/174870794");
+        });
 
       function playTitle() {
-        console.log("PLAYING!");
+        soundTrack.play();
         playLayer.remove();
 
         randomizeOpacity();

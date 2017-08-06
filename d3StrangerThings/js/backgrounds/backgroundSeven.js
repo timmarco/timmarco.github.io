@@ -9,6 +9,17 @@ function backgroundSeven() {
     "fadeOut":69
   });
 
+  radialGradient({
+    "id":"nCloseup",
+    "cx":"85%",
+    "cy":"0%",
+    "stops":[
+      {"offset":"0%","color":"rgb(246,109,66)"},
+      {"offset":"30%","color":"rgb(225,42,39)"},
+      {"offset":"100%","color":"rgb(103,18,18)"},
+    ]
+  });
+
   backgroundGroupMove({
       elementGroup:slide.elementGroup,
       blurGroup:slide.blurGroup,
@@ -17,7 +28,19 @@ function backgroundSeven() {
       duration:120,
       ease:d3.easeLinear,
       strokeWidth:10,
+      stroke:"url(#nCloseup)",
       transform:"translate(200,0)"
+  });
+
+  radialGradient({
+    "id":"gCloseup",
+    "cx":"-5%",
+    "cy":"65%",
+    "stops":[
+      {"offset":"0%","color":"rgb(246,109,66)"},
+      {"offset":"10%","color":"rgb(225,42,39)"},
+      {"offset":"100%","color":"rgb(103,18,18)"},
+    ]
   });
 
   backgroundGroupMove({
@@ -28,6 +51,7 @@ function backgroundSeven() {
       duration:120,
       ease:d3.easeLinear,
       strokeWidth:10,
+      stroke:"url(#gCloseup)",
       transform:"translate(-200,0)"
   });
 

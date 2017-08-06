@@ -22,33 +22,75 @@
       };
 
       var x = d3.scaleLinear()
-        .domain([0,4])
+        .domain([0,12])
         .range([0,size.width]);
 
       var y = d3.scaleLinear()
-        .domain([0,3])
+        .domain([0,12])
         .range([0,size.height]);
 
       var svg = d3.select("body")
         .append("svg")
         .attr("width",size.width)
-        .attr("height",size.height);
+        .attr("height",size.height)
+        .on('mousemove',function() {
+          var xPercentage = x.invert(d3.event.x / size.width);
+          var yPercentage = y.invert(d3.event.y / size.height);
+
+          lightingPoints
+            .attr("x",d3.event.x)
+            .attr("y",d3.event.y);
+        });
 
       var defs = svg
         .append("defs");
 
-      addFrame({x:0,y:0,height:2,width:2});
+      var lighting = defs.append("filter")
+        .attr("id","lightingFilter");
 
-      addFrame({x:0,y:2});
+      var lightingFilter = lighting
+        .append("feDiffuseLighting")
+        .attr("in","SourceGraphic")
+        .attr("result","light")
+        .attr("lighting-color","#aaa");
 
-      addFrame({x:1,y:2});
+      var lightingPoints = lightingFilter
+        .append("fePointLight")
+        .attr("x",100)
+        .attr("y",100)
+        .attr("z",100);
 
-      addFrame({x:2,y:0});
-      addFrame({x:2,y:1});
-      addFrame({x:2,y:2});
+      lightingFilter
+        .append("fePointLight")
+        .attr("x",0)
+        .attr("y",10)
+        .attr("z",50);
 
-      addFrame({x:3,y:0});
-      addFrame({x:3,y:1});
+      var fullStage = svg.append("g");
+
+      fullStage
+        .append("circle")
+        .attr("cx",x(6))
+        .attr("cy",y(6))
+        .attr("r",x(2))
+        .attr("fill","#eee")
+        .attr("filter","url(#lightingFilter)");
+
+
+      /*
+
+      turbulentFrame({x:0,y:0,height:2,width:2});
+
+      turbulentFrame({x:0,y:2,filter:"url(#lightingFilter)"});
+
+      turbulentFrame({x:1,y:2});
+
+      turbulentFrame({x:2,y:0});
+      turbulentFrame({x:2,y:1});
+      turbulentFrame({x:2,y:2});
+
+      turbulentFrame({x:3,y:0});
+      turbulentFrame({x:3,y:1});
 
       svg
         .append("rect")
@@ -72,6 +114,21 @@
         .attr("offset","100%")
         .attr("stop-color","white");
 
+      var lighting = defs.append("filter")
+        .attr("id","lightingFilter");
+
+      var lightingFilter = lighting
+        .append("feDiffuseLighting")
+        .attr("in","SourceGraphic")
+        .attr("result","light")
+        .attr("lighting-color","pink");
+
+      var lightingPoints = lightingFilter
+        .append("fePointLight")
+        .attr("x",0)
+        .attr("y",0)
+        .attr("z",50);
+
       var filter = defs.append("filter")
         .attr("id","turbFilter");
 
@@ -91,6 +148,10 @@
 
       svg
         .on('mousemove',function() {
+          //lightingPoints
+            //.attr("x",d3.event.x)
+            //.attr("y",d3.event.y);
+
           turbulentAttribute
             .attr("baseFrequency",x.invert(d3.event.x) / 20);
 
@@ -99,16 +160,14 @@
         });
 
 
-
-      function addFrame(options) {
+      function turbulentFrame(options) {
 
         if(!options.width) { options.width = 1};
         if(!options.height) { options.height = 1};
+        if(!options.filter) { options.filter = "url(#turbFilter)";}
 
         var group = svg.append("g")
           .attr("transform","translate("+x(options.x)+","+y(options.y)+")");
-
-
 
         group
           .append("rect")
@@ -126,10 +185,11 @@
           .attr("cy",y(options.height / 2))
           .attr("r",x(options.width / 5))
           .attr("fill","url(#radialGradient)")
-          .attr("filter","url(#turbFilter)");
-
+          .attr("filter",options.filter);
 
       }
+      */
+
     </script>
   </body>
 </html>

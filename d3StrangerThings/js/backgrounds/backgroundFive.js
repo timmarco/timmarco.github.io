@@ -7,6 +7,18 @@ function backgroundFive(svg) {
       "duration":68
     });
 
+    radialGradient({
+      "id":"smallSCloseup",
+      "cx":"-5%",
+      "cy":"24%",
+      "stops":[
+        {"offset":"0%","color":"rgb(238,155,134)"},
+        {"offset":"20%","color":"rgb(229,87,40)"},
+        {"offset":"30%","color":"rgb(186,33,33)"},
+        {"offset":"100%","color":"rgb(112,20,20)"}
+      ]
+    });
+
     backgroundGroupMove({
         elementGroup:slide.elementGroup,
         blurGroup:slide.blurGroup,
@@ -14,8 +26,19 @@ function backgroundFive(svg) {
         delay:420,
         duration:68,
         ease:d3.easeLinear,
-        strokeWidth:10,
+        strokeWidth:20,
+        stroke:"url(#smallSCloseup)",
         transform:"scale(0.95) translate(-50,-20)"
+    });
+
+    radialGradient({
+      "id":"smallRCloseup",
+      "cx":"100%",
+      "cy":"40%",
+      "stops":[
+        {"offset":"0%","color":"rgb(115,20,20)"},
+        {"offset":"100%","color":"rgb(64,11,11)"},
+      ]
     });
 
     backgroundGroupMove({
@@ -25,7 +48,8 @@ function backgroundFive(svg) {
         delay:420,
         duration:68,
         ease:d3.easeLinear,
-        strokeWidth:10,
+        strokeWidth:20,
+        stroke:"url(#smallRCloseup)",
         transform:"scale(0.95) translate(30,20)"
     });
 
