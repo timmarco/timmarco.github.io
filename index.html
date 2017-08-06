@@ -1,194 +1,191 @@
 <!doctype html>
 <html>
   <head>
-      <script src="bower_components/d3/d3.min.js"></script>
-      <style>
-        body {
-          margin:0;
-          padding:0;
-          font-family:Oswald;
-        }
-      </style>
+    <script src="bower_components/d3/d3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet">
+    <style>
 
-      <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet">
+      body {
+        font-family:Source Sans Pro;
+        background-color:#e9f6f5;
+      }
 
+      .aCard {
+        background-color:#fff;
+        width:80%;
+        margin:auto;
+        padding:1em;
+        box-shadow: 2px 4px 4px #ccc;
+        transition: all 0.2s ease-in-out;
+        border:1px solid #eee;
+        border-left:5px solid #f1684e;
+        margin-bottom:2em;
+        cursor:pointer;
+      }
+
+      .aCard:hover {
+        box-shadow: 4px 8px 8px #aaa;
+      }
+
+      .cardHeader {
+        border-bottom:1px solid black;
+        margin-bottom:0.25em;
+        padding-bottom:0.25em;
+      }
+
+      .postTitle {
+        font-family:Oswald;
+        font-size:2em;
+        font-weight:500;
+      }
+
+      .postDate {
+        font-family:Oswald;
+        font-weight:300;
+      }
+
+      .cardBody {
+      }
+
+      .cardBody:after {
+        clear:both;
+        display:block;
+        content:"";
+      }
+
+      .cardLeft {
+        float:left;
+        height:200px;
+        width:33%;
+      }
+
+      .cardRight {
+        float:left;
+        width:66%;
+      }
+
+      p {
+        -webkit-margin-before:0;
+      }
+
+      .leftBody {
+        padding-left:1em;
+        padding-right:1em;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+      }
+
+      .leftBody img {
+        width:100%;
+      }
+
+      .rightBody {
+        padding-left:2em;
+        padding-right:2em;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+      }
+
+      .header {
+        position:fixed;
+        width:100%;
+        top:0;
+        left:0;
+        background-color:#85c8dd;
+        box-shadow:0px 5px 5px #aaa;
+      }
+
+      .logo {
+        font-family:Oswald;
+        font-weight:600;
+        width:80%;
+        margin:auto;
+        color:white;
+        font-size:2em;
+        font-style:italic;
+      }
+
+      .subheading {
+        background-color:white;
+        padding-left:10%;
+        padding-top:1em;
+        padding-bottom:1em;
+        padding-bottom:1em;
+      }
+
+      a {
+        color:#f1684e;
+        cursor:pointer;
+      }
+
+      a:hover {
+        color:black;
+      }
+
+      .mainContainer {
+        padding-top:10em;
+      }
+    </style>
   </head>
 
   <body>
+    <div class="header">
+      <div class="logo">
+        <svg
+          width="300"
+          height="50"
+          fill="white"
+        >
+          <text
+            x="10"
+            y="25"
+            alignment-baseline="central"
+          >
+            Tim Marco
+          </text>
+        </svg>
+      </div>
+      <div class="subheading">
+        <a href="mailto:timothymarco@gmail.com">timothymarco@gmail.com</a> | <a href="https://www.twitter.com/timmarco" target="_new">@timmarco</a> | <a href="https://www.github.com/timmarco" target="_new">github</a> | <a href="https://www.linkedin.com/in/timothymarco" target="_new">linkedin</a>
+      </div>
+    </div>
+
+    <div class="mainContainer">
+
+    <div class="aCard" data-url="d3StrangerThings/">
+      <div class="cardHeader">
+        <div class="postTitle">Stranger Things Titles Re-Created with d3.js</div>
+        <div class="postDate">August 5th, 2017</div>
+      </div>
+      <div class="cardBody">
+        <div class="cardLeft">
+          <div class="leftBody">
+            <img src="assets/strangerthings.gif" />
+          </div>
+        </div>
+        <div class="cardRight">
+          <div class="rightBody">
+            <p>A demo and test of the capabilities of d3js and SVG to create cinematic animations and effects. I attempted to re-create the main titles from the Netflix show <em>Stranger Things</em> (the real thing was created by the geniuses at <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
-      var size = {
-        "height":window.innerHeight,
-        "width":window.innerWidth
-      };
+      d3.selectAll(".aCard")
+        .on('click',function() {
+          window.location = d3.select(this).attr("data-url");
+        })
+    </script>
 
-      var x = d3.scaleLinear()
-        .domain([0,12])
-        .range([0,size.width]);
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-      var y = d3.scaleLinear()
-        .domain([0,12])
-        .range([0,size.height]);
-
-      var svg = d3.select("body")
-        .append("svg")
-        .attr("width",size.width)
-        .attr("height",size.height)
-        .on('mousemove',function() {
-          var xPercentage = x.invert(d3.event.x / size.width);
-          var yPercentage = y.invert(d3.event.y / size.height);
-
-          lightingPoints
-            .attr("x",d3.event.x)
-            .attr("y",d3.event.y);
-        });
-
-      var defs = svg
-        .append("defs");
-
-      var lighting = defs.append("filter")
-        .attr("id","lightingFilter");
-
-      var lightingFilter = lighting
-        .append("feDiffuseLighting")
-        .attr("in","SourceGraphic")
-        .attr("result","light")
-        .attr("lighting-color","#aaa");
-
-      var lightingPoints = lightingFilter
-        .append("fePointLight")
-        .attr("x",100)
-        .attr("y",100)
-        .attr("z",100);
-
-      lightingFilter
-        .append("fePointLight")
-        .attr("x",0)
-        .attr("y",10)
-        .attr("z",50);
-
-      var fullStage = svg.append("g");
-
-      fullStage
-        .append("circle")
-        .attr("cx",x(6))
-        .attr("cy",y(6))
-        .attr("r",x(2))
-        .attr("fill","#eee")
-        .attr("filter","url(#lightingFilter)");
-
-
-      /*
-
-      turbulentFrame({x:0,y:0,height:2,width:2});
-
-      turbulentFrame({x:0,y:2,filter:"url(#lightingFilter)"});
-
-      turbulentFrame({x:1,y:2});
-
-      turbulentFrame({x:2,y:0});
-      turbulentFrame({x:2,y:1});
-      turbulentFrame({x:2,y:2});
-
-      turbulentFrame({x:3,y:0});
-      turbulentFrame({x:3,y:1});
-
-      svg
-        .append("rect")
-        .attr("x",x(3))
-        .attr("y",y(2))
-        .attr("width",x(1))
-        .attr("height",y(1))
-        .attr("fill","#995e22");
-
-      var gradient = defs
-        .append("radialGradient")
-        .attr("id","radialGradient");
-
-      var stopOne = gradient
-        .append("stop")
-        .attr("offset","10%")
-        .attr("stop-color","rgba(255,255,255,0.25)");
-
-      gradient
-        .append("stop")
-        .attr("offset","100%")
-        .attr("stop-color","white");
-
-      var lighting = defs.append("filter")
-        .attr("id","lightingFilter");
-
-      var lightingFilter = lighting
-        .append("feDiffuseLighting")
-        .attr("in","SourceGraphic")
-        .attr("result","light")
-        .attr("lighting-color","pink");
-
-      var lightingPoints = lightingFilter
-        .append("fePointLight")
-        .attr("x",0)
-        .attr("y",0)
-        .attr("z",50);
-
-      var filter = defs.append("filter")
-        .attr("id","turbFilter");
-
-      var turbulentAttribute = filter.append("feTurbulence")
-        .attr("type","turbulence")
-        .attr("baseFrequency","0.01")
-        .attr("numOctaves",4)
-        .attr("result","turbulence")
-        .attr("seed",3);
-
-
-      filter.append("feDisplacementMap")
-        .attr("in2","turbulence")
-        .attr("in","SourceGraphic")
-        .attr("scale",50);
-
-
-      svg
-        .on('mousemove',function() {
-          //lightingPoints
-            //.attr("x",d3.event.x)
-            //.attr("y",d3.event.y);
-
-          turbulentAttribute
-            .attr("baseFrequency",x.invert(d3.event.x) / 20);
-
-          stopOne
-            .attr("offset",y.invert(d3.event.y) / 8);
-        });
-
-
-      function turbulentFrame(options) {
-
-        if(!options.width) { options.width = 1};
-        if(!options.height) { options.height = 1};
-        if(!options.filter) { options.filter = "url(#turbFilter)";}
-
-        var group = svg.append("g")
-          .attr("transform","translate("+x(options.x)+","+y(options.y)+")");
-
-        group
-          .append("rect")
-          .attr("x",0)
-          .attr("y",0)
-          .attr("width",x(options.width))
-          .attr("height",y(options.height))
-          .attr("fill","#222299")
-          .attr("stroke","#aaa")
-          .attr("stroke-width",1);
-
-        group
-          .append("circle")
-          .attr("cx",x(options.width / 2))
-          .attr("cy",y(options.height / 2))
-          .attr("r",x(options.width / 5))
-          .attr("fill","url(#radialGradient)")
-          .attr("filter",options.filter);
-
-      }
-      */
+      ga('create', 'UA-104067970-1', 'auto');
+      ga('send', 'pageview');
 
     </script>
   </body>

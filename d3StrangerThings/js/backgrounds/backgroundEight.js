@@ -2,15 +2,17 @@ function backgroundEight(svg) {
   var slide;
 
   slide = backgroundSlide({
+    "svg":svg,
     "transform":reCenter(15),
     "endTransform":reCenter(1),
     "start":626,
     "duration":0,
     "transformDuration":475,
-    "transformEase":d3.easeExpOut
+    "transformEase":d3.easeCircleOut
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bigGGradient",
     "cx":"45%",
     "cy":"25%",
@@ -22,6 +24,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"topRGradient",
     "cx":"50%",
     "cy":"50%",
@@ -32,6 +35,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"topAGradient",
     "cx":"40%",
     "cy":"60%",
@@ -43,6 +47,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"topNGradient",
     "cx":"80%",
     "cy":"90%",
@@ -53,6 +58,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"topEGradient",
     "cx":"60%",
     "cy":"50%",
@@ -63,6 +69,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomTGradient",
     "cx":"50%",
     "cy":"20%",
@@ -73,6 +80,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomHGradient",
     "cx":"40%",
     "cy":"55%",
@@ -83,6 +91,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomIGradient",
     "cx":"50%",
     "cy":"50%",
@@ -93,6 +102,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomNGradient",
     "cx":"70%",
     "cy":"85%",
@@ -103,6 +113,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomGGradient",
     "cx":"70%",
     "cy":"30%",
@@ -113,6 +124,7 @@ function backgroundEight(svg) {
   });
 
   radialGradient({
+    "svg":svg,
     "id":"bottomSGradient",
     "cx":"70%",
     "cy":"30%",
@@ -121,6 +133,38 @@ function backgroundEight(svg) {
       {"offset":"100%","color":"rgb(225,39,39)"}
     ]
   });
+
+
+  linearGradient({
+    "svg":svg,
+    "id":"bigSGradent",
+    "stops":[
+      {"color":"rgb(111,19,19)","offset":"0%"},
+      {"color":"rgb(221,66,44)","offset":"35%"},
+      {"color":"rgb(111,19,19)","offset":"100%"},
+    ]
+  });
+
+
+  linearGradient({
+    "svg":svg,
+    "id":"bigTGradient",
+    "stops":[
+      {"color":"rgb(127,24,24)","offset":"0%"},
+      {"color":"rgb(221,39,39)","offset":"100%"}
+    ]
+  });
+
+
+  linearGradient({
+    "svg":svg,
+    "id":"screenGradient",
+    "stops":[
+      {"color":"rgb(111,19,19)","offset":"0%"},
+      {"color":"rgb(221,66,44)","offset":"80%"}
+    ]
+  });
+
 
   var letterForms = [
     {
@@ -181,7 +225,6 @@ function backgroundEight(svg) {
     },
     {
       "id":"topBigR",
-      "stroke":"url(#bigRGradient)",
       "path":"m 838.00128,272.38033 c -12.87259,-0.0175 -13.75761,0.35466 -13.75761,1.66976 0,1.01589 0.89149,2.30144 1.98109,2.85533 3.95783,2.01189 4.27455,6.00503 3.99831,50.30392 l -0.25624,41.22387 -3.30183,3.30562 c -1.816,1.81838 -3.30182,3.83136 -3.30182,4.47329 0,0.83898 5.19856,1.16763 18.49023,1.16763 15.96456,0 18.49022,-0.21205 18.49022,-1.55218 0,-0.85369 -0.97088,-2.06513 -2.15822,-2.69195 -4.08905,-2.1587 -4.88567,-6.21185 -4.88567,-24.873 0,-15.06693 0.18132,-17.23533 1.54086,-18.43109 0.84746,-0.7454 1.79977,-1.37095 2.11694,-1.38881 1.10346,-0.0621 8.92554,16.48828 12.80317,27.08871 4.25097,11.62105 4.56888,15.61688 1.3689,17.24354 -1.08961,0.55389 -1.98111,1.81636 -1.98111,2.80551 0,1.66333 1.45553,1.79927 19.37071,1.79927 10.65389,0 19.36439,-0.34431 19.35697,-0.76514 -0.0268,-1.51823 -1.34342,-3.05432 -3.19177,-3.72208 -2.05759,-0.74335 -3.98552,-5.30547 -8.34401,-19.74617 -2.68559,-8.89801 -8.15472,-21.49686 -13.71288,-31.58989 l -2.93208,-5.32409 2.52795,-1.51435 c 4.08369,-2.4468 10.18302,-9.93424 12.38357,-15.20116 1.63909,-3.92309 1.96586,-6.08337 1.66123,-10.96301 -0.42877,-6.86809 -2.27663,-10.50555 -6.96135,-13.70276 -2.81188,-1.91904 -4.83454,-2.05763 -34.02601,-2.34325 -7.366,-0.0721 -12.98869,-0.12175 -17.27955,-0.12745 z m 23.76627,11.65245 c 4.40291,0 5.13675,0.32769 7.45318,3.33153 5.87153,7.61401 1.54294,20.68178 -9.21931,27.83395 -2.47541,1.64504 -5.02448,2.99567 -5.6647,3.00076 -0.9261,0.007 -1.1061,-3.11066 -0.8805,-15.25895 0.33844,-18.22428 0.63827,-18.90729 8.31133,-18.90729 z",
       "offset":{"x":100,"y":0},
       "duration":354,
@@ -241,6 +284,7 @@ function backgroundEight(svg) {
 
   letterForms.forEach(function(letter) {
     backgroundGroupMove({
+        "svg":svg,
         elementGroup:slide.elementGroup,
         blurGroup:slide.blurGroup,
         path:letter.path,
@@ -285,8 +329,8 @@ function backgroundEight(svg) {
   secondStop
     .transition()
     .ease(d3.easeLinear)
-    .delay(1079 * frameLength)
-    .duration(29 * frameLength)
+    .delay(1079 * svg.frameLength)
+    .duration(29 * svg.frameLength)
     .attr("offset","33%")
     .attr("style","stop-color:rgba(0,0,0,1);");
 
@@ -336,8 +380,8 @@ function backgroundEight(svg) {
     .attr("stroke","rgba(255,0,0,0.75)")
     .attr("stroke-width",1)
     .transition()
-    .delay(function(d) { return (626 + d.delay) * frameLength;})
-    .duration(function(d) { return d.duration * frameLength;})
+    .delay(function(d) { return (626 + d.delay) * svg.frameLength;})
+    .duration(function(d) { return d.duration * svg.frameLength;})
     .ease(d3.easeExpOut)
     .attr("x",function(d) { return d.x - d.width/2;})
     .attr("width",function(d) { return d.width;});
@@ -354,8 +398,8 @@ function backgroundEight(svg) {
       .attr("stroke-width",2)
       .attr("filter","url(#glow)")
       .transition()
-      .delay(function(d) { return (626 + d.delay) * frameLength;})
-      .duration(function(d) { return d.duration * frameLength;})
+      .delay(function(d) { return (626 + d.delay) * svg.frameLength;})
+      .duration(function(d) { return d.duration * svg.frameLength;})
       .ease(d3.easeExpOut)
       .attr("x",function(d) { return d.x - d.width/2;})
       .attr("width",function(d) { return d.width;});

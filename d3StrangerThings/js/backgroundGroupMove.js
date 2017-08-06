@@ -2,19 +2,18 @@ function backgroundGroupMove(options) {
   var blurGroup,
     visibleGroup;
 
-  if(!options.stroke) { options.stroke = "red"}
+  if(!options.stroke) { options.stroke = "red";}
 
 
   blurGroup = options.blurGroup
     .append("g")
     .attr("transform",options.startTransform);
 
-
   blurGroup
     .transition()
     .ease(options.ease)
-    .delay(options.delay * frameLength)
-    .duration(options.duration * frameLength)
+    .delay(options.delay * options.svg.frameLength)
+    .duration(options.duration * options.svg.frameLength)
     .attr("transform",options.transform);
 
   blurGroup
@@ -31,8 +30,8 @@ function backgroundGroupMove(options) {
   visibleGroup
     .transition()
     .ease(options.ease)
-    .delay(options.delay * frameLength)
-    .duration(options.duration * frameLength)
+    .delay(options.delay * options.svg.frameLength)
+    .duration(options.duration * options.svg.frameLength)
     .attr("transform",options.transform);
 
   visibleGroup

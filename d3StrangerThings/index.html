@@ -2,23 +2,11 @@
 <html>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,400,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
     <script src="bower_components/d3/d3.min.js"></script>
-    <script src="./js/createSvg.js"></script>
-    <script src="./js/titleLine.js"></script>
-    <script src="./js/logoData.js"></script>
-    <script src="./js/backgroundGroupMove.js"></script>
-    <script src="./js/backgroundSlide.js"></script>
-
-    <script src="./js/foregrounds.js"></script>
-
-    <script src="./js/backgrounds/backgroundOne.js"></script>
-    <script src="./js/backgrounds/backgroundTwo.js"></script>
-    <script src="./js/backgrounds/backgroundThree.js"></script>
-    <script src="./js/backgrounds/backgroundFour.js"></script>
-    <script src="./js/backgrounds/backgroundFive.js"></script>
-    <script src="./js/backgrounds/backgroundSix.js"></script>
-    <script src="./js/backgrounds/backgroundSeven.js"></script>
-    <script src="./js/backgrounds/backgroundEight.js"></script>
+    <script src="dist/bundle.js"></script>
 
     <style>
       svg {
@@ -26,251 +14,72 @@
         font-weight:600;
         font-size:4em;
       }
+
+      #mainContainer {
+        width:960px;
+        margin:auto;
+      }
+
+      body {
+        font-family:Source Sans Pro;
+        background-color:#e9f6f5;
+      }
+
+      h2 {
+        font-family:Oswald;
+        margin-bottom:0;
+        padding-bottom:0;
+        font-size:2.25em;
+        margin-top:2em;
+      }
+
+      p {
+        -webkit-margin-before:0;
+        font-size:1.25em;
+      }
     </style>
   </head>
 
   <body>
-    <div style="width:75%" id="container"></div>
+    <div id="mainContainer">
+      <div id="container"></div>
+
+      <h2>What is this?</h2>
+      <p>This is an attempt to re-create the main titles for the Netflix show <em>Stranger Things</em> using only technologies within the browser. The actual sequence was created by <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>, and they of course deserve all credit for designing such a cool, iconic intro.</p>
+
+      <p>I set out to do a frame-by-frame recreation of the sequence by using <a href="https://d3js.org/" target="_new">d3.js</a> to test and demonstrate the kinds of effects and animations that are possible with SVG.</p>
+
+      <p>If you've ever used d3, you probably know that it isn't really the optimal tool for this use case. For one thing, d3 is designed for binding data, not for synchronizing multimedia. For another, since I'm using it for SVG here, it isn't feasible to exactly recreate things like textures, particle effects, and lighting (as you might using a video rendering tool like Adobe After Effects).</p>
+
+      <p>That said, d3 &amp; SVG <em>can</em> work together to create some pretty cool effects, and it's pretty impressive how well d3's <code>.transition()</code> method can be used to sync reasonable amounts of elements down to the milisecond.</p>
+
+      <p>If you're interested, you can check out all of the Javascript for this in the <a href="https://www.github.com/timmarco/d3StrangerThings" target="_new">Github Repo</a>.</p>
+    </div>
 
     <script>
 
-      var soundTrack = new Audio("audiotrack.mp3");
-      console.time("audioload");
-      soundTrack.oncanplay = function() {
-        console.log("IT CAN PLAY YEAH!");
-        console.timeEnd("audioLoad");
+      initialize();
+
+      function initialize() {
+        var soundTrack = new Audio("audiotrack.mp3");
+        var svg = addSvg();
+        addPlayCard(svg,soundTrack);
       }
 
-      var size = {
-        height:720,
-        width:1280
-      }
-      var svg = addSvg();
-      var frameLength = 1000/24;
 
-
-      var bigRGradient = svg.defs
-        .append("linearGradient")
-        .attr("id","screenGradient");
-
-      bigRGradient
-        .append("stop")
-        .attr("stop-color","rgb(111,19,19)")
-        .attr("offset","0%");
-
-      bigRGradient
-        .append("stop")
-        .attr("offset","100%")
-        .attr("stop-color","rgb(221,66,44)");
-
-
-      var bigSGradient = svg.defs
-        .append("linearGradient")
-        .attr("id","bigSGradent");
-
-        bigSGradient
-          .append("stop")
-          .attr("stop-color","rgb(111,19,19)")
-          .attr("offset","0%");
-
-        bigSGradient
-          .append("stop")
-          .attr("offset","35%")
-          .attr("stop-color","rgb(221,66,44)");
-
-      bigSGradient
-        .append("stop")
-        .attr("stop-color","rgb(111,19,19)")
-        .attr("offset","100%");
-
-
-
-        function radialGradient(options) {
-          var gradientToAdd;
-
-          gradientToAdd = svg.defs
-            .append("radialGradient")
-            .attr("id",options.id)
-            .attr("cx",options.cx)
-            .attr("cy",options.cy);
-
-          options.stops.forEach(function(stop) {
-            gradientToAdd
-              .append("stop")
-              .attr("offset",stop.offset)
-              .attr("stop-color",stop.color);
-          });
-
-        }
-
-
-          var bigTGradient = svg.defs
-            .append("linearGradient")
-            .attr("id","bigTGradient");
-
-          bigTGradient
-            .append("stop")
-            .attr("stop-color","rgb(127,24,24)")
-            .attr("offset","0%");
-
-          bigTGradient
-            .append("stop")
-            .attr("offset","100%")
-            .attr("stop-color","rgb(221,39,39)");
-
-
-      svg.frame
-//        .attr("transform","translate(-100) scale(0.75)");
-
-            var darken = svg.frame.append("rect")
-              .attr("x",0)
-              .attr("y",0)
-              .attr("height",720)
-              .attr("width",1280)
-              .attr("fill","black")
-              .attr("opacity",0.1);
-
-
-            function randomizeOpacity() {
-              var newValue = Math.random() / 7;
-              darken
-                .transition()
-                .duration(frameLength * 3)
-                .attr("opacity",newValue)
-                .on('end',randomizeOpacity);
-            }
-
-            function randomizeBlur(svg) {
-              var newValue = 10 + Math.random() * 2.5;
-              svg.blurVal
-                .transition()
-                .attr("stdDeviation",newValue)
-                .duration(frameLength * 12)
-                .on('end',function() {
-                  randomizeBlur(svg);
-                });
-            }
-
-
-      var playLayer = svg.frame.append("g");
-
-      playLayer
-        .append("rect")
-        .attr("x",0)
-        .attr("y",0)
-        .attr("width",1280)
-        .attr("height",240)
-        .attr("fill","#333");
-
-      playLayer
-        .append("text")
-        .attr("x",71)
-        .attr("y",80)
-        .attr("text-anchor","central")
-        .text("Stranger Things Main Title Recreation")
-        .attr("font-weight","400")
-        .attr("fill","white");
-
-      playLayer
-        .append("text")
-        .attr("x",71)
-        .attr("y",140)
-        .attr("text-anchor","central")
-        .text("A d3.js / SVG Experiment by Tim Marco")
-        .attr("font-size","0.5em")
-        .attr("font-weight","200")
-        .attr("fill","white");
-
-      playLayer
-        .append("text")
-        .attr("x",71)
-        .attr("y",200)
-        .attr("text-anchor","central")
-        .text("Original title design by Imaginary Forces for Netflix")
-        .attr("font-size","0.5em")
-        .attr("font-weight","200")
-        .attr("fill","white");
-
-      playLayer
-        .append("rect")
-        .attr("x",0)
-        .attr("y",240)
-        .attr("width",640)
-        .attr("height",480)
-        .attr("fill","#222")
-
-      playLayer
-        .append("text")
-        .attr("x",320)
-        .attr("y",340)
-        .attr("text-anchor","middle")
-        .attr("font-size","0.33em")
-        .text("Click Here To Watch The Re-Creation")
-        .attr("fill","white");
-
-      playLayer
-        .append("image")
-        .attr("xlink:href","recreated.gif")
-        .attr("x",80)
-        .attr("y",360);
-
-      playLayer
-        .append("text")
-        .attr("x",960)
-        .attr("y",340)
-        .attr("text-anchor","middle")
-        .attr("font-size","0.33em")
-        .text("Click Here To Watch The Real Video")
-        .attr("fill","white");
-
-      playLayer
-        .append("image")
-        .attr("xlink:href","original.gif")
-        .attr("x",720)
-        .attr("y",360);
-
-
-      playLayer
-        .append("rect")
-        .attr("x",0)
-        .attr("y",240)
-        .attr("width",640)
-        .attr("height",780)
-        .attr("cursor","pointer")
-        .attr("fill","rgba(0,0,0,0)")
-        .on('click',playTitle);
-
-      playLayer
-        .append("rect")
-        .attr("x",640)
-        .attr("y",240)
-        .attr("width",640)
-        .attr("height",780)
-        .attr("cursor","pointer")
-        .attr("fill","rgba(0,0,0,0)")
-        .on('click',function() {
-          window.open("https://vimeo.com/174870794");
-        });
-
-      function playTitle() {
-        soundTrack.play();
-        playLayer.remove();
-
-        randomizeOpacity();
-
-        addTitles(svg);
-        backgroundOne(svg);
-        backgroundTwo(svg);
-        backgroundThree(svg);
-        backgroundFour(svg);
-        backgroundFive(svg);
-        backgroundSeven(svg);
-        backgroundSix(svg);
-        backgroundEight(svg);
-
-        randomizeBlur(svg);
-      }
 
     </script>
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-104067970-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+        
   </body>
 </html>
