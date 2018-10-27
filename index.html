@@ -1,132 +1,10 @@
 <!doctype html>
 <html>
   <head>
+    <title>Tim Marco</title>
     <script src="bower_components/d3/d3.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet">
-    <style>
-
-
-      body {
-        font-family:Source Sans Pro;
-        background-color:#e9f6f5;
-      }
-
-      .aCard {
-        background-color:#fff;
-        width:80%;
-        margin:auto;
-        padding:1em;
-        box-shadow: 2px 4px 4px #ccc;
-        transition: all 0.2s ease-in-out;
-        border:1px solid #eee;
-        border-left:5px solid #f1684e;
-        margin-bottom:2em;
-        cursor:pointer;
-      }
-
-      .aCard:hover {
-        box-shadow: 4px 8px 8px #aaa;
-      }
-
-      .cardHeader {
-        border-bottom:1px solid black;
-        margin-bottom:0.25em;
-        padding-bottom:0.25em;
-      }
-
-      .postTitle {
-        font-family:Oswald;
-        font-size:2em;
-        font-weight:500;
-      }
-
-      .postDate {
-        font-family:Oswald;
-        font-weight:300;
-      }
-
-      .cardBody {
-      }
-
-      .cardBody:after {
-        clear:both;
-        display:block;
-        content:"";
-      }
-
-      .cardLeft {
-        float:left;
-        height:200px;
-        width:33%;
-      }
-
-      .cardRight {
-        float:left;
-        width:66%;
-      }
-
-      p {
-        -webkit-margin-before:0;
-      }
-
-      .leftBody {
-        padding-left:1em;
-        padding-right:1em;
-        padding-top:0.5em;
-        padding-bottom:0.5em;
-      }
-
-      .leftBody img {
-        width:100%;
-      }
-
-      .rightBody {
-        padding-left:2em;
-        padding-right:2em;
-        padding-top:0.5em;
-        padding-bottom:0.5em;
-      }
-
-      .header {
-        position:fixed;
-        width:100%;
-        top:0;
-        left:0;
-        background-color:#85c8dd;
-        box-shadow:0px 5px 5px #aaa;
-      }
-
-      .logo {
-        font-family:Oswald;
-        font-weight:600;
-        width:80%;
-        margin:auto;
-        color:white;
-        font-size:2em;
-        font-style:italic;
-      }
-
-      .subheading {
-        background-color:white;
-        padding-left:10%;
-        padding-top:1em;
-        padding-bottom:1em;
-        padding-bottom:1em;
-      }
-
-      a {
-        color:#f1684e;
-        cursor:pointer;
-      }
-
-      a:hover {
-        color:black;
-      }
-
-      .mainContainer {
-        padding-top:10em;
-      }
-    </style>
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet" />
+    <link href="css/style.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -147,16 +25,36 @@
         </svg>
       </div>
       <div class="subheading">
-        <a href="mailto:timothymarco@gmail.com">timothymarco@gmail.com</a> | <a href="https://www.twitter.com/timmarco" target="_new">@timmarco</a> | <a href="https://www.github.com/timmarco" target="_new">github</a> | <a href="https://www.linkedin.com/in/timothymarco" target="_new">linkedin</a>
+        <a href="mailto:timothymarco@gmail.com">timothymarco@gmail.com</a>  | <a href="https://www.github.com/timmarco" target="_new">github</a> | <a href="https://www.linkedin.com/in/timothymarco" target="_new">linkedin</a>
       </div>
     </div>
 
     <div class="mainContainer">
 
+      <div class="aCard" data-url="fitts/">
+        <div class="cardHeader">
+          <div class="postType">Explorable Explanation</div>
+          <div class="postTitle">Diving Deep Into Fitts' Law</div>
+        </div>
+        <div class="cardBody">
+          <div class="cardLeft">
+            <div class="leftBody">
+              <img src="assets/fitts.gif" />
+            </div>
+          </div>
+          <div class="cardRight">
+            <div class="rightBody">
+              <p>An <strong>Explorable Explanation</strong> that describes Fitts' Law, a key concept in design and ergonomics.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     <div class="aCard" data-url="d3StrangerThings/">
       <div class="cardHeader">
+        <div class="postType">Design / Animation Study</div>
         <div class="postTitle">Stranger Things Titles Re-Created with d3.js</div>
-        <div class="postDate">August 5th, 2017</div>
       </div>
       <div class="cardBody">
         <div class="cardLeft">
@@ -166,7 +64,7 @@
         </div>
         <div class="cardRight">
           <div class="rightBody">
-            <p>A demo and test of the capabilities of d3js and SVG to create cinematic animations and effects. I attempted to re-create the main titles from the Netflix show <em>Stranger Things</em> (the real thing was created by the geniuses at <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>).</p>
+            <p>A test of the capabilities of d3js and SVG to create cinematic animations and effects. I attempted to re-create the main titles from the Netflix show <em>Stranger Things</em> (the real thing was created by the geniuses at <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>).</p>
           </div>
         </div>
       </div>
