@@ -1,3 +1,4 @@
+<!--
 <!doctype html>
 
 <html>
@@ -87,6 +88,263 @@
 
       ga('create', 'UA-104067970-1', 'auto');
       ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <title>Tim Marco</title>
+    <script src="bower_components/d3/d3.min.js"></script>
+    <style>
+
+      body {
+        padding:0;
+        margin:0;
+        font-family:Oswald;
+      }
+
+      a {
+        color:#C82506;
+        text-decoration:none;
+      }
+
+      a:hover {
+        color:black;
+        text-decoration:underline;
+      }
+
+      #navTop {
+        font-size:1em;
+        font-family:Oswald;
+        font-weight:300;
+        position:fixed;
+        left:0;
+        top:0;
+        z-index:2;
+        background-color:white;
+        width:100%;
+        border-bottom:1px solid black;
+      }
+
+      #navTopContainer {
+        max-width:1000px;
+        margin:auto;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+      }
+
+      #header {
+        width:100%;
+        background-color:black;
+        color:white;
+        border:1px solid #333;
+        min-height:33vh;
+        display:table;
+        margin:auto;
+        margin-top:3em;
+      }
+
+      #centerHeader {
+        display:table-cell;
+        vertical-align: middle;
+        text-align:center;
+      }
+
+      #welcomeText {
+        max-width:1000px;
+        font-size:2.5em;
+        margin:auto;
+        font-weight:300;
+      }
+
+
+
+      #body {
+        width:100%;
+        min-height:50vh;
+        max-width:1000px;
+        margin:auto;
+        margin-top:2em;
+        margin-bottom:2em;
+      }
+
+      #exampleContainer {
+        display:flex;
+        flex-direction:row;
+        justify-content:center;
+        flex-wrap:wrap;
+        align-items:stretch;
+      }
+
+      .exampleLink, .exampleLink:hover {
+        color:inherit;
+        text-decoration:inherit;
+      }
+
+      .example {
+        width:250px;
+        margin-bottom:1em;
+        margin-top:1em;
+        background-color:white;
+        padding:0.25em;
+        padding-left:1em;
+        padding-right:1em;
+        margin-left:0.25em;
+        margin-right:0.25em;
+        box-shadow:2px 2px 5px rgba(0,0,0,0);
+        cursor:pointer;
+        border-top:3px solid #C82506;
+      }
+
+      .example:hover {
+        box-shadow:2px 2px 5px #aaa;
+      }
+
+      .exampleTitleContainer {
+        display:table;
+        font-size:1.33em;
+        height:3em;
+        width:100%;
+      }
+
+      .exampleTitle {
+        display:table-cell;
+        vertical-align:top;
+        font-weight:300;
+        letter-spacing:-0.75px;
+      }
+
+
+      .example img {
+        width:100%;
+        animation-play-state:pause;
+      }
+
+      .example p {
+        font-family:Merriweather;
+      }
+
+
+      #footer {
+        width:100%;
+        border:1px solid #333;
+        display:flex;
+        flex-direction:row;
+        align-content:flex-start;
+        max-width:1000px;
+        margin:auto;
+      }
+
+      #footerAbout {
+        padding:2em;
+      }
+
+      #footerLinks {
+        padding:2em;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="navTop">
+      <div id="navTopContainer">
+        Tim Marco | <a href="mailto:tim@timmarco.com">tim@timmarco.com</a> |  <a href="https://www.github.com/timmarco" target="_new">github</a> | <a href="https://www.linkedin.com/in/timothymarco" target="_new">linkedin</a>
+      </div>
+    </div>
+
+    <div id="header">
+
+      <div id="centerHeader">
+
+        <div id="welcomeText">
+          Hi, I'm Tim. I like to make things.
+          <div style="font-size:0.75em">Here are some examples:</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="body">
+
+      <div id="exampleContainer">
+
+
+        <div class="example">
+          <a href="fitts/" class="exampleLink">
+            <div class="exampleTitleContainer">
+              <div class="exampleTitle">Diving Deep Into Fitts' Law</div>
+            </div>
+            <div class="imageSwapContainer">
+              <img src="assets/FittsMotion.gif" style="display:none" class="hiddenMotion" />
+              <img src="assets/FittsStatic.png" style="display:block" class="staticOverlay"/>
+            </div>
+            <p>An Explorable Explanation about why some things are easy to use, while others are not.</p>
+          </a>
+        </div>
+
+        <div class="example">
+          <a href="d3StrangerThings/" class="exampleLink">
+            <div class="exampleTitleContainer">
+              <div class="exampleTitle">Re-Creating the <em>Stranger Things</em> Main Title in d3</div>
+            </div>
+            <img src="assets/strangerThings.gif" style="display:none" class="hiddenMotion" />
+            <img src="assets/StrangerThingsStatic.png" style="display:block" class="staticOverlay"/>
+            <p>A motion study and experiment to see just how far I can push vector animation in Javascript.</p>
+          </a>
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+
+    <div id="footer">
+      <!--
+      <div id="footerAbout">
+        <strong>Footer Heading</strong>
+        <p>This is the section that is about me. It is much longer than the other parts and I can add real text here if I want. Talking about who I am is important as it will help my audience know more about me. I should talk about what I am passionate about, what I do, and what I want the future to be. It shouldn't be too long, though. I'm not writing an essay.</p>
+      </div>
+      -->
+    </div>
+
+    <script>
+
+      (function() {
+        d3.selectAll(".example")
+          .on('mouseover',function() {
+            let div;
+
+            div = d3
+              .select(this);
+
+            div.selectAll(".staticOverlay")
+              .style("display","none");
+
+            div.selectAll(".hiddenMotion")
+              .style("display","block");
+
+          })
+          .on('mouseout',function() {
+            let div;
+
+            div = d3
+              .select(this);
+
+            div.selectAll(".staticOverlay")
+              .style("display","block");
+
+            div.selectAll(".hiddenMotion")
+              .style("display","none");
+
+          });
+      })();
 
     </script>
   </body>
