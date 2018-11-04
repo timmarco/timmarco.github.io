@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>DIPs</title>
+		<style>
+			body {
+				font-family:Merriweather;
+        font-size:18px;
+			}
+
+			#page {
+				width:600px;
+				margin:auto;
+			}
+
+      h1 {
+        font-family:Oswald;
+        font-size:3em;
+        margin-block-end:0;
+        margin-bottom:0;
+      }
+
+      h2 {
+        margin-block-start:0;
+        margin-top:0;
+        font-family:Oswald;
+        font-weight:300;
+      }
+
+			#tooltip {
+				border:2px solid #aaa;
+				padding:5px;
+				margin:auto;
+				position:absolute;
+				box-shadow:2px 2px 2px #999;
+				background-color:#fff;
+				display:none;
+			}
+
+			.axis {
+				fill:none;
+				stroke:black;
+				shape-rendering:crispEdges;
+			}
+
+			.axis text {
+				font-size:10px;
+
+			}
+
+			.axis_label {
+				font-size:12px;
+				font-weight:bold;
+			}
+
+			.chart_title {
+				font-size:22px;
+				font-weight:bold;
+			}
+		</style>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" />
+
+		<script src="babip.js" type="text/javascript"></script>
+
+
+	</head>
+
+
+	<body>
+		<div id="page">
+
+
+		<h1>A Lot of Baseball is Luck</h1>
+    <h2>How One Analyst Accidentally Upended Baseball Statitistics</h2>
+    <p><em>By <a href="http://timmarco.com">Tim Marco</a></em></p>
+		<p>Late in the last millennium, Voros McCracken realized something that completely revolutionized how people thought about baseball statistics. Sportswriter Jeff Passan  has said that his discovery is among "the most seminal theories" developed by baseball's then newly-influential group of armchair analysts.</p>
+		<p>As it turns out, his idea is also a great introduction into sabermetrics (the term for statistical analysis in baseball).</p>
+		<p><strong>Voros had noticed something peculiar about pitching</strong>. He was looking at the rate that balls hit into play&mdash;that is, every pitch that wasn't a strikeout, walk or homerun&mdash;wound up as hits. This rate is now known as <strong>BABIP</strong>, or batting average on balls in play, and it's very influential in baseball analysis.</p>
+		<p>McCracken pulled together some data on the BABIP for pitchers of the time, and saw patterns like the ones below for <span style="color:#0E3386">Greg Maddux</span>, <span style="color:#BD3039">Pedro Martinez</span>, and <span style="color:#006C67">Randy Johnson</span>.</p>
+		<div id="babip_line"></div>
+		<p>Do you see the pattern there? If you do, you're likely falling victim to <a href='https://en.wikipedia.org/wiki/Apophenia'>apophenia</a>, or the tendency to see patterns in randomness.</p>
+		<p>The randomness inherent in these numbers hinted at a very surprising idea: <strong>pitchers had no control over what happened to balls hit into play</strong>.</p>
+
+    <p>Of course, looking at the career of just three pitchers wouldn't past muster. They could be outliers. If you want to know if <em>patterns</em> really exist, you have to look at a lot of data.</p>
+
+    <p>So Voros did just that. He started looking at the BABIP for pitchers year-over-year, to see how well they were correlated.</p>
+
+    <p>In particular, he measured the <strong>r<sup>2</sup></strong> (pronounced <em>&quot;r-squared&quot;</em>) values from one season to the next.</p>
+
+    <p>This value is just a simple way of seeing how well one data point <em>predicts</em> another. If the values were closely correlated &ndash; if a pitcher had some ability to <em>cause</em> a low BABIP &ndash; the r<sup>2</sup> value would be close to 1. If it was all just luck, the value would be closer to zero.</p>
+		<div id="example_scatter"></div>
+
+    <p>And when you run the numbers, it turns out that there is actually very little correlation. Between 2014 and 2013, for example, the value for all qualified pitchers in MLB was <strong>0.21</strong>.</p>
+
+
+
+		<div id="real_babip_scatter"></div>
+
+    <p>In other words, whether a ball in play is a hit or an out is pretty much a crap shoot. One year, those balls may be harmless popups. But the next year, they may drop in for bad-luck singles.</p>
+
+    <p>Whichever happens is pure luck. Pitchers can't control it.</p>
+
+    <p>This was a huge surprise. Nobody believed it. Even Voros didn't believe it. But the numbers were clear.</p>
+
+		</div>
+
+
+		<div id="tooltip">
+			<span id="tooltip_name" style="font-weight:bold"></span>
+			<table style="font-size:12px">
+				<tr><th>2013</th><th></th><th>2014</th></tr>
+				<tr><td id="2013_babip">.230</td><td><div id="babip_spark"></div></td><td id="2014_babip">.340</td></tr>
+			</table>
+		</div>
+	</body>
+
+</html>
