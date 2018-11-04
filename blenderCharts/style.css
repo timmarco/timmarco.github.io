@@ -1,0 +1,16 @@
+body {
+  background-color:#efefef;
+  font-family:Merriweather;
+  font-size:22px;
+}
+
+h1 {
+  font-family:Oswald;
+  font-size:3em;
+  font-weight:300;
+}
+
+#container {
+  max-width:800px;
+  margin:auto;
+}

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+  <head>
+    <title>
+      Animated Blender Charts | Tim Marco
+    </title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,500" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="container">
+    <h1>Animated Charts in Blender</h1>
+
+    <p>For a recent project, I needed to create high-quality animated charts for video. The charts themselves weren't that complex &ndash; I mostly needed to create column and line charts &ndash; but it was important that they were customizable, repeatable, and looked good.</p>
+
+    <p>I was a little disappointed to discover that the most common way to do this was by hand. There's a whole subgenre of tutorials on Youtube explaining how to manually create charts using After Effects, but not much in the way of how to do this programmatically. There was nothing like d3.js for video.</p>
+
+    <p>So I turned to Blender, the open-source Swiss Army Knife for modeling, animating, and rendering to create my own tools. Blender has its fair share of issues, but one of the great things about it is that literally <em>anything</em> you want to do can be scripted in Python.</p>
+
+    <p>I created a quick Python script to create basic charts using Blender's built-in primitives (primary Text, Cubes, Lights, and Cameras). I needed an example data set, so I grabbed some data from <a href="http://www.fangraphs.com/" target="_new">Fangraphs</a>, a hyper-nerdy baseball statistics site.</p>
+
+    <p>That let me create my first animated chart:</p>
+
+    <iframe src="https://player.vimeo.com/video/298849685" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+    <p>And thanks to Blender's Python API, it was really easy to parameterize any of the style information I wanted to use, like this:</p>
+
+    <iframe src="https://player.vimeo.com/video/298849555" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+    <p>By changing just a few lines of code, I could now make the charts look however I wanted:</p>
+
+    <iframe src="https://player.vimeo.com/video/298849492" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+    <p>But changing the appearance was just one part of what I wanted to accomplish. I also needed to be able to swap out the data on the fly:</p>
+
+    <iframe src="https://player.vimeo.com/video/298849608" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+    <p>Once I could do that once, it was arbitrarily easy to swap out any data set:</p>
+
+    <iframe src="https://player.vimeo.com/video/298849455" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+    <p>After putting this together, my next steps are to allow further customization. First, by playing around with the duration of the animations, and eventually by controlling the camera sweeps.</p>
+
+    </div>
+  </body>
+</html>
