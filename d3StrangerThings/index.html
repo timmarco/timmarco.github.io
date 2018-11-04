@@ -81,14 +81,20 @@
     <div id="mainContainer">
       <div id="container"></div>
 
+
       <h2>What is this?</h2>
-      <p>This is an attempt to re-create the main titles for the Netflix show <em>Stranger Things</em> using only technologies within the browser. The actual sequence was created by <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>, and they of course deserve all credit for designing such a cool, iconic intro.</p>
+      <p>This is an attempt to re-create the main titles for the Netflix show <em>Stranger Things</em> entirely in the browser. The actual sequence was created by <a href="https://www.imaginaryforces.com" target="_new">Imaginary Forces</a>, and they of course deserve all credit for designing such a cool, iconic intro.</p>
 
-      <p>I set out to do a frame-by-frame recreation of the sequence by using <a href="https://d3js.org/" target="_new">d3.js</a> to test and demonstrate the kinds of effects and animations that are possible with SVG.</p>
+      <p>The actual title sequence <a href="http://www.artofthetitle.com/title/stranger-things/" target="_new">was created </a> using sophisticated rendering software like After Effects and Cinema4D. As an experiment, I wanted to see the extent to which I could capture the look and feel of the titles using decididedly less advanced software.</p>
 
-      <p>If you've ever used d3, you probably know that it isn't really the optimal tool for this use case. For one thing, d3 is designed for binding data, not for synchronizing multimedia. For another, since I'm using it for SVG here, it isn't feasible to exactly recreate things like textures, particle effects, and lighting (as you might using a video rendering tool like Adobe After Effects).</p>
+      <p>In other words, I wanted to see the extent to which I could capture cinematic text effects entirely in code.</p>
 
-      <p>That said, d3 &amp; SVG <em>can</em> work together to create some pretty cool effects, and it's pretty impressive how well d3's <code>.transition()</code> method can be used to sync reasonable amounts of elements down to the milisecond.</p>
+      <p>Everything that you see in the example is SVG; there's no ray tracing, image textures, or post-processing going on. And while the differences are significant and noteworthy, I was surprised by just how much is possible using just vector graphics and a few filters.</p>
+
+      <p>You can compare the two side-by-side here:</p>
+      <div style="margin:auto; width:800px; margin-bottom:2em">
+        <iframe style="margin:auto" src="https://player.vimeo.com/video/297597711" width="800" height="450" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+      </div>
 
       <p>If you're interested, you can check out all of the Javascript for this in the <a href="https://www.github.com/timmarco/d3StrangerThings" target="_new">Github Repo</a>.</p>
     </div>
