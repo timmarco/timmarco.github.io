@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Auotonomous Vehicles and Employment | Tim Marco</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+		<script type="text/javascript" src="selfDriving.js"></script>
+
+
+		<style>
+
+			body {
+				font-family:Merriweather;
+			}
+
+			h1, h2 {
+				font-family:Oswald;
+			}
+
+			h3 {
+				margin-block-end:0;
+				margin-end:0;
+			}
+
+			#tooltip {
+				border:2px solid black;
+				width:400px;
+				padding-left:10px;
+				position:absolute;
+				box-shadow:2px 2px 4px #aaa;
+				background-color:white;
+				display:none;
+			}
+
+			#topline {
+				font-weight:700;
+				border-bottom:1px solid #eee;
+				padding-top:5px;
+				margin-bottom:10px;
+			}
+
+			.t_box {
+				float:left;
+				border:1px solid #eee;
+				width:100px;
+				height:50px;
+			}
+
+			.val {
+				font-weight:700;
+				font-size:+1em;
+				margin:auto;
+			}
+
+			#midline {
+				margin:auto;
+			}
+		</style>
+	</head>
+	<body>
+	<div style="width:800px; margin:auto; font-size:14pt">
+	<h1>How Autonomous Trucking Can Impact Drivers</h1>
+	<p><em>By <a href="http://timmarco.com/">Tim Marco</a></em></p>
+	<p>One of the most potentially disruptive technologies today is the self-driving automobile. Over the past few years, many companies have been testing vehicles that are autonomous to varying degrees.</p>
+	<p>Although Google's cutesy robotic passenger vehicles tend to get the most attention in the media, there are good reasons to believe that the first wave of vehicle automation won't immediately affect typical drivers. Instead, long-haul commercial trucking seems perfectly poised for a rapid autonomous takeover.</p>
+
+
+	<h2>The Economics of Long-Haul Trucking</h2>
+	<p>The American Transportation Research Institute released a <a href="http://www.atri-online.org/wp-content/uploads/2014/09/ATRI-Operational-Costs-of-Trucking-2014-FINAL.pdf" target="_new">fascinating study</a> in 2014 on the per-mile costs of the long-haul trucking. We can use this information to start to evaluate the incentives that trucking operators might face in the future.</p>
+
+	<p>According to the study, there are two major sources of costs for trucking: vehicle costs and driver costs.</p>
+	<div style="background-color:#eee; border:1px solid black; padding-left:15px">
+	<h3>Costs of Trucking Per Mile</h3>
+	<div style="margin:auto;width:100%; margin-bottom:2em"><span style="color:#08519c;font-weight:bold">Vehicle Costs</span> vs. <span style="color:#6baed6;font-weight:bold">Driver Costs</span></div>
+	<div id="initial_bar"></div>
+	</div>
+	<p>The costs associated with a human driver are a major portion of the total costs of trucking. And regardless of one's own feelings on <em>whether</em> this should be the case, it's very clear that operators will remove these costs if they can.</p>
+	<p>There's a huge incentive to do so.</p>
+
+	<div style="margin-top:5em"></div>
+	<h2>Impact by State</h2>
+	<p>While these efficiencies will no doubt be good for trucking companies, and will likely mean some long-term savings for consumers, their largest immediate impacts will be on the drivers and the communities they live in.</p>
+	<p>Long-haul trucking alone is a major industry in the US. And as a result, drivers constitute a not-insignificant portion of the tax base in many places.</p>
+	<p>But that impact is not distributed evenly; the interactive below shows how impactful long-haul trucking is to each state, according to the Bureau of Labor Statistics.</p>
+	<div id="the_map"></div>
+	</div>
+
+	<div id="tooltip">
+		<div id="topline">[state]</div>
+		<div id="midline">
+			Had <span id="employment" style="font-weight:bold"></span> long-haul trucking jobs in 2014. (<span id="percent" style="font-weight:bold"></span> of all employment).<br/><br/>
+			The total income for these jobs was <span id="total" style="font-weight:bold"></span>.
+		</div>
+	</div>
+
+	</body>
+</html>
