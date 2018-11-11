@@ -1,0 +1,122 @@
+body {
+  font-family:Roboto;
+  color:#114;
+  font-size:1.15em;
+}
+
+h1 {
+  font-size:+2em;
+  margin:0;
+  padding:0;
+}
+
+h3 {
+  font-size:+1.4em;
+  -webkit-margin-after:0;
+}
+
+h1, h2, h3 {
+  color:#033e6b;
+  font-family:Oswald;
+  font-weight:normal;
+  -webkit-margin-end:0;
+}
+
+a {
+  color:#033e6b;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+a:hover {
+  color:black;
+  text-decoration:underline;
+}
+
+.subtitle {
+  font-size:+1.25em;
+  color:#999;
+}
+
+
+.next_step {
+  width:800px;
+  height:50px;
+  border:2px solid #033e6b;
+  color: #033e6b;
+  font-size:+1.5em;
+  font-weight:bold;
+  margin:auto;
+  text-align:center;
+  cursor:pointer;
+  line-height:50px;
+}
+
+.next_step:hover {
+  color:white;
+  background-color:#033e6b;
+}
+
+
+
+#page {
+  width:800px;
+  margin:auto;
+}
+
+
+.right_box {
+  width:300px;
+  height: 300px;
+  margin-top:50px;
+  padding:1em;
+  float:right;
+  background-color:#fafafa;
+  border:1px dashed black;
+  font-size:.8em;
+}
+
+
+.tooltip {
+  border:2px solid #aaa;
+  padding:5px;
+  margin:auto;
+  position:absolute;
+  box-shadow:2px 2px 2px #999;
+  background-color:#fff;
+  display:none;
+}
+
+.axis {
+  fill:none;
+  stroke:black;
+  shape-rendering:crispEdges;
+}
+
+.axis text {
+  font-size:10px;
+
+}
+
+.axis_label {
+  font-size:12px;
+  font-weight:bold;
+}
+
+
+.player {
+  border-bottom:1px solid black;
+  font-weight:bold;
+}
+
+.metric_label {
+  margin:auto;
+  text-align:center;
+}
+
+.metric_value {
+  margin:auto;
+  text-align:center;
+  font-size:+1.2em;
+  font-weight:bold;
+}

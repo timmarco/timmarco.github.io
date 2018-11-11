@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<title>Strip Plots | Tim Marco</title>
+
+		<script src="d3.min.js" type="text/javascript"></script>
+		<script src="jquery.min.js" type="text/javascript"></script>
+		<script src="stripPlot.js" type="text/javascript"></script>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
+		<link href="style.css" rel="stylesheet" />
+
+		<script>
+
+		$(document).ready(function() {
+			var testData = d3.json('data/pitcherData.json',function(error,data) {
+				var fwar_chart = new strip_plot("#fwar",data.fwar).draw().setTitle("FWAR");
+				var xfip_chart = new strip_plot("#xfip",data.xFip).option("invert",true).draw().setTitle("xFIP");
+				var fip_chart = new strip_plot("#fip",data.fip).option("invert",true).draw().setTitle("FIP");
+				var babip_chart = new strip_plot("#babip",data.babip).option("invert",true).draw().setTitle("BABIP");
+				var k_nine_chart = new strip_plot("#k_nine",data.k_nine).option("width",700).draw().setTitle("K / 9");
+				var bb_nine_chart = new strip_plot("#bb_nine",data.bb_nine).option("invert",true).draw().setTitle("BB / 9");
+			});
+
+		});
+
+
+
+
+		</script>
+
+		</head>
+
+	<body>
+		<div style="width:800px; margin:auto">
+			<h1>Using Strip Plots to Better Understand Pitching Stats</h1>
+			<h3>By <a href="http://timmarco.com/">Tim Marco</a></h3>
+			<p>Henry Chadwick invented the baseball box score in 1859. Since then, results of the game have been communicated in more or less the same way. From the backs of baseball cards and newspaper box scores to modern stats websites, the default mode of presentation has been table after table of numbers.</p>
+			<p>Here's an example from Fangraphs.com, showing starting pitcher leaders from 2014, ordered by strikeouts per nine innings:</p>
+			<img src="top_five.png" width="800"/>
+			<p>Sites like <a href='http://www.fangraphs.com/leaders.aspx?pos=all&stats=pit&lg=all&qual=y&type=8&season=2014&month=0&season1=2014&ind=0' target='_new'>Fangraphs</a> are designed to make it easy to search, filter, and download the <em>numeric representations</em> of results. But that isn't necessarily the optimal way to <em>communicate meaning</em>.</p>
+			<p>Let's say I was interested in just how good <strong>Chris Sale</strong> was that year.</p>
+			<p>The view above will tell me that Sale had 10.76 strikeouts per nine that year, and that he was second overall for the season. Those are, of course, two valuable pieces of information.</p>
+			<p>But they're lacking a good deal of context. How does that 10.76 figure compare to the <em>average starter</em>? Was it significantly far ahead of <em>most</em> starters?</p>
+			<p>Large tables of data make it nearly impossible to answer these questions. For one thing, I'd have to scan through multiple pages of tables just to <em>see</em> the figures for all 88 qualified starters that year. And even if I did, I would need to hold each of those points <em>in working memory</em>. And then I would need to <em>process</em> the information in my head.</p>
+			<h2>A Better Way</h2>
+			<p>So understanding the distribution and full context of the data is essentially impossible with tables. But those tasks can be done intuitively and easily with a simple data visualization:</p>
+
+
+			<div style="border:1px solid black; background-color:#eef; padding-left:2em; padding-top:.5em"><strong>Strikeouts Per Nine Innings</strong><br/>MLB Qualified Starters, 2014<div id="k_nine"></div></div>
+			<p>This is a <strong>strip plot</strong>, a visualization advocated by Stephen Few in his <a href="https://www.perceptualedge.com/articles/visual_business_intelligence/distribution_displays.pdf">Perceptual Edge newsletter</a> for July - September 2014. This type of display plots the data along a scaled horizontal axis, allowing me to quickly see that Sale was in a close second place by this metric, with some significant distance behind them.</p>
+
+			<p>Additionally, the display helps me understand the overall distribution of the data. A red line denotes the median value, while grey boxes show the 25<sup>th</sup> and 75<sup>th</sup> percentiles of the dataset. Including these elements helps me to instantly see that the data are <em>left-skewed</em>, which helps underscore the value of high performers on this metric.</p>
+
+			<br/><br/>
+			<table style="margin:auto; border-collapse:collapse">
+				<tr class="border_top"><td style="text-align:right; padding-right:25px"><strong>Value</strong></td><td style="text-align:right">fWAR</td><td><div id="fwar"></div></td></tr>
+				<tr class="border_top"><td style="text-align:right; padding-right:25px"><strong>Fielding-Independent</strong></td><td style="text-align:right">FIP</td><td><div id="fip"></div></td></tr>
+				<tr><td></td><td style="text-align:right">xFIP</td><td><div id="xfip"></div></td></tr>
+				<tr class="border_top"><td style="text-align:right; padding-right:25px"><strong>Luck</strong></td><td style="text-align:right">BABIP</td><td><div id="babip"></div></td></tr>
+				<tr class="border_top"><td style="text-align:right; padding-right:25px"><strong>Outcomes</strong></td><td style="text-align:right">K/9</td><td><div id="k_nine"></div></td></tr>
+				<tr><td></td><td style="text-align:right">BB/9</td><td><div id="bb_nine"></div></td></tr>
+			</table>
+		</div>
+
+	</body>
+
+</html>

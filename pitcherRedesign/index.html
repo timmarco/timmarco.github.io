@@ -1,0 +1,434 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<!-- <link href='http://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css' /> -->
+	<style>
+		body {
+			font-family:Roboto, sans-serif;
+		}
+
+
+		#intro {
+			font-size:1.4em;
+			margin-bottom:3em;
+		}
+
+		#container {
+			width:800px;
+			margin:auto;
+		}
+
+		.axis path,	.axis line {
+			fill: none;
+			stroke: #aaa;
+			shape-rendering: crispEdges;
+		}
+
+		.axis text {
+			font-family: sans-serif;
+			font-size: 11px;
+			fill:#000;
+		}
+
+		#tooltip {
+			border:1px solid black;
+			position:absolute;
+			background-color:#fff;
+			font-size:10pt;
+			padding:1em;
+			max-width:200px;
+			display:none;
+		}
+
+		.sidebar {
+			padding:1em;
+			margin-right:1em;
+			border:1px solid #aaa;
+			width:350px;
+			float:left;
+			background-color:#f0f0f0;
+		}
+
+
+		.chart_holder {
+			background-color:#f0f0f0;
+			padding:1em;
+			border:1px solid black;
+			margin-top:2em;
+			margin-bottom:2em;
+		}
+
+			.chart_title {
+				font-weight:bold;
+			}
+
+			.chart_subtitle {
+				font-size:.8em;
+			}
+
+			.cite {
+				font-style:italic;
+				font-size:.75em;
+			}
+	</style>
+
+	<script src="d3.js"></script>
+	<script src="jquery.js"></script>
+	<script src="time_charts.js"></script>
+	<script src="cy_data.js"></script>
+
+	<script>
+
+
+	$(document).ready(function() {
+
+
+
+
+		the_circle = new scatter_plot("#k_bb",data);
+		the_circle.grow_time = 400;
+		the_circle.height = 325;
+		the_circle.x_label = "Walks";
+		the_circle.y_label = "Strikeouts";
+		the_circle.margin.left = 150;
+
+
+		the_circle.same_scale = true;
+
+		the_circle.color = "orange";
+		the_circle.draw_chart();
+		the_circle.show();
+
+
+
+
+
+
+
+		hr_scatter = new scatter_plot("#hr_chart",hr_ip);
+		hr_scatter.grow_time = 400;
+		hr_scatter.height = 400;
+		hr_scatter.x_label = "Innings Pitched";
+		hr_scatter.y_label = "Home Runs";
+		hr_scatter.width = 600;
+		hr_scatter.margin.right = 75;
+		hr_scatter.margin.left = 150;
+
+		hr_scatter.color = "orange";
+		hr_scatter.draw_chart();
+
+		hr_scatter.show();
+
+
+
+
+
+		var era_two = {x1:0,y1:0,x2:260,y2:57.72, color:'#070' };
+		var era_three = {x1:0,y1:0,x2:260,y2:86.67, color:"#aaa"};
+		var era_four = {x1:0,y1:0,x2:260,y2:115.55, color:"#aaa" };
+		var era_five = {x1:0,y1:0,x2:260,y2:144.44, color:"#700" };
+
+
+
+		runs_scatter = new scatter_plot("#era_chart",runs_ip);
+		runs_scatter.grow_time = 400;
+		runs_scatter.height = 400;
+		runs_scatter.x_label = "Innings Pitched";
+		runs_scatter.y_label = "Earned Runs";
+		runs_scatter.width = 600;
+		runs_scatter.margin.right = 75;
+		runs_scatter.margin.left = 150;
+
+
+
+		runs_scatter.color = "orange";
+		runs_scatter.draw_chart();
+
+		runs_scatter.add_line(era_two);
+		runs_scatter.add_line(era_three);
+		runs_scatter.add_line(era_four);
+		runs_scatter.add_line(era_five);
+		runs_scatter.show();
+
+
+
+
+
+		bb_scatter = new scatter_plot("#bb_chart",bb_ip);
+		bb_scatter.grow_time = 400;
+		bb_scatter.height = 400;
+		bb_scatter.x_label = "Innings Pitched";
+		bb_scatter.y_label = "Walks";
+		bb_scatter.width = 600;
+		bb_scatter.margin.right = 75;
+		bb_scatter.margin.left = 150;
+
+		bb_scatter.color = "orange";
+		bb_scatter.draw_chart();
+
+		bb_scatter.show();
+
+
+
+
+
+		k_scatter = new scatter_plot("#k_chart",k_ip);
+		k_scatter.grow_time = 400;
+		k_scatter.height = 400;
+		k_scatter.x_label = "Innings Pitched";
+		k_scatter.y_label = "Strikeouts";
+		k_scatter.width = 600;
+		k_scatter.margin.right = 75;
+		k_scatter.margin.left = 150;
+
+		k_scatter.color = "orange";
+		k_scatter.draw_chart();
+
+		k_scatter.show();
+
+		var b_data = {
+			val:135,
+			min:10,
+			max:147,
+			mean:66,
+		};
+
+		bullet_test = new single_bullet("#bullet_test",b_data);
+		bullet_test.draw_chart();
+
+
+
+
+		era_strip = new strip_plot("#era_strip",era_strip_data);
+		era_strip.tooltips.mean = "<strong>Mean</strong>:<br/>Pitchers in this region had fairly average ERAs, compared to all qualified pitchers.";
+		era_strip.tooltips.below_rect_1 = "<strong>More than 1 Standard Deviation Below Mean</strong>:<br/>These pitchers were significantly better than all other qualified pitchers.";
+		era_strip.draw_chart();
+
+
+
+		var kluber_votes = {min:0,max:200,val:169};
+		kluber_votes_bar = new single_bar("#kluber_votes",kluber_votes).draw_chart();
+
+
+		var hernandez_votes = {min:0,max:200,val:159};
+		hernandez_votes_bar = new single_bar("#hernandez_votes",hernandez_votes).draw_chart();
+
+		var sale_votes = {min:0,max:200,val:79};
+		sale_votes_bar = new single_bar("#sale_votes",sale_votes).draw_chart();
+
+		var lester_votes = {min:0,max:200,val:46};
+		lester_votes_bar = new single_bar("#lester_votes",lester_votes).draw_chart();
+
+		var scherzer_votes = {min:0,max:200,val:32};
+		scherzer_votes_bar = new single_bar("#scherzer_votes",scherzer_votes).draw_chart();
+
+
+		var hernandez = {min:0,max:5,val:2.14,color:'#005C5C'};
+		hernandez_bar = new single_bar("#hernandez_era",hernandez);
+		hernandez_bar.draw_chart();
+
+		var sale = {min:0,max:5,val:2.17,color:"#000"};
+		sale_bar = new single_bar("#sale_era",sale);
+		sale_bar.draw_chart();
+
+		var kluber = {min:0,max:5,val:2.47,color:"#D81C3F"};
+		kluber_bar = new single_bar("#kluber_era",kluber);
+		kluber_bar.draw_chart();
+
+		var lester = {min:0,max:5,val:2.46,color:"#C60C30"};
+		lester_bar = new single_bar("#lester_era",lester);
+		lester_bar.draw_chart();
+
+		var richards = {min:0,max:5,val:2.61,color:"#BA0021"};
+		richards_bar = new single_bar("#richards_era",richards);
+		richards_bar.draw_chart();
+
+		var average_era = {min:0,max:5,val:3.59,color:"rgba(0,0,0,0)"};
+		average_bar = new single_bar("#average_era",average_era);
+		average_bar.draw_chart();
+
+	});
+
+
+
+
+
+
+	function show_tooltip(message) {
+		$("#tooltip").html(message);
+		var y_pos = window.my - 40;
+		var new_pos = window.my - 30;
+		$("#tooltip").css({'top':y_pos,'left':window.mx + 20}).show().animate({top:new_pos},50);
+
+	}
+
+
+	function hide_tooltip() {
+		$("#tooltip").hide();
+	}
+
+	$(document).on('mousemove',function(e) {
+		window.mx = e.pageX;
+		window.my = e.pageY;
+	});
+
+	</script>
+</head>
+
+<body>
+
+<div id="container">
+
+<h1>First Steps in Visualization Library</h1>
+<p>In the Perceptual Edge <a href='http://perceptualedge.com/articles/visual_business_intelligence/distribution_displays.pdf'>newsletter</a> for July/August/September 2014, Stephen Few discussed different methods for visualizing the distribution of quantitative data. I was particularly intrigued by his method of creating strip plots, which visualize all data points in a set along a single axis.</p>
+
+<p>In this post, I'm going to implement a strip plot using d3.js. Using d3 allows me to add in an extra layer of interactivity that retains all of the benefits of a traditional strip plot, while adding several new features that can better communicate the shape of the data.</p>
+
+<h2>What is a strip plot?</h2>
+<p>Few uses a dataset of the ages of patient's at a doctor's office for his examples. Given this type of data, we're most likely to be interested in questions like:</p>
+<ul>
+	<li>What is the <strong>average age</strong> of a patient?</li>
+	<li>What is the <strong>typical age range</strong> for most patients?</li>
+	<li>How old are the <strong>oldest</strong> and <strong>youngest</strong> patients at the office?</li>
+</ul>
+
+<p>To answer these questions, Few generated the following strip plot:</p>
+<div class="chart_holder">
+	<span class='chart_title'>Example Strip Plot</span><br/>
+	<span class='chart_subtitle'>Showing distribution of patient ages.</span><br/><br/>
+	<img src="few_example.png" /><br/><br/>
+	<span class='cite'>Source: Perceptual Edge Newsletter</span>
+</div>
+
+<!--
+<div class="sidebar">
+	<span class="chart_title">2014 AL Cy Young Voting</span><br/>
+	<span class="chart_subtitle">A subtitle goes here.</span><br/><br/>
+	<table>
+		<tr><td style='color:#D81C3F; text-align:right'>Corey Kluber</td><td><div id="kluber_votes"></div></td></tr>
+		<tr><td style='color:#005C5C; text-align:right'>Felix Hernandez</td><td><div id="hernandez_votes"></div></td></tr>
+		<tr><td style='color:#000; text-align:right'>Chris Sale</td><td><div id="sale_votes"></div></td></tr>
+		<tr><td style='color:#C60C30; text-align:right'>Jon Lester</td><td><div id="lester_votes"></div></td></tr>
+		<tr><td style='color:#F74902; text-align:right'>Max Scherzer</td><td><div id="scherzer_votes"></div></td></tr>
+	</table>
+
+	<div class="cite">Source: Baseball-Reference.com</div>
+</div>
+
+<p>When the results were counted, Cleveland's Corey Kluber wound up the winner. But was he the right choice?</p>
+<p>To answer that question, we'll need to
+<div style="clear:both"></div>
+
+
+
+-->
+<h2>Interactive Implementation</h2>
+	<p>Understanding how a the observations of a variable is distributed in a set is one of the best uses of data visualization. While it's possible to <em>describe</em> a distribution using numerals (measures of central tendency, deciles, skewness, kurtosis, etc.), it's extraordinarily difficult to <em>understand</em> using these measures.</p>
+
+	<p>To do that, you'd need to be able to hold many different numbers in your head at the same time. And be able to understand every one of those relationships at the same time. That's very, very hard. Charts simply do a better job of communicating the shape of data.</p>
+
+
+	<div class="chart_holder">
+		<div style="float:left">
+			<span class='chart_title'>ERA Distribution</span><br/>
+			<span class='chart_subtitle'>Among Qualified AL Pitchers - 2014</span>
+		</div>
+		<div id="era_strip"></div>
+		<span class='cite'>Source: Fangraphs.com Leaderboards</span>
+	</div>
+
+	<p>The plot above illustrates the ERA of qualified AL pitchers in 2014. <span class="kluber">Corey Kluber</span>, the Cy Young winner, is specifically called out.</p>
+
+	<p>Typically, fans encounter pitching stats as acontextual numerals. For example, ESPN will often say something along the lines of 'Kluber had a 2.44 ERA'. Or more helpfully, 	'Kluber had a top-three ERA'.
+
+
+	<h3>Mantra Check</h3>
+		<ul>
+			<li>Expands on typical measures of distribution (mean, median, standard deviations, etc) in an intuitive way.</li>
+			<li><em>Overview First:</em> </li>
+			<li><em>Zoom and Filter:</em> Righty vs. Lefty</li>
+			<li><em>Details on Demand:</em> Every data point can be customized to include additional information (as a mouseover tooltip) using the <code>message</code> property. Additional, custom information on the distribution is easy to add.</li>
+		</ul>
+
+
+	<h3>Show Code</h3>
+	<div style="display:none">
+		<code>
+			era_strip = new strip_plot("#era_strip",era_strip_data);<br/>
+			era_strip.tooltips.mean = "&lt;strong&gt;Mean&lt;/strong&gt;:<br/>Pitchers in this region had fairly average ERAs, compared to all qualified pitchers.";<br/>
+			era_strip.tooltips.below_rect_1 = "&lt;strong&gt;More than 1 Standard Deviation Below Mean&lt;/strong&gt;:<br/>These pitchers were significantly better than all other qualified pitchers.";<br/>
+			era_strip.draw_chart();<br/>
+		</code>
+	</div>
+
+	<p>In terms of runs allowed per nine innings, Kluber is clearly elite, although not number one. He was third in the league, and one of five elite pitchers in 2014.</p>
+
+	<div class='sidebar' style='float:right; margin-right:0em; margin-left:1em;'>
+		<span class='chart_title'>Top Performers: ERA</span><br/>
+		<span class='chart_subtitle'>Four pitchers were in the elite ERA category with Kluber:</span><br/><br/>
+		<table>
+			<tr><td style='color:#005C5C; text-align:right'>Felix Hernandez</td><td><div id='hernandez_era'></div></tr>
+			<tr><td style='color:#000; text-align:right'>Chris Sale</td><td><div id="sale_era"></div></tr>
+			<tr><td style='color:#D81C3F; text-align:right'><strong>Corey Kluber</strong></td><td><div id="kluber_era"></div></td></tr>
+			<tr><td style='color:#C60C30; text-align:right'>Jon Lester</td><td><div id="lester_era"></div></td></tr>
+			<tr><td style='color:#BA0021; text-align:right'>Garrett Richards</td><td><div id="richards_era"></div></td></tr>
+			<tr><td style='text-align:right'>Average</td><td><div id="average_era"></div></td></tr>
+		</table>
+	</div>
+
+
+
+<p>Going by that plot alone, it looks like Felix Hernandez and Chris Sale were both significantly better than Kluber. And Jon Lester and Garrett Richards weren't far behind. </p>
+<p>But ERA is just a <em>rate stat</em>; it only tells us how a pitcher performed on average.</p>
+<p>Rate stats have pretty obvious limitations. JP Arencibia, a catcher for the Toronto Blue Jays, pitched an inning of relief in August this year. He didn't give up any runs, so his ERA was 0.00, significantly better than Kluber or any other starter. </p>
+<p>But that individual out isn't all that valuable. At most, Arencibia could have only helped his team win a single game as a pitcher. So obviously, a pitcher's durability is really important. </p>
+
+
+	<h2>Scatter Plots</h2>
+	<div class='chart_holder'>
+		<span class='chart_title'>Earned Runs and Innings Pitched</span><br/>
+		<span class='chart_subtitle'>Among AL Qualified Pitchers - 2014</span><br/>
+		<div id="era_chart"></div>
+	</div>
+
+	<!--
+<p>If we take the _number of innings pitched_ into account, Chris Sale and Garrett Richards clearly lag behind the pack. They may have pitched well, but they didn't pitch enough to be in consideration.</p>
+<p>So this leaves Kluber, Hernandez, and Lester. On the basis of both Earned Runs and Innings Pitched, Hernandez still seems like the winner here. </p>
+
+<h2>True Talent</h2>
+<p>But ERA is limited for a few reasons</p>
+<ol>
+	<li>Defense</li>
+	<li>Park</li>
+	<li>Luck</li>
+</ol>
+
+	<div id="k_bb" ></div>
+	<div id="hr_chart"></div>
+	<div id="bb_chart"></div>
+	<div id="k_chart"></div>
+	<!--<div id="bullet_test"></div>
+
+	<table>
+		<tr><td>Walks Allowed</td></tr>
+		<tr><td>Strikeouts</td></tr>
+		<tr><td>Home Runs</td></tr>
+	</table>
+
+
+-->
+
+</div>
+
+
+	<div id="tooltip"></div>
+
+	<audio id="test_sound">
+		<source src="button-24.mp3">
+	</audio>
+</body>
+
+</html>
