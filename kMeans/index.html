@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+	<head>
+		<link rel="stylesheet" href="style.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
+
+		<script src="js/leastDistance.js"></script>
+		<script src="js/kMeans.js"></script>
+		<script src="js/displaySteps.js"></script>
+		<script>
+
+
+			$(document).ready(function() {
+
+
+
+
+				//
+				// Use data that are gaussian around a few groups, rather than uniform.
+				//
+
+				$(".next_step").click(function() {
+					$("#" + $(this).attr('data-shows')).show();
+					$(this).remove();
+				});
+
+				var data = [
+					{x:0.71,y:0.41},
+					{x:0.73,y:0.35},
+					{x:0.85,y:0.09},
+					{x:0.83,y:0.44},
+					{x:0.84,y:0.35},
+					{x:0.7,y:0.38},
+					{x:0.81,y:0.31},
+					{x:0.65,y:0.3},
+					{x:0.7,y:0.26},
+					{x:0.69,y:0.24},
+					{x:0.67,y:0.18},
+					{x:0.75,y:0.3},
+					{x:0.7,y:0.1},
+					{x:0.91,y:0.18},
+					{x:0.68,y:0.18},
+					{x:0.18,y:0.59},
+					{x:0.15,y:0.58},
+					{x:0.25,y:0.64},
+					{x:0.26,y:0.79},
+					{x:0.26,y:0.86},
+					{x:0.22,y:0.74},
+					{x:0.16,y:0.88},
+					{x:0.21,y:0.76},
+					{x:0.17,y:0.96},
+					{x:0.29,y:0.89},
+					{x:0.34,y:0.6},
+					{x:0.18,y:0.3},
+					{x:0.14,y:0.26},
+					{x:0.02,y:0.23},
+					{x:0.15,y:0.23},
+					{x:0.22,y:0.12},
+					{x:0.25,y:0.19},
+					{x:0.34,y:0.15},
+					{x:0.1,y:0.33},
+					{x:0.25,y:0.13},
+					{x:0.12,y:0.32},
+					{x:0.2,y:0.16},
+					{x:0.28,y:0.39},
+					{x:0.18,y:0.19},
+					{x:0.34,y:0.22}
+				];
+
+
+
+				var initial_centroids = [
+					{x:.3,y:.5},
+					{x:.1,y:.8},
+					{x:.7,y:.7},
+				];
+
+				var current_centroids = [];
+
+
+
+
+				var cluster_colors = ["red","green","blue"];
+
+				views_chart = new k_means("#views_chart");
+				views_chart.margins.left = 100;
+				views_chart.size.height = 300;
+				views_chart.configure();
+				views_chart.draw_chart();
+				views_chart.draw_axes();
+				views_chart.label_axes();
+				views_chart.chart.append("text")
+					.attr("x",views_chart.x(.1))
+					.attr("y",views_chart.y(.1))
+					.attr("font-size","10pt")
+					.text("Libertarian");
+
+
+				views_chart.chart.append("text")
+					.attr("x",views_chart.x(.7))
+					.attr("y",views_chart.y(.1))
+					.attr("font-size","10pt")
+					.text("Social Conservative");
+
+
+				views_chart.chart.append("text")
+					.attr("x",views_chart.x(.1))
+					.attr("y",views_chart.y(.7))
+					.attr("font-size","10pt")
+					.text("Progressive");
+
+
+				test_k = new k_means("#first_chart");
+				test_k.data = data;
+				test_k.configure();
+				test_k.draw_chart();
+				test_k.draw_axes();
+				test_k.label_axes();
+
+				$("#play_plot").click(function() {
+					test_k.plot_data(true);
+
+					display_steps("#chart_one_step_one",0,3000);
+					display_steps("#chart_one_step_two",3000,6000);
+				});
+
+
+
+
+
+
+
+
+				show_centroids = new k_means("#second_chart");
+				show_centroids.data = data;
+				show_centroids.configure();
+				show_centroids.draw_chart();
+				show_centroids.draw_axes();
+				show_centroids.plot_data();
+
+
+
+				$("#play_centroids").click(function() {
+					show_centroids.datapoints.transition().attr("opacity",.25);
+					show_centroids.demo_centroids(initial_centroids,0);
+
+					display_steps("#chart_two_step_one",0,1000);
+					display_steps("#chart_two_step_two",1000,1000);
+					display_steps("#chart_two_step_three",2000,1000);
+
+
+					$("#show_button_three").show();
+				});
+
+				assign_class = new k_means("#third_chart");
+				assign_class.data = data;
+				assign_class.configure();
+				assign_class.draw_chart();
+				assign_class.draw_axes();
+				assign_class.plot_data();
+				assign_class.demo_centroids(initial_centroids,10);
+
+				assign_class.datapoints.each(function() {
+					var point_x = d3.select(this).data()[0].x;
+					var point_y = d3.select(this).data()[0].y;
+
+					var distances = [];
+
+					for(var i = 0; i < initial_centroids.length; i++) {
+						var x_distance = Math.pow(point_x - initial_centroids[i].x,2);
+						var y_distance = Math.pow(point_y - initial_centroids[i].y,2);
+						var distance_vector = Math.pow(x_distance + y_distance,.2);
+						distances.push(distance_vector);
+					}
+
+					var new_cluster = least_distance(distances);
+
+					d3.select(this).attr("data-cluster",new_cluster);
+
+				});
+
+				$("#play_find_centroids").click(function() {
+					for(var i = 0; i < 4; i++) {
+						display_distance(d3.select(assign_class.datapoints[0][i]),initial_centroids,750,i*1000);
+					}
+
+					for(var i = 4; i < assign_class.data.length; i++) {
+						display_distance(d3.select(assign_class.datapoints[0][i]),initial_centroids,100,4000 + i*100);
+					}
+
+					assign_class.draw_voronoi(initial_centroids,cluster_colors,8600);
+				});
+
+
+
+
+
+
+
+
+				reassign_centroids = new k_means("#fourth_chart");
+				reassign_centroids.data = data;
+				reassign_centroids.configure();
+				reassign_centroids.draw_chart();
+				reassign_centroids.draw_axes();
+				reassign_centroids.plot_data();
+				reassign_centroids.demo_centroids(initial_centroids,10);
+				reassign_centroids.assign_datapoints(initial_centroids);
+				reassign_centroids.draw_voronoi(initial_centroids,cluster_colors,0);
+
+
+				$("#reassign_centroids").click(function() {
+
+					reassign_centroids.animate_new_centroid(0,0,current_centroids);
+					reassign_centroids.animate_new_centroid(1,2500,current_centroids);
+					reassign_centroids.animate_new_centroid(2,5000,current_centroids);
+
+					reassign_centroids.chart.selectAll(".voronoi")
+						.transition()
+						.delay(7000)
+						.remove();
+
+					reassign_centroids.draw_voronoi(current_centroids,cluster_colors,7000);
+
+
+//					reassign_centroids.datapoints.transition().delay(7500).duration(500).attr("fill","black");
+
+				});
+
+
+
+				reassign_data = new k_means("#fifth_chart");
+				reassign_data.data = data;
+				reassign_data.configure();
+				reassign_data.draw_chart();
+				reassign_data.draw_axes();
+				reassign_data.plot_data();
+//				assign_datapoints(reassign_data.datapoints);
+
+
+				$("#reassign_data").click(function() {
+					//
+					// THIS ONE ACTUALLY NEEDS TO BE MOVED
+					//
+//					demo_centroids(reassign_data,current_centroids,10);
+
+
+					var z = 0;
+
+					reassign_data.datapoints.each(function() {
+						var point_x = d3.select(this).data()[0].x;
+						var point_y = d3.select(this).data()[0].y;
+
+						var distances = [];
+						var radii = [];
+
+						for(var i = 0; i < current_centroids.length; i++) {
+							var x_distance = Math.pow(point_x - current_centroids[i].x,2);
+							var y_distance = Math.pow(point_y - current_centroids[i].y,2);
+							var distance_vector = Math.pow(x_distance + y_distance,.2);
+							distances.push(distance_vector);
+							radii.push(distance_vector);
+						}
+
+
+						var new_cluster = least_distance(distances);
+						var old_cluster = d3.select(this).attr("data-cluster");
+
+						console.log(new_cluster);
+						var radius = 300 * radii[new_cluster];
+
+
+						if(old_cluster != new_cluster) {
+							var points = d3.select(this).data()[0];
+
+
+						d3.select(this).on('mouseover',function() {
+							d3.select(this)
+								.transition()
+								.duration(1000)
+								.attr("r",12)
+								.transition()
+								.duration(500)
+								.attr("r",6);
+
+							/*
+							var hotspot = reassign_data.chart.insert("circle")
+								.attr("r",6)
+								.attr("cx",reassign_data.x(points.x))
+								.attr("cy",reassign_data.y(points.y))
+								.attr("fill",cluster_colors[new_cluster])
+								.attr("stroke","orange")
+								.attr("stroke-width","2");
+							*/
+
+							reassign_data.chart
+								.insert("circle","rect")
+								.attr("cx",reassign_data.x(point_x))
+								.attr("cy",reassign_data.y(point_y))
+								.attr("r",0)
+								.attr("stroke","#333")
+								.attr("stroke-width",1)
+								.attr("fill","white")
+								.transition()
+								.delay(1500)
+								.duration(1500)
+								.transition()
+								.duration(500)
+								.attr("r",radius)
+								.transition()
+								.attr("fill",cluster_colors[new_cluster])
+								.remove();
+
+							});
+						}
+
+
+					});
+
+
+
+				});
+
+
+
+
+
+
+
+
+				function display_distance(point,which_centroids,the_duration,the_delay) {
+
+					if(!point.attr("changed")) {
+
+						var new_cluster = point.attr("data-cluster");
+						if(the_delay < 4000) {
+							point.transition().delay(the_delay).attr("r",6);
+						}
+
+						var point_x = point.data()[0].x;
+						var point_y = point.data()[0].y;
+
+						var point_cluster = point.attr("data-cluster");
+
+						var centroid = which_centroids[point_cluster];
+
+
+						var radius = 300 * Math.pow( Math.pow(point_x - centroid.x,2) + Math.pow(point_y - centroid.y,2) ,.5);
+
+
+						assign_class.chart
+							.insert("circle","rect")
+							.attr("cx",assign_class.x(point_x))
+							.attr("cy",assign_class.y(point_y))
+							.attr("r",0)
+							.attr("stroke","#333")
+							.attr("stroke-width",1)
+							.attr("fill","white")
+							.transition()
+							.duration(the_duration)
+							.delay(the_delay)
+							.attr("r",radius)
+							.transition()
+							.attr("fill",cluster_colors[new_cluster])
+							.remove()
+							.each("end",function() {
+								point.attr("r",3);
+								point.attr("fill",cluster_colors[new_cluster]);
+							});
+
+
+
+					}
+
+
+					point.attr("changed",true);
+
+				}
+
+
+
+
+
+
+
+			});
+
+		</script>
+
+	</head>
+
+	<body>
+		<div id="page">
+			<h1>k-Means Clustering: An Introduction</h1>
+			<div class="subtitle">By <a href="http://timmarco.com">Tim Marco</a></div>
+			<hr/>
+
+			<p><strong>Cluster Analysis</strong> is one of the most common applications of machine learning and data mining. The basic idea behind this type of analysis is to group subsets of data that are similar in some way.</p>
+			<p>In other words, cluster analysis helps us find which elements in a set of data are <em>similar to one another</em> (and distinct from all others).</p>
+			<p>This post helps explains <strong>k-means clustering</strong>, which is also known as <strong>Lloyd's Algorithm</strong>. This is one of the simplest &ndash; yet still very powerful &ndash; types of cluster analysis.</p>
+			<hr/>
+
+			<h3>A Trivial Example: Political Clusters</h3>
+
+			<p>You've probably seen diagrams that illustrate political views across two dimensions: <strong>economic</strong> and <strong>social</strong> views. The basic idea here is that a one-dimensional paradigm &ndash; left vs. right &ndash; misses out on some important nuance.</p>
+			<div id="views_chart" style="float:right"></div>
+
+			<p>The gist of these charts is that the standard liberal vs. conservative model of political views is limited. Instead, political viewpoints can be broken down into different groups like <span style="color:green;font-weight:bold">progressives</span>, <span style="color:red;font-weight:bold">libertarians</span>, and <span style="color:blue;font-weight:bold">social conservatives</span>.</p>
+
+			<p>But imagine that we lived in a world where no one had figured that out. If you were the very first political scientist, how might you discover these groups?</p>
+
+			<p>This is the kind of question where cluster analysis (specifically k-means) can help. If you had access to survey data about how people felt about social and economic views, the algorithm could help you identify these groups.</p>
+
+
+			<div style="clear:both"></div>
+			<h3>Gathering the Data</h3>
+			<p>The first step of k-means is to gather the data. Typically, this is done with surveys: you'd ask a representative sample of the population a set of questions about their beliefs, and then score them along the two axes.</p>
+
+			<p>Press the <strong>Play</strong> button to see data collection in action.</p>
+
+			<div style="width:800px">
+				<div id="first_chart" style="margin:auto; float:left"></div>
+				<div class="right_box">
+
+						<div id="play_plot" class="general_button">
+							Play
+						</div>
+
+					<ol>
+						<li id="chart_one_step_one">Plot how much voters care about <em>eduction</em> on the x-axis</li>
+						<li id="chart_one_step_two">Plot how much they care about <em>taxes</em> on the y-axis</li>
+
+					</ol>
+
+				</div>
+			</div>
+			<div style="clear:both"></div>
+
+
+			<div id="step_two" style="padding-top:8em; padding-bottom:8em">
+				<h3>Step Two: Randomly Select Centroids</h3>
+				<p>The next step in the algorithm is <strong>randomly selecting centroids</strong>. <em>Centroids</em> are positions in the graph that correspond to the different groups we're trying to discover.</p>
+				<p>We'll illustrate these centroids using colored circles like these: <svg style="height:20px; width:20px"><circle cy="10" cx="10" r="8" fill="red" stroke="black"/></svg><svg style="height:20px; width:20px"><circle cy="10" cx="10" r="8" fill="green" stroke="black"/></svg><svg style="height:20px; width:20px"><circle cy="10" cx="10" r="8" fill="blue" stroke="black"/></svg>.</p>
+				<p>Each centroid represents hypothetical pair of responses that we could have received from our survey. But keep in mind that these <em>aren't actual responses</em>, they're just possible combinations of answers any respondent <em>could have</em> given.</p>
+				<p>They're positioned <em>randomly</em> because k-nearest neighbors makes no <em>a priori</em> assumptions about the data. It has no intuition about <em>where</em> the groups of responses will be; instead, it seeks to discover the groupings.</p>
+				<div style="width:800px">
+					<div id="second_chart" style="margin:auto; float:left"></div>
+					<div class="right_box">
+						<div id="play_centroids" class="general_button">
+							Play
+						</div>
+						<ol>
+							<li id="chart_two_step_one">Randomly assign Centroid 1</li>
+							<li id="chart_two_step_two">Randomly assign Centroid 2</li>
+							<li id="chart_two_step_three">Randomly assign Centroid 3</li>
+						</ol>
+					</div>
+				</div>
+				<div style="clear:both"></div>
+
+			</div>
+
+
+
+			<div id="step_three" style="">
+				<h3>Step Three: Assign Each Point to a Cluster</h3>
+				<p>After initially seeding the centroids, the algorithm will begin the process of <strong>clustering</strong>, or assigning data to distinct groups.</p>
+				<p>The way it does so is simple: each data point is <em>assigned</em> to the closest centroid, one at a time.</p>
+
+				<div style="width:800px">
+					<div id="third_chart" style="float:left"></div>
+					<div class="right_box" id="rb_3">
+						<em>Find the nearest centroids.</em>
+						<p>The algorithm will calculate the distance to each centroid for each datapoint.</p>
+						<p><div class="general_button" id="play_find_centroids">Play</div></p>
+						<ol>
+							<li>For each datapoint, find the nearest centroid.</li>
+						</ol>
+					</div>
+				</div>
+				<div style="clear:both"></div>
+
+			</div>
+
+
+			<div id="step_five" style="">
+				<h3>Step Four: Find the Midpoint of Each Cluster</h3>
+				<p>At this point, you may be wondering what the value of seeing how close datapoints are to a randomly selected location is at all helpful. At this point, there is just randomness.</p>
+
+
+				<div style="width:800px">
+					<div id="fourth_chart" style="float:left"></div>
+					<div class="right_box" id="rb_3">
+						<em>Reassign Centroids</em>
+						<p>The algorithm will reassign the centroids.</p>
+						<p><div class="general_button" id="reassign_centroids">Play</div></p>
+
+						<ol>
+							<li>Find the midpoints of each cluster.</li>
+							<li>Move each centroid to that midpoint.</li>
+						</ol>
+
+					</div>
+				</div>
+				<div style="clear:both"></div>
+
+
+
+
+			</div>
+
+
+			<div id="step_six" style="">
+				<h3>Step Five: Re-assign Data to new Centroids</h3>
+				<p>You might have noticed something after the last step: after moving the centroids, some of the datapoints were now in the wrong class. </p>
+				<div style="width:800px">
+					<div id="fifth_chart" style="float:left"></div>
+					<div class="right_box" id="rb_3">
+						<em>Reassign Datapoints</em>
+						<p>The algorithm will recalculate distance to datapoints.</p>
+						<p><div class="general_button" id="reassign_data">Play</div></p>
+
+						<ol>
+							<li>Calculate Distances</li>
+							<li>See if any have changed</li>
+						</ol>
+
+					</div>
+				</div>
+				<div style="clear:both"></div>
+
+			</div>
+
+
+		</div>
+	</body>
+
+</html>

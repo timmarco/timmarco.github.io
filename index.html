@@ -42,10 +42,15 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">Diving Deep Into Fitts' Law</div>
             </div>
+            <!--
             <div class="imageSwapContainer">
               <img src="assets/FittsMotion.gif" style="display:none" class="hiddenMotion" />
               <img src="assets/FittsStatic.png" style="display:block" class="staticOverlay"/>
             </div>
+          -->
+            <video muted loop class="videoSnapshot">
+              <source src="assets/fittsMotion.mp4" type="video/mp4" />
+            </video>
             <p>An Explorable Explanation about why some things are easy to use, while others are not.</p>
           </a>
         </div>
@@ -55,8 +60,13 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">Re-Creating the <em>Stranger Things</em> Main Title in d3.js</div>
             </div>
+            <video muted loop style="width:100%" class="videoSnapshot">
+              <source src="assets/strangerThings.mp4" type="video/mp4"/>
+            </video>
+            <!--
             <img src="assets/strangerThings.gif" style="display:none" class="hiddenMotion" />
             <img src="assets/StrangerThingsStatic.png" style="display:block" class="staticOverlay"/>
+            -->
             <p>A motion study and experiment to see just how far I can push vector animation in Javascript.</p>
           </a>
         </div>
@@ -66,10 +76,17 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">Creating Video Charts in Blender</div>
             </div>
+            <!--
             <div class="imageSwapContainer">
               <img src="assets/blenderCharts.gif" style="display:none" class="hiddenMotion" />
               <img src="assets/blenderCharts.png" style="display:block" class="staticOverlay"/>
             </div>
+            -->
+
+            <video muted loop class="videoSnapshot">
+              <source src="assets/blenderCharts.mp4" type="video/mp4" />
+            </video>
+
             <p>Experimenting with Blender's Python API to create data-driven graphics.</p>
           </a>
         </div>
@@ -79,10 +96,16 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">A Lot of Baseball is Luck</div>
             </div>
+            <!--
             <div class="imageSwapContainer">
               <img src="assets/babip.gif" style="display:none" class="hiddenMotion" />
               <img src="assets/babip.png" style="display:block" class="staticOverlay"/>
             </div>
+            -->
+            <video muted loop class="videoSnapshot">
+              <source src="assets/babip.mp4" type="video/mp4" />
+            </video>
+
             <p>An overview of one of the earliest and most influential findings in baseball analytics.</p>
           </a>
         </div>
@@ -93,10 +116,16 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">Autonomous Vehicles and Employment</div>
             </div>
+            <!--
             <div class="imageSwapContainer">
               <img src="assets/selfDriving.gif" style="display:none" class="hiddenMotion" />
               <img src="assets/selfDriving.png" style="display:block" class="staticOverlay"/>
             </div>
+            -->
+            <video muted loop class="videoSnapshot">
+              <source src="assets/selfDriving.mp4" type="video/mp4" />
+            </video>
+
             <p>A look at how the coming future of Self-Driving vehicles may impact employment and tax revenues.</p>
           </a>
         </div>
@@ -107,10 +136,16 @@
             <div class="exampleTitleContainer">
               <div class="exampleTitle">Pitching Data Visualization</div>
             </div>
+            <!--
             <div class="imageSwapContainer">
               <img src="assets/stripPlot.gif" style="display:none" class="hiddenMotion" />
               <img src="assets/stripPlot.png" style="display:block" class="staticOverlay"/>
             </div>
+            -->
+            <video muted loop class="videoSnapshot">
+              <source src="assets/stripPlot.mp4" type="video/mp4" />
+            </video>
+
             <p>Re-designing statistical tables for better communication, readability, and context.</p>
           </a>
         </div>
@@ -128,6 +163,14 @@
     <script>
 
       (function() {
+        d3.selectAll(".videoSnapshot")
+          .on('mouseover',function() {
+            d3.select(this).node().play();
+          })
+          .on('mouseout',function() {
+            d3.select(this).node().pause();
+          })
+
         d3.selectAll(".example")
           .on('mouseover',function() {
             let div;

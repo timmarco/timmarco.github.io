@@ -143,3 +143,7 @@ a:hover {
 #footerLinks {
   padding:2em;
 }
+
+.videoSnapshot {
+  width:100%;
+}
