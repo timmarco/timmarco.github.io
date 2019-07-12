@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Function Composition</title>
+    <script src="node_modules/d3/dist/d3.min.js"></script>
+    <script src="node_modules/mathjax/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="js/dist/source.js"></script>
+
+    <style>
+      body {
+        font-family:Merriweather;
+        font-size:14pt;
+      }
+
+      #container {
+        width:800px;
+        margin:auto;
+      }
+
+      .equation {
+        font-size:2em;
+      }
+
+      .oneColumn {
+        width:900px;
+        margin:auto;
+      }
+
+      .twoColumns {
+        width:900px;
+        margin:auto;
+        border:1px solid blue;
+      }
+
+      .twoColumns:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      .columnLeft {
+        width:450px;
+        left:0;
+        margin:0;
+        padding:0;
+        float:left;
+      }
+
+      .columnRight {
+        min-width:450px;
+        margin:0;
+        padding:0;
+        float:left;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="oneColumn">
+      <h1>This is the Title!</h1>
+      <ul>
+        <li>This is inspired by the 3Blue1Brown video</li>
+        <li>Embed the video here</li>
+        <li>It's an interesting way to think about functions and what happens when you repeatedly apply them</li>
+        <li>Explain what you mean by repeatedly apply them</li>
+        <li>You can end up with interesting patterns and eventually certain functions have attractors</li>
+      </ul>
+    </div>
+
+
+    <div class="twoColumns">
+      <h2>One Way To Visualize Functions With a Long Headline Title</h2>
+      <div class="columnLeft">
+        <p>The most common way to think about functions is to use a <strong>Cartesian Plot</strong>.</p>
+        <p>Cartesian plots are two-dimensional graphs that show the <strong>input</strong> value horizontally (on the <em>x-axis</em>), and the <strong>output</strong> value vertically (on the <em>y-axis</em>).</p>
+        <p>Here's a Cartesian Plot of the function \[f(x) = 1 + \frac{1}{x} \].</p>
+      </div>
+
+      <div class="columnRight">
+        <div id="cartesianPlot"></div>
+      </div>
+    </div>
+
+    <div class="oneColumn">
+      <h2>Another Way to Visualize</h2>
+      <p>But that isn't the only way to visualize functions. You can also think of functions as <strong>transforms</strong>.</p>
+      <p>Here, you can think of separate <strong>number lines</strong> for the input and the output. Instead of a single line mapping between the two, you can draw many lines, one from every input to every output.</p>
+      <div id="noCirclePlot" style="margin:auto; width:800px"></div>
+      <div id="highlightOneValue" style="margin:auto; width:800px"></div>
+      <div id="initialPlot" style="margin:auto; width:800px"></div>
+
+    </div>
+
+    <div class="twoColumns">
+      <div class="columnLeft">
+        <p>So for example, if the input were 2.4, the output would be [value].</p>
+      </div>
+
+      <div class="columnRight">
+      </div>
+    </div>
+
+    <div class="twoColumns">
+      <div class="columnLeft">
+        <p>When you visualize functions as transforms, the pattern that matters is how the lines map.</p>
+        <p style="color:red">EXPLAIN SOME MORE ABOUT WHAT IS HAPPENING HERE</p>
+      </div>
+
+      <div class="columnRight">
+        <div id="initialPlot"></div>
+      </div>
+    </div>
+
+    <script>
+      (function() {
+        let cartesian = new CartesianPlot({
+          "where":"#cartesianPlot",
+          "width":400,
+          "height":400
+        })
+        .addFunction({
+          "function":(x) => { return 1 + (1/x);}
+        });
+
+        let plotter = new FunctionPlotter({
+          "where":"#initialPlot",
+          "width":800,
+          "marginTop":100,
+          "interactive":false,
+          "isDiscrete":true,
+          "domain":[-10,10],
+          "height":300,
+          "samples":60,
+          "titleString":"\\[f(x) = 1 + \\frac{1}{x} \\]",
+          "margins":{
+            "top":100,
+            "bottom":0,
+            "left":100,
+            "right":100
+          }
+        })
+        .addFunction((x) => { return 1 + (1/x);});
+
+
+        let plotterTwo = new FunctionPlotter({
+          "where":"#noCirclePlot",
+          "width":800,
+          "marginTop":100,
+          "interactive":false,
+          "domain":[-10,10],
+          "height":300,
+          "samples":60,
+          "titleString":"\\[f(x) = 1 + \\frac{1}{x} \\]",
+          "margins":{
+            "top":100,
+            "bottom":0,
+            "left":100,
+            "right":100
+          }
+        })
+        .addFunction((x) => { return 1 + (1/x);});
+
+        let highlightPlot = new FunctionPlotter({
+          "where":"#highlightOneValue",
+          "width":800,
+          "marginTop":100,
+          "interactive":false,
+          "domain":[-10,10],
+          "height":300,
+          "samples":0,
+          "titleString":"\\[f(2) = 1 + \\frac{1}{2} = 1.5\\]",
+          "margins":{
+            "top":100,
+            "bottom":0,
+            "left":100,
+            "right":100
+          }
+        })
+        .addFunction((x) => { return 1 + (1/x);})
+        .highlightStaticValue(2);
+
+      })();
+    </script>
+
+
+  </body>
+</html>

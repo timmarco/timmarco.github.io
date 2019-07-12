@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+  <head>
+    <title>2018-2019 MLB Free Agents</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700&display=swap" rel="stylesheet">
+
+    <script src="dist/all.js"></script>
+
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+
+  <body>
+    <div class="pageHeader">
+      <div class="pageHeaderContents">
+        <span id="showPageTitle">2018-2019 MLB Free Agents</span>
+      </div>
+    </div>
+
+    <div class="pageBody">
+      <div class="pageExplainer">
+        <strong>About This Page</strong>
+        <p>This is a tool for analyzing potential free agents. Select a player below to get more information and model potential contracts.</p>
+      </div>
+
+      <div id="menuDiv">
+        <div class="playerMenuFilters">
+          Filter By Name: <input type="text" id="searchPlayers" length="30" />
+          <br/><br/>
+
+          <div class="playerMenuPositionFilterGroup">
+            Show Position Players:<br/>
+            <input class="menu-position-filter" type="checkbox" data-position="catcher" checked="true" /> Catcher |
+            <input class="menu-position-filter" type="checkbox" data-position="firstBase" checked="true" /> First Basemen |
+            <input class="menu-position-filter" type="checkbox" data-position="secondBase" checked="true" /> Second Basemen |
+            <input class="menu-position-filter" type="checkbox" data-position="shortstop" checked="true" /> Shortstops |
+            <input class="menu-position-filter" type="checkbox" data-position="thirdBase" checked="true" /> Third Basemen |
+            <input class="menu-position-filter" type="checkbox" data-position="leftField" checked="true" /> Left Fielders |
+            <input class="menu-position-filter" type="checkbox" data-position="centerField" checked="true" /> Center Fielders |
+            <input class="menu-position-filter" type="checkbox" data-position="rightField" checked="true" /> Right Fielders |
+            <br/><br/>
+          </div>
+
+          Show Pitchers:<br/>
+          <input class="menu-position-filter" type="checkbox" data-position="starter" checked="true" /> Starters |
+          <input class="menu-position-filter" type="checkbox" data-position="reliever" checked="true" /> Relievers |
+          <br/><br/>
+        </div>
+
+        <div id="playerMenu"></div>
+      </div>
+
+
+      <div id="modelerAndStats" style="display:none">
+        <h1>Free Agent Modeler: <span class="player-name"></span></h1>
+        <div class="hero">
+          <h3>Projected Performance And Value</h3>
+          <div id="modeler"></div>
+        </div>
+
+
+        <h3>Player Profile</h3>
+        <div class="menuOptions">Compared to All Hitters | All This Position</div>
+        <div class="menuOptions">Show Data for 2018 | Past 3 Years | Past 5 Years</div>
+
+        <div id="showStats"></div>
+
+      </div>
+
+    </div>
+    <div id="tooltip"></div>
+
+
+
+    <script>
+      let tooltip = new Tooltip({
+        "where":"#tooltip"
+      });
+
+      function loadPlayerData(player) {
+        if(player.Position == "SP" || player.Position == "RP") {
+          loadPitcher(player);
+        } else {
+          loadHitter(player);
+        }
+
+      }
+
+
+      function loadHitter(hitter) {
+        createTables(hitter);
+      }
+
+      function loadPitcher(pitcher) {
+        console.log("LOADING PITCHER DATA");
+      }
+
+      let playerMenu = new PlayerMenu(loadPlayerData);
+      let allLines = [];
+
+      function createTables(hitter) {
+
+        let sections = hitterConfig();
+        let statsDiv = d3.select("#showStats");
+
+        sections.forEach((section) => {
+          section.where = "#showStats";
+          let thisSection = new StatsSection(section);
+        });
+
+        d3.json("yearlyData/all_hitters_2018.json")
+          .then((dataset) => {
+            populateSections(dataset);
+            showPlayerStats(hitter.Name.replace(" ","_"),dataset);
+            d3.select("#menuDiv").style("display","none");
+            d3.select("#modelerAndStats").style("display","block");
+          });
+
+      }
+
+      function populateSections(dataset) {
+
+        tooltip
+          .registerPlayerMap(dataset.playerMap);
+
+        d3.selectAll(".numberline")
+          .each(function(d,i) {
+
+            let element = d3.select(this);
+            let key = element.attr("data-key");
+            let name = element.attr("data-name");
+            let id = "#" + element.attr("id");
+
+            let options = {"where":id,"name":name,"key":key};
+
+            let min = element.attr("data-scale-min");
+            let max = element.attr("data-scale-max");
+
+            if(min !== null) {
+              options.min = +min;
+            }
+
+            if(max !== null) {
+              options.max = +max;
+            }
+
+            let line = new Numberline(options)
+              .addData(dataset[key])
+              .registerTooltip(tooltip);
+
+            allLines
+              .push(line);
+
+          });
+      }
+
+      function showPlayerStats(name,dataset) {
+        d3.json("agentData/" + name + ".json")
+          .then((stats) => {
+            let compsByAge = {};
+            let compsArray = [];
+
+            d3.select("#showPageTitle")
+              .html(name.replace("_"," "));
+
+            stats["2018"].similarPlayers.forEach((player) => {
+              let ageArray = [];
+              Object.keys(player.warAge).forEach((age) => {
+                  ageArray.push({
+                    "age":age,
+                    "bWar":player.warAge[age].bWar
+                  });
+              });
+
+              compsArray.push({
+                "name":player.name,
+                "bWar":ageArray
+              });
+            });
+
+            stats["2018"].similarPlayers.forEach((player) => {
+                let ages = Object.keys(player.warAge);
+                let currentPlayerAge = stats["2018"].age;
+
+                ages.forEach((age) => {
+                  if(age > currentPlayerAge) {
+                    if(compsByAge[age] == undefined) {
+                      compsByAge[age] = [];
+                    }
+                    let bWar = player.warAge[age];
+                    compsByAge[age].push({"name":player.name,"bWar":player.warAge[age].bWar});
+                  }
+                });
+            });
+
+            let projections = [];
+            let cleanedProjections = {};
+
+
+            Object.keys(compsByAge).forEach((age) => {
+              let allCompValues = compsByAge[age].map((a) => { return a.bWar});
+              allCompValues.sort();
+              let mean = d3.mean(allCompValues);
+              let top25 = d3.quantile(allCompValues,0.75);
+              let bottom25 = d3.quantile(allCompValues,0.25);
+
+              projections.push({
+                "age":age,
+                "mean":mean,
+                "top25":top25,
+                "bottom25":bottom25
+              });
+
+            });
+
+            let bWarArray = [];
+            Object.keys(stats).forEach((year) => {
+              bWarArray.push({
+                "age":stats[year].age,
+                "bWar":stats[year].bWar
+              })
+            });
+
+            cleanedProjections.mean = [
+              {
+                "age":stats["2018"].age,
+                "bWar":stats["2018"].bWar
+              }
+            ];
+
+            cleanedProjections.area = [
+              {
+                "age":stats["2018"].age,
+                "top25":stats["2018"].bWar,
+                "bottom25":stats["2018"].bWar
+              }
+            ];
+
+            cleanedProjections.top25 = [
+              {
+                "age":stats["2018"].age,
+                "bWar":stats["2018"].bWar
+              }
+            ];
+
+
+            cleanedProjections.bottom25 = [
+              {
+                "age":stats["2018"].age,
+                "bWar":stats["2018"].bWar
+              }
+            ];
+
+            projections.forEach((projection) =>{
+              cleanedProjections.mean.push({"age":projection.age,"bWar":projection.mean});
+              cleanedProjections.area.push({"age":projection.age,"top25":projection.top25,"bottom25":projection.bottom25});
+              cleanedProjections.top25.push({"age":projection.age,"bWar":projection.top25});
+              cleanedProjections.bottom25.push({"age":projection.age,"bWar":projection.bottom25});
+            });
+
+            let modeler = new Modeler({
+              "where":"#modeler"
+            })
+            .registerTooltip(tooltip)
+            .addPlayerData(bWarArray,cleanedProjections,name.replace("_"," "))
+            .addCompData(compsArray);
+
+            allLines.forEach((line) => {
+              line
+                .addHighlightValue(stats["2018"][line.options.key]);
+            });
+
+            d3.selectAll(".stats-numberline-stat-name")
+              .each(function(d,i) {
+
+                let element = d3.select(this);
+                let description = element.attr("data-description");
+
+                element
+                  .on('mouseover',() => {
+                    tooltip
+                      .showStatDefinition(description);
+                  })
+                  .on('mouseout',() => {
+                    tooltip.hide();
+                  })
+              });
+
+            d3.selectAll(".stats-numberline-table-player-value")
+              .each(function(d,i) {
+                let element = d3.select(this);
+                let key = element.attr("data-key");
+
+                element
+                  .html(stats["2018"][key]);
+
+              });
+
+            d3.selectAll(".display-player-name")
+              .each(function(d,i) {
+                let element = d3.select(this);
+                element.html(name.replace("_"," "));
+
+              });
+
+
+
+            d3.selectAll(".stats-numberline-table-row-sparkline")
+              .each(function(d,i) {
+                let element = d3.select(this);
+                let key = element.attr("data-key");
+                let statsArray = [];
+                let firstYear = d3.min(Object.keys(stats));
+                let yDomain = d3.extent(dataset[key].map((a) => { return a.value}));
+                d3.range(firstYear,2019).forEach((year) => {
+                  if(stats[year] === undefined) {
+                    statsArray.push(0);
+                  } else {
+                    statsArray.push(stats[year][key]);
+                  }
+                });
+                let sparkline = new Sparkline({
+                  "where":element,
+                  "data":statsArray,
+                  "yDomain":yDomain
+                })
+                .registerTooltip(tooltip);
+
+              });
+
+
+          });
+
+      }
+
+
+    </script>
+  </body>
+</html>

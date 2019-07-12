@@ -1,0 +1,229 @@
+body {
+  font-family:Source Sans Pro;
+}
+
+.pageHeader {
+  position:fixed;
+  left:0;
+  top:0;
+  z-index:2;
+  border-bottom:2px solid #173f5f;
+  width:100%;
+  font-size:2em;
+  font-weight:700;
+  background-color:white;
+}
+
+.pageHeaderContents {
+  max-width:1000px;
+  margin:auto;
+}
+
+.pageExplainer {
+  border:2px solid #eee;
+}
+
+.pageBody {
+  padding-top:4em;
+  max-width:1000px;
+  margin:auto;
+}
+
+.playerMenuFilters {
+  border:1px solid black;
+}
+
+
+.modelerAndStats {
+  display:none;
+}
+
+.player-menu {
+  display:table;
+}
+
+.player-name-link {
+  text-decoration:underline;
+  font-weight:600;
+  color:#20639b;
+  cursor:pointer;
+}
+
+.player-name-link:hover {
+  color:#ed553b;
+}
+
+.player-menu-header-row {
+  display:table-row;
+  font-weight:bold;
+  border-bottom:1px;
+}
+
+.player-menu-header-cell {
+  display:table-cell;
+  padding-right:1em;
+  padding-left:1em;
+  border-bottom:2px solid #173f5f;
+}
+
+.align-center {
+  text-align:center;
+}
+
+.player-menu-cell {
+  display:table-cell;
+  border:1px solid #eee;
+  vertical-align:middle;
+}
+
+.player-menu-row-hidden {
+  display:none;
+}
+
+.player-menu-row-visible {
+  display:table-row;
+}
+
+.stat-group-numberline {
+  margin-bottom:2em;
+  padding-top:1em;
+  padding-bottom:1em;
+  border-bottom:1px solid #aaa;
+  border-top:1px solid #aaa;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.125)
+}
+
+.playerValue {
+  font-weight:bold;
+}
+
+.stats-numberline-sub-table {
+  background-color:#eee;
+}
+
+.stats-numberline-table {
+  display:table;
+  padding-left:2em;
+  margin-bottom:2em;
+}
+
+.stats-numberline-table-row {
+  display:table-row;
+  padding-bottom:0.25em;
+}
+
+.stats-numberline-table-cell {
+  padding-top:0.5em;
+  padding-bottom:0.5em;
+  display:table-cell;
+  vertical-align:middle;
+  font-size:0.8em;
+  font-weight:bold;
+}
+
+.stats-numberline-header-cell {
+  border-bottom:2px solid black;
+}
+
+.right-align {
+  text-align:right;
+  cursor:pointer;
+}
+
+.stats-numberline-table-cell:hover {
+  color:blue;
+}
+
+.left-align {
+  text-align:left;
+  cursor:pointer;
+}
+
+.stats-section-header {
+  font-weight:600;
+  font-size:1.5em;
+  padding-left:0.25em;
+  margin-bottom:0.5em;
+}
+
+.stats-subsection-header {
+  padding-left:0.5em;
+  font-weight:500;
+  font-size:1.25em;
+  margin-bottom:0.5em;
+}
+
+.tooltipNumberlinePlayerName {
+  font-weight:600;
+  margin-bottom:0.5em;
+  padding-right:1.5em;
+}
+
+.tooltipNumberLineValueLine {
+  font-weight:400;
+  font-size:0.8em;
+}
+
+.tooltipNumberlineStatName {
+}
+
+.tooltipNumberlineStatValue {
+  font-weight:bold;
+}
+
+.tooltipNumberlineZScoreStatement {
+  font-style:italic;
+}
+
+.significantlyBelowMean {
+  color:#ed553b;
+  font-weight:600;
+}
+
+.wellBelowMean {
+  color:#ed553b;
+  font-weight:600;
+}
+
+.belowMean {
+  color:#173f5f;
+  font-weight:600;
+}
+
+.aboveMean {
+  color:#173f5f;
+  font-weight:600;
+}
+
+.wellAboveMean {
+  color:#3caea3;
+  font-weight:600;
+}
+
+.significantlyAboveMean {
+  color:#3caea3;
+  font-weight:600;
+}
+
+.tooltipStatMean {
+  font-weight:bold;
+}
+
+.tooltipStatName {
+  font-weight:bold;
+}
+
+.tooltipDeviationInterval {
+  font-weight:bold;
+}
+
+.tooltip {
+  max-width:200px;
+  border:1px solid black;
+  padding:0.5em;
+  position:absolute;
+  background-color:white;
+  left:0;
+  display:none;
+  box-shadow:3px 3px 5px rgba(0,0,0,0.5);
+}

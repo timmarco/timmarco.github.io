@@ -1,0 +1,19 @@
+{
+  "name": "composefunctions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^5.7.0",
+    "gulp": "^4.0.0",
+    "gulp-uglify": "^3.0.1",
+    "gulp-watch": "^5.0.1",
+    "mathjax": "^2.7.5",
+    "uglify-es": "^3.3.9"
+  }
+}
