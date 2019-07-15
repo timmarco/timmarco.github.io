@@ -4,7 +4,7 @@ ModelerPane.prototype.defineSize = function(options) {
   let size = defaulter(options.size,{});
 
   size.height = defaulter(size.height,500);
-  size.width = defaulter(size.width,800);
+  size.width = defaulter(size.width,717);
 
   return size;
 

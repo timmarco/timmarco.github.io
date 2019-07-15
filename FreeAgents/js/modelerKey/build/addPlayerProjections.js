@@ -23,7 +23,7 @@ ModelerKey.prototype.addPlayerProjections = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"[LastName]"
+    "text":""
   }).show()
   .move({
     "x":10,

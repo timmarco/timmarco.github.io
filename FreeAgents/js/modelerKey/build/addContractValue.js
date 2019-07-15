@@ -26,7 +26,7 @@ ModelerKey.prototype.addContractValue = function() {
   }).show()
   .move({
     "x":10,
-    "y":-8
+    "y":-5
   });
 
   toReturn.warLabel = new TextLabel({
@@ -40,7 +40,7 @@ ModelerKey.prototype.addContractValue = function() {
   }).show()
   .move({
     "x":10,
-    "y":8
+    "y":5
   });
 
 

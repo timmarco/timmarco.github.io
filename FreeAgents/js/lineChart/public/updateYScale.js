@@ -6,11 +6,11 @@ LineChart.prototype.updateYScale = function(newExtent) {
 
   let allWar = [];
 
-  Object.keys(chart.projections).forEach((projection) => {
-    chart.projections[projection].forEach((datum) => {
-      allWar.push(+datum.bWar);
-    });
-  });
+  // Object.keys(chart.projections).forEach((projection) => {
+  //   chart.projections[projection].forEach((datum) => {
+  //     allWar.push(+datum.bWar);
+  //   });
+  // });
 
   chart.compPlayers.forEach((player) => {
     player.bWar.forEach((season) => {
@@ -58,6 +58,17 @@ LineChart.prototype.updateYScale = function(newExtent) {
   chart.playerLine
     .attr("d",chart.lineGenerator);
 
+  if(chart.projection !== undefined) {
+
+    chart.projectionLine
+        .attr("d",chart.lineGenerator);
+
+    chart.projectionCircles
+      .attr("cy",(d) => { return chart.scales.y(d[chart.currentWARType]); });
+  }
+
+
+  /*
   chart.meanProjectionLine
       .attr("d",chart.lineGenerator);
 
@@ -72,6 +83,7 @@ LineChart.prototype.updateYScale = function(newExtent) {
 
   chart.meanProjectionCircles
     .attr("cy",(d) => { return chart.scales.y(d.bWar); });
+  */
 
   chart.playerCircles
     .attr("cy",(d) => { return chart.scales.y(d.bWar); });
@@ -94,7 +106,7 @@ LineChart.prototype.updateYScale = function(newExtent) {
   });
 
   chart.axes.y
-    .call(d3.axisLeft(chart.scales.y));
+    .call(d3.axisLeft(chart.scales.y).ticks(3));
 
   return chart;
 };

@@ -5,32 +5,30 @@ Modeler.prototype.dataFromPane = function(data) {
   modeler.chart.projectionLine
     .attr("display","block");
 
-  modeler.projectionParameters = data;
-  console.log(modeler.projectionParameters);
+  modeler.rightPane
+    .attr("display","block");
 
-  modeler.contractYearsSlider = modeler.addContractYearsSlider();
-  modeler.salarySliders = modeler.addSalarySliders();
-  modeler.winValueSliders = modeler.addWinValueSliders();
+  modeler.projectionParameters = data;
 
   modeler.calculateContractValues();
 
-  modeler.contractButton
-    .hide();
-
-  modeler.contractCostLabel
-    .show();
-
-  modeler.contractCostText
-    .show();
-
-  modeler.meanSurplusLabel
-    .show();
-
-  modeler.meanSurplusText
-    .show();
-
-  modeler.contractCostText
-    .show();
+  // modeler.contractButton
+  //   .hide();
+  //
+  // modeler.contractCostLabel
+  //   .show();
+  //
+  // modeler.contractCostText
+  //   .show();
+  //
+  // modeler.meanSurplusLabel
+  //   .show();
+  //
+  // modeler.meanSurplusText
+  //   .show();
+  //
+  // modeler.contractCostText
+  //   .show();
 
   return modeler;
 };

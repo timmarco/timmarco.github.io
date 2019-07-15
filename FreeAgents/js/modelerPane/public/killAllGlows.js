@@ -5,10 +5,8 @@ ModelerPane.prototype.killAllGlows = function() {
   modeler.contractSlider
     .killGlow();
 
-  modeler.salarySliders.forEach((slider) =>{
-    slider
-      .killGlow();
-  });
+  modeler.salarySlider
+    .killGlow();
 
   modeler.winValueSliders.forEach((slider) => {
     slider

@@ -7,13 +7,13 @@ ModelerPane.prototype.addContractYearsSlider = function() {
 
   slider = new Slider({
     "where":pane.group,
-    "coordinates":{"x":pane.referencePoints.rightSixth,"y":50},
+    "coordinates":pane.referencePoints.overlayContractSliderCoordinates,
     "label":"Contract Years",
     "domain":[1,15],
     "defaultValue":pane.contractValues.contractLength,
     "significantDigits":0,
     "size":{
-      "width":500
+      "width":pane.referencePoints.overlayColumnWidth
     }
   }).setDragCallback((newValue) => {
     pane.killAllGlows();

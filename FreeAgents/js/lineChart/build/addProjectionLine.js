@@ -9,6 +9,7 @@ LineChart.prototype.addProjectionLine = function() {
     .datum([])
     .attr("stroke",chart.styles.projectionLine)
     .attr("stroke-width",chart.styles.projectionLineStroke)
+    .attr("stroke-dasharray","5,5")
     .attr("fill","none")
     .attr("display","none")
     .attr("d",chart.lineGenerator);

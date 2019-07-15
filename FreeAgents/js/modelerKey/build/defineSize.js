@@ -3,8 +3,8 @@ ModelerKey.prototype.defineSize = function(options) {
   const key = this;
   let size = defaulter(options.size,{});
 
-  size.height = defaulter(size.height,20);
-  size.width = defaulter(size.width,525);
+  size.height = defaulter(size.height,50);
+  size.width = defaulter(size.width,433.33);
 
   return size;
 

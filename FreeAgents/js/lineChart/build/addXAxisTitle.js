@@ -11,6 +11,7 @@ LineChart.prototype.addXAxisTitle = function() {
     .attr("font-size",chart.styles.axisTitleFontFamily)
     .attr("font-family",chart.styles.axisTitleFontFamily)
     .attr("fill",chart.styles.axisTitleFill)
+    .attr("font-weight",chart.styles.axisTitleFontWeight)
     .text("Year (Age)");
 
   return title;

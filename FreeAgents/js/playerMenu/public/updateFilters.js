@@ -2,8 +2,6 @@
 PlayerMenu.prototype.updateFilters = function() {
   const menu = this;
 
-  console.log(menu.filters);
-
   menu.playerMenuRows
     .each(function(d,i) {
       let element = d3.select(this);

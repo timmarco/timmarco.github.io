@@ -4,7 +4,7 @@ ModelerPane.prototype.transitionIn = function() {
 
   pane.group
     .transition()
-    .duration(250)
+    .duration(500)
     .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
 
   return pane;

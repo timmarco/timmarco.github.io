@@ -22,7 +22,7 @@ ModelerKey.prototype.addPlayerHistory = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"[Player Name]"
+    "text":""
   }).show()
   .move({
     "x":10,

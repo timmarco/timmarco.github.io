@@ -2,6 +2,14 @@ body {
   font-family:Source Sans Pro;
 }
 
+svg {
+  user-select:none;
+}
+
+.player-menu-header-cell {
+  cursor:pointer;
+}
+
 .pageHeader {
   position:fixed;
   left:0;
@@ -38,8 +46,14 @@ body {
   display:none;
 }
 
-.player-menu {
+.modeler {
+  margin:0 auto;
+  text-align:center;
+}
+
+#playerMenu {
   display:table;
+  margin:0 auto;
 }
 
 .player-name-link {
@@ -64,6 +78,7 @@ body {
   padding-right:1em;
   padding-left:1em;
   border-bottom:2px solid #173f5f;
+  vertical-align: bottom;
 }
 
 .align-center {
@@ -226,4 +241,37 @@ body {
   left:0;
   display:none;
   box-shadow:3px 3px 5px rgba(0,0,0,0.5);
+}
+
+#playerPosition {
+  max-width:200px;
+  border:1px solid black;
+  padding:0.5em;
+  position:absolute;
+  background-color:white;
+  left:0;
+  top:0;
+  display:none;
+  box-shadow:3px 3px 5px rgba(0,0,0,0.5);
+}
+
+
+#searchPlayers {
+  width:100%;
+  font-size:1.2em;
+  outline:none;
+  margin-top:0.25em;
+  margin-bottom:0.25em;
+}
+
+.filter-active {
+  background-color:#ed553B;
+  color:white;
+  stroke:1px solid white;
+}
+
+.filter-inactive {
+  background-color:#173f5f;
+  border:1px dashed white;
+  color:white;
 }

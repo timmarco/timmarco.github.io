@@ -21,21 +21,40 @@ function ModelerPane(options) {
     pane.group = pane.addGroup(options.where);
     pane.rect = pane.addRect();
     pane.title = pane.addTitle();
+
+    pane.durationLabel = pane.addContractDurationLabel();
+    pane.durationDescription = pane.addContractDescription();
     pane.contractSlider = pane.addContractYearsSlider();
-    pane.yearGroup = pane.addYearGroup();
-    pane.salaryGroup = pane.addSalaryGroup();
-    pane.winValueGroup = pane.addWinValueGroup();
-    pane.totalContractValue = pane.addTotalContractValue();
+
+    pane.salaryLabel = pane.addSalaryLabel();
+    pane.salaryDescription = pane.addSalaryDescription();
+    pane.salarySlider = pane.addSalarySlider();
+
+    pane.winValueSliders = [];
+    pane.marketValueLabel = pane.addMarketValueLabel();
+    pane.marketValueDescription = pane.addMarketValueDescription();
+    pane.winValueTable = pane.addWinValueTable();
+
+
     pane.saveButton = pane.addSaveButton();
+    
+    pane.updateContractYears();
 
-    pane.yearLabels = pane.addYearLabels();
-    pane.salarySliders = pane.addSalarySliders();
-    pane.winValueSliders = pane.addWinValueSliders();
+    // pane.contractSlider = pane.addContractYearsSlider();
+    // pane.yearGroup = pane.addYearGroup();
+    // pane.salaryGroup = pane.addSalaryGroup();
+    // pane.winValueGroup = pane.addWinValueGroup();
+    // pane.totalContractValue = pane.addTotalContractValue();
 
-    pane.hasDragged = false;
-
-    pane
-      .updateContractYears();
+    //
+    // pane.yearLabels = pane.addYearLabels();
+    // pane.salarySliders = pane.addSalarySliders();
+    // pane.winValueSliders = pane.addWinValueSliders();
+    //
+    // pane.hasDragged = false;
+    //
+    // pane
+    //   .updateContractYears();
 
   }
 

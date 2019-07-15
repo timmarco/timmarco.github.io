@@ -3,6 +3,7 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
   const chart = this;
 
   chart.playerData = data;
+
   chart.projections = projections;
   chart.playerLine = chart.layers.foregroundLine
     .append("path")
@@ -44,7 +45,7 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
 
     });
 
-
+  /*
   chart.meanProjectionLine = chart.layers.projection
     .append("path")
     .datum(projections.mean)
@@ -108,6 +109,7 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
     .attr("stroke-width",1)
     .attr("fill","none")
     .attr("d",chart.lineGenerator);
+  */
 
   return chart;
 };

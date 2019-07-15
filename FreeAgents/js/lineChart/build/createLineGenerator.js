@@ -5,7 +5,7 @@ LineChart.prototype.createLineGenerator = function() {
 
   generator = d3.line()
     .x((d) => { return chart.scales.x(d.age);})
-    .y((d) => { return chart.scales.y(d.bWar);});
+    .y((d) => { return chart.scales.y(d[chart.currentWARType]);});
 
   return generator;
 };

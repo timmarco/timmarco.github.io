@@ -5,8 +5,8 @@ LineChart.prototype.createAreaGenerator = function() {
 
   generator = d3.area()
     .x((d) => { return chart.scales.x(d.age); })
-    .y0((d) => { return chart.scales.y(d.top25);})
-    .y1((d) => { return chart.scales.y(d.bottom25);});
+    .y0((d) => { return chart.scales.y(d.min);})
+    .y1((d) => { return chart.scales.y(d.max);});
 
   return generator;
 };

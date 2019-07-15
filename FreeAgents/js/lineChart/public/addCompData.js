@@ -101,9 +101,9 @@ LineChart.prototype.addCompData = function(data) {
 
       let textLabel = new TextLabel({
         "text":year.bWar.toFixed(1),
-        "where":group,
+        "where":chart.layers.frontText,
         "values":{"x":year.age,"y":year.bWar},
-        "foregroundColor":"#3caea3",
+        "foregroundColor":chart.styles.compPlayerHighlightStroke,
       })
       .move({
         "x":chart.scales.x(year.age),
@@ -117,9 +117,10 @@ LineChart.prototype.addCompData = function(data) {
 
     nameLabel = new TextLabel({
       "text":player.name,
-      "where":group,
+      "where":chart.layers.frontText,
       "values":{"x":player.bWar[player.bWar.length - 1].age - 0.5,"y":player.bWar[player.bWar.length - 1].bWar},
-      "foregroundColor":"#3caea3",
+      "foregroundColor":chart.styles.compPlayerHighlightStroke,
+      "fontSize":"14pt",
       "backgroundColor":"black",
       "textAnchor":"start"
     })

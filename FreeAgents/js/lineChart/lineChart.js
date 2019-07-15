@@ -10,12 +10,12 @@ function LineChart(options) {
     chart.where = options.where;
     chart.size = options.size;
     chart.margins = options.margins;
+    chart.origin = options.origin;
 
     chart.styles = chart.defineStyles();
     chart.layers = chart.addLayers();
     chart.referencePoints = chart.defineReferencePoints();
 
-    chart.title = chart.addTitle();
     chart.yAxisTitle = chart.addYAxisTitle();
     chart.xAxisTitle = chart.addXAxisTitle();
 
@@ -26,11 +26,12 @@ function LineChart(options) {
     chart.lineGenerator = chart.createLineGenerator();
     chart.areaGenerator = chart.createAreaGenerator();
 
-    chart.projectionLine = chart.addProjectionLine();
     chart.zeroLine = chart.addZeroLine();
     chart.starterLine = chart.addStarterLine();
     chart.allStarLine = chart.addAllStarLine();
     chart.mvpLine = chart.addMVPLine();
+
+    chart.currentWARType = "bWar";
 
   }
 

@@ -11,11 +11,11 @@ LineChart.prototype.updateXScale = function(newExtent) {
     allYears.push(datum.age);
   });
 
-  Object.keys(chart.projections).forEach((projection) => {
-    chart.projections[projection].forEach((datum) => {
-      allYears.push(+datum.age);
-    });
-  });
+  // Object.keys(chart.projections).forEach((projection) => {
+  //   chart.projections[projection].forEach((datum) => {
+  //     allYears.push(+datum.age);
+  //   });
+  // });
 
   chart.compPlayers.forEach((player) => {
     player.bWar.forEach((season) => {
@@ -48,8 +48,16 @@ LineChart.prototype.updateXScale = function(newExtent) {
   chart.playerLine
     .attr("d",chart.lineGenerator);
 
-  chart.meanProjectionLine
-      .attr("d",chart.lineGenerator);
+  if(chart.projection !== undefined) {
+    chart.projectionLine
+        .attr("d",chart.lineGenerator);
+
+    chart.projectionCircles
+      .attr("cx",(d) => { return chart.scales.x(d.age); });
+  }
+
+
+  /*
 
   chart.projectionArea
     .attr("d",chart.areaGenerator);
@@ -61,8 +69,7 @@ LineChart.prototype.updateXScale = function(newExtent) {
     .attr("d",chart.lineGenerator);
 
 
-  chart.meanProjectionCircles
-    .attr("cx",(d) => { return chart.scales.x(d.age); });
+  */
 
   chart.playerCircles
     .attr("cx",(d) => { return chart.scales.x(d.age); });
@@ -85,7 +92,7 @@ LineChart.prototype.updateXScale = function(newExtent) {
   });
 
   chart.axes.x
-    .call(d3.axisBottom(chart.scales.x));
+    .call(d3.axisBottom(chart.scales.x).ticks(5));
 
 
   return chart;

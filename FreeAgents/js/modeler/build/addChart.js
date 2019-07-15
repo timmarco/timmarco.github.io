@@ -3,14 +3,11 @@ Modeler.prototype.addChart = function(options) {
   const modeler = this;
   let chart;
 
-  modeler.layers.chart
-    .attr("transform","translate("+modeler.layout.chartOrigin.x+","+modeler.layout.chartOrigin.y+")");
-
   chart = new LineChart({
     "where":modeler.layers.chart,
-    "size":modeler.layout.chartSize,
-    "margins":modeler.chartMargins,
-    "origin":modeler.layout.chartOrigin
+    "size":modeler.referencePoints.chartSize,
+    "margins":modeler.referencePoints.chartMargins,
+    "origin":modeler.referencePoints.chartOrigin,
   });
 
   return chart;

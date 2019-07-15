@@ -31,7 +31,141 @@ ModelerPane.prototype.defineReferencePoints = function() {
   referencePoints.buttonCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.bottomCenter };
 
   referencePoints.offscreen = {"x":800,"y":0};
-  referencePoints.onscreen = {"x":50,"y":0};
+  referencePoints.onscreen = {"x":83.33,"y":0};
+
+
+  referencePoints.titleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+
+
+  referencePoints.overlayPlaneSize = {
+    "width":716.67,
+    "height":500
+  };
+
+  referencePoints.overlayPlaneOffscreen = {
+    "x":800,
+    "y":0
+  };
+
+  referencePoints.overlayPlaneOnscreen = {
+    "x":83.33,
+    "y":0
+  };
+
+  referencePoints.overlayTitleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+  referencePoints.overlayContractCoordinates = {
+    "x":14.92,
+    "y":104.17
+  };
+
+  referencePoints.overlayContractDescriptionCoordinates = {
+    "x":14.92,
+    "y":125
+  };
+
+  referencePoints.overlayContractSliderCoordinates =  {
+    "x":14.92,
+    "y":177.083
+  };
+
+  referencePoints.overlaySalaryCoordinates = {
+    "x":253.94,
+    "y":104.17
+  };
+
+  referencePoints.overlaySalaryDescriptionCoordinates = {
+    "x":253.94,
+    "y":125
+  };
+
+  referencePoints.overlaySalarySliderCoordinates =  {
+    "x":253.94,
+    "y":177.083
+  };
+
+  referencePoints.overlayWinValueCoordinates = {
+    "x":492.94,
+    "y":104.17
+  };
+
+  referencePoints.overlayWinValueDescriptionCoordinates = {
+    "x":492.94,
+    "y":125
+  };
+
+  referencePoints.overlayWinValueTableCoordinates = {
+    "x":492.94,
+    "y":177.083
+  };
+
+  referencePoints.saveButtonCoordinates = {
+    "x":492.94,
+    "y":437.5
+  };
+
+  referencePoints.saveButtonSize = {
+    "width":209.13,
+    "height":41.667
+  };
+
+  referencePoints.contractDetailsHeadingCoordinates = {
+    "x":625,
+    "y":41.68
+  };
+
+  referencePoints.projectedSurplusHeadingCoordinates = {
+    "x":566.67,
+    "y":72.92
+  };
+
+  referencePoints.projectedSurplusValueCoordinates = {
+    "x":566.67,
+    "y":93.75
+  };
+
+  referencePoints.contractValueHeadingCoordinates = {
+    "x":700,
+    "y":72.92
+  };
+
+  referencePoints.contractValueCoordinates = {
+    "x":700,
+    "y":93.75
+  };
+
+  referencePoints.editSalaryButtonCoordinates = {
+    "x":566.67,
+    "y":197.92
+  };
+
+  referencePoints.winValueButtonCoordinates = {
+    "x":700,
+    "y":197.92
+  };
+
+  referencePoints.contractTableCoordinates = {
+    "x":483.333,
+    "y":197.92
+  };
+
+  referencePoints.contractTableSize = {
+    "width":300,
+    "height":260.41
+  };
+
+  referencePoints.overlayColumnWidth = 209.13;
+  referencePoints.overlayDescriptionHeight = 41.667;
+  referencePoints.overlaySliderHeight = 41.667;
+  referencePoints.overlayColumnTableHeight = 218.75;
+
 
 
   return referencePoints;

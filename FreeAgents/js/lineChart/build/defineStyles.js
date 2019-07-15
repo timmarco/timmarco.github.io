@@ -5,7 +5,7 @@ LineChart.prototype.defineStyles = function() {
   let styles = {};
 
   styles.axisFontFamily = "Source Sans Pro";
-  styles.axisFontSize = "12pt";
+  styles.axisFontSize = "10pt";
 
   styles.titleFontFamily = "Source Sans Pro";
   styles.titleFontSize = "18pt";
@@ -16,6 +16,7 @@ LineChart.prototype.defineStyles = function() {
   styles.axisTitleFill = "black";
   styles.axisTitleFontSize = "0.75em";
   styles.axisTitleFontFamily = "Source Sans Pro";
+  styles.axisTitleFontWeight = "bold";
 
   styles.playerYearFill = "white";
   styles.playerYearStroke = "blue";
@@ -23,14 +24,14 @@ LineChart.prototype.defineStyles = function() {
   styles.playerYearLine = "#20639b";
   styles.playerYearLineStrokeWidth = 3;
   styles.playerProjectionDashArray = "5,5";
-  styles.projectionAreaFill = "#ddf";
+  styles.projectionAreaFill = "rgba(221,221,255,0.75)";
   styles.projectionAreaStroke = "#000";
 
   styles.compPlayerStroke = "#fafafa";
   styles.compPlayerStrokeWidth = 1;
-  styles.compPlayerHighlightStroke = "#3caea3";
+  styles.compPlayerHighlightStroke = "black";
 
-  styles.projectionLine = "#ed553b";
+  styles.projectionLine = "#20639b";
   styles.projectionLineStroke = 3;
 
   styles.zeroLineStroke = "#333";

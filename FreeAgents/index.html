@@ -11,6 +11,8 @@
   </head>
 
   <body>
+    <div id="positionFilter" style="position:absolute; background-color:white;"></div>
+
     <div class="pageHeader">
       <div class="pageHeaderContents">
         <span id="showPageTitle">2018-2019 MLB Free Agents</span>
@@ -18,44 +20,16 @@
     </div>
 
     <div class="pageBody">
-      <div class="pageExplainer">
-        <strong>About This Page</strong>
-        <p>This is a tool for analyzing potential free agents. Select a player below to get more information and model potential contracts.</p>
-      </div>
-
       <div id="menuDiv">
-        <div class="playerMenuFilters">
-          Filter By Name: <input type="text" id="searchPlayers" length="30" />
-          <br/><br/>
-
-          <div class="playerMenuPositionFilterGroup">
-            Show Position Players:<br/>
-            <input class="menu-position-filter" type="checkbox" data-position="catcher" checked="true" /> Catcher |
-            <input class="menu-position-filter" type="checkbox" data-position="firstBase" checked="true" /> First Basemen |
-            <input class="menu-position-filter" type="checkbox" data-position="secondBase" checked="true" /> Second Basemen |
-            <input class="menu-position-filter" type="checkbox" data-position="shortstop" checked="true" /> Shortstops |
-            <input class="menu-position-filter" type="checkbox" data-position="thirdBase" checked="true" /> Third Basemen |
-            <input class="menu-position-filter" type="checkbox" data-position="leftField" checked="true" /> Left Fielders |
-            <input class="menu-position-filter" type="checkbox" data-position="centerField" checked="true" /> Center Fielders |
-            <input class="menu-position-filter" type="checkbox" data-position="rightField" checked="true" /> Right Fielders |
-            <br/><br/>
-          </div>
-
-          Show Pitchers:<br/>
-          <input class="menu-position-filter" type="checkbox" data-position="starter" checked="true" /> Starters |
-          <input class="menu-position-filter" type="checkbox" data-position="reliever" checked="true" /> Relievers |
-          <br/><br/>
-        </div>
-
         <div id="playerMenu"></div>
       </div>
 
 
       <div id="modelerAndStats" style="display:none">
-        <h1>Free Agent Modeler: <span class="player-name"></span></h1>
         <div class="hero">
-          <h3>Projected Performance And Value</h3>
-          <div id="modeler"></div>
+          <div>
+            <div id="modeler" style="margin:0 auto; text-align:center"></div>
+          </div>
         </div>
 
 
@@ -73,7 +47,7 @@
 
 
     <script>
-      let tooltip = new Tooltip({
+      var tooltip = new Tooltip({
         "where":"#tooltip"
       });
 
@@ -95,11 +69,11 @@
         console.log("LOADING PITCHER DATA");
       }
 
-      let playerMenu = new PlayerMenu(loadPlayerData);
+      let playerMenu = new PlayerMenu(loadPlayerData)
+        .registerTooltip(tooltip);
       let allLines = [];
 
       function createTables(hitter) {
-
         let sections = hitterConfig();
         let statsDiv = d3.select("#showStats");
 
@@ -221,54 +195,16 @@
               })
             });
 
-            cleanedProjections.mean = [
-              {
-                "age":stats["2018"].age,
-                "bWar":stats["2018"].bWar
-              }
-            ];
-
-            cleanedProjections.area = [
-              {
-                "age":stats["2018"].age,
-                "top25":stats["2018"].bWar,
-                "bottom25":stats["2018"].bWar
-              }
-            ];
-
-            cleanedProjections.top25 = [
-              {
-                "age":stats["2018"].age,
-                "bWar":stats["2018"].bWar
-              }
-            ];
-
-
-            cleanedProjections.bottom25 = [
-              {
-                "age":stats["2018"].age,
-                "bWar":stats["2018"].bWar
-              }
-            ];
-
-            projections.forEach((projection) =>{
-              cleanedProjections.mean.push({"age":projection.age,"bWar":projection.mean});
-              cleanedProjections.area.push({"age":projection.age,"top25":projection.top25,"bottom25":projection.bottom25});
-              cleanedProjections.top25.push({"age":projection.age,"bWar":projection.top25});
-              cleanedProjections.bottom25.push({"age":projection.age,"bWar":projection.bottom25});
-            });
+            let projection = new Projection(stats);
 
             let modeler = new Modeler({
               "where":"#modeler"
             })
             .registerTooltip(tooltip)
             .addPlayerData(bWarArray,cleanedProjections,name.replace("_"," "))
-            .addCompData(compsArray);
+            .addCompData(compsArray)
+            .addProjection(projection);
 
-            allLines.forEach((line) => {
-              line
-                .addHighlightValue(stats["2018"][line.options.key]);
-            });
 
             d3.selectAll(".stats-numberline-stat-name")
               .each(function(d,i) {

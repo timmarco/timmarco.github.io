@@ -23,6 +23,47 @@ function Button(options) {
 }
 
 /* jshint esversion:6 */
+function LineChart(options) {
+  const chart = this;
+
+  init(options);
+
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.size = options.size;
+    chart.margins = options.margins;
+    chart.origin = options.origin;
+
+    chart.styles = chart.defineStyles();
+    chart.layers = chart.addLayers();
+    chart.referencePoints = chart.defineReferencePoints();
+
+    chart.yAxisTitle = chart.addYAxisTitle();
+    chart.xAxisTitle = chart.addXAxisTitle();
+
+    chart.scales = chart.defineScales();
+
+    chart.axes = chart.addAxes();
+
+    chart.lineGenerator = chart.createLineGenerator();
+    chart.areaGenerator = chart.createAreaGenerator();
+
+    chart.zeroLine = chart.addZeroLine();
+    chart.starterLine = chart.addStarterLine();
+    chart.allStarLine = chart.addAllStarLine();
+    chart.mvpLine = chart.addMVPLine();
+
+    chart.currentWARType = "bWar";
+
+  }
+
+
+
+}
+
+/* jshint esversion:6 */
 function hitterConfig() {
   let sections = [{
       "name": "Value",
@@ -357,46 +398,6 @@ function hitterConfig() {
 }
 
 /* jshint esversion:6 */
-function LineChart(options) {
-  const chart = this;
-
-  init(options);
-
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.size = options.size;
-    chart.margins = options.margins;
-
-    chart.styles = chart.defineStyles();
-    chart.layers = chart.addLayers();
-    chart.referencePoints = chart.defineReferencePoints();
-
-    chart.title = chart.addTitle();
-    chart.yAxisTitle = chart.addYAxisTitle();
-    chart.xAxisTitle = chart.addXAxisTitle();
-
-    chart.scales = chart.defineScales();
-
-    chart.axes = chart.addAxes();
-
-    chart.lineGenerator = chart.createLineGenerator();
-    chart.areaGenerator = chart.createAreaGenerator();
-
-    chart.projectionLine = chart.addProjectionLine();
-    chart.zeroLine = chart.addZeroLine();
-    chart.starterLine = chart.addStarterLine();
-    chart.allStarLine = chart.addAllStarLine();
-    chart.mvpLine = chart.addMVPLine();
-
-  }
-
-
-
-}
-
-/* jshint esversion:6 */
 function Modeler(options) {
   const modeler = this;
 
@@ -407,9 +408,27 @@ function Modeler(options) {
   function init(options) {
     modeler.size = modeler.defineSize(options.size);
     modeler.chartMargins = modeler.defineChartMargins(options.chartMargins);
-    modeler.layout = modeler.defineLayout();
     modeler.svg = modeler.addSvg(options.where);
+    modeler.referencePoints = modeler.defineReferencePoints();
     modeler.layers = modeler.addLayers();
+    modeler.title = modeler.addTitle();
+    modeler.subtitle = modeler.addSubtitle();
+    modeler.warFormulation = modeler.addWARFormulation();
+    modeler.BBRefWARButton = modeler.addBBRefWARButton();
+    modeler.fangraphsWARButton = modeler.addFangraphsWARButton();
+    modeler.projectionType = modeler.addProjectionType();
+    modeler.similarPlayersButton = modeler.addSimilarPlayersButton();
+    modeler.agingCurvesButton = modeler.addAgingCurvesButton();
+    modeler.paneHint = modeler.addPaneHint();
+    modeler.rightPane = modeler.addRightPane();
+    modeler.paneContractDetails = modeler.addPaneContractDetails();
+    modeler.projectedSurplusHeading = modeler.addProjectedSurplusHeading();
+    modeler.projectedSurplusValue = modeler.addProjectedSurplusValue();
+    modeler.contractValueHeading = modeler.addContractValueHeading();
+    modeler.contractValueLabel = modeler.addContractValueLabel();
+    modeler.editSalaryButton = modeler.addEditSalaryButton();
+    modeler.editMarketValueButton = modeler.addEditMarketValueButton();
+    modeler.contractYearsSlider = modeler.addContractYearsSlider();
 
     modeler.projections = {};
     modeler.projectionParameters = {
@@ -418,94 +437,10 @@ function Modeler(options) {
       "winValue":[]
     };
 
-    modeler.pane = new ModelerPane({
-      "where":modeler.layers.pane,
-      "parent":modeler
-    });
-
-
-
-    modeler.contractButton = new Button({
-      "where":modeler.layers.button,
-      "text":"CONTRACT BUTTON",
-      "size":{
-        "width":250
-      }
-    })
-    .move({
-      "x":525,
-      "y":250
-    })
-    .registerCallback(() => {modeler.pane.transitionIn(); });
-
-    /*
-    modeler.yearHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Year"
-    }).show()
-    .move({"x":525,"y":117.5});
-
-    modeler.contractHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Contract Value"
-    }).show()
-    .move({"x":600,"y":117.5});
-
-    modeler.contractHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Cost / Win"
-    }).show()
-    .move({"x":700,"y":117.5});
-    */
-
+    modeler.key = modeler.addModelerKey();
+    modeler.pane = modeler.addModelerPane();
     modeler.projectionValueData = {};
-
-    modeler.key = new ModelerKey({
-      "where":modeler.layers.chart
-    });
-
-
-    modeler.chart = modeler.addChart({});
-
-    modeler.contractCostLabel = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"Total Contract Cost:"
-    })
-    .move({
-      "x":525,
-      "y":10
-    });
-
-    modeler.contractCostText = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"$300mm",
-      "fontWeight":"Bold",
-      "fontSize":"18pt"
-    })
-    .move({
-      "x":525,
-      "y":30
-    });
-
-    modeler.meanSurplusLabel = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"Mean Projection Surplus:"
-    })
-    .move({
-      "x":700,
-      "y":10
-    });
-
-    modeler.meanSurplusText = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"$100mm",
-      "fontWeight":"Bold",
-      "fontSize":"18pt"
-    })
-    .move({
-      "x":700,
-      "y":30
-    });
+    modeler.chart = modeler.addChart();
 
 
 
@@ -522,9 +457,11 @@ ModelerKey = function(options) {
   return key;
 
   function init(options) {
+    console.log(options);
+    
     key.styles = key.defineStyles(options);
     key.size = key.defineSize(options);
-    key.position = {"x":25,"y":425};
+    key.position = {"x":66.67,"y":425};
 
     key.group = key.addGroup(options.where);
     key.playerHistory = key.addPlayerHistory();
@@ -564,21 +501,40 @@ function ModelerPane(options) {
     pane.group = pane.addGroup(options.where);
     pane.rect = pane.addRect();
     pane.title = pane.addTitle();
+
+    pane.durationLabel = pane.addContractDurationLabel();
+    pane.durationDescription = pane.addContractDescription();
     pane.contractSlider = pane.addContractYearsSlider();
-    pane.yearGroup = pane.addYearGroup();
-    pane.salaryGroup = pane.addSalaryGroup();
-    pane.winValueGroup = pane.addWinValueGroup();
-    pane.totalContractValue = pane.addTotalContractValue();
+
+    pane.salaryLabel = pane.addSalaryLabel();
+    pane.salaryDescription = pane.addSalaryDescription();
+    pane.salarySlider = pane.addSalarySlider();
+
+    pane.winValueSliders = [];
+    pane.marketValueLabel = pane.addMarketValueLabel();
+    pane.marketValueDescription = pane.addMarketValueDescription();
+    pane.winValueTable = pane.addWinValueTable();
+
+
     pane.saveButton = pane.addSaveButton();
+    
+    pane.updateContractYears();
 
-    pane.yearLabels = pane.addYearLabels();
-    pane.salarySliders = pane.addSalarySliders();
-    pane.winValueSliders = pane.addWinValueSliders();
+    // pane.contractSlider = pane.addContractYearsSlider();
+    // pane.yearGroup = pane.addYearGroup();
+    // pane.salaryGroup = pane.addSalaryGroup();
+    // pane.winValueGroup = pane.addWinValueGroup();
+    // pane.totalContractValue = pane.addTotalContractValue();
 
-    pane.hasDragged = false;
-
-    pane
-      .updateContractYears();
+    //
+    // pane.yearLabels = pane.addYearLabels();
+    // pane.salarySliders = pane.addSalarySliders();
+    // pane.winValueSliders = pane.addWinValueSliders();
+    //
+    // pane.hasDragged = false;
+    //
+    // pane
+    //   .updateContractYears();
 
   }
 
@@ -671,6 +627,8 @@ function PlayerMenu(loadCallback) {
   return menu;
 
   function init() {
+    menu.currentSort = "";
+    menu.filters = menu.defineFilters();
     menu.loadCallback = loadCallback;
     d3.csv("playerMenu.csv")
       .then((players) => {
@@ -679,6 +637,46 @@ function PlayerMenu(loadCallback) {
   }
 
 
+}
+
+/* jshint esversion:6 */
+function Projection(data) {
+  let projection = this;
+
+  init(data);
+
+  return projection;
+
+  function init(data) {
+    projection.data = data;
+    projection.baseAge = projection.getBaseAge();
+    projection.warCurveDeltas = projection.defineWarCurveDeltas();
+    projection.relevantWarCurveDeltas = projection.getRelevantWarCurveDeltas();
+    projection.baseBWar = projection.getBaseBWar();
+    projection.threeYearBWar = projection.getThreeYearBWar();
+    projection.bWarAgingCurveProjection = projection.getBWarAgingCurveProjection();
+    projection.bWarSimilarPlayersRawData = projection.getBWarSimilarPlayersRawData();
+    projection.bWarSimilarPlayersMax = projection.getBWarSimilarPlayersMax();
+    projection.bWarSimilarPlayersMin = projection.getBWarSimilarPlayersMin();
+    projection.bWarSimilarPlayersMean = projection.getBWarSimilarPlayersMean();
+
+    console.log("--------- PLAYER PROJECTION -------");
+
+    console.log("Data", data);
+    console.log("BASE AGE: ", projection.baseAge);
+    console.log("WIN CURVE DELTAS: ", projection.warCurveDeltas);
+    console.log("WIN CURVE DELTAS: ", projection.relevantWarCurveDeltas);
+    console.log("BASE BWAR: ", projection.baseBWar);
+    console.log("THREE YEAR BWAR: ", projection.threeYearBWar);
+    console.log("BWAR PROJECTION: ", projection.bWarAgingCurveProjection);
+    console.log("BWAR SIMILAR PLAYERS RAW: ", projection.bWarSimilarPlayersRawData);
+    console.log("BWAR SIMILAR PLAYERS MAX: ", projection.bWarSimilarPlayersMax);
+    console.log("BWAR SIMILAR PLAYERS MEAN: ", projection.bWarSimilarPlayersMean);
+    console.log("BWAR SIMILAR PLAYERS MIN: ", projection.bWarSimilarPlayersMin);
+
+    console.log("-------------------");
+
+  }
 }
 
 /* jshint esversion:6 */
@@ -951,7 +949,6 @@ Button.prototype.mouseclick = function() {
 Button.prototype.mouseout = function() {
   const button = this;
 
-  console.log("BUTTON MOUSEOUT");
   // Add style changes for mouseout
 
   return button;
@@ -960,8 +957,6 @@ Button.prototype.mouseout = function() {
 /* jshint esversion:6 */
 Button.prototype.mouseover = function() {
   const button = this;
-
-  console.log("BUTTON MOUSEOVER");
 
   // Add style changes for mouseover
 
@@ -1044,6 +1039,7 @@ LineChart.prototype.addLayers = function() {
   layers.projection = chart.addSingleLayer();
   layers.foregroundLine = chart.addSingleLayer();
   layers.backgroundLabels = chart.addSingleLayer();
+  layers.frontText = chart.addSingleLayer();
 
   return layers;
 
@@ -1063,6 +1059,58 @@ LineChart.prototype.addMVPLine = function() {
 };
 
 /* jshint esversion:6 */
+LineChart.prototype.addProjectionArea = function() {
+  const chart = this;
+
+  let area = chart.layers.projectionArea
+    .append("path")
+    .attr("stroke","none")
+    .attr("fill",chart.styles.projectionAreaFill);
+
+  return area;
+
+};
+
+/* jshint esversion:6 */
+LineChart.prototype.addProjectionCircles = function() {
+  const chart = this;
+
+  let projectionCircles = chart.layers.projection
+    .selectAll(".circle")
+    .data(chart.projection.bWarSimilarPlayersMean)
+    .enter()
+    .append("circle")
+    .attr("cx",(d) => { return chart.scales.x(d.age);})
+    .attr("cy",(d) => { return chart.scales.y(d[chart.currentWarType]);})
+    .attr("fill",chart.styles.playerYearFill)
+    .attr("r",3)
+    .attr("stroke",chart.styles.playerYearStroke)
+    .attr("cursor","pointer")
+    .on('mouseover',function(d,i) {
+      let element;
+      element = d3.select(this);
+
+      element
+        .attr("fill",chart.styles.playerYearHighlightFill);
+
+      // chart.tooltip
+      //   .showPlayerProjection(playerName,d);
+    })
+    .on('mouseout',function(d,i) {
+      let element = d3.select(this);
+
+      chart.tooltip
+        .hide();
+
+      element
+        .attr("fill",chart.styles.playerYearFill);
+
+    });
+
+  return projectionCircles;
+};
+
+/* jshint esversion:6 */
 LineChart.prototype.addProjectionLine = function() {
   const chart = this;
 
@@ -1073,6 +1121,7 @@ LineChart.prototype.addProjectionLine = function() {
     .datum([])
     .attr("stroke",chart.styles.projectionLine)
     .attr("stroke-width",chart.styles.projectionLineStroke)
+    .attr("stroke-dasharray","5,5")
     .attr("fill","none")
     .attr("display","none")
     .attr("d",chart.lineGenerator);
@@ -1128,7 +1177,7 @@ LineChart.prototype.addXAxis = function() {
     .call(d3.axisBottom(chart.scales.x))
     .attr("font-family",chart.styles.axisFontFamily)
     .attr("font-size",chart.styles.axisFontSize);
-    
+
 
   return xAxis;
 };
@@ -1146,6 +1195,7 @@ LineChart.prototype.addXAxisTitle = function() {
     .attr("font-size",chart.styles.axisTitleFontFamily)
     .attr("font-family",chart.styles.axisTitleFontFamily)
     .attr("fill",chart.styles.axisTitleFill)
+    .attr("font-weight",chart.styles.axisTitleFontWeight)
     .text("Year (Age)");
 
   return title;
@@ -1156,10 +1206,12 @@ LineChart.prototype.addYAxis = function() {
   const chart = this;
   let yAxis;
 
+  let axis = d3.axisLeft(chart.scales.y).ticks(3);
+
   yAxis = chart.layers.axes
     .append("g")
     .attr("transform","translate("+chart.referencePoints.xMin+",0)")
-    .call(d3.axisLeft(chart.scales.y))
+    .call(axis)
     .attr("font-family",chart.styles.axisFontFamily)
     .attr("font-size",chart.styles.axisFontSize);
 
@@ -1179,7 +1231,8 @@ LineChart.prototype.addYAxisTitle = function() {
     .attr("font-size",chart.styles.axisTitleFontFamily)
     .attr("font-family",chart.styles.axisTitleFontFamily)
     .attr("fill",chart.styles.axisTitleFill)
-    .attr("text-anchor","middle")
+    .attr("font-weight",chart.styles.axisTitleFontWeight)
+    .attr("text-anchor","end")
     .text("WAR");
 
   return title;
@@ -1219,8 +1272,8 @@ LineChart.prototype.createAreaGenerator = function() {
 
   generator = d3.area()
     .x((d) => { return chart.scales.x(d.age); })
-    .y0((d) => { return chart.scales.y(d.top25);})
-    .y1((d) => { return chart.scales.y(d.bottom25);});
+    .y0((d) => { return chart.scales.y(d.min);})
+    .y1((d) => { return chart.scales.y(d.max);});
 
   return generator;
 };
@@ -1232,7 +1285,7 @@ LineChart.prototype.createLineGenerator = function() {
 
   generator = d3.line()
     .x((d) => { return chart.scales.x(d.age);})
-    .y((d) => { return chart.scales.y(d.bWar);});
+    .y((d) => { return chart.scales.y(d[chart.currentWARType]);});
 
   return generator;
 };
@@ -1285,7 +1338,7 @@ LineChart.prototype.defineStyles = function() {
   let styles = {};
 
   styles.axisFontFamily = "Source Sans Pro";
-  styles.axisFontSize = "12pt";
+  styles.axisFontSize = "10pt";
 
   styles.titleFontFamily = "Source Sans Pro";
   styles.titleFontSize = "18pt";
@@ -1296,6 +1349,7 @@ LineChart.prototype.defineStyles = function() {
   styles.axisTitleFill = "black";
   styles.axisTitleFontSize = "0.75em";
   styles.axisTitleFontFamily = "Source Sans Pro";
+  styles.axisTitleFontWeight = "bold";
 
   styles.playerYearFill = "white";
   styles.playerYearStroke = "blue";
@@ -1303,14 +1357,14 @@ LineChart.prototype.defineStyles = function() {
   styles.playerYearLine = "#20639b";
   styles.playerYearLineStrokeWidth = 3;
   styles.playerProjectionDashArray = "5,5";
-  styles.projectionAreaFill = "#ddf";
+  styles.projectionAreaFill = "rgba(221,221,255,0.75)";
   styles.projectionAreaStroke = "#000";
 
   styles.compPlayerStroke = "#fafafa";
   styles.compPlayerStrokeWidth = 1;
-  styles.compPlayerHighlightStroke = "#3caea3";
+  styles.compPlayerHighlightStroke = "black";
 
-  styles.projectionLine = "#ed553b";
+  styles.projectionLine = "#20639b";
   styles.projectionLineStroke = 3;
 
   styles.zeroLineStroke = "#333";
@@ -1433,9 +1487,9 @@ LineChart.prototype.addCompData = function(data) {
 
       let textLabel = new TextLabel({
         "text":year.bWar.toFixed(1),
-        "where":group,
+        "where":chart.layers.frontText,
         "values":{"x":year.age,"y":year.bWar},
-        "foregroundColor":"#3caea3",
+        "foregroundColor":chart.styles.compPlayerHighlightStroke,
       })
       .move({
         "x":chart.scales.x(year.age),
@@ -1449,9 +1503,10 @@ LineChart.prototype.addCompData = function(data) {
 
     nameLabel = new TextLabel({
       "text":player.name,
-      "where":group,
+      "where":chart.layers.frontText,
       "values":{"x":player.bWar[player.bWar.length - 1].age - 0.5,"y":player.bWar[player.bWar.length - 1].bWar},
-      "foregroundColor":"#3caea3",
+      "foregroundColor":chart.styles.compPlayerHighlightStroke,
+      "fontSize":"14pt",
       "backgroundColor":"black",
       "textAnchor":"start"
     })
@@ -1476,7 +1531,6 @@ LineChart.prototype.addCompData = function(data) {
 LineChart.prototype.addData = function(data) {
   const chart = this;
 
-  console.log("ADDING DATA");
 
   return chart;
 };
@@ -1486,6 +1540,7 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
   const chart = this;
 
   chart.playerData = data;
+
   chart.projections = projections;
   chart.playerLine = chart.layers.foregroundLine
     .append("path")
@@ -1527,7 +1582,7 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
 
     });
 
-
+  /*
   chart.meanProjectionLine = chart.layers.projection
     .append("path")
     .datum(projections.mean)
@@ -1591,6 +1646,161 @@ LineChart.prototype.addPlayerData = function(data,projections,playerName) {
     .attr("stroke-width",1)
     .attr("fill","none")
     .attr("d",chart.lineGenerator);
+  */
+
+  return chart;
+};
+
+/* jshint esversion:6 */
+LineChart.prototype.addProjection = function(projection) {
+  const chart = this;
+  chart.projection = projection;
+
+  chart.projectionLine = chart.addProjectionLine();
+  chart.projectionLine
+    .datum(projection.bWarSimilarPlayersMean)
+    .attr("display","block")
+    .attr("d",chart.lineGenerator);
+
+
+  chart.projectionCircles = chart.addProjectionCircles();
+  chart.projectionCircles
+    .data(projection.bWarSimilarPlayersMean)
+    .attr("cx",(d) => { return chart.scales.x(d.age); })
+    .attr("cy",(d) => { return chart.scales.y(d[chart.currentWarType]); });
+
+  chart.projectionArea = chart.addProjectionArea();
+  let projectionAreaData = [];
+
+  chart.projection.bWarSimilarPlayersMax.forEach((season,index) => {
+    let values = {};
+    values.age = season.age;
+    values.max = season.bWar;
+    values.min = chart.projection.bWarSimilarPlayersMin[index].bWar;
+    projectionAreaData.push(values);
+  });
+
+  chart.projectionArea
+    .datum(projectionAreaData)
+    .attr("d",chart.areaGenerator);
+
+  chart.updateXScale();
+  chart.updateYScale();
+
+  return chart;
+};
+
+/* jshint esversion:6 */
+LineChart.prototype.showAgingCurveProjection = function() {
+  const chart = this;
+
+  chart.projectionArea
+    .attr("opacity",1)
+    .transition()
+    .duration(250)
+    .attr("opacity",0)
+    .on("end",function() {
+      d3.select(this)
+        .attr("display","none");
+    });
+
+  chart.compLines.forEach((line,index) => {
+    line
+      .attr("opacity",1)
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",function() {
+        d3.select(this)
+          .attr("display","none");
+      });
+  });
+
+  chart.compCircles.forEach((line,index) => {
+    line
+      .attr("opacity",1)
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",function() {
+        d3.select(this)
+          .attr("display","none");
+      });
+  });
+
+
+  chart.projectionLine
+    .datum(chart.projection.bWarAgingCurveProjection)
+    .transition()
+    .duration(375)
+    .delay(175)
+    .attr("d",chart.lineGenerator);
+
+  chart.projectionCircles
+    .data(chart.projection.bWarAgingCurveProjection)
+    .transition()
+    .duration(375)
+    .delay(175)
+    .attr("cx",(d) => { return chart.scales.x(d.age); })
+    .attr("cy",(d) => { return chart.scales.y(d.bWar); });
+
+  return chart;
+};
+
+/* jshint esversion:6 */
+LineChart.prototype.showAgingSimilarPlayersProjection = function() {
+  const chart = this;
+
+  chart.projectionArea
+    .attr("display","block")
+    .transition()
+    .duration(250)
+    .delay(125)
+    .attr("opacity",0)
+    .on("end",function() {
+      d3.select(this)
+        .attr("opacity",1);
+    });
+
+  chart.compLines.forEach((line,index) => {
+    line
+      .attr("display","block")
+      .transition()
+      .duration(250)
+      .delay(125)
+      .attr("opacity",0)
+      .on("end",function() {
+        d3.select(this)
+          .attr("opacity",1);
+      });
+  });
+
+  chart.compCircles.forEach((line,index) => {
+    line
+      .attr("display","block")
+      .transition()
+      .duration(250)
+      .duration(125)
+      .attr("opacity",0)
+      .on("end",function() {
+        d3.select(this)
+          .attr("opacity",1);
+      });
+  });
+
+
+  chart.projectionLine
+    .datum(chart.projection.bWarSimilarPlayersMean)
+    .transition()
+    .duration(250)
+    .attr("d",chart.lineGenerator);
+
+  chart.projectionCircles
+    .data(chart.projection.bWarSimilarPlayersMean)
+    .transition()
+    .duration(250)
+    .attr("cx",(d) => { return chart.scales.x(d.age); })
+    .attr("cy",(d) => { return chart.scales.y(d.bWar); });
 
   return chart;
 };
@@ -1619,11 +1829,11 @@ LineChart.prototype.updateXScale = function(newExtent) {
     allYears.push(datum.age);
   });
 
-  Object.keys(chart.projections).forEach((projection) => {
-    chart.projections[projection].forEach((datum) => {
-      allYears.push(+datum.age);
-    });
-  });
+  // Object.keys(chart.projections).forEach((projection) => {
+  //   chart.projections[projection].forEach((datum) => {
+  //     allYears.push(+datum.age);
+  //   });
+  // });
 
   chart.compPlayers.forEach((player) => {
     player.bWar.forEach((season) => {
@@ -1656,8 +1866,16 @@ LineChart.prototype.updateXScale = function(newExtent) {
   chart.playerLine
     .attr("d",chart.lineGenerator);
 
-  chart.meanProjectionLine
-      .attr("d",chart.lineGenerator);
+  if(chart.projection !== undefined) {
+    chart.projectionLine
+        .attr("d",chart.lineGenerator);
+
+    chart.projectionCircles
+      .attr("cx",(d) => { return chart.scales.x(d.age); });
+  }
+
+
+  /*
 
   chart.projectionArea
     .attr("d",chart.areaGenerator);
@@ -1669,8 +1887,7 @@ LineChart.prototype.updateXScale = function(newExtent) {
     .attr("d",chart.lineGenerator);
 
 
-  chart.meanProjectionCircles
-    .attr("cx",(d) => { return chart.scales.x(d.age); });
+  */
 
   chart.playerCircles
     .attr("cx",(d) => { return chart.scales.x(d.age); });
@@ -1693,7 +1910,7 @@ LineChart.prototype.updateXScale = function(newExtent) {
   });
 
   chart.axes.x
-    .call(d3.axisBottom(chart.scales.x));
+    .call(d3.axisBottom(chart.scales.x).ticks(5));
 
 
   return chart;
@@ -1707,11 +1924,11 @@ LineChart.prototype.updateYScale = function(newExtent) {
 
   let allWar = [];
 
-  Object.keys(chart.projections).forEach((projection) => {
-    chart.projections[projection].forEach((datum) => {
-      allWar.push(+datum.bWar);
-    });
-  });
+  // Object.keys(chart.projections).forEach((projection) => {
+  //   chart.projections[projection].forEach((datum) => {
+  //     allWar.push(+datum.bWar);
+  //   });
+  // });
 
   chart.compPlayers.forEach((player) => {
     player.bWar.forEach((season) => {
@@ -1759,6 +1976,17 @@ LineChart.prototype.updateYScale = function(newExtent) {
   chart.playerLine
     .attr("d",chart.lineGenerator);
 
+  if(chart.projection !== undefined) {
+
+    chart.projectionLine
+        .attr("d",chart.lineGenerator);
+
+    chart.projectionCircles
+      .attr("cy",(d) => { return chart.scales.y(d[chart.currentWARType]); });
+  }
+
+
+  /*
   chart.meanProjectionLine
       .attr("d",chart.lineGenerator);
 
@@ -1773,6 +2001,7 @@ LineChart.prototype.updateYScale = function(newExtent) {
 
   chart.meanProjectionCircles
     .attr("cy",(d) => { return chart.scales.y(d.bWar); });
+  */
 
   chart.playerCircles
     .attr("cy",(d) => { return chart.scales.y(d.bWar); });
@@ -1795,385 +2024,9 @@ LineChart.prototype.updateYScale = function(newExtent) {
   });
 
   chart.axes.y
-    .call(d3.axisLeft(chart.scales.y));
+    .call(d3.axisLeft(chart.scales.y).ticks(3));
 
   return chart;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addChart = function(options) {
-  const modeler = this;
-  let chart;
-
-  modeler.layers.chart
-    .attr("transform","translate("+modeler.layout.chartOrigin.x+","+modeler.layout.chartOrigin.y+")");
-
-  chart = new LineChart({
-    "where":modeler.layers.chart,
-    "size":modeler.layout.chartSize,
-    "margins":modeler.chartMargins,
-    "origin":modeler.layout.chartOrigin
-  });
-
-  return chart;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addContractAAVSlider = function() {
-  const modeler = this;
-  let slider;
-
-  slider = new Slider({
-    "where":modeler.layers.contract,
-    "coordinates":{"x":550,"y":125},
-    "label":"Average Annual Value ($MM)",
-    "domain":[2,45],
-    "significantDigits":0,
-    "defaultValue":pane.contractValues.contractLength
-  }).setDragCallback((newValue) => {
-    modeler.projectionParameters.aav = newValue;
-    modeler.calculateContractValues();
-  });
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addContractYearsSlider = function() {
-  const modeler = this;
-  let slider;
-
-  slider = new Slider({
-    "where":modeler.layers.contract,
-    "coordinates":{"x":550,"y":50},
-    "label":"Contract Length (Seasons)",
-    "domain":[1,15],
-    "significantDigits":0,
-    "defaultValue":modeler.projectionParameters.contractLength
-  }).setDragCallback((newValue) => {
-    modeler.projectionParameters.contractLength = +newValue.toFixed(0);
-    modeler.calculateContractValues();
-  });
-
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addLayers = function() {
-  const modeler = this;
-  let layers = {};
-  layers.chart = modeler.addSingleLayer();
-  layers.contract = modeler.addSingleLayer();
-  layers.button = modeler.addSingleLayer();
-  layers.pane = modeler.addSingleLayer();
-  return layers;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addSalarySliders = function(yearsToProject) {
-  const modeler = this;
-
-  let sliders = [];
-
-  d3.range(0,16).forEach((year,index) => {
-    let slider;
-
-    slider = new Slider({
-      "where":modeler.layers.contract,
-      "size":{"height":25,"width":100},
-      "margins":{"top":5,"bottom":5},
-      "coordinates":{"x":550,"y":125 + index * 25},
-      "domain":[2,45],
-      "significantDigits":2,
-      "defaultValue":+modeler.projectionParameters.salary[index].toFixed(2)
-    }).setDragCallback((newValue) => {
-      modeler.calculateContractValues();
-    });
-
-    sliders.push(slider);
-
-  });
-
-  return sliders;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addSingleLayer = function() {
-  const modeler = this;
-  let layer;
-  layer = modeler.svg
-    .append("g");
-  return layer;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addSvg = function(where) {
-  const modeler = this;
-  let svg;
-
-  svg = d3.select(where)
-    .append("svg")
-    .attr("width",modeler.size.width)
-    .attr("height",modeler.size.height)
-    .style("border","1px solid black");
-
-  return svg;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addWinDollarsSlider = function() {
-  const modeler = this;
-  let slider;
-
-  slider = new Slider({
-    "where":modeler.layers.contract,
-    "coordinates":{"x":550,"y":175},
-    "label":"Average $MM / Win",
-    "domain":[7,25],
-    "defaultValue":modeler.projectionParameters.dollarsPerWar,
-    "significantDigits":1
-  }).setDragCallback((newValue) => {
-    modeler.projectionParameters.dollarsPerWar = newValue;
-    modeler.calculateContractValues();
-  });
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addWinValueSliders = function (yearsToProject) {
-  const modeler = this;
-
-  let sliders = [];
-
-  d3.range(0,16).forEach((year,index) => {
-    let slider;
-
-    slider = new Slider({
-      "where":modeler.layers.contract,
-      "size":{"height":25,"width":100},
-      "margins":{"top":5,"bottom":5},
-      "coordinates":{"x":650,"y":125 + index * 25},
-      // "label":2019 + index,
-      "domain":[8,25],
-      "significantDigits":2,
-      "defaultValue":+modeler.projectionParameters.winValue[index].toFixed(2)
-    }).setDragCallback((newValue) => {
-      modeler.calculateContractValues();
-    });
-
-    sliders.push(slider);
-
-  });
-
-  return sliders;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.defaulter = function(value,defaultValue) {
-  return value !== undefined ? value : defaultValue;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.defineChartMargins = function(preset) {
-  const modeler = this;
-  let margins;
-  margins = modeler.defaulter(preset,{});
-  margins.left = modeler.defaulter(margins.left,75);
-  margins.right = modeler.defaulter(margins.right,10);
-  margins.top = modeler.defaulter(margins.top,50);
-  margins.bottom = modeler.defaulter(margins.bottom,50);
-  return margins;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.defineLayout = function() {
-  const modeler = this;
-
-  let layout = {};
-
-  layout.chartSize = {
-    "height":400,
-    "width":500
-  };
-
-  layout.chartOrigin = {
-    "x":0,
-    "y":0
-  };
-
-  return layout;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.defineSize = function(preset) {
-  const modeler = this;
-  let size;
-  size = modeler.defaulter(preset,{});
-  size.width = modeler.defaulter(size.width,800);
-  size.height = modeler.defaulter(size.height,600);
-  return size;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addCompData = function(data) {
-  const modeler = this;
-
-  modeler.chart
-    .addCompData(data);
-
-
-  return modeler;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.addPlayerData = function(data,projections,name) {
-  const modeler = this;
-
-  modeler.chart
-    .addPlayerData(data,projections,name);
-
-  modeler.projections = projections;
-
-  let yearsToProject = projections.mean.map((a) => { return a.age; });
-  yearsToProject.shift();
-
-  // modeler.salarySliders = modeler.addSalarySliders(yearsToProject);
-  // modeler.winValueSliders = modeler.addWinValueSliders(yearsToProject);
-  //
-  // modeler.calculateContractValues();
-
-  return modeler;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.calculateContractValues = function() {
-  const modeler = this;
-
-  let top25Projections = [];
-  let meanProjections = [];
-  let bottom25Projections = [];
-  let meanValueByYear = [];
-
-  let salaryValues = [];
-  let winValues = [];
-  let ageSeasons = [];
-
-  Object.keys(modeler.projections.mean).forEach((key) => {
-    meanProjections.push(modeler.projections.mean[key].bWar);
-    ageSeasons.push(modeler.projections.mean[key].age);
-  });
-
-  ageSeasons.shift();
-  meanValueByYear.shift();
-  meanProjections.shift();
-
-  let contractYears = +modeler.contractYearsSlider.currentValue.toFixed(0);
-
-  modeler.salarySliders.forEach((slider,index) => {
-    salaryValues.push(slider.currentValue);
-    if(index >= contractYears) {
-      slider.hide();
-    } else {
-      slider.show();
-    }
-  });
-
-  modeler.winValueSliders.forEach((slider,index) => {
-    winValues.push(slider.currentValue);
-    if(index >= contractYears) {
-      slider.hide();
-    } else {
-      slider.show();
-    }
-  });
-
-  modeler.projectionParameters.salary = salaryValues;
-  modeler.projectionParameters.winValues = winValues;
-
-  let totalContractCost = 0;
-  let totalMeanContractValue = 0;
-
-  d3.range(0,contractYears).forEach((year) => {
-    totalContractCost += modeler.projectionParameters.salary[year];
-    totalMeanContractValue += modeler.projectionParameters.winValues[year] * meanProjections[year];
-    meanValueByYear.push({
-      "age":ageSeasons[year],
-      "bWar":modeler.projectionParameters.salary[year] / modeler.projectionParameters.winValues[year]
-    });
-  });
-
-  let allValues = {
-    "mean":{"yearData":meanValueByYear},
-    // "top25":calculateValues(top25Projections),
-    // "bottom25":calculateValues(bottom25Projections)
-  };
-
-  modeler.chart
-    .updateProjectionLines(allValues);
-
-
-
-  let meanContractSurplus = totalMeanContractValue - totalContractCost;
-
-  modeler.contractCostText
-    .updateText("$" + totalContractCost.toFixed(2) + "mm");
-
-  modeler.meanSurplusText
-    .updateText("$" + meanContractSurplus.toFixed(2) + "mm");
-
-
-  return this;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.dataFromPane = function(data) {
-  const modeler = this;
-
-  modeler.chart.projectionLine
-    .attr("display","block");
-
-  modeler.projectionParameters = data;
-  console.log(modeler.projectionParameters);
-
-  modeler.contractYearsSlider = modeler.addContractYearsSlider();
-  modeler.salarySliders = modeler.addSalarySliders();
-  modeler.winValueSliders = modeler.addWinValueSliders();
-
-  modeler.calculateContractValues();
-
-  modeler.contractButton
-    .hide();
-
-  modeler.contractCostLabel
-    .show();
-
-  modeler.contractCostText
-    .show();
-
-  modeler.meanSurplusLabel
-    .show();
-
-  modeler.meanSurplusText
-    .show();
-
-  modeler.contractCostText
-    .show();
-
-  return modeler;
-};
-
-/* jshint esversion:6 */
-Modeler.prototype.registerTooltip = function(tooltip) {
-  const modeler = this;
-
-  modeler.tooltip = tooltip;
-  modeler.chart.tooltip = tooltip;
-  modeler.pane
-    .registerTooltip(tooltip);
-
-  return modeler;
 };
 
 /* jshint esversion:6 */
@@ -2204,7 +2057,7 @@ ModelerKey.prototype.addContractValue = function() {
   }).show()
   .move({
     "x":10,
-    "y":-8
+    "y":-5
   });
 
   toReturn.warLabel = new TextLabel({
@@ -2218,7 +2071,7 @@ ModelerKey.prototype.addContractValue = function() {
   }).show()
   .move({
     "x":10,
-    "y":8
+    "y":5
   });
 
 
@@ -2310,7 +2163,7 @@ ModelerKey.prototype.addPlayerHistory = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"[Player Name]"
+    "text":""
   }).show()
   .move({
     "x":10,
@@ -2361,7 +2214,7 @@ ModelerKey.prototype.addPlayerProjections = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"[LastName]"
+    "text":""
   }).show()
   .move({
     "x":10,
@@ -2441,8 +2294,8 @@ ModelerKey.prototype.defineSize = function(options) {
   const key = this;
   let size = defaulter(options.size,{});
 
-  size.height = defaulter(size.height,20);
-  size.width = defaulter(size.width,525);
+  size.height = defaulter(size.height,50);
+  size.width = defaulter(size.width,433.33);
 
   return size;
 
@@ -2457,7 +2310,7 @@ ModelerKey.prototype.defineStyles = function(options) {
   let styles = defaulter(options.styles,{});
 
   styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
-  styles.fontSize = "12px";
+  styles.fontSize = "8pt";
   styles.fontWeight = defaulter(styles.fontWeight,"bold");
   styles.lineStrokeWidth = defaulter(styles.lineStrokeWidth,4);
   styles.playerHistoryStroke = defaulter(styles.playerHistoryStroke,"#173f5f");
@@ -2562,23 +2415,49 @@ ModelerKey.prototype.layout = function() {
   const key = this;
 
   let trueValues = Object.keys(key.visibleKeys).filter((a) => { return key.visibleKeys[a]; }).length;
-  let spacing = key.size.width / trueValues;
+  let spacing = 140;
 
   let currentIndex = 0;
+  let lastXPosition = 0;
+  let yPosition = 0;
+  let xPosition = 0;
+
   Object.keys(key.visibleKeys).forEach((keyName) => {
     if(key.visibleKeys[keyName]) {
-      let position = spacing * currentIndex;
+
+      if((lastXPosition + spacing) > key.size.width) {
+        yPosition += 30;
+        xPosition = 0;
+      } else {
+        xPosition = lastXPosition;
+      }
 
       key[keyName].group
-        .attr("transform","translate("+position+",0)")
+        .attr("transform","translate("+xPosition+","+yPosition+")")
         .attr("display","block");
 
       currentIndex += 1;
+      lastXPosition = xPosition + spacing;
+
     } else {
       key[keyName].group
         .attr("display","none");
     }
+
   });
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.playerName = function(name) {
+  const key = this;
+
+  key.playerHistory.playerNameLabel
+    .updateText(name);
+
+  key.playerProjections.playerNameLabel
+    .updateText(name);
 
   return key;
 };
@@ -2623,6 +2502,36 @@ ModelerKey.prototype.showSimilarPlayers = function() {
 };
 
 /* jshint esversion:6 */
+ModelerPane.prototype.addContractDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("x",pane.referencePoints.overlayContractDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlayContractDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .html("Select a contract length:");
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addContractDurationLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlayContractCoordinates.x)
+    .attr("y",pane.referencePoints.overlayContractCoordinates.y)
+    .attr("font-size","12pt")
+    .attr("font-weight","bold")
+    .text("Contract Duration");
+
+  return text;
+};
+
+/* jshint esversion:6 */
 ModelerPane.prototype.addContractYearsSlider = function() {
   const pane = this;
 
@@ -2631,13 +2540,13 @@ ModelerPane.prototype.addContractYearsSlider = function() {
 
   slider = new Slider({
     "where":pane.group,
-    "coordinates":{"x":pane.referencePoints.rightSixth,"y":50},
+    "coordinates":pane.referencePoints.overlayContractSliderCoordinates,
     "label":"Contract Years",
     "domain":[1,15],
     "defaultValue":pane.contractValues.contractLength,
     "significantDigits":0,
     "size":{
-      "width":500
+      "width":pane.referencePoints.overlayColumnWidth
     }
   }).setDragCallback((newValue) => {
     pane.killAllGlows();
@@ -2665,6 +2574,37 @@ ModelerPane.prototype.addGroup = function(where) {
 };
 
 /* jshint esversion:6 */
+ModelerPane.prototype.addMarketValueDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("x",pane.referencePoints.overlayWinValueDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlayWinValueDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .html("Select a fair market value per WAR by year: ");
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addMarketValueLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlayWinValueCoordinates.x)
+    .attr("y",pane.referencePoints.overlayWinValueCoordinates.y)
+    .attr("font-size","12pt")
+    .attr("font-weight","bold")
+    .text("Market Value of Wins");
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
 ModelerPane.prototype.addRect = function() {
   const pane = this;
 
@@ -2682,6 +2622,21 @@ ModelerPane.prototype.addRect = function() {
 };
 
 /* jshint esversion:6 */
+ModelerPane.prototype.addSalaryDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("x",pane.referencePoints.overlaySalaryDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlaySalaryDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .html("Select a contract average annual value ($AAV):");
+
+  return div;
+};
+
+/* jshint esversion:6 */
 ModelerPane.prototype.addSalaryGroup = function() {
   const pane = this;
 
@@ -2691,6 +2646,53 @@ ModelerPane.prototype.addSalaryGroup = function() {
 
   return group;
 }
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalaryLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlaySalaryCoordinates.x)
+    .attr("y",pane.referencePoints.overlaySalaryCoordinates.y)
+    .attr("font-size","12pt")
+    .attr("font-weight","bold")
+    .text("Contract Value");
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalarySlider = function() {
+  const pane = this;
+
+  let slider;
+  // TODO: REVIEW SLIDER OBJECT AND POPULATE
+
+  slider = new Slider({
+    "where":pane.group,
+    "coordinates":pane.referencePoints.overlaySalarySliderCoordinates,
+    "label":"AAV",
+    "domain":[2,45],
+    "defaultValue":pane.contractValues.aav,
+    "significantDigits":0,
+    "size":{
+      "width":pane.referencePoints.overlayColumnWidth
+    }
+  }).setDragCallback((newValue) => {
+    pane.killAllGlows();
+    pane.contractValues.aav = +newValue.toFixed(0);
+    pane.updateContractYears();
+    pane.hasDragged = true;
+  })
+  .runGlow();
+
+  slider.circleMouseover = pane.hintMouseover();
+  slider.circleMouseout = pane.hintMouseout();
+
+  return slider;
+};
 
 /* jshint esversion:6 */
 ModelerPane.prototype.addSalarySliders = function() {
@@ -2758,15 +2760,45 @@ ModelerPane.prototype.addSalarySliders = function() {
 ModelerPane.prototype.addSaveButton = function() {
   const pane = this;
 
-  let button;
+  let button,
+    rect,
+    text;
 
-  button = new Button({
-    "where":pane.group,
-    "text":"Save",
-    "coordinates":pane.referencePoints.buttonCoordinates
-  }).registerCallback(function() {
-    pane.finishEditing();
-  });
+  button = pane.group
+    .append("g")
+    .attr("cursor","pointer")
+    .attr("transform","translate("+pane.referencePoints.saveButtonCoordinates.x+","+pane.referencePoints.saveButtonCoordinates.y+")")
+    .on('click',function() {
+      pane.finishEditing();
+    });
+
+
+  rect = button
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",pane.referencePoints.saveButtonSize.width)
+    .attr("height",pane.referencePoints.saveButtonSize.height)
+    .attr("fill","green");
+
+  text = button
+    .append("text")
+    .attr("x",pane.referencePoints.saveButtonSize.width / 2)
+    .attr("y",pane.referencePoints.saveButtonSize.height / 2)
+    .attr("font-size","14pt")
+    .attr("font-weight","bold")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .attr("fill","white")
+    .text("SAVE");
+
+  // button = new Button({
+  //   "where":pane.group,
+  //   "text":"Save",
+  //   "coordinates":pane.referencePoints.buttonCoordinates
+  // }).registerCallback(function() {
+  //   pane.finishEditing();
+  // });
 
   return button;
 };
@@ -2775,14 +2807,15 @@ ModelerPane.prototype.addSaveButton = function() {
 ModelerPane.prototype.addTitle = function() {
   const pane = this;
 
-  let title = new TextLabel({
-    "where":pane.group,
-    "fontFamily":pane.styles.fontFamily,
-    "fontSize":pane.styles.titleFontSize,
-    "fontWeight":pane.styles.titleFontWeight,
-    "text":"Simulate Contract for [Player Name]"
-  }).move(pane.referencePoints.titleCoordinates)
-  .show();
+  let title = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.titleCoordinates.x)
+    .attr("y",pane.referencePoints.titleCoordinates.y)
+    .attr("text-anchor","start")
+    .attr("alignment-baseline","middle")
+    .attr("font-weight","bold")
+    .attr("font-size","18pt")
+    .text("Simulate a Contract for [Player Name]");
 
   return title;
 };
@@ -2889,6 +2922,57 @@ ModelerPane.prototype.addWinValueSliders = function() {
 };
 
 /* jshint esversion:6 */
+ModelerPane.prototype.addWinValueTable = function() {
+  const pane = this;
+  let foreignObject = pane.group
+    .append("foreignObject")
+    .attr("x",pane.referencePoints.overlayWinValueTableCoordinates.x)
+    .attr("y",pane.referencePoints.overlayWinValueTableCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayColumnTableHeight)
+    .style("overflow","scroll");
+
+  let foreignBody = foreignObject
+    .append("xhtml:body")
+    .attr("height","100%")
+    .attr("width","100%")
+    .style("overflow","scroll");
+
+
+  d3.range(0,16).forEach((number) => {
+    let embeddedSvg = foreignBody
+      .append("svg")
+      .attr("width",pane.referencePoints.overlayColumnWidth)
+      .attr("height",50);
+
+    let year = number + 2019;
+
+    let slider = new Slider({
+      "where":embeddedSvg,
+      "label":year,
+      "coordinates":{"x":0,"y":0},
+      "domain":[8,30],
+      "defaultValue":pane.contractValues.winValue[number],
+      "significantDigits":0,
+      "size":{
+        "width":pane.referencePoints.overlayColumnWidth - 10,
+        "height":35
+      }
+    }).setDragCallback((newValue) => {
+      pane.contractValues.winValue[number] = +newValue.toFixed(2);
+      pane.killAllGlows();
+      pane.updateContractValue();
+      pane.hasDragged = true;
+    })
+    .runGlow();
+
+    pane.winValueSliders.push(slider);
+  });
+
+  return foreignObject;
+};
+
+/* jshint esversion:6 */
 ModelerPane.prototype.addYearGroup = function() {
   const pane = this;
 
@@ -2928,6 +3012,7 @@ ModelerPane.prototype.defineContractValues = function() {
   const pane = this;
   let values = {};
   values.contractLength = 3;
+  values.aav = 10;
   values.salary = [];
   // TODO: COPY OVER WIN VALUES
 
@@ -2969,7 +3054,141 @@ ModelerPane.prototype.defineReferencePoints = function() {
   referencePoints.buttonCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.bottomCenter };
 
   referencePoints.offscreen = {"x":800,"y":0};
-  referencePoints.onscreen = {"x":50,"y":0};
+  referencePoints.onscreen = {"x":83.33,"y":0};
+
+
+  referencePoints.titleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+
+
+  referencePoints.overlayPlaneSize = {
+    "width":716.67,
+    "height":500
+  };
+
+  referencePoints.overlayPlaneOffscreen = {
+    "x":800,
+    "y":0
+  };
+
+  referencePoints.overlayPlaneOnscreen = {
+    "x":83.33,
+    "y":0
+  };
+
+  referencePoints.overlayTitleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+  referencePoints.overlayContractCoordinates = {
+    "x":14.92,
+    "y":104.17
+  };
+
+  referencePoints.overlayContractDescriptionCoordinates = {
+    "x":14.92,
+    "y":125
+  };
+
+  referencePoints.overlayContractSliderCoordinates =  {
+    "x":14.92,
+    "y":177.083
+  };
+
+  referencePoints.overlaySalaryCoordinates = {
+    "x":253.94,
+    "y":104.17
+  };
+
+  referencePoints.overlaySalaryDescriptionCoordinates = {
+    "x":253.94,
+    "y":125
+  };
+
+  referencePoints.overlaySalarySliderCoordinates =  {
+    "x":253.94,
+    "y":177.083
+  };
+
+  referencePoints.overlayWinValueCoordinates = {
+    "x":492.94,
+    "y":104.17
+  };
+
+  referencePoints.overlayWinValueDescriptionCoordinates = {
+    "x":492.94,
+    "y":125
+  };
+
+  referencePoints.overlayWinValueTableCoordinates = {
+    "x":492.94,
+    "y":177.083
+  };
+
+  referencePoints.saveButtonCoordinates = {
+    "x":492.94,
+    "y":437.5
+  };
+
+  referencePoints.saveButtonSize = {
+    "width":209.13,
+    "height":41.667
+  };
+
+  referencePoints.contractDetailsHeadingCoordinates = {
+    "x":625,
+    "y":41.68
+  };
+
+  referencePoints.projectedSurplusHeadingCoordinates = {
+    "x":566.67,
+    "y":72.92
+  };
+
+  referencePoints.projectedSurplusValueCoordinates = {
+    "x":566.67,
+    "y":93.75
+  };
+
+  referencePoints.contractValueHeadingCoordinates = {
+    "x":700,
+    "y":72.92
+  };
+
+  referencePoints.contractValueCoordinates = {
+    "x":700,
+    "y":93.75
+  };
+
+  referencePoints.editSalaryButtonCoordinates = {
+    "x":566.67,
+    "y":197.92
+  };
+
+  referencePoints.winValueButtonCoordinates = {
+    "x":700,
+    "y":197.92
+  };
+
+  referencePoints.contractTableCoordinates = {
+    "x":483.333,
+    "y":197.92
+  };
+
+  referencePoints.contractTableSize = {
+    "width":300,
+    "height":260.41
+  };
+
+  referencePoints.overlayColumnWidth = 209.13;
+  referencePoints.overlayDescriptionHeight = 41.667;
+  referencePoints.overlaySliderHeight = 41.667;
+  referencePoints.overlayColumnTableHeight = 218.75;
+
 
 
   return referencePoints;
@@ -2981,7 +3200,7 @@ ModelerPane.prototype.defineSize = function(options) {
   let size = defaulter(options.size,{});
 
   size.height = defaulter(size.height,500);
-  size.width = defaulter(size.width,800);
+  size.width = defaulter(size.width,717);
 
   return size;
 
@@ -3019,6 +3238,10 @@ ModelerPane.prototype.finishEditing = function() {
 
   pane
     .transitionOut();
+
+  pane.contractValues.salary.forEach((value,index) => {
+    pane.contractValues.salary[index] = pane.contractValues.aav;
+  });
 
   pane.parent
     .dataFromPane(pane.contractValues);
@@ -3059,10 +3282,8 @@ ModelerPane.prototype.killAllGlows = function() {
   modeler.contractSlider
     .killGlow();
 
-  modeler.salarySliders.forEach((slider) =>{
-    slider
-      .killGlow();
-  });
+  modeler.salarySlider
+    .killGlow();
 
   modeler.winValueSliders.forEach((slider) => {
     slider
@@ -3077,7 +3298,6 @@ ModelerPane.prototype.registerTooltip = function(tooltip) {
   const pane = this;
 
   pane.tooltip = tooltip;
-  console.log("TOOLTIP CALLT!");
 
   return pane;
 };
@@ -3088,7 +3308,7 @@ ModelerPane.prototype.transitionIn = function() {
 
   pane.group
     .transition()
-    .duration(250)
+    .duration(500)
     .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
 
   return pane;
@@ -3114,18 +3334,17 @@ ModelerPane.prototype.updateContractValue = function() {
   let totalValue;
   totalValue = 0;
 
-  pane.contractValues.salary.forEach((dollars,yearIndex) => {
-    if(yearIndex < pane.contractValues.contractLength) {
-      totalValue += dollars;
-      pane.salarySliders[yearIndex].valueLabel.updateText("$" + dollars.toFixed(2) + "M");
-      pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
-    }
+  totalValue = pane.contractValues.contractLength * pane.contractValues.aav;
+
+  pane.salarySlider.valueLabel.updateText("$" + pane.contractValues.aav.toFixed(2) + "M");
+
+  pane.contractValues.winValue.forEach((value,yearIndex) => {
+    pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
   });
 
 
-
-  pane.totalContractValue.contractValueLabel
-    .updateText("$" + totalValue.toFixed(0) + "mm");
+  // pane.totalContractValue.contractValueLabel
+  //   .updateText("$" + totalValue.toFixed(0) + "mm");
 
   return pane;
 };
@@ -3134,24 +3353,24 @@ ModelerPane.prototype.updateContractValue = function() {
 ModelerPane.prototype.updateContractYears = function() {
   const pane = this;
 
-  pane.yearLabels.forEach((label,yearIndex) => {
-    if(yearIndex >= pane.contractValues.contractLength) {
-      label
-        .hide();
-    }
-  });
+  // pane.yearLabels.forEach((label,yearIndex) => {
+  //   if(yearIndex >= pane.contractValues.contractLength) {
+  //     label
+  //       .hide();
+  //   }
+  // });
 
 
-  pane.salarySliders.forEach((slider,yearIndex) => {
-    if(yearIndex >= pane.contractValues.contractLength) {
-      slider
-        .hide();
-    } else {
-      slider
-        .show();
-    }
-  });
-
+  // pane.salarySliders.forEach((slider,yearIndex) => {
+  //   if(yearIndex >= pane.contractValues.contractLength) {
+  //     slider
+  //       .hide();
+  //   } else {
+  //     slider
+  //       .show();
+  //   }
+  // });
+  
   pane.winValueSliders.forEach((slider,yearIndex) => {
     if(yearIndex >= pane.contractValues.contractLength) {
       slider
@@ -3817,6 +4036,1157 @@ NumberlineReference.prototype.defineStyles = function() {
 };
 
 /* jshint esversion:6 */
+Modeler.prototype.addAgingCurvesButton = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.similarPlayersButton.node().getBBox().width + modeler.referencePoints.projectionTypeCoordinates.x + 10)
+    .attr("y",modeler.referencePoints.projectionTypeCoordinates.y)
+    .attr("font-size","10pt")
+    .attr("font-weight","normal")
+    .attr("text-anchor","start")
+    .attr("alignment-baseline","middle")
+    .attr("cursor","pointer")
+    .text("Aging Curve")
+    .on('click',() => {
+      modeler.similarPlayersButton
+        .attr("font-weight","normal");
+
+      modeler.agingCurvesButton
+        .attr("font-weight","bold");
+
+      modeler.chart
+        .showAgingCurveProjection();
+    })
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("The total surplus value derived by comparing the total contract cost to the value of projected performance over the length of the contract.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addBBRefWARButton = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.warFormulationCoordinates.x + 5)
+    .attr("y",modeler.referencePoints.warFormulationCoordinates.y)
+    .attr("text-anchor","start")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","10pt")
+    .attr("font-weight","bold")
+    .text("Baseball-Reference")
+    .attr("cursor","pointer")
+    .on('click',() => {
+      modeler.BBRefWARButton
+        .attr("font-weight","bold");
+
+      modeler.fangraphsWARButton
+        .attr("font-weight","normal");
+    })
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("Click to select <strong>Baseball-Reference.com's</strong> Wins Above Replacement metric (bWAR).")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addChart = function(options) {
+  const modeler = this;
+  let chart;
+
+  chart = new LineChart({
+    "where":modeler.layers.chart,
+    "size":modeler.referencePoints.chartSize,
+    "margins":modeler.referencePoints.chartMargins,
+    "origin":modeler.referencePoints.chartOrigin,
+  });
+
+  return chart;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addContractAAVSlider = function() {
+  const modeler = this;
+  let slider;
+
+  slider = new Slider({
+    "where":modeler.layers.contract,
+    "coordinates":{"x":550,"y":125},
+    "label":"Average Annual Value ($MM)",
+    "domain":[2,45],
+    "significantDigits":0,
+    "defaultValue":pane.contractValues.contractLength
+  }).setDragCallback((newValue) => {
+    modeler.projectionParameters.aav = newValue;
+    modeler.calculateContractValues();
+  });
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addContractValueHeading = function() {
+  const modeler = this;
+
+  let text = modeler.rightPane
+    .append("text")
+    .attr("font-size","10pt")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","alphabetic")
+    .attr("x",modeler.referencePoints.contractValueHeadingCoordinates.x)
+    .attr("y",modeler.referencePoints.contractValueHeadingCoordinates.y)
+    .text("Projected Production");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addContractValueLabel = function() {
+  const modeler = this;
+
+  text = modeler.rightPane
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .attr("font-weight","bold")
+    .attr("font-size","18pt")
+    .attr("x",modeler.referencePoints.contractValueCoordinates.x)
+    .attr("y",modeler.referencePoints.contractValueCoordinates.y)
+    .text("$150M");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addContractYearsSlider = function() {
+  const modeler = this;
+  let slider;
+
+  slider = new Slider({
+    "where":modeler.rightPane,
+    "coordinates":modeler.referencePoints.rightPaneContractLengthSliderCoordinates,
+    "label":"Contract Length (Seasons)",
+    "domain":[1,15],
+    "significantDigits":0,
+    "defaultValue":3,
+    "size":{
+      "width":300
+    }
+  }).setDragCallback((newValue) => {
+    modeler.projectionParameters.contractLength = +newValue.toFixed(0);
+    modeler.calculateContractValues();
+  });
+
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addEditMarketValueButton = function() {
+  const modeler = this;
+  let text = modeler.rightPane
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","alphabetic")
+    .attr("font-size","10pt")
+    .attr("cursor","pointer")
+    .attr("x",modeler.referencePoints.winValueButtonCoordinates.x)
+    .attr("y",modeler.referencePoints.winValueButtonCoordinates.y)
+    .text("Edit Market Value");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addEditSalaryButton = function() {
+  const modeler = this;
+  let text = modeler.rightPane
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","alphabetic")
+    .attr("font-weight","bold")
+    .attr("font-size","10pt")
+    .attr("cursor","pointer")
+    .attr("x",modeler.referencePoints.editSalaryButtonCoordinates.x)
+    .attr("y",modeler.referencePoints.editSalaryButtonCoordinates.y)
+    .text("Edit Salary");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addFangraphsWARButton = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.BBRefWARButton.node().getBBox().width + modeler.referencePoints.warFormulationCoordinates.x + 10)
+    .attr("y",modeler.referencePoints.warFormulationCoordinates.y)
+    .attr("text-anchor","start")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","10pt")
+    .attr("font-weight","normal")
+    .attr("cursor","pointer")
+    .text("Fangraphs")
+    .on('click',() => {
+      modeler.BBRefWARButton
+        .attr("font-weight","normal");
+
+      modeler.fangraphsWARButton
+        .attr("font-weight","bold");
+
+    })
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("Click to select <strong>Fangraph's</strong> Wins Above Replacement metric (fWAR).")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addLayers = function() {
+  const modeler = this;
+  let layers = {};
+
+  layers.base = modeler.addSingleLayer();
+  layers.contract = modeler.addSingleLayer();
+  layers.button = modeler.addSingleLayer();
+  layers.rightPane = modeler.addSingleLayer();
+  layers.chart = modeler.addSingleLayer();
+  layers.pane = modeler.addSingleLayer();
+
+  layers.chart
+    .attr("transform","translate("+modeler.referencePoints.chartOrigin.x+","+modeler.referencePoints.chartOrigin.y+")");
+
+  return layers;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addModelerKey = function() {
+  const modeler = this;
+  
+  let key = new ModelerKey({
+    "where":modeler.layers.base,
+  });
+  return key;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addModelerPane = function() {
+  const modeler = this;
+
+  let pane = new ModelerPane({
+    "where":modeler.layers.pane,
+    "parent":modeler
+  });
+  
+  return pane;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addPaneContractDetails = function() {
+  const modeler = this;
+
+  let text = modeler.rightPane
+    .append("text")
+    .attr("x",modeler.referencePoints.contractDetailsHeadingCoordinates.x)
+    .attr("y",modeler.referencePoints.contractDetailsHeadingCoordinates.y)
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .attr("font-weight","bold")
+    .attr("font-size","14pt")
+    .text("Contract Details");
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addPaneHint = function() {
+  const modeler = this;
+
+  let object = modeler.layers.base
+    .append("foreignObject")
+    .attr("x",modeler.referencePoints.rightPaneCoordinates.x)
+    .attr("y",modeler.referencePoints.rightPaneCoordinates.y)
+    .attr("width",modeler.referencePoints.rightPaneSize.width)
+    .attr("height",modeler.referencePoints.rightPaneSize.height)
+    .attr("cursor","pointer");
+
+  let body = object
+    .append("xhtml:body")
+    .style("height","100%")
+    .style("width","100%")
+    .style("margin",0)
+    .style("background-color","#eee");
+
+  let tableDisplay = body
+    .append("div")
+    .style("display","table")
+    .style("height","100%")
+    .style("width","100%");
+
+  let tableCenter = tableDisplay
+    .append("div")
+    .style("display","table-cell")
+    .style("height","100%")
+    .style("vertical-align","middle")
+    .style("padding-left","1em")
+    .style("padding-right","1em");
+
+  let emptyDiv = tableCenter
+    .append("div")
+    .style("border","5px dashed #20639B")
+    .style("padding","0.25em");
+
+  let display = emptyDiv
+    .append("div")
+    .style("color","#20639B")
+    .html("<div style='font-size:2em; font-weight:bold'>Contract Simulator</div><div><strong>Click here</strong> to evaluate potential contracts for <span class='playerName'></span>.</div>");
+
+
+
+  object
+    .on('mouseover',() => {
+      body
+        .transition()
+        .duration(250)
+        .style("background-color","#20639B");
+
+      display
+        .transition()
+        .duration(250)
+        .style("color","#eee");
+
+      emptyDiv
+        .transition()
+        .duration(250)
+        .style("border","5px dashed #eee");
+
+    })
+    .on('mouseout',() => {
+      body
+        .transition()
+        .duration(175)
+        .style("background-color","#eee");
+
+      display
+        .transition()
+        .duration(175)
+        .style("color","#20639B");
+
+      emptyDiv
+        .transition()
+        .duration(175)
+        .style("border","5px dashed #20639B");
+
+
+    })
+    .on('click',() => {
+      modeler.pane
+        .transitionIn();
+    });
+
+  return object;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addProjectedSurplusHeading = function() {
+  const modeler = this;
+
+  let text = modeler.rightPane
+    .append("text")
+    .attr("x",modeler.referencePoints.projectedSurplusHeadingCoordinates.x)
+    .attr("y",modeler.referencePoints.projectedSurplusHeadingCoordinates.y)
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","alphabetic")
+    .attr("font-size","10pt")
+    .text("Projected Surplus");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addProjectedSurplusValue = function() {
+  const modeler = this;
+
+  let text = modeler.rightPane
+    .append("text")
+    .attr("font-weight","bold")
+    .attr("font-size","18pt")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .attr("x",modeler.referencePoints.projectedSurplusValueCoordinates.x)
+    .attr("y",modeler.referencePoints.projectedSurplusValueCoordinates.y)
+    .text("");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addProjectionType = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.projectionTypeCoordinates.x)
+    .attr("y",modeler.referencePoints.projectionTypeCoordinates.y)
+    .attr("text-anchor","end")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","10pt")
+    .attr("font-weight","normal")
+    .text("Projection Basis")
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("Select a method for projected future player performance.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addRightPane = function() {
+  const modeler = this;
+
+  let pane = modeler.layers.rightPane
+    .append("g")
+    .attr("display","none");
+
+  pane
+    .append("rect")
+    .attr("x",modeler.referencePoints.rightPaneCoordinates.x)
+    .attr("y",modeler.referencePoints.rightPaneCoordinates.y)
+    .attr("width",modeler.referencePoints.rightPaneSize.width)
+    .attr("height",modeler.referencePoints.rightPaneSize.height)
+    .attr("fill","white");
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addSalarySliders = function(yearsToProject) {
+  const modeler = this;
+
+  let sliders = [];
+
+  d3.range(0,16).forEach((year,index) => {
+    let slider;
+
+    slider = new Slider({
+      "where":modeler.layers.contract,
+      "size":{"height":25,"width":100},
+      "margins":{"top":5,"bottom":5},
+      "coordinates":{"x":550,"y":125 + index * 25},
+      "domain":[2,45],
+      "significantDigits":2,
+      "defaultValue":+modeler.projectionParameters.salary[index].toFixed(2)
+    }).setDragCallback((newValue) => {
+      modeler.calculateContractValues();
+    });
+
+    sliders.push(slider);
+
+  });
+
+  return sliders;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addSimilarPlayersButton = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.projectionTypeCoordinates.x + 5)
+    .attr("y",modeler.referencePoints.projectionTypeCoordinates.y)
+    .attr("text-anchor","start")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","10pt")
+    .attr("font-weight","bold")
+    .text("Similar Players")
+    .attr("cursor","pointer")
+    .on('click',() => {
+      modeler.similarPlayersButton
+        .attr("font-weight","bold");
+
+      modeler.agingCurvesButton
+        .attr("font-weight","normal");
+
+      modeler.chart
+        .showAgingSimilarPlayersProjection();
+        
+    })
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("Average out the career performance of Baseball-Reference.com's <strong>10 most similar players</strong>.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addSingleLayer = function() {
+  const modeler = this;
+  let layer;
+  layer = modeler.svg
+    .append("g");
+  return layer;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addSubtitle = function() {
+  const modeler = this;
+
+  let text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.subTitleCoordinates.x)
+    .attr("y",modeler.referencePoints.subTitleCoordinates.y)
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","12pt")
+    .text("Career and Projected Wins Above Replacement");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addSvg = function(where) {
+  const modeler = this;
+  let svg;
+
+  svg = d3.select(where)
+    .append("svg")
+    .attr("width",modeler.size.width)
+    .attr("height",modeler.size.height);
+
+  return svg;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addTitle = function() {
+  const modeler = this;
+
+  text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.nameCoordinates.x)
+    .attr("y",modeler.referencePoints.nameCoordinates.y)
+    .attr("font-size","24pt")
+    .attr("font-weight","bold")
+    .attr("text-anchor","middle")
+    .attr("alignment-baseline","middle")
+    .text("");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addWARFormulation = function() {
+  const modeler = this;
+
+  text = modeler.layers.base
+    .append("text")
+    .attr("x",modeler.referencePoints.warFormulationCoordinates.x)
+    .attr("y",modeler.referencePoints.warFormulationCoordinates.y)
+    .attr("text-anchor","end")
+    .attr("alignment-baseline","middle")
+    .attr("font-size","10pt")
+    .text("WAR Formulation: ")
+    .attr("cursor","pointer")
+    .on('mouseover',function() {
+      modeler.tooltip
+        .update("Select the basis for measuring player production.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      modeler.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      modeler.tooltip
+        .hide();
+    });
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addWinDollarsSlider = function() {
+  const modeler = this;
+  let slider;
+
+  slider = new Slider({
+    "where":modeler.layers.contract,
+    "coordinates":{"x":550,"y":175},
+    "label":"Average $MM / Win",
+    "domain":[7,25],
+    "defaultValue":modeler.projectionParameters.dollarsPerWar,
+    "significantDigits":1
+  }).setDragCallback((newValue) => {
+    modeler.projectionParameters.dollarsPerWar = newValue;
+    modeler.calculateContractValues();
+  });
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addWinValueSliders = function (yearsToProject) {
+  const modeler = this;
+
+  let sliders = [];
+
+  d3.range(0,16).forEach((year,index) => {
+    let slider;
+
+    slider = new Slider({
+      "where":modeler.layers.contract,
+      "size":{"height":25,"width":100},
+      "margins":{"top":5,"bottom":5},
+      "coordinates":{"x":650,"y":125 + index * 25},
+      // "label":2019 + index,
+      "domain":[8,25],
+      "significantDigits":2,
+      "defaultValue":+modeler.projectionParameters.winValue[index].toFixed(2)
+    }).setDragCallback((newValue) => {
+      modeler.calculateContractValues();
+    });
+
+    sliders.push(slider);
+
+  });
+
+  return sliders;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.defaulter = function(value,defaultValue) {
+  return value !== undefined ? value : defaultValue;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.defineChartMargins = function(preset) {
+  const modeler = this;
+  let margins;
+  margins = modeler.defaulter(preset,{});
+  margins.left = modeler.defaulter(margins.left,75);
+  margins.right = modeler.defaulter(margins.right,10);
+  margins.top = modeler.defaulter(margins.top,50);
+  margins.bottom = modeler.defaulter(margins.bottom,50);
+  return margins;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.defineReferencePoints = function() {
+  const modeler = this;
+
+  let referencePoints = {};
+  referencePoints.leftPaneSize = {
+    "width":467,
+    "height":500
+  };
+
+  referencePoints.nameCoordinates = {
+    "x":235,
+    "y":31.25
+  };
+
+  referencePoints.subTitleCoordinates = {
+      "x":235,
+      "y":62.5
+  };
+
+  referencePoints.warFormulationCoordinates = {
+    "x":100,
+    "y":93.75
+  };
+
+  referencePoints.projectionTypeCoordinates = {
+    "x":100,
+    "y":114.58
+  };
+
+  referencePoints.chartOrigin = {
+    "x":16.67,
+    "y":135.42
+  };
+
+  referencePoints.chartSize = {
+    "width":433.33,
+    "height":260.42
+  };
+
+  referencePoints.chartMarginLeft = 66.67;
+  referencePoints.chartMarginBottom = 52.08;
+
+  referencePoints.chartMargins = {
+    "left":66.67,
+    "right":0,
+    "top":0,
+    "bottom":52.08
+  };
+
+  referencePoints.chartEffectiveMidX = 266.68;
+  referencePoints.chartEffectiveMidY = 239.59;
+
+  referencePoints.chartXAxisLabelCoordinates = {
+    "x":referencePoints.chartEffectiveMidX,
+    "y":369.8
+  };
+
+  referencePoints.chartYAxisLabelCoordinates = {
+    "x":50,
+    "y":referencePoints.chartEffectiveMidY
+  };
+
+
+
+
+  referencePoints.chartEffectiveSize = {
+    "width":366.67,
+    "height":208.34
+  };
+
+  referencePoints.chartXAxisMin = referencePoints.chartOrigin.x + referencePoints.chartMarginLeft;
+  referencePoints.chartYAxisMin = referencePoints.chartOrigin.y + referencePoints.chartEffectiveSize.height;
+
+  referencePoints.chartXAxisMax = referencePoints.chartXAxisMin + referencePoints.chartEffectiveSize.width;
+  referencePoints.chartYAxisMax = referencePoints.chartYAxisMin - referencePoints.chartEffectiveSize.height;
+
+  referencePoints.chartMinCoordinates = {
+    "x":referencePoints.chartXAxisMin,
+    "y":referencePoints.chartYAxisMin
+  };
+
+  referencePoints.legendCoordinates = {
+    "x":16.67,
+    "y":416.67
+  };
+
+  referencePoints.legendSize = {
+    "width":433.33,
+    "height":52.09
+  };
+
+  referencePoints.rightPaneSize = {
+    "width":333,
+    "height":500
+  };
+
+  referencePoints.rightPaneCoordinates = {
+    "x":467,
+    "y":0
+  };
+
+  referencePoints.overlayPlaneSize = {
+    "width":716.67,
+    "height":500
+  };
+
+  referencePoints.overlayPlaneOffscreen = {
+    "x":800,
+    "y":0
+  };
+
+  referencePoints.overlayPlaneOnscreen = {
+    "x":83.33,
+    "y":0
+  };
+
+  referencePoints.overlayTitleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+  referencePoints.overlayContractCoordinates = {
+    "x":14.92,
+    "y":104.17
+  };
+
+  referencePoints.overlayContractDescriptionCoordinates = {
+    "x":14.92,
+    "y":125
+  };
+
+  referencePoints.overlayContractSliderCoordinates =  {
+    "x":14.92,
+    "y":177.083
+  };
+
+  referencePoints.overlaySalaryCoordinates = {
+    "x":253.94,
+    "y":104.17
+  };
+
+  referencePoints.overlaySalaryDescriptionCoordinates = {
+    "x":253.94,
+    "y":125
+  };
+
+  referencePoints.overlaySalarySliderCoordinates =  {
+    "x":253.94,
+    "y":177.083
+  };
+
+  referencePoints.overlayWinValueCoordinates = {
+    "x":492.94,
+    "y":104.17
+  };
+
+  referencePoints.overlayWinValueDescriptionCoordinates = {
+    "x":492.94,
+    "y":125
+  };
+
+  referencePoints.overlayWinValueTableCoordinates = {
+    "x":492.94,
+    "y":177.083
+  };
+
+  referencePoints.saveButtonCoordinates = {
+    "x":492.94,
+    "y":437.5
+  };
+
+  referencePoints.saveButtonSize = {
+    "width":209.13,
+    "height":41.667
+  };
+
+  referencePoints.contractDetailsHeadingCoordinates = {
+    "x":625,
+    "y":41.68
+  };
+
+  referencePoints.projectedSurplusHeadingCoordinates = {
+    "x":566.67,
+    "y":72.92
+  };
+
+  referencePoints.projectedSurplusValueCoordinates = {
+    "x":566.67,
+    "y":93.75
+  };
+
+  referencePoints.contractValueHeadingCoordinates = {
+    "x":700,
+    "y":72.92
+  };
+
+  referencePoints.contractValueCoordinates = {
+    "x":700,
+    "y":93.75
+  };
+
+  referencePoints.editSalaryButtonCoordinates = {
+    "x":566.67,
+    "y":197.92
+  };
+
+  referencePoints.winValueButtonCoordinates = {
+    "x":700,
+    "y":197.92
+  };
+
+  referencePoints.contractTableCoordinates = {
+    "x":483.333,
+    "y":197.92
+  };
+
+  referencePoints.contractTableSize = {
+    "width":300,
+    "height":260.41
+  };
+
+  referencePoints.rightPaneContractLengthSliderCoordinates = {
+    "x":483.33,
+    "y":125
+  };
+
+
+  referencePoints.overlayColumnWidth = 209.13;
+  referencePoints.overlayDescriptionHeight = 41.667;
+  referencePoints.overlaySliderHeight = 41.667;
+  referencePoints.overlayColumnTableHeight = 218.75;
+
+  return referencePoints;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.defineSize = function(preset) {
+  const modeler = this;
+  let size;
+  size = modeler.defaulter(preset,{});
+  size.width = modeler.defaulter(size.width,800);
+  size.height = modeler.defaulter(size.height,500);
+  return size;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addCompData = function(data) {
+  const modeler = this;
+
+  modeler.chart
+    .addCompData(data);
+
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addPlayerData = function(data,projections,name) {
+  const modeler = this;
+
+  modeler.chart
+    .addPlayerData(data,projections,name);
+
+  modeler.projections = projections;
+
+  modeler.title
+    .text(name);
+
+  modeler.key
+    .playerName(name);
+
+  d3.selectAll(".playerName")
+    .html(name);
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.addProjection = function(projection) {
+  const modeler = this;
+
+  modeler.projection = projection;
+
+  modeler.chart
+    .addProjection(projection);
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.calculateContractValues = function() {
+  const modeler = this;
+
+  let totalCost = 0;
+  let projectedProduction = 0;
+  let projectedWins = 0;
+  let warKey = "bWar";
+
+  modeler.projectionParameters.salary.forEach((value,index) => {
+    if(index < modeler.projectionParameters.contractLength) {
+      totalCost += value;
+    }
+  });
+
+  modeler.projectionParameters.winValue.forEach((value,index) => {
+    if(index < modeler.projectionParameters.contractLength) {
+      let projectedWins = modeler.projections.mean[index][warKey];
+      let costPerWin = value;
+      projectedProduction += projectedWins * costPerWin;
+    }
+  });
+
+  let surplus = projectedProduction - totalCost;
+  let surplusColor = surplus > 0 ? "green" : "red";
+
+
+  modeler.projectedSurplusValue
+    .text("$" + surplus.toFixed(2) + "MM")
+    .attr("fill",surplusColor);
+
+
+  modeler.contractValueLabel
+    .text("$" + projectedProduction.toFixed(2) + "MM");
+
+  // let top25Projections = [];
+  // let meanProjections = [];
+  // let bottom25Projections = [];
+  // let meanValueByYear = [];
+  //
+  // let salaryValues = [];
+  // let winValues = [];
+  // let ageSeasons = [];
+  //
+  // Object.keys(modeler.projections.mean).forEach((key) => {
+  //   meanProjections.push(modeler.projections.mean[key].bWar);
+  //   ageSeasons.push(modeler.projections.mean[key].age);
+  // });
+  //
+  // ageSeasons.shift();
+  // meanValueByYear.shift();
+  // meanProjections.shift();
+  //
+  // let contractYears = +modeler.contractYearsSlider.currentValue.toFixed(0);
+  //
+  // modeler.salarySliders.forEach((slider,index) => {
+  //   salaryValues.push(slider.currentValue);
+  //   if(index >= contractYears) {
+  //     slider.hide();
+  //   } else {
+  //     slider.show();
+  //   }
+  // });
+  //
+  // modeler.winValueSliders.forEach((slider,index) => {
+  //   winValues.push(slider.currentValue);
+  //   if(index >= contractYears) {
+  //     slider.hide();
+  //   } else {
+  //     slider.show();
+  //   }
+  // });
+  //
+  // modeler.projectionParameters.salary = salaryValues;
+  // modeler.projectionParameters.winValues = winValues;
+  //
+  // let totalContractCost = 0;
+  // let totalMeanContractValue = 0;
+  //
+  // d3.range(0,contractYears).forEach((year) => {
+  //   totalContractCost += modeler.projectionParameters.salary[year];
+  //   totalMeanContractValue += modeler.projectionParameters.winValues[year] * meanProjections[year];
+  //   meanValueByYear.push({
+  //     "age":ageSeasons[year],
+  //     "bWar":modeler.projectionParameters.salary[year] / modeler.projectionParameters.winValues[year]
+  //   });
+  // });
+  //
+  // let allValues = {
+  //   "mean":{"yearData":meanValueByYear},
+  //   // "top25":calculateValues(top25Projections),
+  //   // "bottom25":calculateValues(bottom25Projections)
+  // };
+  //
+  // modeler.chart
+  //   .updateProjectionLines(allValues);
+  //
+  //
+  //
+  // let meanContractSurplus = totalMeanContractValue - totalContractCost;
+  //
+  // modeler.contractCostText
+  //   .updateText("$" + totalContractCost.toFixed(2) + "mm");
+  //
+  // modeler.meanSurplusText
+  //   .updateText("$" + meanContractSurplus.toFixed(2) + "mm");
+
+
+  return this;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.dataFromPane = function(data) {
+  const modeler = this;
+
+  modeler.chart.projectionLine
+    .attr("display","block");
+
+  modeler.rightPane
+    .attr("display","block");
+
+  modeler.projectionParameters = data;
+
+  modeler.calculateContractValues();
+
+  // modeler.contractButton
+  //   .hide();
+  //
+  // modeler.contractCostLabel
+  //   .show();
+  //
+  // modeler.contractCostText
+  //   .show();
+  //
+  // modeler.meanSurplusLabel
+  //   .show();
+  //
+  // modeler.meanSurplusText
+  //   .show();
+  //
+  // modeler.contractCostText
+  //   .show();
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
+Modeler.prototype.registerTooltip = function(tooltip) {
+  const modeler = this;
+
+  modeler.tooltip = tooltip;
+  modeler.chart.tooltip = tooltip;
+  modeler.pane
+    .registerTooltip(tooltip);
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
 PitcherConfig.prototype.defineBBRefValue = function() {
   const config = this;
 
@@ -4350,6 +5720,646 @@ PitcherConfig.prototype.defineTotalValue = function() {
 };
 
 /* jshint esversion:6 */
+PlayerMenu.prototype.add2018PlayerBWar = function(where,player) {
+  const menu = this;
+  let element;
+
+  let displayBWar;
+
+  if(player.bWar2018 !== "") {
+    displayBWar = parseFloat(player.bWar2018).toFixed(1);
+  } else {
+    displayBWar = "n/a";
+  }
+
+  where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("player-menu-war",true)
+    .classed("align-center",true)
+    .html(displayBWar);
+
+  return element;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addCareerBWar = function(where,player) {
+  const menu = this;
+
+  let element;
+  let careerTotal = 0;
+
+  Object.keys(player).forEach((key) => {
+    if(key.substr(0,4) === "bWar") {
+      if(player[key] !== "") {
+        careerTotal += parseFloat(player[key]);
+      }
+    }
+  });
+
+  careerTotal = careerTotal.toFixed(1);
+
+  element = where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("align-center",true)
+    .html(careerTotal);
+
+  return element;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addContainerElement = function() {
+  const menu = this;
+
+  let element;
+
+  element = d3.select("#playerMenu")
+    .append("div")
+    .classed("player-menu-container",true);
+
+  return element;
+
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addFilterRow = function() {
+  const menu = this;
+
+  let blankRow = menu.containerElement
+    .append("div")
+    .classed("player-menu-header-row",true)
+    .attr("id","filterNameRow")
+    .style("height","50px");
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .classed("align-left",true)
+    .html("<input type='text' id='searchPlayers' length='30' placeholder='Filter By Name...'/>");
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+  blankRow
+    .append("div")
+    .classed("player-menu-header-cell",true);
+
+
+
+  return blankRow;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addHeaderRow = function() {
+  const menu = this;
+
+  let headerRow = menu.containerElement
+    .append("div")
+    .classed("player-menu-header-row",true);
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .classed("align-left",true)
+    .html("Player Name")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player Name")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    })
+    .on('click',function() {
+      menu
+        .sort("Name");
+    })
+    .on('click',function() {
+      menu.positionRow.style("display","none");
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .classed("align-center",true)
+    .attr("id","positionHeader")
+    .html("Position")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player's primary position. <em>Click to filter.</em>")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    })
+    .on('click',function() {
+      menu.positionRow.style("display","block");
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .classed("align-center",true)
+    .html("Age")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player's age starting the 2019 season.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    })
+    .on("click",function() {
+      console.log("AGE CLICK!");
+      menu
+        .sort("Age");
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .html("Career bWAR Performance")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player's production to date.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .html("Career bWAR")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player's production to date.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .html("Projected 3 Year bWAR")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Projected production through the 2021 season.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    });
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .html("2018 bWar")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Player's production in 2018.")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    });
+
+
+
+
+
+  return headerRow;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerAge = function(where,player) {
+  const menu = this;
+
+  let element;
+
+  where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("player-menu-position",true)
+    .classed("align-center",true)
+    .html(player.Age);
+
+  return element;
+
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerLine = function(player) {
+  const menu = this;
+
+  let playerRow = menu.addPlayerRow(menu.containerElement,player);
+  let playerName = menu.addPlayerName(playerRow,player);
+  let playerPosition = menu.addPlayerPosition(playerRow,player);
+  let playerAge = menu.addPlayerAge(playerRow,player);
+  let playerSparkline = menu.addPlayerSparkline(playerRow,player);
+  let playerCareerbWar = menu.addCareerBWar(playerRow,player);
+  let player2018bWar = menu.add2018PlayerBWar(playerRow,player);
+
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerName = function(where,player) {
+  const menu = this;
+
+  let element;
+
+  element = where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("player-menu-name",true);
+
+  element
+    .append("a")
+    .classed("player-name-link",true)
+    .html(player.Name)
+    .on('click',() => {
+      menu.loadCallback(player);
+    });
+
+  return element;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerPosition = function(where,player) {
+  const menu = this;
+
+  let element;
+
+  element = where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("player-menu-position",true)
+    .classed("align-center",true)
+    .html(player.Position);
+
+  return element;
+
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerRow = function(where,player) {
+  const menu = this;
+
+  let element;
+
+  element = where
+    .append("div")
+    .datum(player)
+    .classed("player-menu-row",true)
+    .classed("player-menu-row-visible",true)
+    .classed("player-menu-row-hidden",false);
+
+  return element;
+
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPlayerSparkline = function(where,player) {
+  let element,
+  sparkline;
+
+  element = where
+    .append("div")
+    .classed("player-menu-cell",true)
+    .classed("player-menu-sparkline",true)
+    .classed("align-center",true);
+
+  sparkline = new Sparkline({
+    "where":element,
+    "data":[player.bWar2004,player.bWar2005,player.bWar2006,player.bWar2007,player.bWar2008,player.bWar2009,player.bWar2010,player.bWar2011,player.bWar2012,player.bWar2013,player.bWar2014,player.bWar2015,player.bWar2016,player.bWar2017,player.bWar2018]
+  });
+
+  return element;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.addPositionRow = function() {
+  const menu = this;
+
+
+  let header = d3.select("#filterNameRow").node().getBoundingClientRect();
+
+  let positionFilterRow = d3.select("#positionFilter")
+    .style("display","none")
+    .style("width",header.width + "px")
+    .style("height",header.height + "px")
+    .style("top",header.y + "px")
+    .style("left",header.x + "px")
+    .style("border","1px solid black")
+    .style("margin","auto");
+
+
+  let positionFilter = positionFilterRow
+    .append("div")
+    .style("width","100%")
+    .style("height","100%")
+    .style("background-color","#20639b")
+    .style("color","#20639b")
+    .style("display","flex")
+    .style("justify-content","space-between");
+
+  let positions = [
+    {
+      "label":"Catchers",
+      "key":"catcher"
+    },
+    {
+      "label":"First Basemen",
+      "key":"firstBase"
+    },
+    {
+      "label":"Second Basemen",
+      "key":"secondBase"
+    },
+    {
+      "label":"Shortstops",
+      "key":"shortstop"
+    },
+    {
+      "label":"Third Basemen",
+      "key":"thirdBase"
+    },
+    {
+      "label":"Left Fielders",
+      "key":"leftField"
+    },
+    {
+      "label":"Center Fielders",
+      "key":"centerField"
+    },
+    {
+      "label":"Right Fielders",
+      "key":"rightField"
+    },
+    {
+      "label":"Starters",
+      "key":"starter"
+    },
+    {
+      "label":"Relievers",
+      "key":"reliever"
+    }
+  ];
+
+  let positionSpans = positionFilter.selectAll(".positionSpan")
+    .data(positions)
+    .enter()
+    .append("div")
+    .style("cursor","pointer")
+    .style("display","table")
+    .style("margin","0.25em");
+
+
+  positionSpans
+    .append("div")
+    .style("display","table-cell")
+    .style("vertical-align","middle")
+    .style("height","35px")
+    .style("padding-left","0.125em")
+    .style("padding-right","0.125em")
+    .classed("filter-active",function(d) {
+      return menu.filters[d.key];
+    })
+    .classed("filter-inactive",function(d) {
+      return !menu.filters[d.key];
+    })
+    .html((d) => { return d.label; })
+    .on('mouseover',function(d) {
+      let message;
+
+      if(menu.filters[d.key]) {
+        message = "Click to hide <strong>" + d.label + "</strong>";
+      } else {
+        message = "Click to show <strong>" + d.label + "</strong>";
+      }
+
+      menu.tooltip
+        .update(message)
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    })
+    .on("click",function(d) {
+      menu.filters[d.key] = !menu.filters[d.key];
+
+      menu.tooltip
+        .hide();
+
+      menu
+        .updateFilters();
+
+      d3.select(this)
+        .classed("filter-active",function(d) {
+          return menu.filters[d.key];
+        })
+        .classed("filter-inactive",function(d) {
+          return !menu.filters[d.key];
+        });
+
+
+    });
+
+  window.addEventListener("resize",resizeRow);
+
+  menu
+    .definePositionFilters();
+
+
+  function resizeRow() {
+    let header = d3.select("#filterNameRow").node().getBoundingClientRect();
+    positionFilterRow = d3.select("#positionFilter")
+      .style("width",header.width + "px")
+      .style("height",header.height + "px")
+      .style("top",header.y + "px")
+      .style("left",header.x + "px");
+  }
+
+
+  return positionFilterRow;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.defineFilters = function() {
+  const menu = this;
+
+  let filters = {};
+  filters.name = "";
+  filters.catcher = true;
+  filters.firstBase = true;
+  filters.secondBase = true;
+  filters.shortstop = true;
+  filters.thirdBase = true;
+  filters.leftField = true;
+  filters.centerField = true;
+  filters.rightField = true;
+  filters.starter = true;
+  filters.reliever = true;
+
+  return filters;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.defineNameFilter = function() {
+  const menu = this;
+
+  let element;
+  let filterInput;
+
+  element = d3.select("#searchPlayers");
+
+  element
+    .on('input',() => {
+      let value = element.node().value;
+      menu.filters.name = value.toLowerCase();
+      menu
+        .updateFilters();
+    })
+    .on('mouseover',() => {
+      menu.tooltip
+        .update("Type to search players.")
+        .show()
+        .move();
+    })
+    .on('mousemove',() => {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',() => {
+      menu.tooltip
+        .hide();
+    });
+
+  return menu;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.definePositionFilters = function() {
+  const menu = this;
+
+  d3.selectAll(".menu-position-filter")
+    .on('input',function(d,i) {
+      let element = d3.select(this);
+      let position = element.attr("data-position");
+      menu.filters[position] = element.node().checked;
+      menu.updateFilters();
+    });
+
+  return menu;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.showTable = function(menu,players) {
+
+  menu.containerElement = menu
+    .addContainerElement();
+
+  menu.headerRow = menu
+    .addHeaderRow();
+
+  menu.filterRow = menu
+    .addFilterRow();
+
+  menu.positionRow = menu
+    .addPositionRow();
+
+  players.forEach((player) => {
+    menu.addPlayerLine(player);
+  });
+
+  menu.playerMenuRows = menu.containerElement
+    .selectAll(".player-menu-row");
+
+
+  menu
+    .defineNameFilter()
+    .definePositionFilters();
+
+};
+
+/* jshint esversion:6 */
 PlayerMenu.prototype.filterByName = function(query) {
   const menu = this;
 
@@ -4369,6 +6379,25 @@ PlayerMenu.prototype.filterByName = function(query) {
     });
 
   return menu;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.registerTooltip = function(tooltip) {
+  const menu = this;
+
+  menu.tooltip = tooltip;
+
+  return menu;
+};
+
+/* jshint esversion:6 */
+PlayerMenu.prototype.sort = function(key) {
+  const menu = this;
+
+  let select = d3.selectAll(".player-menu-row");
+  select.sort((a,b) => { return b.Position - a.Position; });
+
+  return this;
 };
 
 /* jshint esversion:6 */
@@ -4400,8 +6429,6 @@ PlayerMenu.prototype.togglePosition = function(togglePosition) {
 /* jshint esversion:6 */
 PlayerMenu.prototype.updateFilters = function() {
   const menu = this;
-
-  console.log(menu.filters);
 
   menu.playerMenuRows
     .each(function(d,i) {
@@ -4442,393 +6469,201 @@ PlayerMenu.prototype.updateFilters = function() {
 };
 
 /* jshint esversion:6 */
-Slider.prototype.addGlowCircle = function() {
-  const slider = this;
+Projection.prototype.getBWarAgingCurveProjection = function() {
+  const projection = this;
 
-  // TODO: FILL IN VALUES
-  // UPDATE STYLES
-  let glowCircle = slider.layers.glow
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
-    .attr("r",slider.styles.glowCircleDefaultRadius)
-    .attr("fill",slider.styles.glowCircleFill)
-    .attr("display","none");
+  let warProjection = [];
+  let lastValue;
 
-  return glowCircle;
-};
+  lastValue = projection.threeYearBWar;
 
-/* jshint esversion:6 */
-Slider.prototype.addGroup = function(where) {
-  const slider = this;
-  let group;
-
-  group = where
-    .append("g");
-
-  return group;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.addLabel = function() {
-  const slider = this;
-  let text;
-
-  text = new TextLabel({
-    "text":slider.labelText,
-    "where":slider.layers.text
-  }).show()
-  .move(slider.referencePoints.labelPosition);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addLayers = function() {
-  const slider = this;
-  let layers = {};
-
-  layers.background = addSingleLayer();
-  layers.text = addSingleLayer();
-  layers.track = addSingleLayer();
-  layers.glow = addSingleLayer();
-  layers.circle = addSingleLayer();
-
-  return layers;
-
-  function addSingleLayer() {
-    let layer;
-
-    layer = slider.group
-      .append("g");
-
-    return layer;
-  }
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSliderTrack = function() {
-  const slider = this;
-  let track;
-
-  track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.margins.left)
-    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
-    .attr("height",slider.styles.sliderTrackHeight)
-    .attr("width",slider.referencePoints.effectiveWidth)
-    .attr("fill",slider.styles.sliderTrackColor);
-
-  return track;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSlidingCircle = function() {
-  const slider = this;
-
-  let circle = slider.layers.circle
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("r",slider.styles.circleRadius)
-    .attr("fill",slider.styles.circleFill)
-    .attr("stroke",slider.styles.circleStroke)
-    .attr("stroke-width",slider.styles.circleStrokeWidth)
-    .attr("cursor","pointer")
-    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
-    .on('mouseover',function() {
-      let element = d3.select(this);
-
-      element
-        .transition()
-        .duration(125)
-        .attr("fill",slider.styles.highlightFillColor)
-        .attr("stroke",slider.styles.highlightStrokeColor)
-        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
-        .attr("radius",slider.styles.highlightCircleRadius);
-
-      slider
-        .circleMouseover();
-    })
-    .on('mouseout',function() {
-      let element = d3.select(this);
-
-      if(!slider.dragLock) {
-        element
-          .transition()
-          .duration(125)
-          .attr("fill",slider.styles.circleFill)
-          .attr("stroke",slider.styles.circleStroke)
-          .attr("stroke-width",slider.styles.circleStrokeWidth)
-          .attr("radius",slider.styles.circleRadius);
-      }
-
-      slider
-        .circleMouseout();
-
-
-    });
-
-  return circle;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addValueLabel = function() {
-  const slider = this;
-  let text;
-
-  text = new TextLabel({
-    "text":slider.datum.value,
-    "where":slider.layers.text,
-    "textAnchor":"start",
-    "fontSize":"16px"
-  }).show()
-  .move({
-    "x":slider.referencePoints.valueLabelCenterX,
-    "y":slider.referencePoints.circleCenterY
+  warProjection.push({
+    "age":projection.data["2018"].age,
+    "bWar":projection.data["2018"].bWar
   });
 
-  return text;
+  projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {
+    let season = {};
+    season.age = curveDeltaObject.age;
+    season.bWar = +(lastValue + curveDeltaObject.delta).toFixed(1);
+    lastValue += curveDeltaObject.delta;
+    warProjection.push(season);
+  });
+
+  return warProjection;
 };
 
 /* jshint esversion:6 */
-Slider.prototype.defaulter = function(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
+Projection.prototype.getBWarSimilarPlayersMax = function() {
+  const projection = this;
+  let maxValues = [];
+
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+      let season = {};
+      season.age = key;
+      season.bWar = d3.max(projection.bWarSimilarPlayersRawData[key]);
+      maxValues.push(season);
+  });
+
+  maxValues.shift();
+
+  maxValues.unshift({
+    "age":projection.data["2018"].age,
+    "bWar":projection.data["2018"].bWar
+  });
+
+  return maxValues;
 };
 
 /* jshint esversion:6 */
-Slider.prototype.defineDragFunctions = function() {
-  const slider = this;
+Projection.prototype.getBWarSimilarPlayersMean = function() {
+  const projection = this;
+  let meanValues = [];
 
-  let dragFunctions = {};
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.bWar = d3.mean(projection.bWarSimilarPlayersRawData[key]);
+    meanValues.push(season);
+  });
 
-  dragFunctions.start = function(d,i) {
-    let element = d3.select(this);
-    slider.dragLock = true;
-  };
-
-  dragFunctions.drag = function(d,i) {
-    let element = d3.select(this);
-    let xPosition = d3.event.x;
-
-    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
-      let newValue;
-      newValue = slider.scale.invert(xPosition);
-
-      slider.currentValue = newValue;
-
-      slider.valueLabel
-        .updateText(newValue.toFixed(slider.significantDigits));
-
-      slider.dragCallback(newValue);
-
-      element
-        .attr("cx",xPosition);
-    }
-  };
-
-
-  dragFunctions.end = function(d,i) {
-    slider.dragLock = false;
-
-    let element = d3.select(this);
-
-    element
-      .transition()
-      .duration(125)
-      .attr("fill",slider.styles.circleFill)
-      .attr("stroke",slider.styles.circleStroke)
-      .attr("stroke-width",slider.styles.circleStrokeWidth)
-      .attr("radius",slider.styles.circleRadius);
-
-  };
-
-  return dragFunctions;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineLayout = function() {
-  const slider = this;
-  let layout = {};
-
-  layout.labelOrigin = {"x":0,"y":slider.margins.top};
-  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
-
-  return layout;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineMargins = function(presetMargins) {
-  const slider = this;
-  let margins = slider.defaulter(presetMargins,{});
-
-  margins.left = slider.defaulter(margins.left,10);
-  margins.right = slider.defaulter(margins.right,50);
-  margins.top = slider.defaulter(margins.top,10);
-  margins.bottom = slider.defaulter(margins.bottom,0);
-
-  return margins;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineReferencePoints = function() {
-  const slider = this;
-  let referencePoints = {};
-
-  referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
-  referencePoints.verticalCenter = slider.size.height / 2;
-  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
-  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
-  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
-  referencePoints.trackMin = slider.margins.left;
-  referencePoints.trackMax = slider.size.width - slider.margins.right;
-  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
-  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
-
-  return referencePoints;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineScale = function() {
-  const slider = this;
-  let scale;
-
-  scale = d3.scaleLinear()
-    .domain(slider.domain)
-    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
-
-  return scale;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineSize = function(presetSize) {
-  const slider = this;
-  let size = slider.defaulter(presetSize,{});
-
-  size.height = slider.defaulter(size.height,50);
-  size.width = slider.defaulter(size.width,200);
-
-  return size;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineStyles = function(presetStyles) {
-  const slider = this;
-  let styles = slider.defaulter(presetStyles,{});
-
-  styles.sliderTrackColor = "#aaa";
-  styles.sliderTrackHeight = 5;
-  styles.circleRadius = 5;
-  styles.circleFill = "black";
-  styles.circleStroke = "#eee";
-  styles.circleStrokeWidth = 1;
-
-  styles.highlightFillColor = "red";
-  styles.highlightStrokeColor = "black";
-  styles.highlightFillStrokeWidth = 2;
-  styles.highlightCircleRadius = 7;
-
-  styles.glowCircleDefaultOpacity = 1.0;
-  styles.glowCircleDefaultRadius = 7;
-  styles.glowCircleFill = "red";
-
-  styles.glowCircleDefaultOpacity = 1;
-  styles.glowCircleDefaultRadius = 5;
-  styles.glowCircleFill = "red";
-
-  styles.glowDelay = 0;
-  styles.glowDuration = 1500;
-  styles.glowCircleEndOpacity = 0;
-  styles.glowCircleEndRadius = 15;
-  styles.glowCircleEndFill = "red";
-
-
-  return styles;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.hide = function() {
-  const slider = this;
-
-  slider.group
-    .attr("display","none");
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.killGlow = function() {
-  const slider = this;
-
-  slider.isGlowing = false;
+  meanValues.shift();
+  meanValues.unshift({
+    "age":projection.data["2018"].age,
+    "bWar":projection.data["2018"].bWar
+  });
   
-  slider.glowCircle
-    .attr("display","none");
-
-  return slider;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.move = function(coordinates) {
-  const slider = this;
-
-  slider.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return slider;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.runGlow = function() {
-  const slider = this;
-
-  slider.isGlowing = true;
-
-  slider.glowCircle
-    .attr("display","block");
-
-  glow();
-
-  return slider;
-
-  function glow() {
-    slider.glowCircle
-      .attr("opacity",slider.styles.glowCircleDefaultOpacity)
-      .attr("r",slider.styles.glowCircleDefaultRadius)
-      .attr("fill",slider.styles.glowCircleFill)
-      .transition()
-      .delay(slider.styles.glowDelay)
-      .duration(slider.styles.glowDuration)
-      .attr("opacity",slider.styles.glowCircleEndOpacity)
-      .attr("r",slider.styles.glowCircleEndRadius)
-      .attr("fill",slider.styles.glowCircleEndFill)
-      .on('end',function()  {
-        if(slider.isGlowing) {
-          glow();
-        }
-      });
-
-  }
+  return meanValues;
 };
 
 /* jshint esversion:6 */
-Slider.prototype.setDragCallback = function(cb) {
-  const slider = this;
+Projection.prototype.getBWarSimilarPlayersMin = function() {
+  const projection = this;
+  let minValues = [];
 
-  slider.dragCallback = cb;
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.bWar = d3.min(projection.bWarSimilarPlayersRawData[key]);
+    minValues.push(season);
+  });
 
-  return slider;
+  minValues.shift();
+
+  minValues.unshift({
+    "age":projection.data["2018"].age,
+    "bWar":projection.data["2018"].bWar
+  });
+  
+  return minValues;
 };
 
 /* jshint esversion:6 */
-Slider.prototype.show = function() {
-  const slider = this;
+Projection.prototype.getBWarSimilarPlayersRawData = function() {
+  const projection = this;
 
-  slider.group
-    .attr("display","block");
+  let playerProjection = [];
+  let similarPlayers = projection.data["2018"].similarPlayers;
+  let rawValues = {};
+  let mean;
+  let top25;
+  let bottom25;
+  let agesToProject;
 
-  return slider;
+  agesToProject = projection.bWarAgingCurveProjection.map((a) => {return a.age;});
+
+  agesToProject.forEach((age) => {
+    rawValues[age] = [];
+  });
+
+  similarPlayers.forEach((player) => {
+    agesToProject.forEach((age) => {
+      if(player.warAge.hasOwnProperty(age)) {
+        rawValues[age].push(player.warAge[age].bWar);
+      } else {
+        rawValues[age].push(0);
+      }
+    });
+  });
+
+
+  return rawValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBaseAge = function() {
+  const projection = this;
+
+  let baseAge = projection.data[Object.keys(projection.data)[Object.keys(projection.data).length - 1]].age;
+
+  return baseAge;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBaseBWar = function() {
+  const projection = this;
+  let baseBWar = projection.data[Object.keys(projection.data)[Object.keys(projection.data).length - 1]].bWar;
+  return baseBWar;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getRelevantWarCurveDeltas = function() {
+  const projection = this;
+  let deltas;
+
+  deltas = projection.warCurveDeltas.filter((object) => { return +object.age > projection.baseAge; });
+
+  return deltas;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getThreeYearBWar = function() {
+  const projection = this;
+
+  let relevantYears,
+    rollingAverage;
+
+  relevantYears = [
+    projection.data["2016"].bWar,
+    projection.data["2017"].bWar,
+    projection.data["2018"].bWar
+  ];
+
+  rollingAverage = relevantYears.reduce((a,b) => { return a+b; })/3;
+
+  return rollingAverage;
+
+};
+
+/* jshint esversion:6 */
+Projection.prototype.defineWarCurveDeltas = function() {
+  const projection = this;
+
+  return [
+    {"age":"19","delta":0.33},
+    {"age":"20","delta":0.33},
+    {"age":"21","delta":0.33},
+    {"age":"22","delta":0.21},
+    {"age":"23","delta":0.19},
+    {"age":"24","delta":0.06},
+    {"age":"25","delta":0},
+    {"age":"26","delta":-0.10},
+    {"age":"27","delta":-0.06},
+    {"age":"28","delta":-0.13},
+    {"age":"29","delta":-0.13},
+    {"age":"30","delta":-0.23},
+    {"age":"31","delta":-0.21},
+    {"age":"32","delta":-0.25},
+    {"age":"33","delta":-0.27},
+    {"age":"34","delta":-0.25},
+    {"age":"35","delta":-0.29},
+    {"age":"36","delta":-0.29},
+    {"age":"37","delta":-0.25},
+    {"age":"38","delta":-0.33},
+    {"age":"39","delta":-0.33},
+    {"age":"40","delta":-0.33}
+  ];
+
 };
 
 /* jshint esversion:6 */
@@ -5255,6 +7090,46 @@ StatsTableRow.prototype.addSparkline = function(where) {
 };
 
 /* jshint esversion:6 */
+TextLabel.prototype.hide = function() {
+  const label = this;
+
+  label.group
+    .style("display","none");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.move = function(position) {
+  const label = this;
+
+  label.group
+    .attr("transform","translate("+position.x+","+position.y+")");
+
+  return this;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.show = function() {
+  const label = this;
+
+  label.group
+    .style("display","block");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.updateText = function(newText) {
+  const label = this;
+
+  label.background.text(newText);
+  label.foreground.text(newText);
+
+  return label;
+};
+
+/* jshint esversion:6 */
 TextLabel.prototype.addBackground = function() {
   const label = this;
 
@@ -5332,46 +7207,6 @@ TextLabel.prototype.defineStyles = function(options) {
   function defaulter(value,defaultValue) {
     return value === undefined ? defaultValue : value;
   }
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.hide = function() {
-  const label = this;
-
-  label.group
-    .style("display","none");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.move = function(position) {
-  const label = this;
-
-  label.group
-    .attr("transform","translate("+position.x+","+position.y+")");
-
-  return this;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.show = function() {
-  const label = this;
-
-  label.group
-    .style("display","block");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.updateText = function(newText) {
-  const label = this;
-
-  label.background.text(newText);
-  label.foreground.text(newText);
-
-  return label;
 };
 
 /* jshint esversion:6 */
@@ -5572,8 +7407,6 @@ Tooltip.prototype.showPlayerYear = function(name,datum) {
 Tooltip.prototype.showSparklinedata = function(data) {
   const tooltip = this;
 
-  console.log("SHOWING SPARKLINE DATA");
-
   return tooltip;
 };
 
@@ -5615,300 +7448,391 @@ Tooltip.prototype.showTwoStandardDeviations = function(summaryData,name) {
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.add2018PlayerBWar = function(where,player) {
-  const menu = this;
-  let element;
+Slider.prototype.hide = function() {
+  const slider = this;
 
-  let displayBWar;
+  slider.group
+    .attr("display","none");
 
-  if(player.bWar2018 !== "") {
-    displayBWar = parseFloat(player.bWar2018).toFixed(1);
-  } else {
-    displayBWar = "n/a";
+  return slider;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.killGlow = function() {
+  const slider = this;
+
+  slider.isGlowing = false;
+  
+  slider.glowCircle
+    .attr("display","none");
+
+  return slider;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.move = function(coordinates) {
+  const slider = this;
+
+  slider.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
+
+  return slider;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.runGlow = function() {
+  const slider = this;
+
+  slider.isGlowing = true;
+
+  slider.glowCircle
+    .attr("display","block");
+
+  glow();
+
+  return slider;
+
+  function glow() {
+    slider.glowCircle
+      .attr("opacity",slider.styles.glowCircleDefaultOpacity)
+      .attr("r",slider.styles.glowCircleDefaultRadius)
+      .attr("fill",slider.styles.glowCircleFill)
+      .transition()
+      .delay(slider.styles.glowDelay)
+      .duration(slider.styles.glowDuration)
+      .attr("opacity",slider.styles.glowCircleEndOpacity)
+      .attr("r",slider.styles.glowCircleEndRadius)
+      .attr("fill",slider.styles.glowCircleEndFill)
+      .on('end',function()  {
+        if(slider.isGlowing) {
+          glow();
+        }
+      });
+
   }
-
-  where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("player-menu-war",true)
-    .classed("align-center",true)
-    .html(displayBWar);
-
-  return element;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addCareerBWar = function(where,player) {
-  const menu = this;
+Slider.prototype.setDragCallback = function(cb) {
+  const slider = this;
 
-  let element;
-  let careerTotal = 0;
+  slider.dragCallback = cb;
 
-  Object.keys(player).forEach((key) => {
-    if(key.substr(0,4) === "bWar") {
-      if(player[key] !== "") {
-        careerTotal += parseFloat(player[key]);
-      }
-    }
-  });
-
-  careerTotal = careerTotal.toFixed(1);
-
-  element = where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("align-center",true)
-    .html(careerTotal);
-
-  return element;
+  return slider;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addContainerElement = function() {
-  const menu = this;
+Slider.prototype.show = function() {
+  const slider = this;
 
-  let element;
+  slider.group
+    .attr("display","block");
 
-  element = d3.select("#playerMenu")
-    .append("div")
-    .classed("player-menu-container",true);
-
-  return element;
-
+  return slider;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addHeaderRow = function() {
-  const menu = this;
+Slider.prototype.addGlowCircle = function() {
+  const slider = this;
 
-  let headerRow = menu.containerElement
-    .append("div")
-    .classed("player-menu-header-row",true);
+  // TODO: FILL IN VALUES
+  // UPDATE STYLES
+  let glowCircle = slider.layers.glow
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
+    .attr("r",slider.styles.glowCircleDefaultRadius)
+    .attr("fill",slider.styles.glowCircleFill)
+    .attr("display","none");
 
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("Player Name");
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .classed("align-center",true)
-    .html("Position");
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .classed("align-center",true)
-    .html("Age");
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("Career bWAR Performance");
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("Career bWAR");
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("2018 bWar");
-
-
-
-
-  return headerRow;
+  return glowCircle;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerAge = function(where,player) {
-  const menu = this;
+Slider.prototype.addGroup = function(where) {
+  const slider = this;
+  let group;
 
-  let element;
+  group = where
+    .append("g");
 
-  where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("player-menu-position",true)
-    .classed("align-center",true)
-    .html(player.Age);
+  return group;
+}
 
-  return element;
+/* jshint esversion:6 */
+Slider.prototype.addLabel = function() {
+  const slider = this;
+  let text;
 
+  text = new TextLabel({
+    "text":slider.labelText,
+    "where":slider.layers.text
+  }).show()
+  .move(slider.referencePoints.labelPosition);
+
+  return text;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerLine = function(player) {
-  const menu = this;
+Slider.prototype.addLayers = function() {
+  const slider = this;
+  let layers = {};
 
-  let playerRow = menu.addPlayerRow(menu.containerElement,player);
-  let playerName = menu.addPlayerName(playerRow,player);
-  let playerPosition = menu.addPlayerPosition(playerRow,player);
-  let playerAge = menu.addPlayerAge(playerRow,player);
-  let playerSparkline = menu.addPlayerSparkline(playerRow,player);
-  let playerCareerbWar = menu.addCareerBWar(playerRow,player);
-  let player2018bWar = menu.add2018PlayerBWar(playerRow,player);
+  layers.background = addSingleLayer();
+  layers.text = addSingleLayer();
+  layers.track = addSingleLayer();
+  layers.glow = addSingleLayer();
+  layers.circle = addSingleLayer();
 
+  return layers;
+
+  function addSingleLayer() {
+    let layer;
+
+    layer = slider.group
+      .append("g");
+
+    return layer;
+  }
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerName = function(where,player) {
-  const menu = this;
+Slider.prototype.addSliderTrack = function() {
+  const slider = this;
+  let track;
 
-  let element;
+  track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.margins.left)
+    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
+    .attr("height",slider.styles.sliderTrackHeight)
+    .attr("width",slider.referencePoints.effectiveWidth)
+    .attr("fill",slider.styles.sliderTrackColor);
 
-  element = where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("player-menu-name",true);
-
-  element
-    .append("a")
-    .classed("player-name-link",true)
-    .html(player.Name)
-    .on('click',() => {
-      menu.loadCallback(player);
-    });
-
-  return element;
+  return track;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerPosition = function(where,player) {
-  const menu = this;
+Slider.prototype.addSlidingCircle = function() {
+  const slider = this;
 
-  let element;
-
-  element = where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("player-menu-position",true)
-    .classed("align-center",true)
-    .html(player.Position);
-
-  return element;
-
-};
-
-/* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerRow = function(where,player) {
-  const menu = this;
-
-  let element;
-
-  element = where
-    .append("div")
-    .datum(player)
-    .classed("player-menu-row",true)
-    .classed("player-menu-row-visible",true)
-    .classed("player-menu-row-hidden",false);
-
-  return element;
-
-};
-
-/* jshint esversion:6 */
-PlayerMenu.prototype.addPlayerSparkline = function(where,player) {
-  let element,
-  sparkline;
-
-  element = where
-    .append("div")
-    .classed("player-menu-cell",true)
-    .classed("player-menu-sparkline",true)
-    .classed("align-center",true);
-
-  sparkline = new Sparkline({
-    "where":element,
-    "data":[player.bWar2004,player.bWar2005,player.bWar2006,player.bWar2007,player.bWar2008,player.bWar2009,player.bWar2010,player.bWar2011,player.bWar2012,player.bWar2013,player.bWar2014,player.bWar2015,player.bWar2016,player.bWar2017,player.bWar2018]
-  });
-
-  return element;
-};
-
-/* jshint esversion:6 */
-PlayerMenu.prototype.defineFilters = function() {
-  const menu = this;
-
-  let filters = {};
-  filters.name = "";
-  filters.catcher = true;
-  filters.firstBase = true;
-  filters.secondBase = true;
-  filters.shortstop = true;
-  filters.thirdBase = true;
-  filters.leftField = true;
-  filters.centerField = true;
-  filters.rightField = true;
-  filters.starter = true;
-  filters.reliever = true;
-
-  return filters;
-};
-
-/* jshint esversion:6 */
-PlayerMenu.prototype.defineNameFilter = function() {
-  const menu = this;
-
-  let element;
-  let filterInput;
-
-  element = d3.select("#searchPlayers");
-
-  element
-    .on('input',() => {
-      let value = element.node().value;
-      menu.filters.name = value.toLowerCase();
-      menu
-        .updateFilters();
-    });
-
-  filterInput = d3.select("#searchPlayers")
-    .on('change',() => {
-      console.log("INPUT CHANGE");
-    });
-
-  return menu;
-};
-
-/* jshint esversion:6 */
-PlayerMenu.prototype.definePositionFilters = function() {
-  const menu = this;
-
-  d3.selectAll(".menu-position-filter")
-    .on('input',function(d,i) {
+  let circle = slider.layers.circle
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("r",slider.styles.circleRadius)
+    .attr("fill",slider.styles.circleFill)
+    .attr("stroke",slider.styles.circleStroke)
+    .attr("stroke-width",slider.styles.circleStrokeWidth)
+    .attr("cursor","pointer")
+    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
+    .on('mouseover',function() {
       let element = d3.select(this);
-      let position = element.attr("data-position");
-      menu.filters[position] = element.node().checked;
-      menu.updateFilters();
+
+      element
+        .transition()
+        .duration(125)
+        .attr("fill",slider.styles.highlightFillColor)
+        .attr("stroke",slider.styles.highlightStrokeColor)
+        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
+        .attr("radius",slider.styles.highlightCircleRadius);
+
+      slider
+        .circleMouseover();
+    })
+    .on('mouseout',function() {
+      let element = d3.select(this);
+
+      if(!slider.dragLock) {
+        element
+          .transition()
+          .duration(125)
+          .attr("fill",slider.styles.circleFill)
+          .attr("stroke",slider.styles.circleStroke)
+          .attr("stroke-width",slider.styles.circleStrokeWidth)
+          .attr("radius",slider.styles.circleRadius);
+      }
+
+      slider
+        .circleMouseout();
+
+
     });
 
-  return menu;
+  return circle;
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.showTable = function(menu,players) {
+Slider.prototype.addValueLabel = function() {
+  const slider = this;
+  let text;
 
-  menu.containerElement = menu
-    .addContainerElement();
-
-  menu.headerRow = menu
-    .addHeaderRow();
-
-  players.forEach((player) => {
-    menu.addPlayerLine(player);
+  text = new TextLabel({
+    "text":slider.datum.value,
+    "where":slider.layers.text,
+    "textAnchor":"start",
+    "fontSize":"16px"
+  }).show()
+  .move({
+    "x":slider.referencePoints.valueLabelCenterX,
+    "y":slider.referencePoints.circleCenterY
   });
 
-  menu.playerMenuRows = menu.containerElement
-    .selectAll(".player-menu-row");
+  return text;
+};
 
-  menu.filters = menu.defineFilters();
+/* jshint esversion:6 */
+Slider.prototype.defaulter = function(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+};
 
-  menu
-    .defineNameFilter()
-    .definePositionFilters();
+/* jshint esversion:6 */
+Slider.prototype.defineDragFunctions = function() {
+  const slider = this;
 
+  let dragFunctions = {};
+
+  dragFunctions.start = function(d,i) {
+    let element = d3.select(this);
+    slider.dragLock = true;
+  };
+
+  dragFunctions.drag = function(d,i) {
+    let element = d3.select(this);
+    let xPosition = d3.event.x;
+
+    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
+      let newValue;
+      newValue = slider.scale.invert(xPosition);
+
+      slider.currentValue = newValue;
+
+      slider.valueLabel
+        .updateText(newValue.toFixed(slider.significantDigits));
+
+      slider.dragCallback(newValue);
+
+      element
+        .attr("cx",xPosition);
+    }
+  };
+
+
+  dragFunctions.end = function(d,i) {
+    slider.dragLock = false;
+
+    let element = d3.select(this);
+
+    element
+      .transition()
+      .duration(125)
+      .attr("fill",slider.styles.circleFill)
+      .attr("stroke",slider.styles.circleStroke)
+      .attr("stroke-width",slider.styles.circleStrokeWidth)
+      .attr("radius",slider.styles.circleRadius);
+
+  };
+
+  return dragFunctions;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineLayout = function() {
+  const slider = this;
+  let layout = {};
+
+  layout.labelOrigin = {"x":0,"y":slider.margins.top};
+  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
+
+  return layout;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineMargins = function(presetMargins) {
+  const slider = this;
+  let margins = slider.defaulter(presetMargins,{});
+
+  margins.left = slider.defaulter(margins.left,10);
+  margins.right = slider.defaulter(margins.right,50);
+  margins.top = slider.defaulter(margins.top,10);
+  margins.bottom = slider.defaulter(margins.bottom,0);
+
+  return margins;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineReferencePoints = function() {
+  const slider = this;
+  let referencePoints = {};
+
+  referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
+  referencePoints.verticalCenter = slider.size.height / 2;
+  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
+  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
+  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
+  referencePoints.trackMin = slider.margins.left;
+  referencePoints.trackMax = slider.size.width - slider.margins.right;
+  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
+  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
+
+  return referencePoints;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineScale = function() {
+  const slider = this;
+  let scale;
+
+  scale = d3.scaleLinear()
+    .domain(slider.domain)
+    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
+
+  return scale;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineSize = function(presetSize) {
+  const slider = this;
+  let size = slider.defaulter(presetSize,{});
+
+  size.height = slider.defaulter(size.height,50);
+  size.width = slider.defaulter(size.width,200);
+
+  return size;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineStyles = function(presetStyles) {
+  const slider = this;
+  let styles = slider.defaulter(presetStyles,{});
+
+  styles.sliderTrackColor = "#aaa";
+  styles.sliderTrackHeight = 5;
+  styles.circleRadius = 5;
+  styles.circleFill = "black";
+  styles.circleStroke = "#eee";
+  styles.circleStrokeWidth = 1;
+
+  styles.highlightFillColor = "red";
+  styles.highlightStrokeColor = "black";
+  styles.highlightFillStrokeWidth = 2;
+  styles.highlightCircleRadius = 7;
+
+  styles.glowCircleDefaultOpacity = 1.0;
+  styles.glowCircleDefaultRadius = 7;
+  styles.glowCircleFill = "red";
+
+  styles.glowCircleDefaultOpacity = 1;
+  styles.glowCircleDefaultRadius = 5;
+  styles.glowCircleFill = "red";
+
+  styles.glowDelay = 0;
+  styles.glowDuration = 1500;
+  styles.glowCircleEndOpacity = 0;
+  styles.glowCircleEndRadius = 15;
+  styles.glowCircleEndFill = "red";
+
+
+  return styles;
 };

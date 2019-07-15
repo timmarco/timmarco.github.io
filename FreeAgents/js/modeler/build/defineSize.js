@@ -4,6 +4,6 @@ Modeler.prototype.defineSize = function(preset) {
   let size;
   size = modeler.defaulter(preset,{});
   size.width = modeler.defaulter(size.width,800);
-  size.height = modeler.defaulter(size.height,600);
+  size.height = modeler.defaulter(size.height,500);
   return size;
 };

@@ -3,6 +3,7 @@ ModelerPane.prototype.defineContractValues = function() {
   const pane = this;
   let values = {};
   values.contractLength = 3;
+  values.aav = 10;
   values.salary = [];
   // TODO: COPY OVER WIN VALUES
 

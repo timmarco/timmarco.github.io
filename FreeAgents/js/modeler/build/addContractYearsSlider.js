@@ -4,12 +4,15 @@ Modeler.prototype.addContractYearsSlider = function() {
   let slider;
 
   slider = new Slider({
-    "where":modeler.layers.contract,
-    "coordinates":{"x":550,"y":50},
+    "where":modeler.rightPane,
+    "coordinates":modeler.referencePoints.rightPaneContractLengthSliderCoordinates,
     "label":"Contract Length (Seasons)",
     "domain":[1,15],
     "significantDigits":0,
-    "defaultValue":modeler.projectionParameters.contractLength
+    "defaultValue":3,
+    "size":{
+      "width":300
+    }
   }).setDragCallback((newValue) => {
     modeler.projectionParameters.contractLength = +newValue.toFixed(0);
     modeler.calculateContractValues();

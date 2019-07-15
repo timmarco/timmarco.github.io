@@ -10,7 +10,7 @@ LineChart.prototype.addXAxis = function() {
     .call(d3.axisBottom(chart.scales.x))
     .attr("font-family",chart.styles.axisFontFamily)
     .attr("font-size",chart.styles.axisFontSize);
-    
+
 
   return xAxis;
 };

@@ -11,6 +11,7 @@ LineChart.prototype.addLayers = function() {
   layers.projection = chart.addSingleLayer();
   layers.foregroundLine = chart.addSingleLayer();
   layers.backgroundLabels = chart.addSingleLayer();
+  layers.frontText = chart.addSingleLayer();
 
   return layers;
 

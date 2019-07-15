@@ -7,6 +7,12 @@ PlayerMenu.prototype.showTable = function(menu,players) {
   menu.headerRow = menu
     .addHeaderRow();
 
+  menu.filterRow = menu
+    .addFilterRow();
+
+  menu.positionRow = menu
+    .addPositionRow();
+
   players.forEach((player) => {
     menu.addPlayerLine(player);
   });
@@ -14,7 +20,6 @@ PlayerMenu.prototype.showTable = function(menu,players) {
   menu.playerMenuRows = menu.containerElement
     .selectAll(".player-menu-row");
 
-  menu.filters = menu.defineFilters();
 
   menu
     .defineNameFilter()

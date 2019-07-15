@@ -11,7 +11,8 @@ LineChart.prototype.addYAxisTitle = function() {
     .attr("font-size",chart.styles.axisTitleFontFamily)
     .attr("font-family",chart.styles.axisTitleFontFamily)
     .attr("fill",chart.styles.axisTitleFill)
-    .attr("text-anchor","middle")
+    .attr("font-weight",chart.styles.axisTitleFontWeight)
+    .attr("text-anchor","end")
     .text("WAR");
 
   return title;

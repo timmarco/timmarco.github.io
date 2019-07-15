@@ -7,6 +7,8 @@ function PlayerMenu(loadCallback) {
   return menu;
 
   function init() {
+    menu.currentSort = "";
+    menu.filters = menu.defineFilters();
     menu.loadCallback = loadCallback;
     d3.csv("playerMenu.csv")
       .then((players) => {

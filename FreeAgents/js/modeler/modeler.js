@@ -9,9 +9,27 @@ function Modeler(options) {
   function init(options) {
     modeler.size = modeler.defineSize(options.size);
     modeler.chartMargins = modeler.defineChartMargins(options.chartMargins);
-    modeler.layout = modeler.defineLayout();
     modeler.svg = modeler.addSvg(options.where);
+    modeler.referencePoints = modeler.defineReferencePoints();
     modeler.layers = modeler.addLayers();
+    modeler.title = modeler.addTitle();
+    modeler.subtitle = modeler.addSubtitle();
+    modeler.warFormulation = modeler.addWARFormulation();
+    modeler.BBRefWARButton = modeler.addBBRefWARButton();
+    modeler.fangraphsWARButton = modeler.addFangraphsWARButton();
+    modeler.projectionType = modeler.addProjectionType();
+    modeler.similarPlayersButton = modeler.addSimilarPlayersButton();
+    modeler.agingCurvesButton = modeler.addAgingCurvesButton();
+    modeler.paneHint = modeler.addPaneHint();
+    modeler.rightPane = modeler.addRightPane();
+    modeler.paneContractDetails = modeler.addPaneContractDetails();
+    modeler.projectedSurplusHeading = modeler.addProjectedSurplusHeading();
+    modeler.projectedSurplusValue = modeler.addProjectedSurplusValue();
+    modeler.contractValueHeading = modeler.addContractValueHeading();
+    modeler.contractValueLabel = modeler.addContractValueLabel();
+    modeler.editSalaryButton = modeler.addEditSalaryButton();
+    modeler.editMarketValueButton = modeler.addEditMarketValueButton();
+    modeler.contractYearsSlider = modeler.addContractYearsSlider();
 
     modeler.projections = {};
     modeler.projectionParameters = {
@@ -20,94 +38,10 @@ function Modeler(options) {
       "winValue":[]
     };
 
-    modeler.pane = new ModelerPane({
-      "where":modeler.layers.pane,
-      "parent":modeler
-    });
-
-
-
-    modeler.contractButton = new Button({
-      "where":modeler.layers.button,
-      "text":"CONTRACT BUTTON",
-      "size":{
-        "width":250
-      }
-    })
-    .move({
-      "x":525,
-      "y":250
-    })
-    .registerCallback(() => {modeler.pane.transitionIn(); });
-
-    /*
-    modeler.yearHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Year"
-    }).show()
-    .move({"x":525,"y":117.5});
-
-    modeler.contractHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Contract Value"
-    }).show()
-    .move({"x":600,"y":117.5});
-
-    modeler.contractHeading = new TextLabel({
-      "where":modeler.layers.contract,
-      "text":"Cost / Win"
-    }).show()
-    .move({"x":700,"y":117.5});
-    */
-
+    modeler.key = modeler.addModelerKey();
+    modeler.pane = modeler.addModelerPane();
     modeler.projectionValueData = {};
-
-    modeler.key = new ModelerKey({
-      "where":modeler.layers.chart
-    });
-
-
-    modeler.chart = modeler.addChart({});
-
-    modeler.contractCostLabel = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"Total Contract Cost:"
-    })
-    .move({
-      "x":525,
-      "y":10
-    });
-
-    modeler.contractCostText = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"$300mm",
-      "fontWeight":"Bold",
-      "fontSize":"18pt"
-    })
-    .move({
-      "x":525,
-      "y":30
-    });
-
-    modeler.meanSurplusLabel = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"Mean Projection Surplus:"
-    })
-    .move({
-      "x":700,
-      "y":10
-    });
-
-    modeler.meanSurplusText = new TextLabel({
-      "where":modeler.layers.chart,
-      "text":"$100mm",
-      "fontWeight":"Bold",
-      "fontSize":"18pt"
-    })
-    .move({
-      "x":700,
-      "y":30
-    });
+    modeler.chart = modeler.addChart();
 
 
 

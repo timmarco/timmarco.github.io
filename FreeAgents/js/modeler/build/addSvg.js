@@ -6,8 +6,7 @@ Modeler.prototype.addSvg = function(where) {
   svg = d3.select(where)
     .append("svg")
     .attr("width",modeler.size.width)
-    .attr("height",modeler.size.height)
-    .style("border","1px solid black");
+    .attr("height",modeler.size.height);
 
   return svg;
 };

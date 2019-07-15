@@ -7,9 +7,11 @@ ModelerKey = function(options) {
   return key;
 
   function init(options) {
+    console.log(options);
+    
     key.styles = key.defineStyles(options);
     key.size = key.defineSize(options);
-    key.position = {"x":25,"y":425};
+    key.position = {"x":66.67,"y":425};
 
     key.group = key.addGroup(options.where);
     key.playerHistory = key.addPlayerHistory();

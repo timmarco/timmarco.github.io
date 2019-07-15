@@ -5,6 +5,10 @@ ModelerPane.prototype.finishEditing = function() {
   pane
     .transitionOut();
 
+  pane.contractValues.salary.forEach((value,index) => {
+    pane.contractValues.salary[index] = pane.contractValues.aav;
+  });
+
   pane.parent
     .dataFromPane(pane.contractValues);
 

@@ -13,11 +13,20 @@ PlayerMenu.prototype.defineNameFilter = function() {
       menu.filters.name = value.toLowerCase();
       menu
         .updateFilters();
-    });
-
-  filterInput = d3.select("#searchPlayers")
-    .on('change',() => {
-      console.log("INPUT CHANGE");
+    })
+    .on('mouseover',() => {
+      menu.tooltip
+        .update("Type to search players.")
+        .show()
+        .move();
+    })
+    .on('mousemove',() => {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',() => {
+      menu.tooltip
+        .hide();
     });
 
   return menu;

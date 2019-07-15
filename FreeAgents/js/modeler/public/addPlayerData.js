@@ -7,13 +7,14 @@ Modeler.prototype.addPlayerData = function(data,projections,name) {
 
   modeler.projections = projections;
 
-  let yearsToProject = projections.mean.map((a) => { return a.age; });
-  yearsToProject.shift();
+  modeler.title
+    .text(name);
 
-  // modeler.salarySliders = modeler.addSalarySliders(yearsToProject);
-  // modeler.winValueSliders = modeler.addWinValueSliders(yearsToProject);
-  //
-  // modeler.calculateContractValues();
+  modeler.key
+    .playerName(name);
+
+  d3.selectAll(".playerName")
+    .html(name);
 
   return modeler;
 };
