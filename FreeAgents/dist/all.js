@@ -22,475 +22,6 @@ function Button(options) {
   }
 }
 
-function HitterConfig() {
-  const config = this;
-  init();
-  return config;
-
-  function init() {
-    config.totalValue = config.defineTotalValue();
-    config.batting = config.defineBatting();
-    config.runPrevention = config.defineRunPrevention();
-    config.baseRunning = config.defineBaseRunning();
-
-    config.tables = [
-      {
-        "name":"Total Value",
-        "tables":config.totalValue,
-        "description":"Measures of the player's total contribution to his team."
-      },
-      {
-        "name":"Batting",
-        "description":"Measures of the player's batting contributions to his team.",
-        "tables":config.batting
-      },
-  ];
-  }
-}
-
-/* jshint esversion:6 */
-function LineChart(options) {
-  const chart = this;
-
-  init(options);
-
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.size = options.size;
-    chart.margins = options.margins;
-    chart.origin = options.origin;
-
-    chart.styles = chart.defineStyles();
-    chart.layers = chart.addLayers();
-    chart.referencePoints = chart.defineReferencePoints();
-
-    chart.yAxisTitle = chart.addYAxisTitle();
-    chart.xAxisTitle = chart.addXAxisTitle();
-
-    chart.scales = chart.defineScales();
-
-    chart.axes = chart.addAxes();
-
-    chart.currentWARType = "bWar";
-    chart.currentView = "similarPlayers";
-    
-
-    chart.lineGenerator = chart.createLineGenerator();
-    chart.areaGenerator = chart.createAreaGenerator();
-
-    chart.zeroLine = chart.addZeroLine();
-    chart.zeroText = chart.addZeroText();
-    chart.starterLine = chart.addStarterLine();
-    chart.starterText = chart.addStarterText();
-    chart.allStarLine = chart.addAllStarLine();
-    chart.allStarText = chart.addAllStarText();
-    chart.mvpLine = chart.addMVPLine();
-    chart.mvpText = chart.addMvpText();
-
-    chart.contractLine = chart.addContractLine();
-    chart.contractText = chart.addContractText();
-    chart.contractCircles = chart.addContractCircles();
-
-  }
-
-
-
-}
-
-/* jshint esversion:6 */
-function ModelSlider(options) {
-  const slider = this;
-
-  init(options);
-
-  return slider;
-
-  function init(options) {
-    slider.domain = options.domain;
-    slider.currentValue = options.domain[0];
-
-    slider.callbacks = slider.defineCallbacks(options);
-    slider.formatter = slider.defineFormatter(options);
-    slider.coordinates = slider.defineCoordinates(options);
-    slider.size = slider.defineSize(options);
-    slider.margins = slider.defineMargins(options);
-    slider.styles = slider.defineStyles(options);
-
-    slider.referencePoints = slider.defineReferencePoints();
-    slider.scale = slider.defineScale(options.domain);
-
-    slider.group = slider.addGroup(options.where);
-    slider.layers = slider.addLayers();
-
-    slider.track = slider.addTrack();
-    slider.activeTrack = slider.addActiveTrack();
-    slider.circleGroup = slider.addCircleGroup();
-    slider.highlightCircle = slider.addHighlightCircle();
-    slider.circle = slider.addCircle();
-    slider.labelGhost = slider.addTextGhost();
-    slider.labelText = slider.addTextLabel();
-    slider.heading = slider.addHeading(options.labelText);
-
-    slider.updateValue(slider.currentValue);
-
-    slider.dragLock = false;
-
-  }
-}
-
-/* jshint esversion:6 */
-function Modeler(options) {
-  const modeler = this;
-
-  init(options);
-
-  return modeler;
-
-  function init(options) {
-    modeler.tooltip = options.tooltip;
-    modeler.player = options.player;
-    modeler.name = options.name;
-    modeler.size = modeler.defineSize(options.size);
-    modeler.chartMargins = modeler.defineChartMargins(options.chartMargins);
-    modeler.svg = modeler.addSvg(options.where);
-    modeler.referencePoints = modeler.defineReferencePoints();
-    modeler.layers = modeler.addLayers();
-    modeler.title = modeler.addTitle();
-    modeler.subtitle = modeler.addSubtitle();
-    modeler.warFormulation = modeler.addWARFormulation();
-    modeler.BBRefWARButton = modeler.addBBRefWARButton();
-    modeler.fangraphsWARButton = modeler.addFangraphsWARButton();
-    modeler.projectionType = modeler.addProjectionType();
-    modeler.similarPlayersButton = modeler.addSimilarPlayersButton();
-    modeler.agingCurvesButton = modeler.addAgingCurvesButton();
-    modeler.paneHint = modeler.addPaneHint();
-    modeler.rightPane = modeler.addRightPane();
-    modeler.paneContractDetails = modeler.addPaneContractDetails();
-    modeler.projectedSurplusHeading = modeler.addProjectedSurplusHeading();
-    modeler.projectedSurplusValue = modeler.addProjectedSurplusValue();
-    modeler.contractValueHeading = modeler.addContractValueHeading();
-    modeler.contractValueLabel = modeler.addContractValueLabel();
-
-    modeler.currentEditView = "salary";
-
-    modeler.chart = modeler.addChart();
-
-    modeler.salaryButton = modeler.addEditSalaryButton();
-    modeler.winValueButton = modeler.addEditMarketValueButton();
-
-    modeler.contractYearsSlider = modeler.addContractYearsSlider();
-    modeler.salaryChartGroup = modeler.addSalaryChartGroup();
-    modeler.winChartGroup = modeler.addWinChartGroup();
-
-
-    modeler.key = modeler.addModelerKey();
-    modeler.pane = modeler.addModelerPane();
-    modeler.projectionValueData = {};
-  }
-
-}
-
-/* jshint esversion:6 */
-ModelerKey = function(options) {
-  let key = this;
-
-  init(options);
-
-  return key;
-
-  function init(options) {
-
-    key.styles = key.defineStyles(options);
-    key.size = key.defineSize(options);
-    key.position = {"x":66.67,"y":425};
-
-    key.group = key.addGroup(options.where);
-    key.playerHistory = key.addPlayerHistory();
-    key.playerProjections = key.addPlayerProjections();
-    key.similarPlayers = key.addSimilarPlayers();
-    key.errorRange = key.addErrorRange();
-    key.contractValue = key.addContractValue();
-
-    key.visibleKeys = key.defineVisibleKeys();
-
-    console.log("HIDE CONTRACT VALUE!");
-    key
-      .hideContractValue();
-
-    key
-      .layout();
-
-  }
-};
-
-/* jshint esversion:6 */
-
-function Numberline(options) {
-  let chart = this;
-
-  init(options);
-
-  return chart;
-
-  function init(options) {
-    chart.options = options;
-
-    chart.size = chart.defaultSize(options);
-    chart.margins = chart.defaultMargins(options);
-    chart.styles = chart.defaultStyles(options);
-    chart.referencePoints = chart.defineReferencePoints();
-    chart.svg = chart.addSvg(options.where);
-    chart.layers = chart.addLayers(chart.svg);
-    chart.bottomLine = chart.addBottomLine();
-    chart.scale = chart.defineScale(options);
-
-
-    chart.backgroundCircleMouseover = () => {  };
-    chart.backgroundCircleMouseout = () => {  };
-
-    chart.handleBackgroundCircleMouseover = function(datum) { chart.backgroundCircleMouseover(d3.select(this),datum); };
-    chart.handleBackgroundCircleMouseout = function(datum) { chart.backgroundCircleMouseout(d3.select(this),datum); };
-
-  }
-
-
-}
-
-/* jshint esversion:6 */
-function NumberlineReference(options) {
-  const chart = this;
-
-  init(options);
-
-  return chart;
-
-  function init(options) {
-    chart.playerName = options.name;
-    chart.svg = chart.addSvg(options.where);
-    chart.styles = chart.defineStyles();
-    chart.bottomLine = chart.addBottomLine();
-    chart.labels = chart.defineLabels(options.type);
-    chart.leftText = chart.addLeftText();
-    chart.rightText = chart.addRightText();
-    chart.circleKey = chart.addCircleKey();
-    chart.qualifierKey = chart.addQualifierKey();
-  }
-
-}
-
-function PitcherConfig() {
-  const config = this;
-  init();
-  return config;
-
-  function init() {
-
-    config.totalValue = config.defineTotalValue();
-    config.pitchingOutcomes = config.definePitchingOutcomes();
-    // config.pitchDetails = config.definePitchDetails();
-
-
-    config.tables = [
-      {
-        "name":"Total Value",
-        "tables":config.totalValue,
-        "description":"Measures of the pitcher's total contribution to his team."
-      },
-      {
-        "name":"Pitching Outcomes",
-        "description":"Measures of the player's pitching results.",
-        "tables":config.pitchingOutcomes
-      },
-      // {
-      //   "name":"Pitch Details",
-      //   "description":"Specific measures of individual pitches and tendencies",
-      //   "tables":config.pitchDetails
-      // }
-  ];
-
-  }
-}
-
-/* jshint esversion:6 */
-function Player(options,tooltip) {
-  const player = this;
-  init(options,tooltip);
-  return player;
-
-  function init(options,tooltip) {
-    player.metadata(options);
-    player.tooltip = tooltip;
-
-    player.comparePlayers = false;
-
-    player.stats = player.getStats();
-    player.config = player.getConfig();
-
-    d3.select("#mainHeaderTextSpan")
-      .html(player.Name);
-
-  }
-
-}
-
-/* jshint esversion:6 */
-function PlayerMenu(loadCallback) {
-  const menu = this;
-
-  init();
-
-  return menu;
-
-  function init() {
-    menu.currentSort = "";
-    menu.currentSortOrder = "";
-    menu.filters = menu.defineFilters();
-    menu.loadCallback = loadCallback;
-    d3.csv("playerMenu.csv")
-      .then((players) => {
-        menu.showTable(menu,players,loadCallback);
-        menu.sort("3yearZips");
-      });
-  }
-
-
-}
-
-/* jshint esversion:6 */
-function PlayerTable(player) {
-  const table = this;
-
-  init(player);
-
-  return table;
-
-  function init(player) {
-
-    table.numberlines = {};
-    table.sparklines = [];
-
-    table.player = player;
-    table.container = table.addContainer();
-    table.sections = table.addSections();
-    table.sectionHeadings = table.addSectionHeadings();
-    table.subSections = table.addSubSections();
-    table.subSectionHeadings = table.addSubSectionHeadings();
-    table.subSectionTables = table.addSubSectionTables();
-
-    table.subSectionRows = table.addSubSectionRows();
-    table.metricNames = table.addMetricNames();
-    table.metricNumberlineCells = table.addMetricNumberlineCells();
-    table.playerMetricValueCells = table.addPlayerMetricValueCells();
-    table.playerMetricSparkline = table.addPlayerMetricSparkline();
-
-    Object.keys(table.numberlines).forEach((key) => {
-      let thisNumberline = table.numberlines[key];
-      let datum = thisNumberline.datum;
-
-
-      if(datum.hasOwnProperty("shareScale")) {
-        let minValues = [];
-        let maxValues = [];
-
-        minValues.push(thisNumberline.numberline.getDomain()[0]);
-        maxValues.push(thisNumberline.numberline.getDomain()[1]);
-
-        datum.shareScale.forEach((line) => {
-          let currentLine = table.numberlines[line].numberline;
-
-          minValues.push(currentLine.getDomain()[0]);
-          maxValues.push(currentLine.getDomain()[1]);
-
-        });
-
-        let least = d3.min(minValues);
-        let most = d3.max(maxValues);
-
-        let newDomain = [least,most];
-
-
-        thisNumberline.numberline
-          .rescale(newDomain);
-
-        datum.shareScale.forEach((line) => {
-          table.numberlines[line].numberline
-            .rescale(newDomain);
-
-
-        })
-
-      };
-
-
-
-      if(datum.hasOwnProperty("scalePercentage")) {
-        thisNumberline.numberline
-          .scalePercentage();
-      }
-
-
-
-    });
-  }
-}
-
-/* jshint esversion:6 */
-function ModelerPane(options) {
-  const pane = this;
-
-  init(options);
-
-  return pane;
-
-  function init(options) {
-
-    pane.parent = options.parent;
-
-    pane.styles = pane.defineStyles(options);
-
-    pane.size = pane.defineSize(options);
-    pane.referencePoints = pane.defineReferencePoints(options);
-
-    pane.contractValues = pane.defineContractValues();
-    pane.contractLength = 3;
-
-    pane.group = pane.addGroup(options.where);
-    pane.rect = pane.addRect();
-    pane.title = pane.addTitle();
-
-    pane.durationLabel = pane.addContractDurationLabel();
-    pane.durationDescription = pane.addContractDescription();
-    pane.contractSlider = pane.addContractYearsSlider();
-
-    pane.salaryLabel = pane.addSalaryLabel();
-    pane.salaryDescription = pane.addSalaryDescription();
-    pane.salarySlider = pane.addSalarySlider();
-
-    // pane.winValueSliders = [];
-    pane.marketValueLabel = pane.addMarketValueLabel();
-    pane.marketValueDescription = pane.addMarketValueDescription();
-    // pane.winValueTable = pane.addWinValueTable();
-
-
-    pane.salaryGroup = pane.addSalaryGroup();
-    pane.salaryChart = pane.addSalaryChart();
-
-    pane.winValueGroup = pane.addWinValueGroup();
-    pane.winValueChart = pane.addWinValueChart();
-
-
-
-    pane.saveButton = pane.addSaveButton();
-
-    pane.updateContractYears();
-
-
-  }
-
-}
-
 /* jshint esversion:6 */
 function hitterConfig() {
   let sections = [{
@@ -829,6 +360,551 @@ function hitterConfig() {
 
 }
 
+function HitterConfig() {
+  const config = this;
+  init();
+  return config;
+
+  function init() {
+    config.totalValue = config.defineTotalValue();
+    config.batting = config.defineBatting();
+    config.runPrevention = config.defineRunPrevention();
+    config.baseRunning = config.defineBaseRunning();
+
+    config.tables = [
+      {
+        "name":"Total Value",
+        "tables":config.totalValue,
+        "description":"Measures of the player's total contribution to his team."
+      },
+      {
+        "name":"Batting",
+        "description":"Measures of the player's batting contributions to his team.",
+        "tables":config.batting
+      },
+  ];
+  }
+}
+
+/* jshint esversion:6 */
+function LineChart(options) {
+  const chart = this;
+
+  init(options);
+
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.size = options.size;
+    chart.margins = options.margins;
+    chart.origin = options.origin;
+
+    chart.styles = chart.defineStyles();
+    chart.layers = chart.addLayers();
+    chart.referencePoints = chart.defineReferencePoints();
+
+    chart.yAxisTitle = chart.addYAxisTitle();
+    chart.xAxisTitle = chart.addXAxisTitle();
+
+    chart.scales = chart.defineScales();
+
+    chart.axes = chart.addAxes();
+
+    chart.currentWARType = "bWar";
+    chart.currentView = "similarPlayers";
+    
+
+    chart.lineGenerator = chart.createLineGenerator();
+    chart.areaGenerator = chart.createAreaGenerator();
+
+    chart.zeroLine = chart.addZeroLine();
+    chart.zeroText = chart.addZeroText();
+    chart.starterLine = chart.addStarterLine();
+    chart.starterText = chart.addStarterText();
+    chart.allStarLine = chart.addAllStarLine();
+    chart.allStarText = chart.addAllStarText();
+    chart.mvpLine = chart.addMVPLine();
+    chart.mvpText = chart.addMvpText();
+
+    chart.contractLine = chart.addContractLine();
+    chart.contractText = chart.addContractText();
+    chart.contractCircles = chart.addContractCircles();
+
+  }
+
+
+
+}
+
+/* jshint esversion:6 */
+function ModelSlider(options) {
+  const slider = this;
+
+  init(options);
+
+  return slider;
+
+  function init(options) {
+    slider.domain = options.domain;
+    slider.currentValue = options.domain[0];
+
+    slider.callbacks = slider.defineCallbacks(options);
+    slider.formatter = slider.defineFormatter(options);
+    slider.coordinates = slider.defineCoordinates(options);
+    slider.size = slider.defineSize(options);
+    slider.margins = slider.defineMargins(options);
+    slider.styles = slider.defineStyles(options);
+
+    slider.referencePoints = slider.defineReferencePoints();
+    slider.scale = slider.defineScale(options.domain);
+
+    slider.group = slider.addGroup(options.where);
+    slider.layers = slider.addLayers();
+
+    slider.track = slider.addTrack();
+    slider.activeTrack = slider.addActiveTrack();
+    slider.circleGroup = slider.addCircleGroup();
+    slider.highlightCircle = slider.addHighlightCircle();
+    slider.circle = slider.addCircle();
+    slider.labelGhost = slider.addTextGhost();
+    slider.labelText = slider.addTextLabel();
+    slider.heading = slider.addHeading(options.labelText);
+
+    slider.updateValue(slider.currentValue);
+
+    slider.dragLock = false;
+
+  }
+}
+
+/* jshint esversion:6 */
+function Modeler(options) {
+  const modeler = this;
+
+  init(options);
+
+  return modeler;
+
+  function init(options) {
+    modeler.tooltip = options.tooltip;
+    modeler.player = options.player;
+    modeler.name = options.name;
+    modeler.size = modeler.defineSize(options.size);
+    modeler.chartMargins = modeler.defineChartMargins(options.chartMargins);
+    modeler.svg = modeler.addSvg(options.where);
+    modeler.referencePoints = modeler.defineReferencePoints();
+    modeler.layers = modeler.addLayers();
+    modeler.title = modeler.addTitle();
+    modeler.subtitle = modeler.addSubtitle();
+    modeler.warFormulation = modeler.addWARFormulation();
+    modeler.BBRefWARButton = modeler.addBBRefWARButton();
+    modeler.fangraphsWARButton = modeler.addFangraphsWARButton();
+    modeler.projectionType = modeler.addProjectionType();
+    modeler.similarPlayersButton = modeler.addSimilarPlayersButton();
+    modeler.agingCurvesButton = modeler.addAgingCurvesButton();
+    modeler.paneHint = modeler.addPaneHint();
+    modeler.rightPane = modeler.addRightPane();
+    modeler.paneContractDetails = modeler.addPaneContractDetails();
+    modeler.projectedSurplusHeading = modeler.addProjectedSurplusHeading();
+    modeler.projectedSurplusValue = modeler.addProjectedSurplusValue();
+    modeler.contractValueHeading = modeler.addContractValueHeading();
+    modeler.contractValueLabel = modeler.addContractValueLabel();
+
+    modeler.currentEditView = "salary";
+
+    modeler.chart = modeler.addChart();
+
+    modeler.salaryButton = modeler.addEditSalaryButton();
+    modeler.winValueButton = modeler.addEditMarketValueButton();
+
+    modeler.contractYearsSlider = modeler.addContractYearsSlider();
+    modeler.salaryChartGroup = modeler.addSalaryChartGroup();
+    modeler.winChartGroup = modeler.addWinChartGroup();
+
+
+    modeler.key = modeler.addModelerKey();
+    modeler.pane = modeler.addModelerPane();
+    modeler.projectionValueData = {};
+  }
+
+}
+
+/* jshint esversion:6 */
+function ModelerPane(options) {
+  const pane = this;
+
+  init(options);
+
+  return pane;
+
+  function init(options) {
+
+    pane.parent = options.parent;
+
+    pane.styles = pane.defineStyles(options);
+
+    pane.size = pane.defineSize(options);
+    pane.referencePoints = pane.defineReferencePoints(options);
+
+    pane.contractValues = pane.defineContractValues();
+    pane.contractLength = 3;
+
+    pane.group = pane.addGroup(options.where);
+    pane.rect = pane.addRect();
+    pane.title = pane.addTitle();
+
+    pane.durationLabel = pane.addContractDurationLabel();
+    pane.durationDescription = pane.addContractDescription();
+    pane.contractSlider = pane.addContractYearsSlider();
+
+    pane.salaryLabel = pane.addSalaryLabel();
+    pane.salaryDescription = pane.addSalaryDescription();
+    pane.salarySlider = pane.addSalarySlider();
+
+    // pane.winValueSliders = [];
+    pane.marketValueLabel = pane.addMarketValueLabel();
+    pane.marketValueDescription = pane.addMarketValueDescription();
+    // pane.winValueTable = pane.addWinValueTable();
+
+
+    pane.salaryGroup = pane.addSalaryGroup();
+    pane.salaryChart = pane.addSalaryChart();
+
+    pane.winValueGroup = pane.addWinValueGroup();
+    pane.winValueChart = pane.addWinValueChart();
+
+
+
+    pane.saveButton = pane.addSaveButton();
+
+    pane.updateContractYears();
+
+
+  }
+
+}
+
+/* jshint esversion:6 */
+ModelerKey = function(options) {
+  let key = this;
+
+  init(options);
+
+  return key;
+
+  function init(options) {
+
+    key.styles = key.defineStyles(options);
+    key.size = key.defineSize(options);
+    key.position = {"x":66.67,"y":425};
+
+    key.group = key.addGroup(options.where);
+    key.playerHistory = key.addPlayerHistory();
+    key.playerProjections = key.addPlayerProjections();
+    key.similarPlayers = key.addSimilarPlayers();
+    key.errorRange = key.addErrorRange();
+    key.contractValue = key.addContractValue();
+
+    key.visibleKeys = key.defineVisibleKeys();
+
+    key
+      .hideContractValue();
+
+    key
+      .layout();
+
+  }
+};
+
+/* jshint esversion:6 */
+
+function Numberline(options) {
+  let chart = this;
+
+  init(options);
+
+  return chart;
+
+  function init(options) {
+    chart.options = options;
+
+    chart.size = chart.defaultSize(options);
+    chart.margins = chart.defaultMargins(options);
+    chart.styles = chart.defaultStyles(options);
+    chart.referencePoints = chart.defineReferencePoints();
+    chart.svg = chart.addSvg(options.where);
+    chart.layers = chart.addLayers(chart.svg);
+    chart.bottomLine = chart.addBottomLine();
+    chart.scale = chart.defineScale(options);
+
+
+    chart.backgroundCircleMouseover = () => {  };
+    chart.backgroundCircleMouseout = () => {  };
+
+    chart.handleBackgroundCircleMouseover = function(datum) { chart.backgroundCircleMouseover(d3.select(this),datum); };
+    chart.handleBackgroundCircleMouseout = function(datum) { chart.backgroundCircleMouseout(d3.select(this),datum); };
+
+  }
+
+
+}
+
+/* jshint esversion:6 */
+function NumberlineReference(options) {
+  const chart = this;
+
+  init(options);
+
+  return chart;
+
+  function init(options) {
+    chart.playerName = options.name;
+    chart.svg = chart.addSvg(options.where);
+    chart.styles = chart.defineStyles();
+    chart.bottomLine = chart.addBottomLine();
+    chart.labels = chart.defineLabels(options.type);
+    chart.leftText = chart.addLeftText();
+    chart.rightText = chart.addRightText();
+    chart.circleKey = chart.addCircleKey();
+    chart.qualifierKey = chart.addQualifierKey();
+  }
+
+}
+
+function PitcherConfig() {
+  const config = this;
+  init();
+  return config;
+
+  function init() {
+
+    config.totalValue = config.defineTotalValue();
+    config.pitchingOutcomes = config.definePitchingOutcomes();
+    // config.pitchDetails = config.definePitchDetails();
+
+
+    config.tables = [
+      {
+        "name":"Total Value",
+        "tables":config.totalValue,
+        "description":"Measures of the pitcher's total contribution to his team."
+      },
+      {
+        "name":"Pitching Outcomes",
+        "description":"Measures of the player's pitching results.",
+        "tables":config.pitchingOutcomes
+      },
+      // {
+      //   "name":"Pitch Details",
+      //   "description":"Specific measures of individual pitches and tendencies",
+      //   "tables":config.pitchDetails
+      // }
+  ];
+
+  }
+}
+
+/* jshint esversion:6 */
+function Player(options,tooltip) {
+  const player = this;
+  init(options,tooltip);
+  return player;
+
+  function init(options,tooltip) {
+    player.metadata(options);
+    player.tooltip = tooltip;
+
+    player.comparePlayers = false;
+
+    player.stats = player.getStats();
+    player.config = player.getConfig();
+
+    d3.select("#mainHeaderTextSpan")
+      .html(player.Name);
+
+  }
+
+}
+
+/* jshint esversion:6 */
+function PlayerMenu(loadCallback) {
+  const menu = this;
+
+  init();
+
+  return menu;
+
+  function init() {
+    menu.currentSort = "";
+    menu.currentSortOrder = "";
+    menu.filters = menu.defineFilters();
+    menu.loadCallback = loadCallback;
+    d3.csv("playerMenu.csv")
+      .then((players) => {
+        menu.showTable(menu,players,loadCallback);
+        menu.sort("3yearZips");
+      });
+  }
+
+
+}
+
+/* jshint esversion:6 */
+function PlayerTable(player) {
+  const table = this;
+
+  init(player);
+
+  return table;
+
+  function init(player) {
+
+    table.numberlines = {};
+    table.sparklines = [];
+
+    table.player = player;
+    table.container = table.addContainer();
+    table.sections = table.addSections();
+    table.sectionHeadings = table.addSectionHeadings();
+    table.subSections = table.addSubSections();
+    table.subSectionHeadings = table.addSubSectionHeadings();
+    table.subSectionTables = table.addSubSectionTables();
+
+    table.subSectionRows = table.addSubSectionRows();
+    table.metricNames = table.addMetricNames();
+    table.metricNumberlineCells = table.addMetricNumberlineCells();
+    table.playerMetricValueCells = table.addPlayerMetricValueCells();
+    table.playerMetricSparkline = table.addPlayerMetricSparkline();
+
+    Object.keys(table.numberlines).forEach((key) => {
+      let thisNumberline = table.numberlines[key];
+      let datum = thisNumberline.datum;
+
+
+      if(datum.hasOwnProperty("shareScale")) {
+        let minValues = [];
+        let maxValues = [];
+
+        minValues.push(thisNumberline.numberline.getDomain()[0]);
+        maxValues.push(thisNumberline.numberline.getDomain()[1]);
+
+        datum.shareScale.forEach((line) => {
+          let currentLine = table.numberlines[line].numberline;
+
+          minValues.push(currentLine.getDomain()[0]);
+          maxValues.push(currentLine.getDomain()[1]);
+
+        });
+
+        let least = d3.min(minValues);
+        let most = d3.max(maxValues);
+
+        let newDomain = [least,most];
+
+
+        thisNumberline.numberline
+          .rescale(newDomain);
+
+        datum.shareScale.forEach((line) => {
+          table.numberlines[line].numberline
+            .rescale(newDomain);
+
+
+        })
+
+      };
+
+
+
+      if(datum.hasOwnProperty("scalePercentage")) {
+        thisNumberline.numberline
+          .scalePercentage();
+      }
+
+
+
+    });
+  }
+}
+
+/* jshint esversion:6 */
+function Projection(data) {
+  let projection = this;
+
+  init(data);
+
+  return projection;
+
+  function init(data) {
+    projection.data = data;
+    projection.baseAge = projection.getBaseAge();
+    projection.warCurveDeltas = projection.defineWarCurveDeltas();
+    projection.relevantWarCurveDeltas = projection.getRelevantWarCurveDeltas();
+    projection.baseBWar = projection.getBaseBWar();
+    projection.threeYearBWar = projection.getThreeYearBWar();
+    projection.bWarAgingCurveProjection = projection.getBWarAgingCurveProjection();
+    projection.bWarSimilarPlayersRawData = projection.getBWarSimilarPlayersRawData();
+    projection.bWarSimilarPlayersMax = projection.getBWarSimilarPlayersMax();
+    projection.bWarSimilarPlayersMin = projection.getBWarSimilarPlayersMin();
+    projection.bWarSimilarPlayersMean = projection.getBWarSimilarPlayersMean();
+    projection.threeYearFWar = projection.getThreeYearFWar();
+    projection.fWarAgingCurveProjection = projection.getFWarAgingCurveProjection();
+    projection.fWarSimilarPlayersRawData = projection.getFWarSimilarPlayersRawData();
+    projection.fWarSimilarPlayersMax = projection.getFWarSimilarPlayersMax();
+    projection.fWarSimilarPlayersMin = projection.getFWarSimilarPlayersMin();
+    projection.fWarSimilarPlayersMean = projection.getFWarSimilarPlayersMean();
+
+  }
+}
+
+/* jshint esversion:6 */
+function Slider(options) {
+  const slider = this;
+
+  init(options);
+
+  return slider;
+
+  function init(options) {
+    slider.labelText = options.label;
+    slider.significantDigits = slider.defaulter(options.significantDigits,2);
+    slider.domain = slider.defaulter(options.domain,[0,1]);
+    slider.currentValue = slider.defaulter(options.defaultValue,1);
+    slider.dragLock = false;
+
+    slider.dragCallback = () => { };
+
+    slider.group = slider.addGroup(options.where);
+    slider.layers = slider.addLayers();
+    slider.size = slider.defineSize(options.size);
+    slider.margins = slider.defineMargins(options.margins);
+    slider.layout = slider.defineLayout(options.layout);
+    slider.styles = slider.defineStyles();
+    slider.referencePoints = slider.defineReferencePoints(options.leftLabel);
+
+
+    slider.scale = slider.defineScale();
+
+    slider.datum = {"name":"","value":slider.currentValue};
+
+    slider.label = slider.addLabel();
+    slider.track = slider.addSliderTrack();
+    slider.valueLabel = slider.addValueLabel();
+
+    slider.move(options.coordinates);
+
+    slider.dragFunctions = slider.defineDragFunctions();
+    slider.circle = slider.addSlidingCircle();
+    slider.glowCircle = slider.addGlowCircle();
+
+    slider.circleMouseover = () => {};
+    slider.circleMouseout = () => {};
+
+
+  }
+}
+
 /* jshint esversion:6 */
 function Sparkline(options) {
   let spark = this;
@@ -855,6 +931,22 @@ function Sparkline(options) {
     spark.circles = spark.addCircles();
 
   }
+}
+
+/* jshint esversion:6 */
+function StatsSection(options) {
+  const section = this;
+
+  init(options);
+
+  return section;
+
+  function init(options) {
+    section.div = section.addDiv(options.where);
+    section.header = section.addHeader(options.name);
+    section.tables = section.addTables(options);
+  }
+  
 }
 
 /* jshint esversion:6 */
@@ -973,126 +1065,6 @@ function WinChart(options) {
 }
 
 /* jshint esversion:6 */
-function Slider(options) {
-  const slider = this;
-
-  init(options);
-
-  return slider;
-
-  function init(options) {
-    slider.labelText = options.label;
-    slider.significantDigits = slider.defaulter(options.significantDigits,2);
-    slider.domain = slider.defaulter(options.domain,[0,1]);
-    slider.currentValue = slider.defaulter(options.defaultValue,1);
-    slider.dragLock = false;
-
-    slider.dragCallback = () => { };
-
-    slider.group = slider.addGroup(options.where);
-    slider.layers = slider.addLayers();
-    slider.size = slider.defineSize(options.size);
-    slider.margins = slider.defineMargins(options.margins);
-    slider.layout = slider.defineLayout(options.layout);
-    slider.styles = slider.defineStyles();
-    slider.referencePoints = slider.defineReferencePoints(options.leftLabel);
-
-
-    slider.scale = slider.defineScale();
-
-    slider.datum = {"name":"","value":slider.currentValue};
-
-    slider.label = slider.addLabel();
-    slider.track = slider.addSliderTrack();
-    slider.valueLabel = slider.addValueLabel();
-
-    slider.move(options.coordinates);
-
-    slider.dragFunctions = slider.defineDragFunctions();
-    slider.circle = slider.addSlidingCircle();
-    slider.glowCircle = slider.addGlowCircle();
-
-    slider.circleMouseover = () => {};
-    slider.circleMouseout = () => {};
-
-
-  }
-}
-
-/* jshint esversion:6 */
-function Projection(data) {
-  let projection = this;
-
-  init(data);
-
-  return projection;
-
-  function init(data) {
-    projection.data = data;
-    projection.baseAge = projection.getBaseAge();
-    projection.warCurveDeltas = projection.defineWarCurveDeltas();
-    projection.relevantWarCurveDeltas = projection.getRelevantWarCurveDeltas();
-    projection.baseBWar = projection.getBaseBWar();
-    projection.threeYearBWar = projection.getThreeYearBWar();
-    projection.bWarAgingCurveProjection = projection.getBWarAgingCurveProjection();
-    projection.bWarSimilarPlayersRawData = projection.getBWarSimilarPlayersRawData();
-    projection.bWarSimilarPlayersMax = projection.getBWarSimilarPlayersMax();
-    projection.bWarSimilarPlayersMin = projection.getBWarSimilarPlayersMin();
-    projection.bWarSimilarPlayersMean = projection.getBWarSimilarPlayersMean();
-    projection.threeYearFWar = projection.getThreeYearFWar();
-    projection.fWarAgingCurveProjection = projection.getFWarAgingCurveProjection();
-    projection.fWarSimilarPlayersRawData = projection.getFWarSimilarPlayersRawData();
-    projection.fWarSimilarPlayersMax = projection.getFWarSimilarPlayersMax();
-    projection.fWarSimilarPlayersMin = projection.getFWarSimilarPlayersMin();
-    projection.fWarSimilarPlayersMean = projection.getFWarSimilarPlayersMean();
-
-  }
-}
-
-/* jshint esversion:6 */
-function StatsSection(options) {
-  const section = this;
-
-  init(options);
-
-  return section;
-
-  function init(options) {
-    section.div = section.addDiv(options.where);
-    section.header = section.addHeader(options.name);
-    section.tables = section.addTables(options);
-  }
-  
-}
-
-/* jshint esversion: 6*/
-Button.prototype.mouseclick = function() {
-  const button = this;
-
-  button.callback();
-
-  return button;
-};
-
-/* jshint esversion:6 */
-Button.prototype.mouseout = function() {
-  const button = this;
-
-  // Add style changes for mouseout
-
-  return button;
-};
-
-/* jshint esversion:6 */
-Button.prototype.mouseover = function() {
-  const button = this;
-
-  // Add style changes for mouseover
-
-  return button;
-};
-
-/* jshint esversion:6 */
 Button.prototype.addGroup = function(where) {
   const button = this;
   let group;
@@ -1180,6 +1152,33 @@ Button.prototype.defineStyles = function(options) {
     return setValue !== undefined ? setValue: defaultValue;
   }
 }
+
+/* jshint esversion: 6*/
+Button.prototype.mouseclick = function() {
+  const button = this;
+
+  button.callback();
+
+  return button;
+};
+
+/* jshint esversion:6 */
+Button.prototype.mouseout = function() {
+  const button = this;
+
+  // Add style changes for mouseout
+
+  return button;
+};
+
+/* jshint esversion:6 */
+Button.prototype.mouseover = function() {
+  const button = this;
+
+  // Add style changes for mouseover
+
+  return button;
+};
 
 /* jshint esversion:6 */
 Button.prototype.hide = function() {
@@ -2652,6 +2651,365 @@ LineChart.prototype.defineStyles = function() {
 
 };
 
+/* jshint esversion:6 */
+ModelSlider.prototype.addActiveTrack = function() {
+  const slider = this;
+
+  let track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.referencePoints.xMin)
+    .attr("y",-slider.styles.trackHeight / 2)
+    .attr("height",slider.styles.trackHeight)
+    .attr("width",0)
+    .attr("fill",slider.styles.activeTrackFill);
+
+
+  return track;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addCircle = function() {
+  const slider = this;
+
+  let circle = slider.circleGroup
+    .append("circle")
+    .attr("r",slider.styles.circleRadius)
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("fill",slider.styles.circleFill)
+    .attr("stroke",slider.styles.circleStroke)
+    .attr("stroke-width",slider.styles.circleStrokeWidth);
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addCircleGroup = function() {
+  const slider = this;
+
+  let group = slider.layers.circle
+    .append("g")
+    .attr("cursor","pointer")
+    .on('mouseover',slider.circleGroupMouseover())
+    .on('mouseout',slider.circleGroupMouseout())
+    .call(d3.drag()
+      .on('start',slider.circleGroupDragStart())
+      .on('drag',slider.circleGroupDrag())
+      .on('end',slider.circleGroupDragEnd())
+    );
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addGroup = function(where) {
+  const slider = this;
+
+  let group = where
+    .append("g")
+    .attr("transform","translate("+slider.coordinates.x+","+slider.coordinates.y+")")
+    .on('mouseover',slider.groupMouseover())
+    .on('mouseout',slider.groupMouseout());
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addHeading = function(labelText) {
+  const slider = this;
+
+  let heading;
+
+  header = slider.group
+    .append("text")
+    .attr("x",slider.margins.left)
+    .attr("y",-10)
+    .attr("font-size","8pt")
+    .attr("text-anchor","start")
+    .text(labelText)
+
+  return heading;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addHighlightCircle = function() {
+  const slider = this;
+
+  let circle = slider.circleGroup
+    .append("circle")
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("r",slider.styles.circleRadius)
+    .attr("fill",slider.styles.highlightCircleFill)
+    .attr("opacity",slider.styles.highlightCircleOpacity);
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addLayers = function() {
+  const slider = this;
+
+  let layers = {};
+  layers.track = slider.addSingleLayer();
+  layers.activeTrack = slider.addSingleLayer();
+  layers.circle = slider.addSingleLayer();
+  layers.heading = slider.addSingleLayer();
+
+  return layers;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addSingleLayer = function() {
+  const slider = this;
+
+  let layer = slider.group
+    .append("g");
+
+  return layer;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTextGhost = function() {
+  const slider = this;
+
+  let text = slider.circleGroup
+    .append("text")
+    .attr("x",10)
+    .attr("y",0)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","middle")
+    .attr("font-size",slider.styles.labelFontSize)
+    .attr("font-family",slider.styles.labelFontFamily)
+    .attr("stroke",slider.styles.labelGhostStroke)
+    .attr("stroke-width",slider.styles.labelGhostStrokeWidth)
+    .attr("opacity",slider.styles.labelFontOpacity)
+    .text("LABEL TEXT!");
+
+  return text;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTextLabel = function() {
+  const slider = this;
+
+  let text = slider.circleGroup
+    .append("text")
+    .attr("x",10)
+    .attr("y",0)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","middle")
+    .attr("font-size",slider.styles.labelFontSize)
+    .attr("font-family",slider.styles.labelFontFamily)
+    .attr("fill",slider.styles.labelFontFill)
+    .attr("opacity",slider.styles.labelFontOpacity)
+    .text("LABEL TEXT!");
+
+  return text;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTrack = function() {
+  const slider = this;
+
+  let track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.referencePoints.xMin)
+    .attr("y",-slider.styles.trackHeight / 2)
+    .attr("height",slider.styles.trackHeight)
+    .attr("width",slider.referencePoints.effectiveWidth)
+    .attr("fill",slider.styles.trackFill);
+
+
+  return track;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineCallbacks = function(options) {
+  const slider = this;
+
+  callbacks = defaulter(options.callbacks,{});
+  callbacks.groupMouseover = defaulter(callbacks.groupMouseover,() => {});
+  callbacks.groupMouseout = defaulter(callbacks.groupMouseout,() => {});
+  callbacks.circleGroupMouseover = defaulter(callbacks.circleGroupMouseover,() => {});
+  callbacks.circleGroupMouseout = defaulter(callbacks.circleGroupMouseout,() => {});
+  callbacks.dragStart = defaulter(callbacks.dragStart,() => {});
+  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {});
+  callbacks.change = defaulter(callbacks.change,() => {});
+
+  return callbacks;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineCoordinates = function(options) {
+  const slider = this;
+
+  let coordinates = defaulter(options.coordinates,{});
+  coordinates.x = defaulter(coordinates.x,0);
+  coordinates.y = defaulter(coordinates.y,0);
+
+  return coordinates;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineFormatter = function(options) {
+  const slider = this;
+
+  let formatter = defaulter(options.formatter,(value) => { return value.toFixed(0); });
+
+  return formatter;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineMargins = function(options) {
+  const slider = this;
+
+  let margins = defaulter(options.margins,{});
+  margins.left = defaulter(margins.left,10);
+  margins.right = defaulter(margins.right,10);
+  margins.top = defaulter(margins.top,10);
+  margins.bottom = defaulter(margins.bottom,10);
+
+  return margins;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineReferencePoints = function() {
+  const slider = this;
+
+  let referencePoints = {};
+  
+  referencePoints.xMin = slider.margins.left;
+  referencePoints.xMax = slider.size.width - slider.margins.right;
+
+  referencePoints.effectiveWidth = slider.size.width - slider.margins.right - slider.margins.left;
+
+  return referencePoints;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineScale = function(domain) {
+  const slider = this;
+
+  let scale = d3.scaleLinear()
+    .domain(domain)
+    .range([slider.referencePoints.xMin,slider.referencePoints.xMax]);
+
+  return scale;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineSize = function(options) {
+  const slider = this;
+
+  let size = defaulter(options.size,{});
+  size.width = defaulter(size.width,200);
+  size.height = defaulter(size.height,20);
+
+  return size;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineStyles = function(options) {
+  const slider = this;
+
+  let styles = defaulter(options.styles,{});
+
+  styles.trackFill = defaulter(styles.trackfill,"#eee");
+  styles.trackHeight = defaulter(styles.trackHeight,4);
+  styles.activeTrackFill = defaulter(styles.activeTrackFill,"#ed553b");
+
+  styles.circleRadius = defaulter(styles.circleRadius,3);
+  styles.circleFill = defaulter(styles.circleFill,"white");
+  styles.circleStroke = defaulter(styles.circleStroke,"#aaa");
+  styles.circleStrokeWidth = defaulter(styles.circleStrokeWidth,1);
+
+  styles.highlightCircleRadius = defaulter(styles.highlightCircleRadius,7);
+  styles.highlightCircleFill = defaulter(styles.highlightCircleFill,"#ed553b");
+  styles.highlightCircleOpacity = defaulter(styles.highlightCircleOpacity,0.25);
+
+  styles.dragCircleOpacity = defaulter(styles.dragCircleOpacity,1);
+
+  styles.labelFontSize = defaulter(styles.labelFontSize,"10pt");
+  styles.labelFontFamily = defaulter(styles.labelFontFamily,"Source Sans Pro");
+  styles.labelFontFill = defaulter(styles.labelFontFill,"#333");
+  styles.labelFontOpacity = defaulter(styles.labelFontOpacity,1);
+  styles.labelActiveFontSize = defaulter(styles.labelActiveFontSize,"12pt");
+  styles.labelActiveFontFill = defaulter(styles.labelActiveFontFill,"black");
+  styles.labelGhostStroke = defaulter(styles.labelGhostStroke,"white");
+  styles.labelGhostStrokeWidth = defaulter(styles.labelGhostStrokeWidth,3);
+
+
+  return styles;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.groupMouseout = function(d,i) {
+  const slider = this;
+
+  return function() {
+    if(!slider.dragLock) {
+      slider.highlightCircle
+        .transition()
+        .duration(150)
+        .attr("r",slider.styles.circleRadius);
+
+      slider.labelText
+        .transition()
+        .duration(150)
+        .attr("font-size",slider.styles.labelFontSize)
+        .attr("fill",slider.styles.labelFontFill);
+
+      slider.labelGhost
+        .transition()
+        .duration(150)
+        .attr("font-size",slider.styles.labelFontSize);
+
+      slider.callbacks
+        .groupMouseout();
+
+    }
+  };
+
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.groupMouseover = function(d,i) {
+  const slider = this;
+
+  return function() {
+
+    slider.callbacks
+      .groupMouseover();
+
+  }
+}
+
 /* jshint esversion: 6 */
 LineChart.prototype.addCompData = function(data) {
   const chart = this;
@@ -3799,365 +4157,6 @@ ModelSlider.prototype.circleGroupMouseover = function() {
     }
   }
 };
-
-/* jshint esversion:6 */
-ModelSlider.prototype.groupMouseout = function(d,i) {
-  const slider = this;
-
-  return function() {
-    if(!slider.dragLock) {
-      slider.highlightCircle
-        .transition()
-        .duration(150)
-        .attr("r",slider.styles.circleRadius);
-
-      slider.labelText
-        .transition()
-        .duration(150)
-        .attr("font-size",slider.styles.labelFontSize)
-        .attr("fill",slider.styles.labelFontFill);
-
-      slider.labelGhost
-        .transition()
-        .duration(150)
-        .attr("font-size",slider.styles.labelFontSize);
-
-      slider.callbacks
-        .groupMouseout();
-
-    }
-  };
-
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.groupMouseover = function(d,i) {
-  const slider = this;
-
-  return function() {
-
-    slider.callbacks
-      .groupMouseover();
-
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addActiveTrack = function() {
-  const slider = this;
-
-  let track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.referencePoints.xMin)
-    .attr("y",-slider.styles.trackHeight / 2)
-    .attr("height",slider.styles.trackHeight)
-    .attr("width",0)
-    .attr("fill",slider.styles.activeTrackFill);
-
-
-  return track;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addCircle = function() {
-  const slider = this;
-
-  let circle = slider.circleGroup
-    .append("circle")
-    .attr("r",slider.styles.circleRadius)
-    .attr("cx",0)
-    .attr("cy",0)
-    .attr("fill",slider.styles.circleFill)
-    .attr("stroke",slider.styles.circleStroke)
-    .attr("stroke-width",slider.styles.circleStrokeWidth);
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addCircleGroup = function() {
-  const slider = this;
-
-  let group = slider.layers.circle
-    .append("g")
-    .attr("cursor","pointer")
-    .on('mouseover',slider.circleGroupMouseover())
-    .on('mouseout',slider.circleGroupMouseout())
-    .call(d3.drag()
-      .on('start',slider.circleGroupDragStart())
-      .on('drag',slider.circleGroupDrag())
-      .on('end',slider.circleGroupDragEnd())
-    );
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addGroup = function(where) {
-  const slider = this;
-
-  let group = where
-    .append("g")
-    .attr("transform","translate("+slider.coordinates.x+","+slider.coordinates.y+")")
-    .on('mouseover',slider.groupMouseover())
-    .on('mouseout',slider.groupMouseout());
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addHeading = function(labelText) {
-  const slider = this;
-
-  let heading;
-
-  header = slider.group
-    .append("text")
-    .attr("x",slider.margins.left)
-    .attr("y",-10)
-    .attr("font-size","8pt")
-    .attr("text-anchor","start")
-    .text(labelText)
-
-  return heading;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addHighlightCircle = function() {
-  const slider = this;
-
-  let circle = slider.circleGroup
-    .append("circle")
-    .attr("cx",0)
-    .attr("cy",0)
-    .attr("r",slider.styles.circleRadius)
-    .attr("fill",slider.styles.highlightCircleFill)
-    .attr("opacity",slider.styles.highlightCircleOpacity);
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addLayers = function() {
-  const slider = this;
-
-  let layers = {};
-  layers.track = slider.addSingleLayer();
-  layers.activeTrack = slider.addSingleLayer();
-  layers.circle = slider.addSingleLayer();
-  layers.heading = slider.addSingleLayer();
-
-  return layers;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addSingleLayer = function() {
-  const slider = this;
-
-  let layer = slider.group
-    .append("g");
-
-  return layer;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTextGhost = function() {
-  const slider = this;
-
-  let text = slider.circleGroup
-    .append("text")
-    .attr("x",10)
-    .attr("y",0)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","middle")
-    .attr("font-size",slider.styles.labelFontSize)
-    .attr("font-family",slider.styles.labelFontFamily)
-    .attr("stroke",slider.styles.labelGhostStroke)
-    .attr("stroke-width",slider.styles.labelGhostStrokeWidth)
-    .attr("opacity",slider.styles.labelFontOpacity)
-    .text("LABEL TEXT!");
-
-  return text;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTextLabel = function() {
-  const slider = this;
-
-  let text = slider.circleGroup
-    .append("text")
-    .attr("x",10)
-    .attr("y",0)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","middle")
-    .attr("font-size",slider.styles.labelFontSize)
-    .attr("font-family",slider.styles.labelFontFamily)
-    .attr("fill",slider.styles.labelFontFill)
-    .attr("opacity",slider.styles.labelFontOpacity)
-    .text("LABEL TEXT!");
-
-  return text;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTrack = function() {
-  const slider = this;
-
-  let track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.referencePoints.xMin)
-    .attr("y",-slider.styles.trackHeight / 2)
-    .attr("height",slider.styles.trackHeight)
-    .attr("width",slider.referencePoints.effectiveWidth)
-    .attr("fill",slider.styles.trackFill);
-
-
-  return track;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineCallbacks = function(options) {
-  const slider = this;
-
-  callbacks = defaulter(options.callbacks,{});
-  callbacks.groupMouseover = defaulter(callbacks.groupMouseover,() => {});
-  callbacks.groupMouseout = defaulter(callbacks.groupMouseout,() => {});
-  callbacks.circleGroupMouseover = defaulter(callbacks.circleGroupMouseover,() => {});
-  callbacks.circleGroupMouseout = defaulter(callbacks.circleGroupMouseout,() => {});
-  callbacks.dragStart = defaulter(callbacks.dragStart,() => {});
-  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {});
-  callbacks.change = defaulter(callbacks.change,() => {});
-
-  return callbacks;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineCoordinates = function(options) {
-  const slider = this;
-
-  let coordinates = defaulter(options.coordinates,{});
-  coordinates.x = defaulter(coordinates.x,0);
-  coordinates.y = defaulter(coordinates.y,0);
-
-  return coordinates;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineFormatter = function(options) {
-  const slider = this;
-
-  let formatter = defaulter(options.formatter,(value) => { return value.toFixed(0); });
-
-  return formatter;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineMargins = function(options) {
-  const slider = this;
-
-  let margins = defaulter(options.margins,{});
-  margins.left = defaulter(margins.left,10);
-  margins.right = defaulter(margins.right,10);
-  margins.top = defaulter(margins.top,10);
-  margins.bottom = defaulter(margins.bottom,10);
-
-  return margins;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineReferencePoints = function() {
-  const slider = this;
-
-  let referencePoints = {};
-  
-  referencePoints.xMin = slider.margins.left;
-  referencePoints.xMax = slider.size.width - slider.margins.right;
-
-  referencePoints.effectiveWidth = slider.size.width - slider.margins.right - slider.margins.left;
-
-  return referencePoints;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineScale = function(domain) {
-  const slider = this;
-
-  let scale = d3.scaleLinear()
-    .domain(domain)
-    .range([slider.referencePoints.xMin,slider.referencePoints.xMax]);
-
-  return scale;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineSize = function(options) {
-  const slider = this;
-
-  let size = defaulter(options.size,{});
-  size.width = defaulter(size.width,200);
-  size.height = defaulter(size.height,20);
-
-  return size;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineStyles = function(options) {
-  const slider = this;
-
-  let styles = defaulter(options.styles,{});
-
-  styles.trackFill = defaulter(styles.trackfill,"#eee");
-  styles.trackHeight = defaulter(styles.trackHeight,4);
-  styles.activeTrackFill = defaulter(styles.activeTrackFill,"#ed553b");
-
-  styles.circleRadius = defaulter(styles.circleRadius,3);
-  styles.circleFill = defaulter(styles.circleFill,"white");
-  styles.circleStroke = defaulter(styles.circleStroke,"#aaa");
-  styles.circleStrokeWidth = defaulter(styles.circleStrokeWidth,1);
-
-  styles.highlightCircleRadius = defaulter(styles.highlightCircleRadius,7);
-  styles.highlightCircleFill = defaulter(styles.highlightCircleFill,"#ed553b");
-  styles.highlightCircleOpacity = defaulter(styles.highlightCircleOpacity,0.25);
-
-  styles.dragCircleOpacity = defaulter(styles.dragCircleOpacity,1);
-
-  styles.labelFontSize = defaulter(styles.labelFontSize,"10pt");
-  styles.labelFontFamily = defaulter(styles.labelFontFamily,"Source Sans Pro");
-  styles.labelFontFill = defaulter(styles.labelFontFill,"#333");
-  styles.labelFontOpacity = defaulter(styles.labelFontOpacity,1);
-  styles.labelActiveFontSize = defaulter(styles.labelActiveFontSize,"12pt");
-  styles.labelActiveFontFill = defaulter(styles.labelActiveFontFill,"black");
-  styles.labelGhostStroke = defaulter(styles.labelGhostStroke,"white");
-  styles.labelGhostStrokeWidth = defaulter(styles.labelGhostStrokeWidth,3);
-
-
-  return styles;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
 
 /* jshint esversion:6 */
 ModelSlider.prototype.updateValue = function(newValue) {
@@ -5630,6 +5629,835 @@ Modeler.prototype.toggleEditView = function() {
   }
 
 }
+
+/* jshint esversion:6 */
+ModelerPane.prototype.finishEditing = function() {
+  const pane = this;
+
+  pane.contractValues.aav = pane.salaryChart.aavSlider.currentValue;
+
+  pane
+    .transitionOut();
+
+  pane.parent
+    .dataFromPane(pane.contractValues);
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.hintMouseout = function() {
+  return () => {
+    const pane = this;
+
+    pane.tooltip
+      .hide();
+      
+    return pane;
+  };
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.hintMouseover = function() {
+  return () => {
+    const pane = this;
+    if(!pane.hasDragged) {
+      pane.tooltip
+        .update("Click and drag to change value.")
+        .show()
+        .move();      
+    }
+    return pane;
+  };
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.killAllGlows = function() {
+  const modeler = this;
+
+  modeler.contractSlider
+    .killGlow();
+
+  modeler.salarySlider
+    .killGlow();
+
+  modeler.winValueSliders.forEach((slider) => {
+    slider
+      .killGlow();
+  });
+
+  return modeler;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.registerTooltip = function(tooltip) {
+  const pane = this;
+
+  pane.tooltip = tooltip;
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.transitionIn = function() {
+  const pane = this;
+
+  pane.group
+    .transition()
+    .duration(500)
+    .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.group
+    .transition()
+    .duration(225)
+    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.updateContractValue = function() {
+  const pane = this;
+
+
+  let totalValue;
+  totalValue = 0;
+
+  totalValue = pane.contractValues.contractLength * pane.contractValues.aav;
+
+  // pane.salarySlider.valueLabel.updateText("$" + pane.contractValues.aav.toFixed(2) + "M");
+
+  // pane.contractValues.winValue.forEach((value,yearIndex) => {
+  //   pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
+  // });
+
+
+  // pane.totalContractValue.contractValueLabel
+  //   .updateText("$" + totalValue.toFixed(0) + "mm");
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.updateContractYears = function() {
+  const pane = this;
+
+  //
+  // pane.winValueSliders.forEach((slider,yearIndex) => {
+  //   if(yearIndex >= pane.contractValues.contractLength) {
+  //     slider
+  //       .hide();
+  //   } else {
+  //     slider
+  //       .show();
+  //   }
+  // });
+
+  pane
+    .updateContractValue();
+
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addContractDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("font-size","10pt")
+    .attr("x",pane.referencePoints.overlayContractDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlayContractDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .style("text-align","left")
+    .html("<strong>Drag</strong> the circle below to set the contract length.");
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addContractDurationLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlayContractCoordinates.x)
+    .attr("y",pane.referencePoints.overlayContractCoordinates.y)
+    .attr("font-size","12pt")
+    // .attr("font-weight","bold")
+    .text("Contract Duration");
+
+  return text;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addContractYearsSlider = function() {
+  const pane = this;
+
+  let slider;
+  let maxYears = 40 - pane.parent.player.stats.stats["2018"].age;
+
+
+  slider = new ModelSlider({
+    "where":pane.group,
+    "coordinates":pane.referencePoints.overlayContractSliderCoordinates,
+    "formatter":(x) => { return x.toFixed(0) + " years" },
+    "domain":[1,maxYears],
+    "size":{
+      "width":200
+    },
+    "styles":{
+      "labelFontFill":"black",
+      "labelFontSize":"12pt",
+      "labelActiveFontSize":"14pt"
+    },
+    "callbacks":{
+      "change":(newValue) => {
+        // pane.killAllGlows();
+        pane.contractValues.contractLength = +newValue.toFixed(0);
+        pane.updateContractYears();
+
+        pane.winValueChart
+          .updateYears(pane.contractValues.contractLength);
+
+        pane.salaryChart
+          .updateYears(pane.contractValues.contractLength);
+
+        pane.hasDragged = true;
+      }
+    }
+  }).updateValue(3);
+
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addGroup = function(where) {
+  const pane = this;
+
+  group = where
+    .append("g")
+    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
+
+  return group;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addMarketValueDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("font-size","10pt")
+    .attr("x",pane.referencePoints.overlayWinValueDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlayWinValueDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .style("text-align","left")
+    .html("<strong>Drag</strong> the circles below to set the market rate for wins each season.");
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addMarketValueLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlayWinValueCoordinates.x)
+    .attr("y",pane.referencePoints.overlayWinValueCoordinates.y)
+    .attr("font-size","12pt")
+    .text("Market Value of Wins");
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addRect = function() {
+  const pane = this;
+
+  let rect = pane.group
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",pane.size.width)
+    .attr("height",pane.size.height)
+    .attr("fill",pane.styles.backgroundColor)
+    .attr("stroke","black")
+    .attr("stroke-width",1);
+
+  return rect;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalaryChart = function() {
+  const pane = this;
+
+
+  let chart = new WinChart({
+    "where":pane.salaryGroup,
+    "domain":[2,40],
+    "size":{
+      "width":pane.referencePoints.overlayColumnWidth,
+      "height":pane.referencePoints.topThird * 1.5
+    },
+    "data":pane.contractValues.salary
+  }).updateYears(3).addAAVSlider();
+
+  return chart;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalaryDescription = function() {
+  const pane = this;
+
+  let div = pane.group
+    .append("foreignObject")
+    .attr("font-size","10pt")
+    .attr("x",pane.referencePoints.overlaySalaryDescriptionCoordinates.x)
+    .attr("y",pane.referencePoints.overlaySalaryDescriptionCoordinates.y)
+    .attr("width",pane.referencePoints.overlayColumnWidth)
+    .attr("height",pane.referencePoints.overlayDescriptionHeight)
+    .style("text-align","left")
+    .html("<strong>Drag</strong> the circles below to set the contract value.");
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalaryGroup = function() {
+  const pane = this;
+
+  let group = pane.group
+    .append("g")
+    .attr("transform","translate("+pane.referencePoints.salaryGroupCoordinates.x+","+pane.referencePoints.salaryGroupCoordinates.y+")");
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalaryLabel = function() {
+  const pane = this;
+
+  let text = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.overlaySalaryCoordinates.x)
+    .attr("y",pane.referencePoints.overlaySalaryCoordinates.y)
+    .attr("font-size","12pt")
+    .text("Contract Cost");
+
+
+  return text;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalarySlider = function() {
+  const pane = this;
+
+  let slider;
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSalarySliders = function() {
+  const pane = this;
+
+  let label = new TextLabel({
+    "where":pane.group,
+    "text":"Salary Per Year"
+  })
+  .show()
+  .move({
+    "x":pane.referencePoints.rightSixth + 100,
+    "y":125
+  });
+
+  let sliders = [];
+
+  d3.range(0,16).forEach((yearIndex) =>{
+    let year = 2019 + yearIndex;
+    let slider;
+
+    slider = new Slider({
+      "where":pane.group,
+      "coordinates":{"x":pane.referencePoints.rightSixth - 50,"y":125 + yearIndex * pane.referencePoints.tableRowHeight},
+      "label":"",
+      "domain":[2,40],
+      "defaultValue":pane.contractValues.salary[yearIndex],
+      "significantDigits":2,
+      "size":{
+        "width":275
+      }
+    }).setDragCallback(function(newValue) {
+      pane.contractValues.salary[yearIndex] = newValue;
+      pane
+        .updateContractValue();
+
+      pane
+        .killAllGlows();
+
+      slider.valueLabel
+        .updateText("$" + newValue.toFixed(2) + "M");
+
+      pane.hasDragged = true;
+
+    })
+    .runGlow();
+
+    slider.circleMouseover = pane.hintMouseover();
+    slider.circleMouseout = pane.hintMouseout();
+
+    sliders.push(slider);
+  });
+
+  return sliders;
+
+  function sliderUpdate(newValue,yearIndex) {
+    pane.contractValues.salary[yearIndex] = newValue;
+    pane
+      .updateContractValue();
+  }
+
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addSaveButton = function() {
+  const pane = this;
+
+  let button,
+    rect,
+    text;
+
+  button = pane.group
+    .append("g")
+    .attr("cursor","pointer")
+    .attr("transform","translate("+pane.referencePoints.saveButtonCoordinates.x+","+pane.referencePoints.saveButtonCoordinates.y+")")
+    .on('click',function() {
+      pane.finishEditing();
+    });
+
+
+  rect = button
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",pane.referencePoints.saveButtonSize.width)
+    .attr("height",pane.referencePoints.saveButtonSize.height)
+    .attr("fill","green");
+
+  text = button
+    .append("text")
+    .attr("x",pane.referencePoints.saveButtonSize.width / 2)
+    .attr("y",pane.referencePoints.saveButtonSize.height / 2)
+    .attr("font-size","14pt")
+    .attr("font-weight","bold")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("fill","white")
+    .text("SAVE");
+
+  // button = new Button({
+  //   "where":pane.group,
+  //   "text":"Save",
+  //   "coordinates":pane.referencePoints.buttonCoordinates
+  // }).registerCallback(function() {
+  //   pane.finishEditing();
+  // });
+
+  return button;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addTitle = function() {
+  const pane = this;
+
+  let title = pane.group
+    .append("text")
+    .attr("x",pane.referencePoints.titleCoordinates.x)
+    .attr("y",pane.referencePoints.titleCoordinates.y)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","14pt")
+    .text("Simulate a Contract for " + pane.parent.name);
+
+  return title;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addTotalContractValue = function() {
+  const pane = this;
+
+  let groupHeight = pane.referencePoints.topSixth;
+
+  let toReturn = {};
+  toReturn.group = pane.group
+    .append("g")
+    .attr("transform","translate(100,"+pane.referencePoints.bottomLine+")");
+
+  toReturn.nameLabel = new TextLabel({
+    "where":toReturn.group,
+    "text":"Total Contract Cost",
+    "fontFamily":pane.styles.fontFamily,
+    "fontSize":pane.styles.contractCostLabelFontSize,
+    "fontWeight":pane.styles.contractCostLabelFontWeight,
+    "textAnchor":"middle"
+  }).move({
+    "x":0,
+    "y":groupHeight / 4
+  })
+  .show();
+
+  toReturn.contractValueLabel = new TextLabel({
+    "where":toReturn.group,
+    "text":"$MM",
+    "fontFamily":pane.styles.fontFamily,
+    "fontSize":pane.styles.contractCostFontSize,
+    "fontWeight":pane.styles.contractCostFontWeight,
+    "textAnchor":"middle"
+  }).move({
+    "x":0,
+    "y":groupHeight * 2 / 3
+  })
+  .show();
+
+  return toReturn;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addWinValueChart = function() {
+  const pane = this;
+
+  let chart = new WinChart({
+    "where":pane.winValueGroup,
+    "domain":[8,30],
+    "size":{
+      "width":pane.referencePoints.overlayColumnWidth,
+      "height":pane.referencePoints.topThird * 1.5
+    },
+    "data":pane.contractValues.winValue
+  }).updateYears(3);
+
+  return chart;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addWinValueGroup = function() {
+  const pane = this;
+
+  let group = pane.group
+    .append("g")
+    .attr("transform","translate("+pane.referencePoints.winValueGroupCoordinates.x+","+pane.referencePoints.winValueGroupCoordinates.y+")");
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addWinValueTable = function() {
+  const pane = this;
+
+
+  d3.range(0,16).forEach((number) => {
+
+    let year = number + 2019;
+
+    let slider = new Slider({
+      "where":pane.group,
+      "label":year,
+      "coordinates":{"x":500,"y":75 + (number * pane.referencePoints.overlaySliderHeight)},
+      "domain":[8,30],
+      "defaultValue":pane.contractValues.winValue[number],
+      "significantDigits":0,
+      "size":{
+        "width":pane.referencePoints.overlayColumnWidth - 10,
+        "height":20
+      },
+      "leftLabel":true
+    }).setDragCallback((newValue) => {
+      pane.contractValues.winValue[number] = +newValue.toFixed(2);
+      pane.killAllGlows();
+      pane.updateContractValue();
+      pane.hasDragged = true;
+    })
+    .runGlow();
+
+    pane.winValueSliders.push(slider);
+  });
+
+  return pane.winValueSliders;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addYearGroup = function() {
+  const pane = this;
+
+  let group = pane.group
+    .append("g")
+    .attr("transform","translate("+pane.referencePoints.yearGroupCoordinates.x+","+pane.referencePoints.yearGroupCoordinates.y+")");
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.addYearLabels = function() {
+  const pane = this;
+
+  let labels = [];
+  d3.range([0,16]).forEach((yearIndex) =>{
+    let year = 2019 + yearIndex;
+    let label = new TextLabel({
+      "where":pane.yearGroup,
+      "text":year,
+      "textAnchor":"end"
+    }).move({
+      "x":0,
+      "y":(yearIndex + 1) * pane.referencePoints.tableRowHeight
+    })
+    .show();
+
+    labels.push(label);
+  });
+
+
+  return labels;
+}
+
+/* jshint esversion:6 */
+ModelerPane.prototype.defineContractValues = function() {
+  const pane = this;
+  let values = {};
+  values.contractLength = 3;
+  values.aav = 10;
+  values.salary = [];
+  // TODO: COPY OVER WIN VALUES
+
+  d3.range(0,16).forEach((year) => { values.salary.push(10); });
+  values.winValue = [10.5,11.03,11.58,12.16,12.76,13.41,14.07,14.77,15.51,16.29,17.10,17.96,18.857,19.80,20.79,21.83];
+  return values;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.defineReferencePoints = function() {
+  const pane = this;
+  let referencePoints = {};
+
+  referencePoints.centerX = pane.size.width / 2;
+  referencePoints.centerY = pane.size.height / 3;
+  referencePoints.topThird = pane.size.height / 3;
+  referencePoints.topSixth = referencePoints.topThird / 2;
+  referencePoints.secondThird = referencePoints.topThird * 2;
+
+  referencePoints.titleCenter = referencePoints.topThird / 6;
+  referencePoints.titleCoordinates = {"x":referencePoints.centerX,"y":referencePoints.titleCenter};
+  referencePoints.contractSliderCenter = referencePoints.titleCenter * 2;
+
+  referencePoints.rightSixth = pane.size.width / 6;
+  referencePoints.rightThird = pane.size.width / 3;
+  referencePoints.rightSecondThird = referencePoints.rightThird * 2;
+
+  referencePoints.yearGroupCoordinates = {"x":referencePoints.rightSixth,"y":referencePoints.topThird};
+  referencePoints.salaryGroupCoordinates = {"x":referencePoints.rightThird,"y":referencePoints.topSixth * 1.5 + 25};
+  referencePoints.winValueGroupCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.topSixth * 1.5 + 25};
+
+  referencePoints.topSixth = referencePoints.topThird / 2;
+
+  referencePoints.bottomLine = pane.size.height - referencePoints.topSixth;
+  referencePoints.bottomCenter = pane.size.height - (referencePoints.topSixth);
+
+  referencePoints.tableRowHeight = (referencePoints.bottomLine - referencePoints.topThird) / 15;
+
+  referencePoints.buttonCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.bottomCenter };
+
+  referencePoints.offscreen = {"x":800,"y":0};
+  referencePoints.onscreen = {"x":83.33,"y":0};
+
+
+  referencePoints.titleCoordinates = {
+    "x":30,
+    "y":20.667
+  };
+
+
+
+  referencePoints.overlayPlaneSize = {
+    "width":716.67,
+    "height":500
+  };
+
+  referencePoints.overlayPlaneOffscreen = {
+    "x":800,
+    "y":0
+  };
+
+  referencePoints.overlayPlaneOnscreen = {
+    "x":83.33,
+    "y":0
+  };
+
+  referencePoints.overlayTitleCoordinates = {
+    "x":14.92,
+    "y":41.67
+  };
+
+  referencePoints.overlayContractCoordinates = {
+    "x":30,
+    "y":70
+  };
+
+  referencePoints.overlayContractDescriptionCoordinates = {
+    "x":30,
+    "y":75
+  };
+
+  referencePoints.overlayContractSliderCoordinates =  {
+    "x":14.92,
+    "y":referencePoints.topSixth * 1.5 + 20
+  };
+
+  referencePoints.overlaySalaryCoordinates = {
+    "x":referencePoints.rightThird + 30,
+    "y":70
+  };
+
+  referencePoints.overlaySalaryDescriptionCoordinates = {
+    "x":referencePoints.rightThird + 30,
+    "y":75
+  };
+
+  referencePoints.overlaySalarySliderCoordinates =  {
+    "x":14.92,
+    "y":230
+  };
+
+  referencePoints.overlayWinValueCoordinates = {
+    "x":referencePoints.rightSecondThird + 30,
+    "y":70
+  };
+
+  referencePoints.overlayWinValueDescriptionCoordinates = {
+    "x":referencePoints.rightSecondThird + 30,
+    "y":75
+  };
+
+  referencePoints.overlayWinValueTableCoordinates = {
+    "x":492.94,
+    "y":177.083
+  };
+
+  referencePoints.saveButtonCoordinates = {
+    "x":492.94,
+    "y":437.5
+  };
+
+  referencePoints.saveButtonSize = {
+    "width":209.13,
+    "height":41.667
+  };
+
+  referencePoints.contractDetailsHeadingCoordinates = {
+    "x":625,
+    "y":41.68
+  };
+
+  referencePoints.projectedSurplusHeadingCoordinates = {
+    "x":566.67,
+    "y":72.92
+  };
+
+  referencePoints.projectedSurplusValueCoordinates = {
+    "x":566.67,
+    "y":93.75
+  };
+
+  referencePoints.contractValueHeadingCoordinates = {
+    "x":700,
+    "y":72.92
+  };
+
+  referencePoints.contractValueCoordinates = {
+    "x":700,
+    "y":93.75
+  };
+
+  referencePoints.editSalaryButtonCoordinates = {
+    "x":566.67,
+    "y":197.92
+  };
+
+  referencePoints.winValueButtonCoordinates = {
+    "x":700,
+    "y":197.92
+  };
+
+  referencePoints.contractTableCoordinates = {
+    "x":483.333,
+    "y":197.92
+  };
+
+  referencePoints.contractTableSize = {
+    "width":300,
+    "height":260.41
+  };
+
+  referencePoints.overlayColumnWidth = 209.13;
+  referencePoints.overlayDescriptionHeight = 41.667;
+  referencePoints.overlaySliderHeight = 20;
+  referencePoints.overlayColumnTableHeight = 218.75;
+
+
+
+  return referencePoints;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.defineSize = function(options) {
+  const pane = this;
+  let size = defaulter(options.size,{});
+
+  size.height = defaulter(size.height,500);
+  size.width = defaulter(size.width,717);
+
+  return size;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.defineStyles = function(options) {
+  const pane = this;
+  let styles = defaulter(options.styles,{});
+
+  styles.backgroundColor = defaulter(styles.backgroundColor,"white");
+  styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
+  styles.titleFontSize = defaulter(styles.titleFontSize,"16pt");
+  styles.titleFontWeight = defaulter(styles.titleFontWeight,"bold");
+
+  styles.contractCostLabelFontSize = defaulter(styles.contractCostLabelFontSize,"10pt");
+  styles.contractCostLabelFontWeight = defaulter(styles.contractCostLabelFontWeight,"normal");
+
+  styles.contractCostFontSize = defaulter(styles.contractCostFontSize,"14pt");
+  styles.contractCostFontWeight = defaulter(styles.contractCostFontWeight,"bold");
+
+  return styles;
+  
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+};
 
 /* jshint esversion:6 */
 ModelerKey.prototype.addContractValue = function() {
@@ -7817,7 +8645,7 @@ PlayerMenu.prototype.addContainerElement = function() {
 
   let element;
 
-  element = d3.select("#playerMenu")
+  element = d3.select("#_playerMenu")
     .append("div")
     .classed("player-menu-container",true);
 
@@ -8552,6 +9380,767 @@ PlayerMenu.prototype.updateFilters = function() {
 };
 
 /* jshint esversion:6 */
+Slider.prototype.addGlowCircle = function() {
+  const slider = this;
+
+  // TODO: FILL IN VALUES
+  // UPDATE STYLES
+  let glowCircle = slider.layers.glow
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
+    .attr("r",slider.styles.glowCircleDefaultRadius)
+    .attr("fill",slider.styles.glowCircleFill)
+    .attr("display","none");
+
+  return glowCircle;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addGroup = function(where) {
+  const slider = this;
+  let group;
+
+  group = where
+    .append("g");
+
+  return group;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.addLabel = function() {
+  const slider = this;
+  let text;
+
+  text = new TextLabel({
+    "text":slider.labelText,
+    "where":slider.layers.text,
+    "text-anchor":"middle"
+  }).show()
+  .move(slider.referencePoints.labelPosition);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addLayers = function() {
+  const slider = this;
+  let layers = {};
+
+  layers.background = addSingleLayer();
+  layers.text = addSingleLayer();
+  layers.track = addSingleLayer();
+  layers.glow = addSingleLayer();
+  layers.circle = addSingleLayer();
+
+  return layers;
+
+  function addSingleLayer() {
+    let layer;
+
+    layer = slider.group
+      .append("g");
+
+    return layer;
+  }
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addSliderTrack = function() {
+  const slider = this;
+  let track;
+
+  track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.margins.left)
+    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
+    .attr("height",slider.styles.sliderTrackHeight)
+    .attr("width",slider.referencePoints.effectiveWidth)
+    .attr("fill",slider.styles.sliderTrackColor);
+
+  return track;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addSlidingCircle = function() {
+  const slider = this;
+
+  let circle = slider.layers.circle
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("r",slider.styles.circleRadius)
+    .attr("fill",slider.styles.circleFill)
+    .attr("stroke",slider.styles.circleStroke)
+    .attr("stroke-width",slider.styles.circleStrokeWidth)
+    .attr("cursor","pointer")
+    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
+    .on('mouseover',function() {
+      let element = d3.select(this);
+
+      element
+        .transition()
+        .duration(125)
+        .attr("fill",slider.styles.highlightFillColor)
+        .attr("stroke",slider.styles.highlightStrokeColor)
+        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
+        .attr("radius",slider.styles.highlightCircleRadius);
+
+      slider
+        .circleMouseover();
+    })
+    .on('mouseout',function() {
+      let element = d3.select(this);
+
+      if(!slider.dragLock) {
+        element
+          .transition()
+          .duration(125)
+          .attr("fill",slider.styles.circleFill)
+          .attr("stroke",slider.styles.circleStroke)
+          .attr("stroke-width",slider.styles.circleStrokeWidth)
+          .attr("radius",slider.styles.circleRadius);
+      }
+
+      slider
+        .circleMouseout();
+
+
+    });
+
+  return circle;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addValueLabel = function() {
+  const slider = this;
+  let text;
+
+  text = new TextLabel({
+    "text":slider.datum.value,
+    "where":slider.layers.text,
+    "textAnchor":"start",
+    "fontSize":"16px"
+  }).show()
+  .move({
+    "x":slider.referencePoints.valueLabelCenterX,
+    "y":slider.referencePoints.circleCenterY
+  });
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defaulter = function(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineDragFunctions = function() {
+  const slider = this;
+
+  let dragFunctions = {};
+
+  dragFunctions.start = function(d,i) {
+    let element = d3.select(this);
+    slider.dragLock = true;
+  };
+
+  dragFunctions.drag = function(d,i) {
+    let element = d3.select(this);
+    let xPosition = d3.event.x;
+
+    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
+      let newValue;
+      newValue = slider.scale.invert(xPosition);
+
+      slider.currentValue = newValue;
+
+      slider.valueLabel
+        .updateText(newValue.toFixed(slider.significantDigits));
+
+      slider.dragCallback(newValue);
+
+      element
+        .attr("cx",xPosition);
+    }
+  };
+
+
+  dragFunctions.end = function(d,i) {
+    slider.dragLock = false;
+
+    let element = d3.select(this);
+
+    element
+      .transition()
+      .duration(125)
+      .attr("fill",slider.styles.circleFill)
+      .attr("stroke",slider.styles.circleStroke)
+      .attr("stroke-width",slider.styles.circleStrokeWidth)
+      .attr("radius",slider.styles.circleRadius);
+
+  };
+
+  return dragFunctions;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineLayout = function() {
+  const slider = this;
+  let layout = {};
+
+  layout.labelOrigin = {"x":0,"y":slider.margins.top};
+  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
+
+  return layout;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineMargins = function(presetMargins) {
+  const slider = this;
+  let margins = slider.defaulter(presetMargins,{});
+
+  margins.left = slider.defaulter(margins.left,10);
+  margins.right = slider.defaulter(margins.right,50);
+  margins.top = slider.defaulter(margins.top,10);
+  margins.bottom = slider.defaulter(margins.bottom,0);
+
+  return margins;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineReferencePoints = function(isLeft) {
+  const slider = this;
+  let referencePoints = {};
+
+  referencePoints.verticalCenter = slider.size.height / 2;
+  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
+  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
+  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
+  referencePoints.trackMin = slider.margins.left;
+  referencePoints.trackMax = slider.size.width - slider.margins.right;
+  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
+  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
+
+  if(isLeft) {
+    referencePoints.labelPosition = {"x":-10,"y":referencePoints.circleCenterY};
+  } else {
+    referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
+  }
+
+  return referencePoints;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineScale = function() {
+  const slider = this;
+  let scale;
+
+  scale = d3.scaleLinear()
+    .domain(slider.domain)
+    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
+
+  return scale;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineSize = function(presetSize) {
+  const slider = this;
+  let size = slider.defaulter(presetSize,{});
+
+  size.height = slider.defaulter(size.height,50);
+  size.width = slider.defaulter(size.width,200);
+
+  return size;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineStyles = function(presetStyles) {
+  const slider = this;
+  let styles = slider.defaulter(presetStyles,{});
+
+  styles.sliderTrackColor = "#aaa";
+  styles.sliderTrackHeight = 5;
+  styles.circleRadius = 5;
+  styles.circleFill = "black";
+  styles.circleStroke = "#eee";
+  styles.circleStrokeWidth = 1;
+
+  styles.highlightFillColor = "#ed553b";
+  styles.highlightStrokeColor = "black";
+  styles.highlightFillStrokeWidth = 2;
+  styles.highlightCircleRadius = 7;
+
+  styles.glowCircleDefaultOpacity = 1.0;
+  styles.glowCircleDefaultRadius = 7;
+  styles.glowCircleFill = "#ed553b";
+
+  styles.glowCircleDefaultOpacity = 1;
+  styles.glowCircleDefaultRadius = 5;
+  styles.glowCircleFill = "#ed553b";
+
+  styles.glowDelay = 0;
+  styles.glowDuration = 1500;
+  styles.glowCircleEndOpacity = 0;
+  styles.glowCircleEndRadius = 15;
+  styles.glowCircleEndFill = "#ed553b";
+
+
+  return styles;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBWarAgingCurveProjection = function() {
+  const projection = this;
+
+  let warProjection = [];
+  let lastValue;
+
+  lastValue = projection.threeYearBWar;
+
+  warProjection.push({
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
+  });
+
+  projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {
+    let season = {};
+    season.age = curveDeltaObject.age;
+    season.bWar = +(lastValue + curveDeltaObject.delta).toFixed(1);
+    lastValue += curveDeltaObject.delta;
+    warProjection.push(season);
+  });
+
+  return warProjection;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBWarSimilarPlayersMax = function() {
+  const projection = this;
+  let maxValues = [];
+
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+      let season = {};
+      season.age = key;
+      season.bWar = d3.max(projection.bWarSimilarPlayersRawData[key]);
+      maxValues.push(season);
+  });
+
+  maxValues.shift();
+
+  maxValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
+  });
+
+  return maxValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBWarSimilarPlayersMean = function() {
+  const projection = this;
+  let meanValues = [];
+
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.bWar = d3.mean(projection.bWarSimilarPlayersRawData[key]);
+    meanValues.push(season);
+  });
+
+  meanValues.shift();
+  meanValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
+  });
+
+  return meanValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBWarSimilarPlayersMin = function() {
+  const projection = this;
+  let minValues = [];
+
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.bWar = d3.min(projection.bWarSimilarPlayersRawData[key]);
+    minValues.push(season);
+  });
+
+  minValues.shift();
+
+  minValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
+  });
+
+  return minValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBWarSimilarPlayersRawData = function() {
+  const projection = this;
+
+  let playerProjection = [];
+  let similarPlayers = projection.data.metadata.similarPlayers;
+  let rawValues = {};
+  let mean;
+  let top25;
+  let bottom25;
+  let agesToProject;
+
+  agesToProject = projection.bWarAgingCurveProjection.map((a) => {return a.age;});
+
+  agesToProject.forEach((age) => {
+    rawValues[age] = [];
+  });
+
+  similarPlayers.forEach((player) => {
+    agesToProject.forEach((age) => {
+      let findMatch = player.data.filter((a) => { return a.age == age});
+      if(findMatch[0]) {
+        rawValues[age].push(+findMatch[0].bWAR);
+      } else {
+        let lastSeason = d3.max(player.data.map((a) => { return a.year}));
+        if(lastSeason != "2018") {
+          rawValues[age].push(0);
+        }
+      }
+    });
+  });
+
+
+  return rawValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBaseAge = function() {
+  const projection = this;
+
+  let baseAge = projection.data.stats["2018"].age;
+
+  return baseAge;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getBaseBWar = function() {
+  const projection = this;
+  let baseBWar = projection.data[Object.keys(projection.data)[Object.keys(projection.data).length - 1]].bWar;
+  return baseBWar;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getFWarAgingCurveProjection = function() {
+  const projection = this;
+
+  let warProjection = [];
+  let lastValue;
+
+  lastValue = projection.threeYearFWar;
+
+  warProjection.push({
+    "age":projection.data.stats["2018"].age,
+    "fWar":projection.data.stats["2018"].fWar
+  });
+
+  projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {
+    let season = {};
+    season.age = curveDeltaObject.age;
+    season.fWar = +(lastValue + curveDeltaObject.delta).toFixed(1);
+    lastValue += curveDeltaObject.delta;
+    warProjection.push(season);
+  });
+
+  return warProjection;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getFWarSimilarPlayersMax = function() {
+  const projection = this;
+  let maxValues = [];
+
+  Object.keys(projection.fWarSimilarPlayersRawData).forEach((key,index) => {
+      let season = {};
+      season.age = key;
+      season.fWar = d3.max(projection.fWarSimilarPlayersRawData[key]);
+      maxValues.push(season);
+  });
+
+  maxValues.shift();
+
+  maxValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "fWar":projection.data.stats["2018"].fWar
+  });
+
+  return maxValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getFWarSimilarPlayersMean = function() {
+  const projection = this;
+  let meanValues = [];
+
+  Object.keys(projection.fWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.fWar = d3.mean(projection.fWarSimilarPlayersRawData[key]);
+    meanValues.push(season);
+  });
+
+  meanValues.shift();
+  meanValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "fWar":projection.data.stats["2018"].fWar
+  });
+
+  return meanValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getFWarSimilarPlayersMin = function() {
+  const projection = this;
+  let minValues = [];
+
+  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
+    let season = {};
+    season.age = key;
+    season.fWar = d3.min(projection.fWarSimilarPlayersRawData[key]);
+    minValues.push(season);
+  });
+
+  minValues.shift();
+
+  minValues.unshift({
+    "age":projection.data.stats["2018"].age,
+    "fWar":projection.data.stats["2018"].fWar
+  });
+
+  return minValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getFWarSimilarPlayersRawData = function() {
+  const projection = this;
+
+  let playerProjection = [];
+  let similarPlayers = projection.data.metadata.similarPlayers;
+  let rawValues = {};
+  let mean;
+  let top25;
+  let bottom25;
+  let agesToProject;
+
+  agesToProject = projection.fWarAgingCurveProjection.map((a) => {return a.age;});
+
+  agesToProject.forEach((age) => {
+    rawValues[age] = [];
+  });
+
+  similarPlayers.forEach((player) => {
+    agesToProject.forEach((age) => {
+      let findMatch = player.data.filter((a) => { return a.age == age});
+      if(findMatch[0]) {
+        rawValues[age].push(+findMatch[0].fWar);
+      } else {
+        let lastSeason = d3.max(player.data.map((a) => { return a.year}));
+        if(lastSeason != "2018") {
+          rawValues[age].push(0);
+        }
+      }
+    });
+  });
+  return rawValues;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getRelevantWarCurveDeltas = function() {
+  const projection = this;
+  let deltas;
+
+  deltas = projection.warCurveDeltas.filter((object) => { return +object.age > projection.baseAge; });
+
+  return deltas;
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getThreeYearBWar = function() {
+  const projection = this;
+
+  let relevantYears,
+    rollingAverage;
+
+  relevantYears = [
+    projection.data.stats["2016"].bWar,
+    projection.data.stats["2017"].bWar,
+    projection.data.stats["2018"].bWar
+  ];
+
+  rollingAverage = relevantYears.reduce((a,b) => { return a+b; })/3;
+
+  return rollingAverage;
+
+};
+
+/* jshint esversion:6 */
+Projection.prototype.getThreeYearFWar = function() {
+  const projection = this;
+
+  let relevantYears,
+    rollingAverage;
+
+  relevantYears = [
+    projection.data.stats["2016"].fWar,
+    projection.data.stats["2017"].fWar,
+    projection.data.stats["2018"].fWar
+  ];
+
+  rollingAverage = relevantYears.reduce((a,b) => { return a+b; })/3;
+
+  return rollingAverage;
+
+};
+
+/* jshint esversion:6 */
+PlayerTable.prototype.registerTooltip = function(tooltip) {
+  const table = this;
+
+  table.tooltip = tooltip;
+
+  return table;
+}
+
+/* jshint esversion:6 */
+Projection.prototype.defineWarCurveDeltas = function() {
+  const projection = this;
+
+  return [
+    {"age":"19","delta":0.33},
+    {"age":"20","delta":0.33},
+    {"age":"21","delta":0.33},
+    {"age":"22","delta":0.21},
+    {"age":"23","delta":0.19},
+    {"age":"24","delta":0.06},
+    {"age":"25","delta":0},
+    {"age":"26","delta":-0.10},
+    {"age":"27","delta":-0.06},
+    {"age":"28","delta":-0.13},
+    {"age":"29","delta":-0.13},
+    {"age":"30","delta":-0.23},
+    {"age":"31","delta":-0.21},
+    {"age":"32","delta":-0.25},
+    {"age":"33","delta":-0.27},
+    {"age":"34","delta":-0.25},
+    {"age":"35","delta":-0.29},
+    {"age":"36","delta":-0.29},
+    {"age":"37","delta":-0.25},
+    {"age":"38","delta":-0.33},
+    {"age":"39","delta":-0.33},
+    {"age":"40","delta":-0.33}
+  ];
+
+};
+
+/* jshint esversion:6 */
+Slider.prototype.hide = function() {
+  const slider = this;
+
+  slider.group
+    .attr("display","none");
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.killGlow = function() {
+  const slider = this;
+
+  slider.isGlowing = false;
+  
+  slider.glowCircle
+    .attr("display","none");
+
+  return slider;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.move = function(coordinates) {
+  const slider = this;
+
+  slider.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
+
+  return slider;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.runGlow = function() {
+  const slider = this;
+
+  slider.isGlowing = true;
+
+  slider.glowCircle
+    .attr("display","block");
+
+  glow();
+
+  return slider;
+
+  function glow() {
+    slider.glowCircle
+      .attr("opacity",slider.styles.glowCircleDefaultOpacity)
+      .attr("r",slider.styles.glowCircleDefaultRadius)
+      .attr("fill",slider.styles.glowCircleFill)
+      .transition()
+      .delay(slider.styles.glowDelay)
+      .duration(slider.styles.glowDuration)
+      .attr("opacity",slider.styles.glowCircleEndOpacity)
+      .attr("r",slider.styles.glowCircleEndRadius)
+      .attr("fill",slider.styles.glowCircleEndFill)
+      .on('end',function()  {
+        if(slider.isGlowing) {
+          glow();
+        }
+      });
+
+  }
+};
+
+/* jshint esversion:6 */
+Slider.prototype.setDragCallback = function(cb) {
+  const slider = this;
+
+  slider.dragCallback = cb;
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.show = function() {
+  const slider = this;
+
+  slider.group
+    .attr("display","block");
+
+  return slider;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.update = function(newValue) {
+  const slider = this;
+
+  slider.currentValue = newValue;
+  slider.circle
+    .attr("cx",slider.scale(newValue));
+
+  return slider;
+}
+
+/* jshint esversion:6 */
 PlayerTable.prototype.addContainer = function() {
   const table = this;
 
@@ -8847,835 +10436,6 @@ PlayerTable.prototype.addSubSections = function() {
 }
 
 /* jshint esversion:6 */
-ModelerPane.prototype.addContractDescription = function() {
-  const pane = this;
-
-  let div = pane.group
-    .append("foreignObject")
-    .attr("font-size","10pt")
-    .attr("x",pane.referencePoints.overlayContractDescriptionCoordinates.x)
-    .attr("y",pane.referencePoints.overlayContractDescriptionCoordinates.y)
-    .attr("width",pane.referencePoints.overlayColumnWidth)
-    .attr("height",pane.referencePoints.overlayDescriptionHeight)
-    .style("text-align","left")
-    .html("<strong>Drag</strong> the circle below to set the contract length.");
-
-  return div;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addContractDurationLabel = function() {
-  const pane = this;
-
-  let text = pane.group
-    .append("text")
-    .attr("x",pane.referencePoints.overlayContractCoordinates.x)
-    .attr("y",pane.referencePoints.overlayContractCoordinates.y)
-    .attr("font-size","12pt")
-    // .attr("font-weight","bold")
-    .text("Contract Duration");
-
-  return text;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addContractYearsSlider = function() {
-  const pane = this;
-
-  let slider;
-  let maxYears = 40 - pane.parent.player.stats.stats["2018"].age;
-
-
-  slider = new ModelSlider({
-    "where":pane.group,
-    "coordinates":pane.referencePoints.overlayContractSliderCoordinates,
-    "formatter":(x) => { return x.toFixed(0) + " years" },
-    "domain":[1,maxYears],
-    "size":{
-      "width":200
-    },
-    "styles":{
-      "labelFontFill":"black",
-      "labelFontSize":"12pt",
-      "labelActiveFontSize":"14pt"
-    },
-    "callbacks":{
-      "change":(newValue) => {
-        // pane.killAllGlows();
-        pane.contractValues.contractLength = +newValue.toFixed(0);
-        pane.updateContractYears();
-
-        pane.winValueChart
-          .updateYears(pane.contractValues.contractLength);
-
-        pane.salaryChart
-          .updateYears(pane.contractValues.contractLength);
-
-        pane.hasDragged = true;
-      }
-    }
-  }).updateValue(3);
-
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addGroup = function(where) {
-  const pane = this;
-
-  group = where
-    .append("g")
-    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
-
-  return group;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addMarketValueDescription = function() {
-  const pane = this;
-
-  let div = pane.group
-    .append("foreignObject")
-    .attr("font-size","10pt")
-    .attr("x",pane.referencePoints.overlayWinValueDescriptionCoordinates.x)
-    .attr("y",pane.referencePoints.overlayWinValueDescriptionCoordinates.y)
-    .attr("width",pane.referencePoints.overlayColumnWidth)
-    .attr("height",pane.referencePoints.overlayDescriptionHeight)
-    .style("text-align","left")
-    .html("<strong>Drag</strong> the circles below to set the market rate for wins each season.");
-
-  return div;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addMarketValueLabel = function() {
-  const pane = this;
-
-  let text = pane.group
-    .append("text")
-    .attr("x",pane.referencePoints.overlayWinValueCoordinates.x)
-    .attr("y",pane.referencePoints.overlayWinValueCoordinates.y)
-    .attr("font-size","12pt")
-    .text("Market Value of Wins");
-
-
-  return text;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addRect = function() {
-  const pane = this;
-
-  let rect = pane.group
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",pane.size.width)
-    .attr("height",pane.size.height)
-    .attr("fill",pane.styles.backgroundColor)
-    .attr("stroke","black")
-    .attr("stroke-width",1);
-
-  return rect;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalaryChart = function() {
-  const pane = this;
-
-
-  let chart = new WinChart({
-    "where":pane.salaryGroup,
-    "domain":[2,40],
-    "size":{
-      "width":pane.referencePoints.overlayColumnWidth,
-      "height":pane.referencePoints.topThird * 1.5
-    },
-    "data":pane.contractValues.salary
-  }).updateYears(3).addAAVSlider();
-
-  return chart;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalaryDescription = function() {
-  const pane = this;
-
-  let div = pane.group
-    .append("foreignObject")
-    .attr("font-size","10pt")
-    .attr("x",pane.referencePoints.overlaySalaryDescriptionCoordinates.x)
-    .attr("y",pane.referencePoints.overlaySalaryDescriptionCoordinates.y)
-    .attr("width",pane.referencePoints.overlayColumnWidth)
-    .attr("height",pane.referencePoints.overlayDescriptionHeight)
-    .style("text-align","left")
-    .html("<strong>Drag</strong> the circles below to set the contract value.");
-
-  return div;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalaryGroup = function() {
-  const pane = this;
-
-  let group = pane.group
-    .append("g")
-    .attr("transform","translate("+pane.referencePoints.salaryGroupCoordinates.x+","+pane.referencePoints.salaryGroupCoordinates.y+")");
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalaryLabel = function() {
-  const pane = this;
-
-  let text = pane.group
-    .append("text")
-    .attr("x",pane.referencePoints.overlaySalaryCoordinates.x)
-    .attr("y",pane.referencePoints.overlaySalaryCoordinates.y)
-    .attr("font-size","12pt")
-    .text("Contract Cost");
-
-
-  return text;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalarySlider = function() {
-  const pane = this;
-
-  let slider;
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSalarySliders = function() {
-  const pane = this;
-
-  let label = new TextLabel({
-    "where":pane.group,
-    "text":"Salary Per Year"
-  })
-  .show()
-  .move({
-    "x":pane.referencePoints.rightSixth + 100,
-    "y":125
-  });
-
-  let sliders = [];
-
-  d3.range(0,16).forEach((yearIndex) =>{
-    let year = 2019 + yearIndex;
-    let slider;
-
-    slider = new Slider({
-      "where":pane.group,
-      "coordinates":{"x":pane.referencePoints.rightSixth - 50,"y":125 + yearIndex * pane.referencePoints.tableRowHeight},
-      "label":"",
-      "domain":[2,40],
-      "defaultValue":pane.contractValues.salary[yearIndex],
-      "significantDigits":2,
-      "size":{
-        "width":275
-      }
-    }).setDragCallback(function(newValue) {
-      pane.contractValues.salary[yearIndex] = newValue;
-      pane
-        .updateContractValue();
-
-      pane
-        .killAllGlows();
-
-      slider.valueLabel
-        .updateText("$" + newValue.toFixed(2) + "M");
-
-      pane.hasDragged = true;
-
-    })
-    .runGlow();
-
-    slider.circleMouseover = pane.hintMouseover();
-    slider.circleMouseout = pane.hintMouseout();
-
-    sliders.push(slider);
-  });
-
-  return sliders;
-
-  function sliderUpdate(newValue,yearIndex) {
-    pane.contractValues.salary[yearIndex] = newValue;
-    pane
-      .updateContractValue();
-  }
-
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addSaveButton = function() {
-  const pane = this;
-
-  let button,
-    rect,
-    text;
-
-  button = pane.group
-    .append("g")
-    .attr("cursor","pointer")
-    .attr("transform","translate("+pane.referencePoints.saveButtonCoordinates.x+","+pane.referencePoints.saveButtonCoordinates.y+")")
-    .on('click',function() {
-      pane.finishEditing();
-    });
-
-
-  rect = button
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",pane.referencePoints.saveButtonSize.width)
-    .attr("height",pane.referencePoints.saveButtonSize.height)
-    .attr("fill","green");
-
-  text = button
-    .append("text")
-    .attr("x",pane.referencePoints.saveButtonSize.width / 2)
-    .attr("y",pane.referencePoints.saveButtonSize.height / 2)
-    .attr("font-size","14pt")
-    .attr("font-weight","bold")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("fill","white")
-    .text("SAVE");
-
-  // button = new Button({
-  //   "where":pane.group,
-  //   "text":"Save",
-  //   "coordinates":pane.referencePoints.buttonCoordinates
-  // }).registerCallback(function() {
-  //   pane.finishEditing();
-  // });
-
-  return button;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addTitle = function() {
-  const pane = this;
-
-  let title = pane.group
-    .append("text")
-    .attr("x",pane.referencePoints.titleCoordinates.x)
-    .attr("y",pane.referencePoints.titleCoordinates.y)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","14pt")
-    .text("Simulate a Contract for " + pane.parent.name);
-
-  return title;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addTotalContractValue = function() {
-  const pane = this;
-
-  let groupHeight = pane.referencePoints.topSixth;
-
-  let toReturn = {};
-  toReturn.group = pane.group
-    .append("g")
-    .attr("transform","translate(100,"+pane.referencePoints.bottomLine+")");
-
-  toReturn.nameLabel = new TextLabel({
-    "where":toReturn.group,
-    "text":"Total Contract Cost",
-    "fontFamily":pane.styles.fontFamily,
-    "fontSize":pane.styles.contractCostLabelFontSize,
-    "fontWeight":pane.styles.contractCostLabelFontWeight,
-    "textAnchor":"middle"
-  }).move({
-    "x":0,
-    "y":groupHeight / 4
-  })
-  .show();
-
-  toReturn.contractValueLabel = new TextLabel({
-    "where":toReturn.group,
-    "text":"$MM",
-    "fontFamily":pane.styles.fontFamily,
-    "fontSize":pane.styles.contractCostFontSize,
-    "fontWeight":pane.styles.contractCostFontWeight,
-    "textAnchor":"middle"
-  }).move({
-    "x":0,
-    "y":groupHeight * 2 / 3
-  })
-  .show();
-
-  return toReturn;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addWinValueChart = function() {
-  const pane = this;
-
-  let chart = new WinChart({
-    "where":pane.winValueGroup,
-    "domain":[8,30],
-    "size":{
-      "width":pane.referencePoints.overlayColumnWidth,
-      "height":pane.referencePoints.topThird * 1.5
-    },
-    "data":pane.contractValues.winValue
-  }).updateYears(3);
-
-  return chart;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addWinValueGroup = function() {
-  const pane = this;
-
-  let group = pane.group
-    .append("g")
-    .attr("transform","translate("+pane.referencePoints.winValueGroupCoordinates.x+","+pane.referencePoints.winValueGroupCoordinates.y+")");
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addWinValueTable = function() {
-  const pane = this;
-
-
-  d3.range(0,16).forEach((number) => {
-
-    let year = number + 2019;
-
-    let slider = new Slider({
-      "where":pane.group,
-      "label":year,
-      "coordinates":{"x":500,"y":75 + (number * pane.referencePoints.overlaySliderHeight)},
-      "domain":[8,30],
-      "defaultValue":pane.contractValues.winValue[number],
-      "significantDigits":0,
-      "size":{
-        "width":pane.referencePoints.overlayColumnWidth - 10,
-        "height":20
-      },
-      "leftLabel":true
-    }).setDragCallback((newValue) => {
-      pane.contractValues.winValue[number] = +newValue.toFixed(2);
-      pane.killAllGlows();
-      pane.updateContractValue();
-      pane.hasDragged = true;
-    })
-    .runGlow();
-
-    pane.winValueSliders.push(slider);
-  });
-
-  return pane.winValueSliders;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addYearGroup = function() {
-  const pane = this;
-
-  let group = pane.group
-    .append("g")
-    .attr("transform","translate("+pane.referencePoints.yearGroupCoordinates.x+","+pane.referencePoints.yearGroupCoordinates.y+")");
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.addYearLabels = function() {
-  const pane = this;
-
-  let labels = [];
-  d3.range([0,16]).forEach((yearIndex) =>{
-    let year = 2019 + yearIndex;
-    let label = new TextLabel({
-      "where":pane.yearGroup,
-      "text":year,
-      "textAnchor":"end"
-    }).move({
-      "x":0,
-      "y":(yearIndex + 1) * pane.referencePoints.tableRowHeight
-    })
-    .show();
-
-    labels.push(label);
-  });
-
-
-  return labels;
-}
-
-/* jshint esversion:6 */
-ModelerPane.prototype.defineContractValues = function() {
-  const pane = this;
-  let values = {};
-  values.contractLength = 3;
-  values.aav = 10;
-  values.salary = [];
-  // TODO: COPY OVER WIN VALUES
-
-  d3.range(0,16).forEach((year) => { values.salary.push(10); });
-  values.winValue = [10.5,11.03,11.58,12.16,12.76,13.41,14.07,14.77,15.51,16.29,17.10,17.96,18.857,19.80,20.79,21.83];
-  return values;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.defineReferencePoints = function() {
-  const pane = this;
-  let referencePoints = {};
-
-  referencePoints.centerX = pane.size.width / 2;
-  referencePoints.centerY = pane.size.height / 3;
-  referencePoints.topThird = pane.size.height / 3;
-  referencePoints.topSixth = referencePoints.topThird / 2;
-  referencePoints.secondThird = referencePoints.topThird * 2;
-
-  referencePoints.titleCenter = referencePoints.topThird / 6;
-  referencePoints.titleCoordinates = {"x":referencePoints.centerX,"y":referencePoints.titleCenter};
-  referencePoints.contractSliderCenter = referencePoints.titleCenter * 2;
-
-  referencePoints.rightSixth = pane.size.width / 6;
-  referencePoints.rightThird = pane.size.width / 3;
-  referencePoints.rightSecondThird = referencePoints.rightThird * 2;
-
-  referencePoints.yearGroupCoordinates = {"x":referencePoints.rightSixth,"y":referencePoints.topThird};
-  referencePoints.salaryGroupCoordinates = {"x":referencePoints.rightThird,"y":referencePoints.topSixth * 1.5 + 25};
-  referencePoints.winValueGroupCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.topSixth * 1.5 + 25};
-
-  referencePoints.topSixth = referencePoints.topThird / 2;
-
-  referencePoints.bottomLine = pane.size.height - referencePoints.topSixth;
-  referencePoints.bottomCenter = pane.size.height - (referencePoints.topSixth);
-
-  referencePoints.tableRowHeight = (referencePoints.bottomLine - referencePoints.topThird) / 15;
-
-  referencePoints.buttonCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.bottomCenter };
-
-  referencePoints.offscreen = {"x":800,"y":0};
-  referencePoints.onscreen = {"x":83.33,"y":0};
-
-
-  referencePoints.titleCoordinates = {
-    "x":30,
-    "y":20.667
-  };
-
-
-
-  referencePoints.overlayPlaneSize = {
-    "width":716.67,
-    "height":500
-  };
-
-  referencePoints.overlayPlaneOffscreen = {
-    "x":800,
-    "y":0
-  };
-
-  referencePoints.overlayPlaneOnscreen = {
-    "x":83.33,
-    "y":0
-  };
-
-  referencePoints.overlayTitleCoordinates = {
-    "x":14.92,
-    "y":41.67
-  };
-
-  referencePoints.overlayContractCoordinates = {
-    "x":30,
-    "y":70
-  };
-
-  referencePoints.overlayContractDescriptionCoordinates = {
-    "x":30,
-    "y":75
-  };
-
-  referencePoints.overlayContractSliderCoordinates =  {
-    "x":14.92,
-    "y":referencePoints.topSixth * 1.5 + 20
-  };
-
-  referencePoints.overlaySalaryCoordinates = {
-    "x":referencePoints.rightThird + 30,
-    "y":70
-  };
-
-  referencePoints.overlaySalaryDescriptionCoordinates = {
-    "x":referencePoints.rightThird + 30,
-    "y":75
-  };
-
-  referencePoints.overlaySalarySliderCoordinates =  {
-    "x":14.92,
-    "y":230
-  };
-
-  referencePoints.overlayWinValueCoordinates = {
-    "x":referencePoints.rightSecondThird + 30,
-    "y":70
-  };
-
-  referencePoints.overlayWinValueDescriptionCoordinates = {
-    "x":referencePoints.rightSecondThird + 30,
-    "y":75
-  };
-
-  referencePoints.overlayWinValueTableCoordinates = {
-    "x":492.94,
-    "y":177.083
-  };
-
-  referencePoints.saveButtonCoordinates = {
-    "x":492.94,
-    "y":437.5
-  };
-
-  referencePoints.saveButtonSize = {
-    "width":209.13,
-    "height":41.667
-  };
-
-  referencePoints.contractDetailsHeadingCoordinates = {
-    "x":625,
-    "y":41.68
-  };
-
-  referencePoints.projectedSurplusHeadingCoordinates = {
-    "x":566.67,
-    "y":72.92
-  };
-
-  referencePoints.projectedSurplusValueCoordinates = {
-    "x":566.67,
-    "y":93.75
-  };
-
-  referencePoints.contractValueHeadingCoordinates = {
-    "x":700,
-    "y":72.92
-  };
-
-  referencePoints.contractValueCoordinates = {
-    "x":700,
-    "y":93.75
-  };
-
-  referencePoints.editSalaryButtonCoordinates = {
-    "x":566.67,
-    "y":197.92
-  };
-
-  referencePoints.winValueButtonCoordinates = {
-    "x":700,
-    "y":197.92
-  };
-
-  referencePoints.contractTableCoordinates = {
-    "x":483.333,
-    "y":197.92
-  };
-
-  referencePoints.contractTableSize = {
-    "width":300,
-    "height":260.41
-  };
-
-  referencePoints.overlayColumnWidth = 209.13;
-  referencePoints.overlayDescriptionHeight = 41.667;
-  referencePoints.overlaySliderHeight = 20;
-  referencePoints.overlayColumnTableHeight = 218.75;
-
-
-
-  return referencePoints;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.defineSize = function(options) {
-  const pane = this;
-  let size = defaulter(options.size,{});
-
-  size.height = defaulter(size.height,500);
-  size.width = defaulter(size.width,717);
-
-  return size;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.defineStyles = function(options) {
-  const pane = this;
-  let styles = defaulter(options.styles,{});
-
-  styles.backgroundColor = defaulter(styles.backgroundColor,"white");
-  styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
-  styles.titleFontSize = defaulter(styles.titleFontSize,"16pt");
-  styles.titleFontWeight = defaulter(styles.titleFontWeight,"bold");
-
-  styles.contractCostLabelFontSize = defaulter(styles.contractCostLabelFontSize,"10pt");
-  styles.contractCostLabelFontWeight = defaulter(styles.contractCostLabelFontWeight,"normal");
-
-  styles.contractCostFontSize = defaulter(styles.contractCostFontSize,"14pt");
-  styles.contractCostFontWeight = defaulter(styles.contractCostFontWeight,"bold");
-
-  return styles;
-  
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.finishEditing = function() {
-  const pane = this;
-
-  pane.contractValues.aav = pane.salaryChart.aavSlider.currentValue;
-
-  pane
-    .transitionOut();
-
-  pane.parent
-    .dataFromPane(pane.contractValues);
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.hintMouseout = function() {
-  return () => {
-    const pane = this;
-
-    pane.tooltip
-      .hide();
-      
-    return pane;
-  };
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.hintMouseover = function() {
-  return () => {
-    const pane = this;
-    if(!pane.hasDragged) {
-      pane.tooltip
-        .update("Click and drag to change value.")
-        .show()
-        .move();      
-    }
-    return pane;
-  };
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.killAllGlows = function() {
-  const modeler = this;
-
-  modeler.contractSlider
-    .killGlow();
-
-  modeler.salarySlider
-    .killGlow();
-
-  modeler.winValueSliders.forEach((slider) => {
-    slider
-      .killGlow();
-  });
-
-  return modeler;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.registerTooltip = function(tooltip) {
-  const pane = this;
-
-  pane.tooltip = tooltip;
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.transitionIn = function() {
-  const pane = this;
-
-  pane.group
-    .transition()
-    .duration(500)
-    .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.group
-    .transition()
-    .duration(225)
-    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.updateContractValue = function() {
-  const pane = this;
-
-
-  let totalValue;
-  totalValue = 0;
-
-  totalValue = pane.contractValues.contractLength * pane.contractValues.aav;
-
-  // pane.salarySlider.valueLabel.updateText("$" + pane.contractValues.aav.toFixed(2) + "M");
-
-  // pane.contractValues.winValue.forEach((value,yearIndex) => {
-  //   pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
-  // });
-
-
-  // pane.totalContractValue.contractValueLabel
-  //   .updateText("$" + totalValue.toFixed(0) + "mm");
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.updateContractYears = function() {
-  const pane = this;
-
-  //
-  // pane.winValueSliders.forEach((slider,yearIndex) => {
-  //   if(yearIndex >= pane.contractValues.contractLength) {
-  //     slider
-  //       .hide();
-  //   } else {
-  //     slider
-  //       .show();
-  //   }
-  // });
-
-  pane
-    .updateContractValue();
-
-
-  return pane;
-};
-
-/* jshint esversion:6 */
 Sparkline.prototype.addCircles = function() {
   const spark = this;
 
@@ -9854,6 +10614,48 @@ Sparkline.prototype.registerTooltip = function(tooltip) {
 };
 
 /* jshint esversion:6 */
+StatsSection.prototype.addDiv = function(where) {
+  const section = this;
+  let div;
+
+  div = d3.select(where)
+    .append("div")
+    .classed("stat-group-numberline",true);
+
+  return div;
+};
+
+/* jshint esversion:6 */
+StatsSection.prototype.addHeader = function(name) {
+  const section = this;
+  let header;
+
+  header = section.div
+    .append("div")
+    .classed("stats-section-header",true)
+    .html(name);
+
+  return header;
+};
+
+/* jshint esversion:6 */
+StatsSection.prototype.addTables = function(options) {
+  const section = this;
+
+  let allTables = [];
+
+  if(!options.tables) {return allTables;}
+
+  options.tables.forEach((tableOptions) => {
+    tableOptions.where = section.div;
+    let table = new StatsTable(tableOptions);
+    allTables.push(table);
+  });
+
+  return allTables;
+};
+
+/* jshint esversion:6 */
 StatsTable.prototype.addContainer = function(where) {
   const table = this;
 
@@ -9946,6 +10748,126 @@ StatsTable.prototype.generateRowElements = function(rows) {
 };
 
 /* jshint esversion:6 */
+TextLabel.prototype.hide = function() {
+  const label = this;
+
+  label.group
+    .style("display","none");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.move = function(position) {
+  const label = this;
+
+  label.group
+    .attr("transform","translate("+position.x+","+position.y+")");
+
+  return this;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.show = function() {
+  const label = this;
+
+  label.group
+    .style("display","block");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.updateText = function(newText) {
+  const label = this;
+
+  label.background.text(newText);
+  label.foreground.text(newText);
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addBackground = function() {
+  const label = this;
+
+  let text;
+
+  text = label.group
+    .append("text")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("text-anchor",label.styles.textAnchor)
+    .attr("dominant-baseline","central")
+    .attr("font-family",label.styles.fontFamily)
+    .attr("font-size",label.styles.fontSize)
+    .attr("font-weight",label.styles.fontWeight)
+    .attr("stroke",label.styles.backgroundStroke)
+    .attr("fill","none")
+    .attr("stroke-width",label.styles.outlineWidth)
+    .text(label.text);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addForeground = function() {
+  const label = this;
+
+  let text;
+
+  text = label.group
+    .append("text")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("text-anchor",label.styles.textAnchor)
+    .attr("dominant-baseline","central")
+    .attr("font-family",label.styles.fontFamily)
+    .attr("font-size",label.styles.fontSize)
+    .attr("font-weight",label.styles.fontWeight)
+    .attr("stroke","none")
+    .attr("fill",label.styles.foregroundColor)
+    .text(label.text);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addGroup = function(where) {
+  const label = this;
+  let group;
+
+  group = where
+    .append("g")
+    .style("display","none")
+    .attr("cursor","pointer");
+
+  return group;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.defineStyles = function(options) {
+  const label = this;
+  let styles;
+
+  styles = defaulter(options.styles,{});
+
+  styles.fontFamily = defaulter(options.fontFamily,"Source Sans Pro");
+  styles.fontSize = defaulter(options.fontSize,"10pt");
+  styles.fontWeight = defaulter(options.fontWeight,"bold");
+  styles.backgroundStroke = defaulter(options.backgroundStroke,"white");
+  styles.outlineWidth = defaulter(options.outlineWidth,5);
+  styles.foregroundColor = defaulter(options.foregroundColor,"black");
+  styles.textAnchor = defaulter(options.textAnchor,"middle");
+
+  return styles;
+
+  function defaulter(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+  }
+};
+
+/* jshint esversion:6 */
 StatsTableRow.prototype.addNameCell = function(where) {
   const tableRow = this;
   let element;
@@ -10035,126 +10957,6 @@ StatsTableRow.prototype.addSparkline = function(where) {
 
 
   return element;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addBackground = function() {
-  const label = this;
-
-  let text;
-
-  text = label.group
-    .append("text")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("text-anchor",label.styles.textAnchor)
-    .attr("dominant-baseline","central")
-    .attr("font-family",label.styles.fontFamily)
-    .attr("font-size",label.styles.fontSize)
-    .attr("font-weight",label.styles.fontWeight)
-    .attr("stroke",label.styles.backgroundStroke)
-    .attr("fill","none")
-    .attr("stroke-width",label.styles.outlineWidth)
-    .text(label.text);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addForeground = function() {
-  const label = this;
-
-  let text;
-
-  text = label.group
-    .append("text")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("text-anchor",label.styles.textAnchor)
-    .attr("dominant-baseline","central")
-    .attr("font-family",label.styles.fontFamily)
-    .attr("font-size",label.styles.fontSize)
-    .attr("font-weight",label.styles.fontWeight)
-    .attr("stroke","none")
-    .attr("fill",label.styles.foregroundColor)
-    .text(label.text);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addGroup = function(where) {
-  const label = this;
-  let group;
-
-  group = where
-    .append("g")
-    .style("display","none")
-    .attr("cursor","pointer");
-
-  return group;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.defineStyles = function(options) {
-  const label = this;
-  let styles;
-
-  styles = defaulter(options.styles,{});
-
-  styles.fontFamily = defaulter(options.fontFamily,"Source Sans Pro");
-  styles.fontSize = defaulter(options.fontSize,"10pt");
-  styles.fontWeight = defaulter(options.fontWeight,"bold");
-  styles.backgroundStroke = defaulter(options.backgroundStroke,"white");
-  styles.outlineWidth = defaulter(options.outlineWidth,5);
-  styles.foregroundColor = defaulter(options.foregroundColor,"black");
-  styles.textAnchor = defaulter(options.textAnchor,"middle");
-
-  return styles;
-
-  function defaulter(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
-  }
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.hide = function() {
-  const label = this;
-
-  label.group
-    .style("display","none");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.move = function(position) {
-  const label = this;
-
-  label.group
-    .attr("transform","translate("+position.x+","+position.y+")");
-
-  return this;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.show = function() {
-  const label = this;
-
-  label.group
-    .style("display","block");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.updateText = function(newText) {
-  const label = this;
-
-  label.background.text(newText);
-  label.foreground.text(newText);
-
-  return label;
 };
 
 /* jshint esversion:6 */
@@ -11014,806 +11816,3 @@ WinChart.prototype.updateYears = function(years) {
 
   return chart;
 }
-
-/* jshint esversion:6 */
-Slider.prototype.addGlowCircle = function() {
-  const slider = this;
-
-  // TODO: FILL IN VALUES
-  // UPDATE STYLES
-  let glowCircle = slider.layers.glow
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
-    .attr("r",slider.styles.glowCircleDefaultRadius)
-    .attr("fill",slider.styles.glowCircleFill)
-    .attr("display","none");
-
-  return glowCircle;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addGroup = function(where) {
-  const slider = this;
-  let group;
-
-  group = where
-    .append("g");
-
-  return group;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.addLabel = function() {
-  const slider = this;
-  let text;
-
-  text = new TextLabel({
-    "text":slider.labelText,
-    "where":slider.layers.text,
-    "text-anchor":"middle"
-  }).show()
-  .move(slider.referencePoints.labelPosition);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addLayers = function() {
-  const slider = this;
-  let layers = {};
-
-  layers.background = addSingleLayer();
-  layers.text = addSingleLayer();
-  layers.track = addSingleLayer();
-  layers.glow = addSingleLayer();
-  layers.circle = addSingleLayer();
-
-  return layers;
-
-  function addSingleLayer() {
-    let layer;
-
-    layer = slider.group
-      .append("g");
-
-    return layer;
-  }
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSliderTrack = function() {
-  const slider = this;
-  let track;
-
-  track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.margins.left)
-    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
-    .attr("height",slider.styles.sliderTrackHeight)
-    .attr("width",slider.referencePoints.effectiveWidth)
-    .attr("fill",slider.styles.sliderTrackColor);
-
-  return track;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSlidingCircle = function() {
-  const slider = this;
-
-  let circle = slider.layers.circle
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("r",slider.styles.circleRadius)
-    .attr("fill",slider.styles.circleFill)
-    .attr("stroke",slider.styles.circleStroke)
-    .attr("stroke-width",slider.styles.circleStrokeWidth)
-    .attr("cursor","pointer")
-    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
-    .on('mouseover',function() {
-      let element = d3.select(this);
-
-      element
-        .transition()
-        .duration(125)
-        .attr("fill",slider.styles.highlightFillColor)
-        .attr("stroke",slider.styles.highlightStrokeColor)
-        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
-        .attr("radius",slider.styles.highlightCircleRadius);
-
-      slider
-        .circleMouseover();
-    })
-    .on('mouseout',function() {
-      let element = d3.select(this);
-
-      if(!slider.dragLock) {
-        element
-          .transition()
-          .duration(125)
-          .attr("fill",slider.styles.circleFill)
-          .attr("stroke",slider.styles.circleStroke)
-          .attr("stroke-width",slider.styles.circleStrokeWidth)
-          .attr("radius",slider.styles.circleRadius);
-      }
-
-      slider
-        .circleMouseout();
-
-
-    });
-
-  return circle;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addValueLabel = function() {
-  const slider = this;
-  let text;
-
-  text = new TextLabel({
-    "text":slider.datum.value,
-    "where":slider.layers.text,
-    "textAnchor":"start",
-    "fontSize":"16px"
-  }).show()
-  .move({
-    "x":slider.referencePoints.valueLabelCenterX,
-    "y":slider.referencePoints.circleCenterY
-  });
-
-  return text;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defaulter = function(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineDragFunctions = function() {
-  const slider = this;
-
-  let dragFunctions = {};
-
-  dragFunctions.start = function(d,i) {
-    let element = d3.select(this);
-    slider.dragLock = true;
-  };
-
-  dragFunctions.drag = function(d,i) {
-    let element = d3.select(this);
-    let xPosition = d3.event.x;
-
-    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
-      let newValue;
-      newValue = slider.scale.invert(xPosition);
-
-      slider.currentValue = newValue;
-
-      slider.valueLabel
-        .updateText(newValue.toFixed(slider.significantDigits));
-
-      slider.dragCallback(newValue);
-
-      element
-        .attr("cx",xPosition);
-    }
-  };
-
-
-  dragFunctions.end = function(d,i) {
-    slider.dragLock = false;
-
-    let element = d3.select(this);
-
-    element
-      .transition()
-      .duration(125)
-      .attr("fill",slider.styles.circleFill)
-      .attr("stroke",slider.styles.circleStroke)
-      .attr("stroke-width",slider.styles.circleStrokeWidth)
-      .attr("radius",slider.styles.circleRadius);
-
-  };
-
-  return dragFunctions;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineLayout = function() {
-  const slider = this;
-  let layout = {};
-
-  layout.labelOrigin = {"x":0,"y":slider.margins.top};
-  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
-
-  return layout;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineMargins = function(presetMargins) {
-  const slider = this;
-  let margins = slider.defaulter(presetMargins,{});
-
-  margins.left = slider.defaulter(margins.left,10);
-  margins.right = slider.defaulter(margins.right,50);
-  margins.top = slider.defaulter(margins.top,10);
-  margins.bottom = slider.defaulter(margins.bottom,0);
-
-  return margins;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineReferencePoints = function(isLeft) {
-  const slider = this;
-  let referencePoints = {};
-
-  referencePoints.verticalCenter = slider.size.height / 2;
-  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
-  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
-  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
-  referencePoints.trackMin = slider.margins.left;
-  referencePoints.trackMax = slider.size.width - slider.margins.right;
-  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
-  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
-
-  if(isLeft) {
-    referencePoints.labelPosition = {"x":-10,"y":referencePoints.circleCenterY};
-  } else {
-    referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
-  }
-
-  return referencePoints;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineScale = function() {
-  const slider = this;
-  let scale;
-
-  scale = d3.scaleLinear()
-    .domain(slider.domain)
-    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
-
-  return scale;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineSize = function(presetSize) {
-  const slider = this;
-  let size = slider.defaulter(presetSize,{});
-
-  size.height = slider.defaulter(size.height,50);
-  size.width = slider.defaulter(size.width,200);
-
-  return size;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineStyles = function(presetStyles) {
-  const slider = this;
-  let styles = slider.defaulter(presetStyles,{});
-
-  styles.sliderTrackColor = "#aaa";
-  styles.sliderTrackHeight = 5;
-  styles.circleRadius = 5;
-  styles.circleFill = "black";
-  styles.circleStroke = "#eee";
-  styles.circleStrokeWidth = 1;
-
-  styles.highlightFillColor = "#ed553b";
-  styles.highlightStrokeColor = "black";
-  styles.highlightFillStrokeWidth = 2;
-  styles.highlightCircleRadius = 7;
-
-  styles.glowCircleDefaultOpacity = 1.0;
-  styles.glowCircleDefaultRadius = 7;
-  styles.glowCircleFill = "#ed553b";
-
-  styles.glowCircleDefaultOpacity = 1;
-  styles.glowCircleDefaultRadius = 5;
-  styles.glowCircleFill = "#ed553b";
-
-  styles.glowDelay = 0;
-  styles.glowDuration = 1500;
-  styles.glowCircleEndOpacity = 0;
-  styles.glowCircleEndRadius = 15;
-  styles.glowCircleEndFill = "#ed553b";
-
-
-  return styles;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.hide = function() {
-  const slider = this;
-
-  slider.group
-    .attr("display","none");
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.killGlow = function() {
-  const slider = this;
-
-  slider.isGlowing = false;
-  
-  slider.glowCircle
-    .attr("display","none");
-
-  return slider;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.move = function(coordinates) {
-  const slider = this;
-
-  slider.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return slider;
-}
-
-/* jshint esversion:6 */
-Slider.prototype.runGlow = function() {
-  const slider = this;
-
-  slider.isGlowing = true;
-
-  slider.glowCircle
-    .attr("display","block");
-
-  glow();
-
-  return slider;
-
-  function glow() {
-    slider.glowCircle
-      .attr("opacity",slider.styles.glowCircleDefaultOpacity)
-      .attr("r",slider.styles.glowCircleDefaultRadius)
-      .attr("fill",slider.styles.glowCircleFill)
-      .transition()
-      .delay(slider.styles.glowDelay)
-      .duration(slider.styles.glowDuration)
-      .attr("opacity",slider.styles.glowCircleEndOpacity)
-      .attr("r",slider.styles.glowCircleEndRadius)
-      .attr("fill",slider.styles.glowCircleEndFill)
-      .on('end',function()  {
-        if(slider.isGlowing) {
-          glow();
-        }
-      });
-
-  }
-};
-
-/* jshint esversion:6 */
-Slider.prototype.setDragCallback = function(cb) {
-  const slider = this;
-
-  slider.dragCallback = cb;
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.show = function() {
-  const slider = this;
-
-  slider.group
-    .attr("display","block");
-
-  return slider;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.update = function(newValue) {
-  const slider = this;
-
-  slider.currentValue = newValue;
-  slider.circle
-    .attr("cx",slider.scale(newValue));
-
-  return slider;
-}
-
-/* jshint esversion:6 */
-Projection.prototype.getBWarAgingCurveProjection = function() {
-  const projection = this;
-
-  let warProjection = [];
-  let lastValue;
-
-  lastValue = projection.threeYearBWar;
-
-  warProjection.push({
-    "age":projection.data.stats["2018"].age,
-    "bWar":projection.data.stats["2018"].bWar
-  });
-
-  projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {
-    let season = {};
-    season.age = curveDeltaObject.age;
-    season.bWar = +(lastValue + curveDeltaObject.delta).toFixed(1);
-    lastValue += curveDeltaObject.delta;
-    warProjection.push(season);
-  });
-
-  return warProjection;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBWarSimilarPlayersMax = function() {
-  const projection = this;
-  let maxValues = [];
-
-  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
-      let season = {};
-      season.age = key;
-      season.bWar = d3.max(projection.bWarSimilarPlayersRawData[key]);
-      maxValues.push(season);
-  });
-
-  maxValues.shift();
-
-  maxValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "bWar":projection.data.stats["2018"].bWar
-  });
-
-  return maxValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBWarSimilarPlayersMean = function() {
-  const projection = this;
-  let meanValues = [];
-
-  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
-    let season = {};
-    season.age = key;
-    season.bWar = d3.mean(projection.bWarSimilarPlayersRawData[key]);
-    meanValues.push(season);
-  });
-
-  meanValues.shift();
-  meanValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "bWar":projection.data.stats["2018"].bWar
-  });
-
-  return meanValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBWarSimilarPlayersMin = function() {
-  const projection = this;
-  let minValues = [];
-
-  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
-    let season = {};
-    season.age = key;
-    season.bWar = d3.min(projection.bWarSimilarPlayersRawData[key]);
-    minValues.push(season);
-  });
-
-  minValues.shift();
-
-  minValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "bWar":projection.data.stats["2018"].bWar
-  });
-
-  return minValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBWarSimilarPlayersRawData = function() {
-  const projection = this;
-
-  let playerProjection = [];
-  let similarPlayers = projection.data.metadata.similarPlayers;
-  let rawValues = {};
-  let mean;
-  let top25;
-  let bottom25;
-  let agesToProject;
-
-  agesToProject = projection.bWarAgingCurveProjection.map((a) => {return a.age;});
-
-  agesToProject.forEach((age) => {
-    rawValues[age] = [];
-  });
-
-  similarPlayers.forEach((player) => {
-    agesToProject.forEach((age) => {
-      let findMatch = player.data.filter((a) => { return a.age == age});
-      if(findMatch[0]) {
-        rawValues[age].push(+findMatch[0].bWAR);
-      } else {
-        let lastSeason = d3.max(player.data.map((a) => { return a.year}));
-        if(lastSeason != "2018") {
-          rawValues[age].push(0);
-        }
-      }
-    });
-  });
-
-
-  return rawValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBaseAge = function() {
-  const projection = this;
-
-  let baseAge = projection.data.stats["2018"].age;
-
-  return baseAge;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getBaseBWar = function() {
-  const projection = this;
-  let baseBWar = projection.data[Object.keys(projection.data)[Object.keys(projection.data).length - 1]].bWar;
-  return baseBWar;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getFWarAgingCurveProjection = function() {
-  const projection = this;
-
-  let warProjection = [];
-  let lastValue;
-
-  lastValue = projection.threeYearFWar;
-
-  warProjection.push({
-    "age":projection.data.stats["2018"].age,
-    "fWar":projection.data.stats["2018"].fWar
-  });
-
-  projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {
-    let season = {};
-    season.age = curveDeltaObject.age;
-    season.fWar = +(lastValue + curveDeltaObject.delta).toFixed(1);
-    lastValue += curveDeltaObject.delta;
-    warProjection.push(season);
-  });
-
-  return warProjection;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getFWarSimilarPlayersMax = function() {
-  const projection = this;
-  let maxValues = [];
-
-  Object.keys(projection.fWarSimilarPlayersRawData).forEach((key,index) => {
-      let season = {};
-      season.age = key;
-      season.fWar = d3.max(projection.fWarSimilarPlayersRawData[key]);
-      maxValues.push(season);
-  });
-
-  maxValues.shift();
-
-  maxValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "fWar":projection.data.stats["2018"].fWar
-  });
-
-  return maxValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getFWarSimilarPlayersMean = function() {
-  const projection = this;
-  let meanValues = [];
-
-  Object.keys(projection.fWarSimilarPlayersRawData).forEach((key,index) => {
-    let season = {};
-    season.age = key;
-    season.fWar = d3.mean(projection.fWarSimilarPlayersRawData[key]);
-    meanValues.push(season);
-  });
-
-  meanValues.shift();
-  meanValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "fWar":projection.data.stats["2018"].fWar
-  });
-
-  return meanValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getFWarSimilarPlayersMin = function() {
-  const projection = this;
-  let minValues = [];
-
-  Object.keys(projection.bWarSimilarPlayersRawData).forEach((key,index) => {
-    let season = {};
-    season.age = key;
-    season.fWar = d3.min(projection.fWarSimilarPlayersRawData[key]);
-    minValues.push(season);
-  });
-
-  minValues.shift();
-
-  minValues.unshift({
-    "age":projection.data.stats["2018"].age,
-    "fWar":projection.data.stats["2018"].fWar
-  });
-
-  return minValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getFWarSimilarPlayersRawData = function() {
-  const projection = this;
-
-  let playerProjection = [];
-  let similarPlayers = projection.data.metadata.similarPlayers;
-  let rawValues = {};
-  let mean;
-  let top25;
-  let bottom25;
-  let agesToProject;
-
-  agesToProject = projection.fWarAgingCurveProjection.map((a) => {return a.age;});
-
-  agesToProject.forEach((age) => {
-    rawValues[age] = [];
-  });
-
-  similarPlayers.forEach((player) => {
-    agesToProject.forEach((age) => {
-      let findMatch = player.data.filter((a) => { return a.age == age});
-      if(findMatch[0]) {
-        rawValues[age].push(+findMatch[0].fWar);
-      } else {
-        let lastSeason = d3.max(player.data.map((a) => { return a.year}));
-        if(lastSeason != "2018") {
-          rawValues[age].push(0);
-        }
-      }
-    });
-  });
-  return rawValues;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getRelevantWarCurveDeltas = function() {
-  const projection = this;
-  let deltas;
-
-  deltas = projection.warCurveDeltas.filter((object) => { return +object.age > projection.baseAge; });
-
-  return deltas;
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getThreeYearBWar = function() {
-  const projection = this;
-
-  let relevantYears,
-    rollingAverage;
-
-  relevantYears = [
-    projection.data.stats["2016"].bWar,
-    projection.data.stats["2017"].bWar,
-    projection.data.stats["2018"].bWar
-  ];
-
-  rollingAverage = relevantYears.reduce((a,b) => { return a+b; })/3;
-
-  return rollingAverage;
-
-};
-
-/* jshint esversion:6 */
-Projection.prototype.getThreeYearFWar = function() {
-  const projection = this;
-
-  let relevantYears,
-    rollingAverage;
-
-  relevantYears = [
-    projection.data.stats["2016"].fWar,
-    projection.data.stats["2017"].fWar,
-    projection.data.stats["2018"].fWar
-  ];
-
-  rollingAverage = relevantYears.reduce((a,b) => { return a+b; })/3;
-
-  return rollingAverage;
-
-};
-
-/* jshint esversion:6 */
-PlayerTable.prototype.registerTooltip = function(tooltip) {
-  const table = this;
-
-  table.tooltip = tooltip;
-
-  return table;
-}
-
-/* jshint esversion:6 */
-Projection.prototype.defineWarCurveDeltas = function() {
-  const projection = this;
-
-  return [
-    {"age":"19","delta":0.33},
-    {"age":"20","delta":0.33},
-    {"age":"21","delta":0.33},
-    {"age":"22","delta":0.21},
-    {"age":"23","delta":0.19},
-    {"age":"24","delta":0.06},
-    {"age":"25","delta":0},
-    {"age":"26","delta":-0.10},
-    {"age":"27","delta":-0.06},
-    {"age":"28","delta":-0.13},
-    {"age":"29","delta":-0.13},
-    {"age":"30","delta":-0.23},
-    {"age":"31","delta":-0.21},
-    {"age":"32","delta":-0.25},
-    {"age":"33","delta":-0.27},
-    {"age":"34","delta":-0.25},
-    {"age":"35","delta":-0.29},
-    {"age":"36","delta":-0.29},
-    {"age":"37","delta":-0.25},
-    {"age":"38","delta":-0.33},
-    {"age":"39","delta":-0.33},
-    {"age":"40","delta":-0.33}
-  ];
-
-};
-
-/* jshint esversion:6 */
-StatsSection.prototype.addDiv = function(where) {
-  const section = this;
-  let div;
-
-  div = d3.select(where)
-    .append("div")
-    .classed("stat-group-numberline",true);
-
-  return div;
-};
-
-/* jshint esversion:6 */
-StatsSection.prototype.addHeader = function(name) {
-  const section = this;
-  let header;
-
-  header = section.div
-    .append("div")
-    .classed("stats-section-header",true)
-    .html(name);
-
-  return header;
-};
-
-/* jshint esversion:6 */
-StatsSection.prototype.addTables = function(options) {
-  const section = this;
-
-  let allTables = [];
-
-  if(!options.tables) {return allTables;}
-
-  options.tables.forEach((tableOptions) => {
-    tableOptions.where = section.div;
-    let table = new StatsTable(tableOptions);
-    allTables.push(table);
-  });
-
-  return allTables;
-};

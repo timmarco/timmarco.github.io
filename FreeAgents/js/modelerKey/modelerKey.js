@@ -21,7 +21,6 @@ ModelerKey = function(options) {
 
     key.visibleKeys = key.defineVisibleKeys();
 
-    console.log("HIDE CONTRACT VALUE!");
     key
       .hideContractValue();
 

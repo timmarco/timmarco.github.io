@@ -4,7 +4,7 @@ PlayerMenu.prototype.addContainerElement = function() {
 
   let element;
 
-  element = d3.select("#playerMenu")
+  element = d3.select("#_playerMenu")
     .append("div")
     .classed("player-menu-container",true);
 

@@ -27,7 +27,7 @@
         <h1>Agent List</h1>
         <p>This tool lists all 2018-2019 MLB Free Agents. Click on table headers to sort and filter the list, and <strong>click on a player name</strong> to project future performance, evaluate potential contracts, and see more detailed data.</p>
 
-        <div id="playerMenu"></div>
+        <div id="_playerMenu"></div>
       </div>
 
 
@@ -50,13 +50,13 @@
       </div>
 
     </div>
-    <div id="tooltip"></div>
+    <div id="_tooltip"></div>
 
 
 
     <script>
       var tooltip = new Tooltip({
-        "where":"#tooltip"
+        "where":"#_tooltip"
       });
 
       let playerMenu = new PlayerMenu(loadPlayerData)
