@@ -5,6 +5,7 @@ LineChart.prototype.addCompData = function(data) {
   chart.compPlayers = data;
   chart.compLines = [];
   chart.compCircles = [];
+  chart.textLabelGroups = [];
   chart.textLabels = [];
 
   let allBWarValues = [];
@@ -101,9 +102,12 @@ LineChart.prototype.addCompData = function(data) {
 
       let textLabel = new TextLabel({
         "text":year.bWar.toFixed(1),
-        "where":chart.layers.frontText,
+        "where":group,
         "values":{"x":year.age,"y":year.bWar},
         "foregroundColor":chart.styles.compPlayerHighlightStroke,
+        "bWar":year.bWar,
+        "fWar":year.fWar,
+        "age":year.age
       })
       .move({
         "x":chart.scales.x(year.age),
@@ -120,7 +124,7 @@ LineChart.prototype.addCompData = function(data) {
       "where":chart.layers.frontText,
       "values":{"x":player.bWar[player.bWar.length - 1].age - 0.5,"y":player.bWar[player.bWar.length - 1].bWar},
       "foregroundColor":chart.styles.compPlayerHighlightStroke,
-      "fontSize":"14pt",
+      "fontSize":"10pt",
       "backgroundColor":"black",
       "textAnchor":"start"
     })
@@ -136,7 +140,9 @@ LineChart.prototype.addCompData = function(data) {
 
   });
 
-
+  chart
+    .updateXScale()
+    .updateYScale();
 
   return chart;
 };

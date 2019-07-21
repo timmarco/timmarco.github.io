@@ -9,7 +9,7 @@ LineChart.prototype.defineScales = function() {
     .range([chart.referencePoints.xMin,chart.referencePoints.xMax]);
 
   scales.y = d3.scaleLinear()
-    .domain([-2,10])
+    .domain([-3,12])
     .range([chart.referencePoints.yMin,chart.referencePoints.yMax]);
 
   return scales;

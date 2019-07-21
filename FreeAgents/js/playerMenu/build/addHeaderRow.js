@@ -43,7 +43,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .html("Position")
     .on('mouseover',function() {
       menu.tooltip
-        .update("Player's primary position. <em>Click to filter.</em>")
+        .update("Player's primary position. <em>Click to filter by position.</em>")
         .show()
         .move();
     })
@@ -56,7 +56,8 @@ PlayerMenu.prototype.addHeaderRow = function() {
         .hide();
     })
     .on('click',function() {
-      menu.positionRow.style("display","block");
+      menu
+        .showPositionRow();
     });
 
 
@@ -67,7 +68,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .html("Age")
     .on('mouseover',function() {
       menu.tooltip
-        .update("Player's age starting the 2019 season.")
+        .update("Player's age starting the 2019 season. <em>Click to sort table</em>.")
         .show()
         .move();
     })
@@ -80,7 +81,6 @@ PlayerMenu.prototype.addHeaderRow = function() {
         .hide();
     })
     .on("click",function() {
-      console.log("AGE CLICK!");
       menu
         .sort("Age");
     });
@@ -105,47 +105,6 @@ PlayerMenu.prototype.addHeaderRow = function() {
         .hide();
     });
 
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("Career bWAR")
-    .on('mouseover',function() {
-      menu.tooltip
-        .update("Player's production to date.")
-        .show()
-        .move();
-    })
-    .on('mousemove',function() {
-      menu.tooltip
-        .move();
-    })
-    .on('mouseout',function() {
-      menu.tooltip
-        .hide();
-    });
-
-
-  headerRow
-    .append("div")
-    .classed("player-menu-header-cell",true)
-    .html("Projected 3 Year bWAR")
-    .on('mouseover',function() {
-      menu.tooltip
-        .update("Projected production through the 2021 season.")
-        .show()
-        .move();
-    })
-    .on('mousemove',function() {
-      menu.tooltip
-        .move();
-    })
-    .on('mouseout',function() {
-      menu.tooltip
-        .hide();
-    });
-
-
   headerRow
     .append("div")
     .classed("player-menu-header-cell",true)
@@ -163,7 +122,36 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .on('mouseout',function() {
       menu.tooltip
         .hide();
+    })
+    .on('click',function() {
+      menu.sort("bWar2018")
+    })
+
+
+  headerRow
+    .append("div")
+    .classed("player-menu-header-cell",true)
+    .html("2019-2021<br/>Zips")
+    .on('mouseover',function() {
+      menu.tooltip
+        .update("Fangraph's projected value through the 2021 season. <em>Click to sort table.</em>")
+        .show()
+        .move();
+    })
+    .on('mousemove',function() {
+      menu.tooltip
+        .move();
+    })
+    .on('mouseout',function() {
+      menu.tooltip
+        .hide();
+    })
+    .on('click',function() {
+      menu
+        .sort("3yearZips");
     });
+
+
 
 
 

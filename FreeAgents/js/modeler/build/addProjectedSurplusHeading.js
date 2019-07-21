@@ -7,7 +7,7 @@ Modeler.prototype.addProjectedSurplusHeading = function() {
     .attr("x",modeler.referencePoints.projectedSurplusHeadingCoordinates.x)
     .attr("y",modeler.referencePoints.projectedSurplusHeadingCoordinates.y)
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","alphabetic")
+    .attr("dominant-baseline","alphabetic")
     .attr("font-size","10pt")
     .text("Projected Surplus");
 

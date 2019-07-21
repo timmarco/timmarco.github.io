@@ -4,7 +4,7 @@ Numberline.prototype.addSvg = function(where) {
 
   let svg;
 
-  svg = d3.select(where)
+  svg = where
     .append("svg")
     .attr("width",chart.size.width)
     .attr("height",chart.size.height)
@@ -13,5 +13,5 @@ Numberline.prototype.addSvg = function(where) {
     });
 
   return svg;
-  
+
 };

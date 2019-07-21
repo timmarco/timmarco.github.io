@@ -9,7 +9,7 @@ TextLabel.prototype.addBackground = function() {
     .attr("x",0)
     .attr("y",0)
     .attr("text-anchor",label.styles.textAnchor)
-    .attr("alignment-baseline","central")
+    .attr("dominant-baseline","central")
     .attr("font-family",label.styles.fontFamily)
     .attr("font-size",label.styles.fontSize)
     .attr("font-weight",label.styles.fontWeight)

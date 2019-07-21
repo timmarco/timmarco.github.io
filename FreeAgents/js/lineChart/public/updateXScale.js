@@ -3,6 +3,7 @@
 LineChart.prototype.updateXScale = function(newExtent) {
   const chart = this;
 
+
   let domain = chart.scales.x.domain();
 
   let allYears = [];
@@ -11,19 +12,20 @@ LineChart.prototype.updateXScale = function(newExtent) {
     allYears.push(datum.age);
   });
 
-  // Object.keys(chart.projections).forEach((projection) => {
-  //   chart.projections[projection].forEach((datum) => {
-  //     allYears.push(+datum.age);
-  //   });
-  // });
-
-  chart.compPlayers.forEach((player) => {
-    player.bWar.forEach((season) => {
-      allYears.push(+season.age);
+  if(chart.compPlayers) {
+    chart.compPlayers.forEach((player) => {
+      player.bWar.forEach((season) => {
+        allYears.push(+season.age);
+      });
     });
-  });
+  }
 
-
+  if(chart.projection) {
+    let years = chart.projection.bWarAgingCurveProjection.map((a) => { return a.age});
+    years.forEach((year) => {
+      allYears.push(+year);
+    });
+  }
 
   chart.scales.x
     .domain(d3.extent(allYears));
@@ -32,64 +34,71 @@ LineChart.prototype.updateXScale = function(newExtent) {
     .attr("x1",chart.scales.x(d3.extent(allYears)[0]))
     .attr("x2",chart.scales.x(d3.extent(allYears)[1]));
 
+  chart.zeroText
+    .attr("x",chart.scales.x(d3.extent(allYears)[1]) + 5)
+
   chart.starterLine
     .attr("x1",chart.scales.x(d3.extent(allYears)[0]))
     .attr("x2",chart.scales.x(d3.extent(allYears)[1]));
+
+  chart.starterText
+    .attr("x",chart.scales.x(d3.extent(allYears)[1]) + 5);
 
   chart.allStarLine
     .attr("x1",chart.scales.x(d3.extent(allYears)[0]))
     .attr("x2",chart.scales.x(d3.extent(allYears)[1]));
 
+  chart.allStarText
+    .attr("x",chart.scales.x(d3.extent(allYears)[1]) + 5);
+
   chart.mvpLine
     .attr("x1",chart.scales.x(d3.extent(allYears)[0]))
     .attr("x2",chart.scales.x(d3.extent(allYears)[1]));
+
+  chart.mvpText
+    .attr("x",chart.scales.x(d3.extent(allYears)[1]) + 5);
 
 
   chart.playerLine
     .attr("d",chart.lineGenerator);
 
   if(chart.projection !== undefined) {
+
+    chart.projectionArea
+      .attr("d",chart.areaGenerator);
+
     chart.projectionLine
         .attr("d",chart.lineGenerator);
 
     chart.projectionCircles
-      .attr("cx",(d) => { return chart.scales.x(d.age); });
+      .attr("transform",function(d) {
+        return "translate("+chart.scales.x(d.age)+","+chart.scales.y(d[chart.currentWARType])+")";
+      });
   }
 
+  chart.playerGroups
+    .attr("transform",function(d) {
+      return "translate("+chart.scales.x(d.age)+","+chart.scales.y(d[chart.currentWARType])+")";
+    });
 
-  /*
+  if(chart.compLines) {
+    chart.compLines.forEach((line) => {
+      line
+        .attr("d",chart.lineGenerator);
+    });
 
-  chart.projectionArea
-    .attr("d",chart.areaGenerator);
+    chart.textLabels.forEach((label) => {
+        label.move({
+          "x":chart.scales.x(+label.values.x),
+          "y":chart.scales.y(label.values.y)
+        });
+    });
 
-  chart.bottom25ProjectionLine
-      .attr("d",chart.lineGenerator);
-
-  chart.top25ProjectionLine
-    .attr("d",chart.lineGenerator);
-
-
-  */
-
-  chart.playerCircles
-    .attr("cx",(d) => { return chart.scales.x(d.age); });
-
-  chart.compLines.forEach((line) => {
-    line
-      .attr("d",chart.lineGenerator);
-  });
-
-  chart.textLabels.forEach((label) => {
-      label.move({
-        "x":chart.scales.x(+label.values.x),
-        "y":chart.scales.y(label.values.y)
-      });
-  });
-
-  chart.compCircles.forEach((circle) => {
-    circle
-      .attr("cx",(d) => { return chart.scales.x(d.age); });
-  });
+    chart.compCircles.forEach((circle) => {
+      circle
+        .attr("cx",(d) => { return chart.scales.x(d.age); });
+    });
+  }
 
   chart.axes.x
     .call(d3.axisBottom(chart.scales.x).ticks(5));

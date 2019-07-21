@@ -33,7 +33,7 @@ Modeler.prototype.addPaneHint = function() {
 
   let emptyDiv = tableCenter
     .append("div")
-    .style("border","5px dashed #20639B")
+    .style("border","5px dashed #ed553b")
     .style("padding","0.25em");
 
   let display = emptyDiv
@@ -47,17 +47,17 @@ Modeler.prototype.addPaneHint = function() {
     .on('mouseover',() => {
       body
         .transition()
-        .duration(250)
+        .duration(125)
         .style("background-color","#20639B");
 
       display
         .transition()
-        .duration(250)
+        .duration(125)
         .style("color","#eee");
 
       emptyDiv
         .transition()
-        .duration(250)
+        .duration(125)
         .style("border","5px dashed #eee");
 
     })
@@ -69,13 +69,13 @@ Modeler.prototype.addPaneHint = function() {
 
       display
         .transition()
-        .duration(175)
+        .duration(75)
         .style("color","#20639B");
 
       emptyDiv
         .transition()
-        .duration(175)
-        .style("border","5px dashed #20639B");
+        .duration(75)
+        .style("border","5px dashed #ed553b");
 
 
     })

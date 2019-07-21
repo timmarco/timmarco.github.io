@@ -7,6 +7,9 @@ function Modeler(options) {
   return modeler;
 
   function init(options) {
+    modeler.tooltip = options.tooltip;
+    modeler.player = options.player;
+    modeler.name = options.name;
     modeler.size = modeler.defineSize(options.size);
     modeler.chartMargins = modeler.defineChartMargins(options.chartMargins);
     modeler.svg = modeler.addSvg(options.where);
@@ -27,24 +30,22 @@ function Modeler(options) {
     modeler.projectedSurplusValue = modeler.addProjectedSurplusValue();
     modeler.contractValueHeading = modeler.addContractValueHeading();
     modeler.contractValueLabel = modeler.addContractValueLabel();
-    modeler.editSalaryButton = modeler.addEditSalaryButton();
-    modeler.editMarketValueButton = modeler.addEditMarketValueButton();
-    modeler.contractYearsSlider = modeler.addContractYearsSlider();
 
-    modeler.projections = {};
-    modeler.projectionParameters = {
-      "contractYears":3,
-      "salary":[],
-      "winValue":[]
-    };
+    modeler.currentEditView = "salary";
+
+    modeler.chart = modeler.addChart();
+
+    modeler.salaryButton = modeler.addEditSalaryButton();
+    modeler.winValueButton = modeler.addEditMarketValueButton();
+
+    modeler.contractYearsSlider = modeler.addContractYearsSlider();
+    modeler.salaryChartGroup = modeler.addSalaryChartGroup();
+    modeler.winChartGroup = modeler.addWinChartGroup();
+
 
     modeler.key = modeler.addModelerKey();
     modeler.pane = modeler.addModelerPane();
     modeler.projectionValueData = {};
-    modeler.chart = modeler.addChart();
-
-
-
   }
 
 }

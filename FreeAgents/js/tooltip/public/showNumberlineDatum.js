@@ -2,7 +2,7 @@
 Tooltip.prototype.showNumberlineDatum = function(datum) {
   const tooltip = this;
   let chartName = datum.chartName;
-  let playerName = tooltip.matchFangraphs(datum).name;
+  let playerName = datum.name;
   let playerValue = datum.value;
   let summaryData = datum.summaryData;
   let zScore = (playerValue - summaryData.mean) / summaryData.standardDeviation;

@@ -5,7 +5,7 @@ Modeler.prototype.addContractValueLabel = function() {
   text = modeler.rightPane
     .append("text")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-weight","bold")
     .attr("font-size","18pt")
     .attr("x",modeler.referencePoints.contractValueCoordinates.x)

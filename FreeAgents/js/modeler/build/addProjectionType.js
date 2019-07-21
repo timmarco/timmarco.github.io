@@ -7,7 +7,7 @@ Modeler.prototype.addProjectionType = function() {
     .attr("x",modeler.referencePoints.projectionTypeCoordinates.x)
     .attr("y",modeler.referencePoints.projectionTypeCoordinates.y)
     .attr("text-anchor","end")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-size","10pt")
     .attr("font-weight","normal")
     .text("Projection Basis")

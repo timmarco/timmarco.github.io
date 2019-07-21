@@ -22,11 +22,11 @@ ModelerKey.prototype.addErrorRange = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Error Range"
+    "text":"Similar Players"
   }).show()
   .move({
     "x":10,
-    "y":-6
+    "y":-7
   });
 
   toReturn.warLabel = new TextLabel({
@@ -36,11 +36,11 @@ ModelerKey.prototype.addErrorRange = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Mean 50%"
+    "text":"Career WAR Range"
   }).show()
   .move({
     "x":10,
-    "y":6
+    "y":7
   });
 
 

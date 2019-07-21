@@ -9,7 +9,7 @@ Modeler.prototype.addTitle = function() {
     .attr("font-size","24pt")
     .attr("font-weight","bold")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .text("");
 
   return text;

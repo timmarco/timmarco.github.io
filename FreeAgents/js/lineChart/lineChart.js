@@ -23,15 +23,25 @@ function LineChart(options) {
 
     chart.axes = chart.addAxes();
 
+    chart.currentWARType = "bWar";
+    chart.currentView = "similarPlayers";
+    
+
     chart.lineGenerator = chart.createLineGenerator();
     chart.areaGenerator = chart.createAreaGenerator();
 
     chart.zeroLine = chart.addZeroLine();
+    chart.zeroText = chart.addZeroText();
     chart.starterLine = chart.addStarterLine();
+    chart.starterText = chart.addStarterText();
     chart.allStarLine = chart.addAllStarLine();
+    chart.allStarText = chart.addAllStarText();
     chart.mvpLine = chart.addMVPLine();
+    chart.mvpText = chart.addMvpText();
 
-    chart.currentWARType = "bWar";
+    chart.contractLine = chart.addContractLine();
+    chart.contractText = chart.addContractText();
+    chart.contractCircles = chart.addContractCircles();
 
   }
 

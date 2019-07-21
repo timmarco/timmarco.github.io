@@ -7,10 +7,9 @@ ModelerPane.prototype.addTitle = function() {
     .attr("x",pane.referencePoints.titleCoordinates.x)
     .attr("y",pane.referencePoints.titleCoordinates.y)
     .attr("text-anchor","start")
-    .attr("alignment-baseline","middle")
-    .attr("font-weight","bold")
-    .attr("font-size","18pt")
-    .text("Simulate a Contract for [Player Name]");
+    .attr("dominant-baseline","middle")
+    .attr("font-size","14pt")
+    .text("Simulate a Contract for " + pane.parent.name);
 
   return title;
 };

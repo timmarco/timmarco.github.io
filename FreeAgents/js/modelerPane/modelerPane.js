@@ -30,31 +30,24 @@ function ModelerPane(options) {
     pane.salaryDescription = pane.addSalaryDescription();
     pane.salarySlider = pane.addSalarySlider();
 
-    pane.winValueSliders = [];
+    // pane.winValueSliders = [];
     pane.marketValueLabel = pane.addMarketValueLabel();
     pane.marketValueDescription = pane.addMarketValueDescription();
-    pane.winValueTable = pane.addWinValueTable();
+    // pane.winValueTable = pane.addWinValueTable();
+
+
+    pane.salaryGroup = pane.addSalaryGroup();
+    pane.salaryChart = pane.addSalaryChart();
+
+    pane.winValueGroup = pane.addWinValueGroup();
+    pane.winValueChart = pane.addWinValueChart();
+
 
 
     pane.saveButton = pane.addSaveButton();
-    
+
     pane.updateContractYears();
 
-    // pane.contractSlider = pane.addContractYearsSlider();
-    // pane.yearGroup = pane.addYearGroup();
-    // pane.salaryGroup = pane.addSalaryGroup();
-    // pane.winValueGroup = pane.addWinValueGroup();
-    // pane.totalContractValue = pane.addTotalContractValue();
-
-    //
-    // pane.yearLabels = pane.addYearLabels();
-    // pane.salarySliders = pane.addSalarySliders();
-    // pane.winValueSliders = pane.addWinValueSliders();
-    //
-    // pane.hasDragged = false;
-    //
-    // pane
-    //   .updateContractYears();
 
   }
 

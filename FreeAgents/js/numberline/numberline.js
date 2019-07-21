@@ -16,7 +16,9 @@ function Numberline(options) {
     chart.referencePoints = chart.defineReferencePoints();
     chart.svg = chart.addSvg(options.where);
     chart.layers = chart.addLayers(chart.svg);
+    chart.bottomLine = chart.addBottomLine();
     chart.scale = chart.defineScale(options);
+
 
     chart.backgroundCircleMouseover = () => {  };
     chart.backgroundCircleMouseout = () => {  };

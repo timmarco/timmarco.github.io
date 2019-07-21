@@ -5,6 +5,5 @@ Modeler.prototype.addCompData = function(data) {
   modeler.chart
     .addCompData(data);
 
-
   return modeler;
 };

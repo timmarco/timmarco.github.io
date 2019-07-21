@@ -15,7 +15,7 @@ Numberline.prototype.defaultStyles = function(options) {
   styles.activeCircleStroke = chart.defaulter(options.styles.activeCircleStroke,"red");
   styles.activeCircleStrokeWidth = chart.defaulter(options.styles.activeCircleStrokeWidth,10);
 
-  styles.highlightedCircleRadius = chart.defaulter(options.styles.highlightedCircleRadius,7);
+  styles.highlightedCircleRadius = chart.defaulter(options.styles.highlightedCircleRadius,5);
   styles.highlightedCircleFill = chart.defaulter(options.styles.highlightedCircleFill,"#f6d55c");
   styles.highlightedCircleOpacity = chart.defaulter(options.styles.highlightedCircleOpacity,1.0);
   styles.highlightedCircleStroke = chart.defaulter(options.styles.highlightedCircleStroke,"gray");

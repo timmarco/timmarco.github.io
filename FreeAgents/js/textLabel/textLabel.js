@@ -7,6 +7,9 @@ function TextLabel(options) {
   return label;
 
   function init(options) {
+    label.bWar = options.bWar;
+    label.fWar = options.fWar;
+    label.age = options.age;
     label.values = options.values;
     label.text = options.text;
     label.styles = label.defineStyles(options);

@@ -21,7 +21,11 @@ Numberline.prototype.addBackgroundCircles = function(dataset) {
     .attr("stroke",chart.styles.inactiveCircleStroke)
     .attr("stroke-width",chart.styles.inactiveCircleStrokeWidth)
     .attr("opacity",chart.styles.inactiveCircleOpacity)
-    .on('mouseover',chart.handleBackgroundCircleMouseover);
+    .on('mouseover',chart.handleBackgroundCircleMouseover)
+    .on('mousemove',function() {
+      chart.tooltip
+        .move();
+    });
 
 
   return selection;

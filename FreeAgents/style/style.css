@@ -1,13 +1,27 @@
 body {
   font-family:Source Sans Pro;
+  /* background-color:#eee; */
 }
 
 svg {
   user-select:none;
 }
 
+h1 {
+  margin-left:0.5em;
+}
+
 .player-menu-header-cell {
   cursor:pointer;
+  background-color:white;
+}
+
+a {
+  color:#173f5f;
+}
+
+a:hover {
+  color:#ed553b;
 }
 
 .pageHeader {
@@ -89,6 +103,7 @@ svg {
   display:table-cell;
   border:1px solid #eee;
   vertical-align:middle;
+  background-color:white;
 }
 
 .player-menu-row-hidden {
@@ -124,12 +139,30 @@ svg {
 
 .stats-numberline-table-row {
   display:table-row;
-  padding-bottom:0.25em;
 }
 
+.stats-numberline-start-group div {
+  border-top:1px solid #aaa;
+  background-color:#fafafa ;
+}
+
+.stats-number-line-related-to-next {
+  background-color:#fafafa;
+}
+
+
+.stats-number-line-related-to-previous {
+  background-color:#fafafa;
+}
+
+
+.stats-number-line-end-group div {
+  border-bottom:1px solid #aaa;
+  background-color:#fafafa;
+}
+
+
 .stats-numberline-table-cell {
-  padding-top:0.5em;
-  padding-bottom:0.5em;
   display:table-cell;
   vertical-align:middle;
   font-size:0.8em;
@@ -137,7 +170,11 @@ svg {
 }
 
 .stats-numberline-header-cell {
-  border-bottom:2px solid black;
+  display:table-cell;
+  border-bottom:2px solid #999;
+  font-size:0.8em;
+  font-weight:normal;
+  color:#999;
 }
 
 .right-align {
@@ -145,8 +182,12 @@ svg {
   cursor:pointer;
 }
 
+.center-align {
+  text-align:center;
+}
+
 .stats-numberline-table-cell:hover {
-  color:blue;
+  color:#ed553b;
 }
 
 .left-align {
@@ -162,7 +203,7 @@ svg {
 }
 
 .stats-subsection-header {
-  padding-left:0.5em;
+  padding-left:0.75em;
   font-weight:500;
   font-size:1.25em;
   margin-bottom:0.5em;
@@ -176,7 +217,6 @@ svg {
 
 .tooltipNumberLineValueLine {
   font-weight:400;
-  font-size:0.8em;
 }
 
 .tooltipNumberlineStatName {
@@ -241,6 +281,7 @@ svg {
   left:0;
   display:none;
   box-shadow:3px 3px 5px rgba(0,0,0,0.5);
+  font-size:0.8em;
 }
 
 #playerPosition {
@@ -274,4 +315,25 @@ svg {
   background-color:#173f5f;
   border:1px dashed white;
   color:white;
+}
+
+
+.tooltip-metric-description-text {
+  
+}
+
+.tooltip-metric-source-header {
+  font-weight:lighter;
+  margin-top:0.5em;
+  margin-bottom:0.25em;
+  font-size:0.8em;
+  border-bottom:1px solid #eee;
+}
+
+.tooltip-metric-description-source {
+  font-size:0.75em;
+}
+
+.tooltip-metric-icon {
+  height:12px;
 }

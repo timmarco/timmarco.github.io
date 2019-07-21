@@ -30,7 +30,7 @@ ModelerPane.prototype.addSaveButton = function() {
     .attr("font-size","14pt")
     .attr("font-weight","bold")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("fill","white")
     .text("SAVE");
 

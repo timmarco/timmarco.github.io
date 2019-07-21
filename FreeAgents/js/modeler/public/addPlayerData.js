@@ -1,11 +1,19 @@
 /* jshint esversion:6 */
-Modeler.prototype.addPlayerData = function(data,projections,name) {
+Modeler.prototype.addPlayerData = function(data,name) {
   const modeler = this;
 
-  modeler.chart
-    .addPlayerData(data,projections,name);
 
-  modeler.projections = projections;
+  let bWarArray = [];
+  Object.keys(data.stats).forEach((year) => {
+    bWarArray.push({
+      "age":data.stats[year].age,
+      "bWar":data.stats[year].bWar,
+      "fWar":data.stats[year].fWar
+    })
+  });
+
+  modeler.chart
+    .addPlayerData(bWarArray,name);
 
   modeler.title
     .text(name);

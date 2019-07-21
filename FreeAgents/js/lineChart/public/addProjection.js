@@ -11,10 +11,11 @@ LineChart.prototype.addProjection = function(projection) {
 
 
   chart.projectionCircles = chart.addProjectionCircles();
+
   chart.projectionCircles
     .data(projection.bWarSimilarPlayersMean)
     .attr("cx",(d) => { return chart.scales.x(d.age); })
-    .attr("cy",(d) => { return chart.scales.y(d[chart.currentWarType]); });
+    .attr("cy",(d) => { return chart.scales.y(d[chart.currentWARType]); });
 
   chart.projectionArea = chart.addProjectionArea();
   let projectionAreaData = [];

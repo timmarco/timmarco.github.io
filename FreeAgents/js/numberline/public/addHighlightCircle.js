@@ -15,7 +15,11 @@ Numberline.prototype.addHighlightCircle = function() {
     .attr("cursor","pointer")
     .style("display","none")
     .on('mouseout',chart.handleBackgroundCircleMouseout)
-    .on('mouseexit',chart.handleBackgroundCircleMouseout);
+    .on('mouseout',chart.handleBackgroundCircleMouseout)
+    .on('mousemove',function() {
+      chart.tooltip
+        .move();
+    });
 
   return circle;
 };

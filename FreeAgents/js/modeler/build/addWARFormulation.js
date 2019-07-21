@@ -7,7 +7,7 @@ Modeler.prototype.addWARFormulation = function() {
     .attr("x",modeler.referencePoints.warFormulationCoordinates.x)
     .attr("y",modeler.referencePoints.warFormulationCoordinates.y)
     .attr("text-anchor","end")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-size","10pt")
     .text("WAR Formulation: ")
     .attr("cursor","pointer")

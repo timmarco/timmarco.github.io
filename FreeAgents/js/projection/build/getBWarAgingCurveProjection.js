@@ -8,8 +8,8 @@ Projection.prototype.getBWarAgingCurveProjection = function() {
   lastValue = projection.threeYearBWar;
 
   warProjection.push({
-    "age":projection.data["2018"].age,
-    "bWar":projection.data["2018"].bWar
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
   });
 
   projection.relevantWarCurveDeltas.forEach((curveDeltaObject) => {

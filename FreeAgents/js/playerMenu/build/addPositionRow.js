@@ -3,7 +3,8 @@ PlayerMenu.prototype.addPositionRow = function() {
   const menu = this;
 
 
-  let header = d3.select("#filterNameRow").node().getBoundingClientRect();
+  let header = d3.select("#filterNameRow")
+    .node().getBoundingClientRect();
 
   let positionFilterRow = d3.select("#positionFilter")
     .style("display","none")

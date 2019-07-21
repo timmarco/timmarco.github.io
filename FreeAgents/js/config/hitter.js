@@ -24,10 +24,12 @@ function hitterConfig() {
       }, {
         "name": "Baseball Reference",
         "headerType":"worse-better",
+        "rows":[]
       }]
     }, {
       "name": "Hitting Overview",
       "tables": [{
+        "name":"Overview",
         "headerType": "worse-better",
         "rows": [{
           "key": "wOBA",
@@ -57,8 +59,9 @@ function hitterConfig() {
         }]
       }]
     }, {
-      "name": "Run Prevention",
-    }, {
+    //   "name": "Run Prevention",
+    //   "tables":[]
+    // }, {
       "name": "Batted Ball Outcomes",
       "tables": [{
           "name": "Overview",
@@ -184,6 +187,7 @@ function hitterConfig() {
     }, {
       "name": "Batting Approach",
       "tables": [{
+        "name":"Zone",
         "headerType": "never-always",
         "rows": [{
           "description": "Rate that hitter swung on pitches outside the strike zone.",
@@ -254,6 +258,7 @@ function hitterConfig() {
     {
       "name": "Baserunning",
       "tables": [{
+        "name":"Baserunning Overview",
         "headerType": "worse-better",
         "rows": [{
           "description": "Fangraphs' Baserunning metric.",
@@ -285,6 +290,7 @@ function hitterConfig() {
     }, {
       "name": "Pitch Values",
       "tables": [{
+        "name":"Pitch Type",
         "headerType": "worse-better",
         "rows": [{
           "description": "Relative number of runs for hitter facing fastballs (per 100 pitches).",
@@ -323,8 +329,6 @@ function hitterConfig() {
           "source": "fangraphs"
         }]
       }]
-    }, {
-      "name": "Injury Data",
     }
   ];
 

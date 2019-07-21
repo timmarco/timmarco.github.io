@@ -9,12 +9,23 @@ PitcherConfig.prototype.definePitchingOutcomesOverview = function() {
   };
 
   group.metrics.push({
+    "key":"",
+    "display":"",
+    "description":"",
+    "source":"",
+    "isHeader":true,
+    "headerType":"fewer-runs-more-runs",
+    "startGroup":true
+  });
+
+  group.metrics.push({
     "key":"fielding_independent_pitching",
     "display":"FIP",
     "description":"Fielding Independent Pitching. Estimates pitcher ERA based on outcomes entirely under his control.",
     "source":"Fangraphs",
     "shareScale":["expected_fielding_independent_pitching"],
-    "relatedToNext":true
+    "relatedToNext":true,
+    "startGroup":true
   });
 
   group.metrics.push({
@@ -22,16 +33,25 @@ PitcherConfig.prototype.definePitchingOutcomesOverview = function() {
     "display":"xFIP",
     "description":"Expected Fielding Independent Pitching. Controls the above measure for luck.",
     "source":"Fangraphs",
-    "shareScale":[]
+    "shareScale":[],
+    "endGroup":true
   });
 
   group.metrics.push({
-    "key":"runs_allowed_per_nine_innings",
-    "display":"RA/9",
-    "description":"Total number of runs (earned and unearned) allowed by a pitcher per nine innings.",
-    "source":"Fangraphs",
-    "shareScale":[]
+    "key":"",
+    "display":"",
+    "description":"",
+    "source":"",
+    "isSpacer":true
   });
+
+  // group.metrics.push({
+  //   "key":"runs_allowed_per_nine_innings",
+  //   "display":"RA/9",
+  //   "description":"Total number of runs (earned and unearned) allowed by a pitcher per nine innings.",
+  //   "source":"Fangraphs",
+  //   "shareScale":[]
+  // });
 
 
 

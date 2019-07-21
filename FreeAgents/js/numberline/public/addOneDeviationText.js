@@ -37,7 +37,7 @@ Numberline.prototype.addOneDeviationText = function() {
   indicators.negative = chart.layers.axis
     .append("text")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","text-before-edge")
+    .attr("dominant-baseline","text-before-edge")
     .attr("x",chart.scale(chart.summaryData.oneBelowStandardDeviation))
     .attr("y",chart.referencePoints.bottomBaseline)
     .attr("font-family",chart.styles.indicatorFontFamily)
@@ -51,7 +51,7 @@ Numberline.prototype.addOneDeviationText = function() {
   indicators.positive = chart.layers.axis
     .append("text")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","text-before-edge")
+    .attr("dominant-baseline","text-before-edge")
     .attr("x",chart.scale(chart.summaryData.oneAboveStandardDeviation))
     .attr("y",chart.referencePoints.bottomBaseline)
     .attr("font-family",chart.styles.indicatorFontFamily)

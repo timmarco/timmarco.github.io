@@ -18,22 +18,12 @@ function Projection(data) {
     projection.bWarSimilarPlayersMax = projection.getBWarSimilarPlayersMax();
     projection.bWarSimilarPlayersMin = projection.getBWarSimilarPlayersMin();
     projection.bWarSimilarPlayersMean = projection.getBWarSimilarPlayersMean();
-
-    console.log("--------- PLAYER PROJECTION -------");
-
-    console.log("Data", data);
-    console.log("BASE AGE: ", projection.baseAge);
-    console.log("WIN CURVE DELTAS: ", projection.warCurveDeltas);
-    console.log("WIN CURVE DELTAS: ", projection.relevantWarCurveDeltas);
-    console.log("BASE BWAR: ", projection.baseBWar);
-    console.log("THREE YEAR BWAR: ", projection.threeYearBWar);
-    console.log("BWAR PROJECTION: ", projection.bWarAgingCurveProjection);
-    console.log("BWAR SIMILAR PLAYERS RAW: ", projection.bWarSimilarPlayersRawData);
-    console.log("BWAR SIMILAR PLAYERS MAX: ", projection.bWarSimilarPlayersMax);
-    console.log("BWAR SIMILAR PLAYERS MEAN: ", projection.bWarSimilarPlayersMean);
-    console.log("BWAR SIMILAR PLAYERS MIN: ", projection.bWarSimilarPlayersMin);
-
-    console.log("-------------------");
+    projection.threeYearFWar = projection.getThreeYearFWar();
+    projection.fWarAgingCurveProjection = projection.getFWarAgingCurveProjection();
+    projection.fWarSimilarPlayersRawData = projection.getFWarSimilarPlayersRawData();
+    projection.fWarSimilarPlayersMax = projection.getFWarSimilarPlayersMax();
+    projection.fWarSimilarPlayersMin = projection.getFWarSimilarPlayersMin();
+    projection.fWarSimilarPlayersMean = projection.getFWarSimilarPlayersMean();
 
   }
 }

@@ -13,7 +13,7 @@ ModelerKey.prototype.addContractValue = function() {
     .attr("y1",0)
     .attr("y2",0)
     .attr("stroke",key.styles.contractValueStroke)
-    .attr("strokeWidth",key.styles.lineStrokeWidth);
+    .attr("stroke-width",5);
 
   toReturn.playerNameLabel = new TextLabel({
     "where":toReturn.group,
@@ -22,11 +22,11 @@ ModelerKey.prototype.addContractValue = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Contract Market"
+    "text":"Contract Fair"
   }).show()
   .move({
     "x":10,
-    "y":-5
+    "y":-6
   });
 
   toReturn.warLabel = new TextLabel({
@@ -36,11 +36,11 @@ ModelerKey.prototype.addContractValue = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Value"
+    "text":"Market Value"
   }).show()
   .move({
     "x":10,
-    "y":5
+    "y":6
   });
 
 

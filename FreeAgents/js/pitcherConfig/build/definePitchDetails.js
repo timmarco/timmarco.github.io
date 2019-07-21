@@ -6,10 +6,11 @@ PitcherConfig.prototype.definePitchDetails = function() {
   group = {
     "display":"Pitch Details",
     "description":"Measures of tendency and effectiveness by pitch type."
-  }
+  };
 
   let subGroups = [
     config.definePitchFrequency(),
+    config.definePitchVelocity()
   ];
 
   return subGroups;

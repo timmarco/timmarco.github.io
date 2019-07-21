@@ -10,24 +10,24 @@ Slider.prototype.defineStyles = function(presetStyles) {
   styles.circleStroke = "#eee";
   styles.circleStrokeWidth = 1;
 
-  styles.highlightFillColor = "red";
+  styles.highlightFillColor = "#ed553b";
   styles.highlightStrokeColor = "black";
   styles.highlightFillStrokeWidth = 2;
   styles.highlightCircleRadius = 7;
 
   styles.glowCircleDefaultOpacity = 1.0;
   styles.glowCircleDefaultRadius = 7;
-  styles.glowCircleFill = "red";
+  styles.glowCircleFill = "#ed553b";
 
   styles.glowCircleDefaultOpacity = 1;
   styles.glowCircleDefaultRadius = 5;
-  styles.glowCircleFill = "red";
+  styles.glowCircleFill = "#ed553b";
 
   styles.glowDelay = 0;
   styles.glowDuration = 1500;
   styles.glowCircleEndOpacity = 0;
   styles.glowCircleEndRadius = 15;
-  styles.glowCircleEndFill = "red";
+  styles.glowCircleEndFill = "#ed553b";
 
 
   return styles;

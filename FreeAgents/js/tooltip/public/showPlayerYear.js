@@ -2,8 +2,8 @@
 Tooltip.prototype.showPlayerYear = function(name,datum) {
   let tooltip = this;
 
-  let display = "In <strong>" + name + "'s</strong> ";
-  display += " age " + datum.age + " season, he was worth " + datum.bWar.toFixed(1) + " wins above replacement.";
+
+  let display = name + " was worth <strong>" + datum.bWar.toFixed(1) + "</strong> wins above replacement in his age " + datum.age + " season.";
 
   tooltip
     .update(display)

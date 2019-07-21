@@ -37,7 +37,7 @@ ModelerKey.prototype.addPlayerProjections = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Projected bWar"
+    "text":"Projected WAR"
   }).show()
   .move({
     "x":10,

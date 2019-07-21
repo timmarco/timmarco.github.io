@@ -4,11 +4,13 @@ ModelerPane.prototype.addMarketValueDescription = function() {
 
   let div = pane.group
     .append("foreignObject")
+    .attr("font-size","10pt")
     .attr("x",pane.referencePoints.overlayWinValueDescriptionCoordinates.x)
     .attr("y",pane.referencePoints.overlayWinValueDescriptionCoordinates.y)
     .attr("width",pane.referencePoints.overlayColumnWidth)
     .attr("height",pane.referencePoints.overlayDescriptionHeight)
-    .html("Select a fair market value per WAR by year: ");
+    .style("text-align","left")
+    .html("<strong>Drag</strong> the circles below to set the market rate for wins each season.");
 
   return div;
 };

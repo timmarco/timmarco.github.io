@@ -9,7 +9,7 @@ LineChart.prototype.addTitle = function() {
     .attr("x",chart.referencePoints.midlineX)
     .attr("y",chart.referencePoints.titleTopY)
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","central")
+    .attr("dominant-baseline","central")
     .attr("font-size",chart.styles.titleFontSize)
     .attr("font-family",chart.styles.titleFontFamily)
     .attr("fill",chart.styles.titleFontFill)

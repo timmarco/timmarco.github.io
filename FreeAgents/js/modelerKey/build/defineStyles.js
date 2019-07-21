@@ -4,8 +4,8 @@ ModelerKey.prototype.defineStyles = function(options) {
   let styles = defaulter(options.styles,{});
 
   styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
-  styles.fontSize = "8pt";
-  styles.fontWeight = defaulter(styles.fontWeight,"bold");
+  styles.fontSize = "10pt";
+  styles.fontWeight = defaulter(styles.fontWeight,"normal");
   styles.lineStrokeWidth = defaulter(styles.lineStrokeWidth,4);
   styles.playerHistoryStroke = defaulter(styles.playerHistoryStroke,"#173f5f");
   styles.playerProjectionStroke = defaulter(styles.playerProjectionStroke,"#173f5f");

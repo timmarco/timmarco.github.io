@@ -5,7 +5,8 @@ Slider.prototype.addLabel = function() {
 
   text = new TextLabel({
     "text":slider.labelText,
-    "where":slider.layers.text
+    "where":slider.layers.text,
+    "text-anchor":"middle"
   }).show()
   .move(slider.referencePoints.labelPosition);
 

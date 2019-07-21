@@ -7,7 +7,7 @@ Modeler.prototype.addPaneContractDetails = function() {
     .attr("x",modeler.referencePoints.contractDetailsHeadingCoordinates.x)
     .attr("y",modeler.referencePoints.contractDetailsHeadingCoordinates.y)
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-weight","bold")
     .attr("font-size","14pt")
     .text("Contract Details");

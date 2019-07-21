@@ -7,8 +7,7 @@ ModelerKey = function(options) {
   return key;
 
   function init(options) {
-    console.log(options);
-    
+
     key.styles = key.defineStyles(options);
     key.size = key.defineSize(options);
     key.position = {"x":66.67,"y":425};
@@ -21,6 +20,10 @@ ModelerKey = function(options) {
     key.contractValue = key.addContractValue();
 
     key.visibleKeys = key.defineVisibleKeys();
+
+    console.log("HIDE CONTRACT VALUE!");
+    key
+      .hideContractValue();
 
     key
       .layout();

@@ -9,28 +9,38 @@ PitcherConfig.prototype.defineTeamResults = function() {
   };
 
   group.metrics.push({
-    "key":"wOba_against",
-    "display":"wOBA",
-    "description":"Weighted On-Base Average for hitters facing this pitcher.",
-    "source":"Baseball Savant",
-    "relatedToNext":true,
-    "shareScale":["xWobaAgainst"]
+    "isHeader":true,
+    "headerType":"fewer-runs-more-runs",
+    "startGroup":true
   });
 
+  // group.metrics.push({
+  //   "key":"weighted_on_base_average_against",
+  //   "display":"wOBA",
+  //   "description":"Weighted On-Base Average for hitters facing this pitcher.",
+  //   "source":"Fangraphs",
+  //   "relatedToNext":true,
+  //   "shareScale":["expected_weighted_on_base_average"],
+  //   "startGroup":true
+  // });
+
   group.metrics.push({
-    "key":"expected_woba_against",
+    "key":"expected_weighted_on_base_average_against",
     "display":"xWOBA",
     "description":"Expected Weighted On-Base Average for hitters facing this pitcher. Controls above measure for luck.",
     "source":"Baseball Savant",
-    "scalePercentage":true
+    "endGroup":true,
+    "startGroup":true
   });
 
   group.metrics.push({
-    "key":"slugging_against",
-    "display":"Slugging",
-    "description":"Slugging average for hitters facing this pitcher.",
-    "source":"Baseball Savant",
-    "shareScale":["expected_slugging_against"]
+    "isSpacer":true
+  })
+
+  group.metrics.push({
+    "isHeader":true,
+    "startGroup":true,
+    "headerType":"fewer-runs-more-runs",
   });
 
   group.metrics.push({
@@ -38,23 +48,37 @@ PitcherConfig.prototype.defineTeamResults = function() {
     "display":"xSlugging",
     "description":"Expected slugging average for hitters facing this pitcher. Controls above measure for luck.",
     "source":"Baseball Savant",
+    "endGroup":true,
+    "startGroup":true
   });
 
   group.metrics.push({
-    "key":"batting_average_against",
-    "display":"Batting Average",
-    "description":"Batting average of hitters facing this pitcher.",
-    "source":"Baseball Savant",
-    "relatedToNext":true,
-    "shareScale":["expected_batting_average_against"]
-  });
+    "isSpacer":true
+  })
+
+  // group.metrics.push({
+  //   "key":"batting_average_against",
+  //   "display":"Batting Average",
+  //   "description":"Batting average of hitters facing this pitcher.",
+  //   "source":"Baseball Savant",
+  //   "relatedToNext":true,
+  //   "shareScale":["expected_batting_average_against"]
+  // });
+
+
+  group.metrics.push({
+    "isHeader":true,
+    "startGroup":true,
+    "headerType":"fewer-hits-more-hits"
+  })
 
   group.metrics.push({
     "key":"expected_batting_average_against",
     "display":"xBatting Average",
     "description":"Expected batting average of hitters facing this pitcher. Controls above measure for luck",
     "source":"Baseball Savant",
-    "shareScale":["expected_batting_average_against"]
+    "endGroup":true,
+    "startGroup":true
   });
 
 

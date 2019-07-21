@@ -2,7 +2,7 @@
 Projection.prototype.getBaseAge = function() {
   const projection = this;
 
-  let baseAge = projection.data[Object.keys(projection.data)[Object.keys(projection.data).length - 1]].age;
+  let baseAge = projection.data.stats["2018"].age;
 
   return baseAge;
 };

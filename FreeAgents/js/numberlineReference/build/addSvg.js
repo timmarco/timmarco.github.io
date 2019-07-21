@@ -6,7 +6,7 @@ NumberlineReference.prototype.addSvg = function(where) {
   svg = where
     .append("svg")
     .attr("height",20)
-    .attr("width",300);
+    .attr("width",500);
 
   return svg;
 };

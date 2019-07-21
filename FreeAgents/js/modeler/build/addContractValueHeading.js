@@ -6,7 +6,7 @@ Modeler.prototype.addContractValueHeading = function() {
     .append("text")
     .attr("font-size","10pt")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","alphabetic")
+    .attr("dominant-baseline","alphabetic")
     .attr("x",modeler.referencePoints.contractValueHeadingCoordinates.x)
     .attr("y",modeler.referencePoints.contractValueHeadingCoordinates.y)
     .text("Projected Production");

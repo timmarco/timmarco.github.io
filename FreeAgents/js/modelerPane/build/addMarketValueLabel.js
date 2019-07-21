@@ -7,7 +7,6 @@ ModelerPane.prototype.addMarketValueLabel = function() {
     .attr("x",pane.referencePoints.overlayWinValueCoordinates.x)
     .attr("y",pane.referencePoints.overlayWinValueCoordinates.y)
     .attr("font-size","12pt")
-    .attr("font-weight","bold")
     .text("Market Value of Wins");
 
 

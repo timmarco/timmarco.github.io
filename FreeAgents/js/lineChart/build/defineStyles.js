@@ -19,8 +19,8 @@ LineChart.prototype.defineStyles = function() {
   styles.axisTitleFontWeight = "bold";
 
   styles.playerYearFill = "white";
-  styles.playerYearStroke = "blue";
-  styles.playerYearHighlightFill = "blue";
+  styles.playerYearStroke = "#20639b";
+  styles.playerYearHighlightFill = "#20639b";
   styles.playerYearLine = "#20639b";
   styles.playerYearLineStrokeWidth = 3;
   styles.playerProjectionDashArray = "5,5";
@@ -29,7 +29,7 @@ LineChart.prototype.defineStyles = function() {
 
   styles.compPlayerStroke = "#fafafa";
   styles.compPlayerStrokeWidth = 1;
-  styles.compPlayerHighlightStroke = "black";
+  styles.compPlayerHighlightStroke = "rgb(22,58,98)";
 
   styles.projectionLine = "#20639b";
   styles.projectionLineStroke = 3;
@@ -45,6 +45,10 @@ LineChart.prototype.defineStyles = function() {
 
   styles.mvpLineStroke = "#999";
   styles.mvpLineStrokeWidth = 1;
+
+  styles.contractLineStroke = "#ed553b";
+  styles.contractLineStrokeWidth = 2;
+  styles.contractLineStrokeDashArray = "none";
 
   return styles;
 

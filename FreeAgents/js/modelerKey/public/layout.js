@@ -14,7 +14,7 @@ ModelerKey.prototype.layout = function() {
     if(key.visibleKeys[keyName]) {
 
       if((lastXPosition + spacing) > key.size.width) {
-        yPosition += 30;
+        yPosition += 45;
         xPosition = 0;
       } else {
         xPosition = lastXPosition;

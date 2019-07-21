@@ -9,12 +9,19 @@ PitcherConfig.prototype.defineBattedBallLocation = function() {
   };
 
   group.metrics.push({
+    "isHeader":true,
+    "startGroup":true,
+    "headerType":"never-always"
+  })
+
+  group.metrics.push({
     "key":"pull_field_against",
     "display":"Pull %",
     "description":"Percentage of balls hit to the pull field.",
     "source":"Fangraphs",
     "relatedToNext":true,
-    "scalePercentage":true
+    "scalePercentage":true,
+    "startGroup":true
   });
 
   group.metrics.push({
@@ -32,7 +39,8 @@ PitcherConfig.prototype.defineBattedBallLocation = function() {
     "description":"Percentage of balls hit to the opposite field.",
     "source":"Fangraphs",
     "relatedToNext":true,
-    "scalePercentage":true
+    "scalePercentage":true,
+    "endGroup":true
   });
 
 

@@ -9,6 +9,12 @@ PitcherConfig.prototype.definePitchFrequency = function() {
   };
 
   group.metrics.push({
+    "isHeader":true,
+    "headerType":"never-always",
+    "startGroup":true
+  });
+
+  group.metrics.push({
     "key":"four_seam_frequency",
     "display":"Four-Seam",
     "description":"Frequency of Four-Seam Fastballs.",
@@ -74,16 +80,6 @@ PitcherConfig.prototype.definePitchFrequency = function() {
     "key":"slider_frequency",
     "display":"Changeup",
     "description":"Frequency of Changeups.",
-    "source":"Fangraphs",
-    "scalePercentage":true,
-    "relatedToNext":true,
-    "isPitchType":true
-  });
-
-  group.metrics.push({
-    "key":"knuckleball_frequency",
-    "display":"Knuckleball",
-    "description":"Frequency of Cut Fastballs.",
     "source":"Fangraphs",
     "scalePercentage":true,
     "relatedToNext":true,

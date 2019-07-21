@@ -10,7 +10,7 @@ Sparkline.prototype.defineStyles = function(preset) {
 
   styles.lineStroke = spark.defaulter(styles.lineStroke,"#173f5f");
   styles.lineStrokeWidth = spark.defaulter(styles.lineStrokeWidth,1);
-  styles.areaFill = spark.defaulter(styles.areaFill,"#20639b");
+  styles.areaFill = spark.defaulter(styles.areaFill,"rgba(32, 99, 155,0.5)");
 
   return styles;
 };

@@ -12,9 +12,9 @@ Projection.prototype.getBWarSimilarPlayersMean = function() {
 
   meanValues.shift();
   meanValues.unshift({
-    "age":projection.data["2018"].age,
-    "bWar":projection.data["2018"].bWar
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
   });
-  
+
   return meanValues;
 };

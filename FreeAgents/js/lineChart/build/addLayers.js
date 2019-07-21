@@ -12,6 +12,7 @@ LineChart.prototype.addLayers = function() {
   layers.foregroundLine = chart.addSingleLayer();
   layers.backgroundLabels = chart.addSingleLayer();
   layers.frontText = chart.addSingleLayer();
+  layers.contract = chart.addSingleLayer();
 
   return layers;
 

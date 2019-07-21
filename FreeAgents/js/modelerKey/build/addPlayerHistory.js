@@ -26,7 +26,7 @@ ModelerKey.prototype.addPlayerHistory = function() {
   }).show()
   .move({
     "x":10,
-    "y":-6
+    "y":-7
   });
 
 
@@ -37,11 +37,11 @@ ModelerKey.prototype.addPlayerHistory = function() {
     "fontFamily":key.styles.fontFamily,
     "fontWeight":key.styles.fontWeight,
     "fontSize":key.styles.fontSize,
-    "text":"Career bWar"
+    "text":"Career WAR"
   }).show()
   .move({
     "x":10,
-    "y":6
+    "y":7
   });
 
 

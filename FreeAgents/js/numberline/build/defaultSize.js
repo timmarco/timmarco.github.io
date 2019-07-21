@@ -4,7 +4,7 @@ Numberline.prototype.defaultSize = function(options) {
 
   let size = {};
   options.size = chart.defaulter(options.size,{});
-  size.height = chart.defaulter(options.height,30);
+  size.height = chart.defaulter(options.height,40);
   size.width = chart.defaulter(options.width,500);
   return size;
 };

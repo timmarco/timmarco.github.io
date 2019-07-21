@@ -21,7 +21,7 @@ function Slider(options) {
     slider.margins = slider.defineMargins(options.margins);
     slider.layout = slider.defineLayout(options.layout);
     slider.styles = slider.defineStyles();
-    slider.referencePoints = slider.defineReferencePoints();
+    slider.referencePoints = slider.defineReferencePoints(options.leftLabel);
 
 
     slider.scale = slider.defineScale();

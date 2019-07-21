@@ -2,15 +2,8 @@
 ModelerPane.prototype.updateContractYears = function() {
   const pane = this;
 
-  // pane.yearLabels.forEach((label,yearIndex) => {
-  //   if(yearIndex >= pane.contractValues.contractLength) {
-  //     label
-  //       .hide();
-  //   }
-  // });
-
-
-  // pane.salarySliders.forEach((slider,yearIndex) => {
+  //
+  // pane.winValueSliders.forEach((slider,yearIndex) => {
   //   if(yearIndex >= pane.contractValues.contractLength) {
   //     slider
   //       .hide();
@@ -19,16 +12,6 @@ ModelerPane.prototype.updateContractYears = function() {
   //       .show();
   //   }
   // });
-  
-  pane.winValueSliders.forEach((slider,yearIndex) => {
-    if(yearIndex >= pane.contractValues.contractLength) {
-      slider
-        .hide();
-    } else {
-      slider
-        .show();
-    }
-  });
 
   pane
     .updateContractValue();

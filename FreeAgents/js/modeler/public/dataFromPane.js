@@ -10,25 +10,15 @@ Modeler.prototype.dataFromPane = function(data) {
 
   modeler.projectionParameters = data;
 
+  modeler.contractYearsSlider.updateValue(modeler.projectionParameters.contractLength);
+
   modeler.calculateContractValues();
 
-  // modeler.contractButton
-  //   .hide();
-  //
-  // modeler.contractCostLabel
-  //   .show();
-  //
-  // modeler.contractCostText
-  //   .show();
-  //
-  // modeler.meanSurplusLabel
-  //   .show();
-  //
-  // modeler.meanSurplusText
-  //   .show();
-  //
-  // modeler.contractCostText
-  //   .show();
+  modeler.salaryChart = modeler.addSalaryChart()
+    .updateYears(modeler.projectionParameters.contractLength);
+
+  modeler.winChart = modeler.addWinChart()
+    .updateYears(modeler.projectionParameters.contractLength);
 
   return modeler;
 };

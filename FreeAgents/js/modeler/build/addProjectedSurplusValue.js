@@ -7,7 +7,7 @@ Modeler.prototype.addProjectedSurplusValue = function() {
     .attr("font-weight","bold")
     .attr("font-size","18pt")
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("x",modeler.referencePoints.projectedSurplusValueCoordinates.x)
     .attr("y",modeler.referencePoints.projectedSurplusValueCoordinates.y)
     .text("");

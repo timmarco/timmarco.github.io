@@ -7,8 +7,7 @@ ModelerPane.prototype.addSalaryLabel = function() {
     .attr("x",pane.referencePoints.overlaySalaryCoordinates.x)
     .attr("y",pane.referencePoints.overlaySalaryCoordinates.y)
     .attr("font-size","12pt")
-    .attr("font-weight","bold")
-    .text("Contract Value");
+    .text("Contract Cost");
 
 
   return text;

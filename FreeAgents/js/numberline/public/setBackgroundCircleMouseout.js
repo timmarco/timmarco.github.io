@@ -3,6 +3,7 @@ Numberline.prototype.setBackgroundCircleMouseout = function() {
   const chart = this;
 
   chart.backgroundCircleMouseout = (circle,datum) => {
+
     chart
       .hideHighlight();
 

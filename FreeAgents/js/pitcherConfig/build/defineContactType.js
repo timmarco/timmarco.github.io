@@ -9,12 +9,19 @@ PitcherConfig.prototype.defineContactType = function() {
   };
 
   group.metrics.push({
+    "isHeader":true,
+    "startGroup":true,
+    "headerType":"never-always"
+  })
+
+  group.metrics.push({
     "key":"hard_hits_against",
     "display":"Hard %",
     "description":"Percentage of contact classified as 'Hard'.",
     "source":"Fangraphs",
     "relatedToNext":true,
-    "scalePercentage":true
+    "scalePercentage":true,
+    "startGroup":true
   });
 
   group.metrics.push({
@@ -32,7 +39,8 @@ PitcherConfig.prototype.defineContactType = function() {
     "description":"Percentage of contact classified as 'Soft'.",
     "source":"Fangraphs",
     "relatedToNext":true,
-    "scalePercentage":true
+    "scalePercentage":true,
+    "endGroup":true
   });
 
 

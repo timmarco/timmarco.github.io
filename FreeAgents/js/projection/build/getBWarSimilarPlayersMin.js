@@ -13,9 +13,9 @@ Projection.prototype.getBWarSimilarPlayersMin = function() {
   minValues.shift();
 
   minValues.unshift({
-    "age":projection.data["2018"].age,
-    "bWar":projection.data["2018"].bWar
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
   });
-  
+
   return minValues;
 };

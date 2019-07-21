@@ -13,8 +13,8 @@ Projection.prototype.getBWarSimilarPlayersMax = function() {
   maxValues.shift();
 
   maxValues.unshift({
-    "age":projection.data["2018"].age,
-    "bWar":projection.data["2018"].bWar
+    "age":projection.data.stats["2018"].age,
+    "bWar":projection.data.stats["2018"].bWar
   });
 
   return maxValues;

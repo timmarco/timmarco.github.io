@@ -6,6 +6,6 @@ Modeler.prototype.addModelerPane = function() {
     "where":modeler.layers.pane,
     "parent":modeler
   });
-  
+
   return pane;
 };

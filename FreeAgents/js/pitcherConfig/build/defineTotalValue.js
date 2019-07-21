@@ -8,7 +8,10 @@ PitcherConfig.prototype.defineTotalValue = function() {
     "description":"Measures of pitcher's overall contribution to team performance."
   };
 
-  let subGroups = [config.defineFangraphsValue(),config.defineBBRefValue()];
+  let subGroups = [
+    config.defineFangraphsValue(),
+    config.defineBBRefValue()
+  ];
 
   return subGroups;
 };

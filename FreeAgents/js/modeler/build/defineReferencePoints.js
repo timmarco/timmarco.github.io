@@ -29,7 +29,7 @@ Modeler.prototype.defineReferencePoints = function() {
   };
 
   referencePoints.chartOrigin = {
-    "x":16.67,
+    "x":0,
     "y":135.42
   };
 
@@ -91,12 +91,12 @@ Modeler.prototype.defineReferencePoints = function() {
   };
 
   referencePoints.rightPaneSize = {
-    "width":333,
+    "width":250,
     "height":500
   };
 
   referencePoints.rightPaneCoordinates = {
-    "x":467,
+    "x":550,
     "y":0
   };
 
@@ -206,7 +206,7 @@ Modeler.prototype.defineReferencePoints = function() {
   };
 
   referencePoints.winValueButtonCoordinates = {
-    "x":700,
+    "x":675,
     "y":197.92
   };
 
@@ -222,7 +222,12 @@ Modeler.prototype.defineReferencePoints = function() {
 
   referencePoints.rightPaneContractLengthSliderCoordinates = {
     "x":483.33,
-    "y":125
+    "y":135
+  };
+
+  referencePoints.aavSliderCoordinates = {
+    "x":483.33,
+    "y":150
   };
 
 

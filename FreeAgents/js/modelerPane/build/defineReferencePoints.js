@@ -5,8 +5,8 @@ ModelerPane.prototype.defineReferencePoints = function() {
 
   referencePoints.centerX = pane.size.width / 2;
   referencePoints.centerY = pane.size.height / 3;
-  referencePoints.topSixth = referencePoints.topThird / 2;
   referencePoints.topThird = pane.size.height / 3;
+  referencePoints.topSixth = referencePoints.topThird / 2;
   referencePoints.secondThird = referencePoints.topThird * 2;
 
   referencePoints.titleCenter = referencePoints.topThird / 6;
@@ -18,8 +18,8 @@ ModelerPane.prototype.defineReferencePoints = function() {
   referencePoints.rightSecondThird = referencePoints.rightThird * 2;
 
   referencePoints.yearGroupCoordinates = {"x":referencePoints.rightSixth,"y":referencePoints.topThird};
-  referencePoints.salaryGroupCoordinates = {"x":referencePoints.rightThird,"y":referencePoints.topThird};
-  referencePoints.winValueGroupCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.topThird};
+  referencePoints.salaryGroupCoordinates = {"x":referencePoints.rightThird,"y":referencePoints.topSixth * 1.5 + 25};
+  referencePoints.winValueGroupCoordinates = {"x":referencePoints.rightSecondThird,"y":referencePoints.topSixth * 1.5 + 25};
 
   referencePoints.topSixth = referencePoints.topThird / 2;
 
@@ -35,8 +35,8 @@ ModelerPane.prototype.defineReferencePoints = function() {
 
 
   referencePoints.titleCoordinates = {
-    "x":14.92,
-    "y":41.67
+    "x":30,
+    "y":20.667
   };
 
 
@@ -62,43 +62,43 @@ ModelerPane.prototype.defineReferencePoints = function() {
   };
 
   referencePoints.overlayContractCoordinates = {
-    "x":14.92,
-    "y":104.17
+    "x":30,
+    "y":70
   };
 
   referencePoints.overlayContractDescriptionCoordinates = {
-    "x":14.92,
-    "y":125
+    "x":30,
+    "y":75
   };
 
   referencePoints.overlayContractSliderCoordinates =  {
     "x":14.92,
-    "y":177.083
+    "y":referencePoints.topSixth * 1.5 + 20
   };
 
   referencePoints.overlaySalaryCoordinates = {
-    "x":253.94,
-    "y":104.17
+    "x":referencePoints.rightThird + 30,
+    "y":70
   };
 
   referencePoints.overlaySalaryDescriptionCoordinates = {
-    "x":253.94,
-    "y":125
+    "x":referencePoints.rightThird + 30,
+    "y":75
   };
 
   referencePoints.overlaySalarySliderCoordinates =  {
-    "x":253.94,
-    "y":177.083
+    "x":14.92,
+    "y":230
   };
 
   referencePoints.overlayWinValueCoordinates = {
-    "x":492.94,
-    "y":104.17
+    "x":referencePoints.rightSecondThird + 30,
+    "y":70
   };
 
   referencePoints.overlayWinValueDescriptionCoordinates = {
-    "x":492.94,
-    "y":125
+    "x":referencePoints.rightSecondThird + 30,
+    "y":75
   };
 
   referencePoints.overlayWinValueTableCoordinates = {
@@ -163,7 +163,7 @@ ModelerPane.prototype.defineReferencePoints = function() {
 
   referencePoints.overlayColumnWidth = 209.13;
   referencePoints.overlayDescriptionHeight = 41.667;
-  referencePoints.overlaySliderHeight = 41.667;
+  referencePoints.overlaySliderHeight = 20;
   referencePoints.overlayColumnTableHeight = 218.75;
 
 

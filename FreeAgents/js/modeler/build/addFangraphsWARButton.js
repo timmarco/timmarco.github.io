@@ -2,22 +2,46 @@
 Modeler.prototype.addFangraphsWARButton = function() {
   const modeler = this;
 
-  let text = modeler.layers.base
+  let group = modeler.layers.base
+    .append("g")
+    .attr("transform","translate("+250+","+modeler.referencePoints.warFormulationCoordinates.y+")");
+
+  let rect = group
+    .append("rect")
+    .attr("fill","none");
+
+  let text = group
     .append("text")
-    .attr("x",modeler.BBRefWARButton.node().getBBox().width + modeler.referencePoints.warFormulationCoordinates.x + 10)
-    .attr("y",modeler.referencePoints.warFormulationCoordinates.y)
+    .attr("x",0)
+    .attr("y",0)
     .attr("text-anchor","start")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-size","10pt")
     .attr("font-weight","normal")
     .attr("cursor","pointer")
     .text("Fangraphs")
     .on('click',() => {
       modeler.BBRefWARButton
+        .select("text")
+        .attr("fill","black")
         .attr("font-weight","normal");
+
+      modeler.BBRefWARButton
+        .select("rect")
+        .attr("fill","none")
 
       modeler.fangraphsWARButton
         .attr("font-weight","bold");
+
+      rect
+        .attr("fill","#ed553b");
+
+      text
+        .attr("fill","white");
+
+
+      modeler
+        .showFangraphsData();
 
     })
     .on('mouseover',function() {
@@ -35,6 +59,14 @@ Modeler.prototype.addFangraphsWARButton = function() {
         .hide();
     });
 
+  let textSize = text.node().getBBox();
 
-  return text;
+  rect
+    .attr("x",-textSize.width * 0.025)
+    .attr("y",-textSize.height * (1.25/2))
+    .attr("width",textSize.width * 1.05)
+    .attr("height",textSize.height * 1.1);
+
+
+  return group;
 };

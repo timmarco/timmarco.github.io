@@ -7,7 +7,7 @@ Modeler.prototype.addSubtitle = function() {
     .attr("x",modeler.referencePoints.subTitleCoordinates.x)
     .attr("y",modeler.referencePoints.subTitleCoordinates.y)
     .attr("text-anchor","middle")
-    .attr("alignment-baseline","middle")
+    .attr("dominant-baseline","middle")
     .attr("font-size","12pt")
     .text("Career and Projected Wins Above Replacement");
 
