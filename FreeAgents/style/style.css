@@ -418,3 +418,34 @@ a:hover {
   font-size:1.1em;
   background-color:rgba(96,147,190,0.25);
 }
+
+
+.mobileOverlay {
+  margin:0;
+  padding:0;
+  left:0;
+  top:0;
+  position:fixed;
+  z-index:9999;
+  width:100vw;
+  height:100vh;
+  background-color:white;
+}
+
+.mobileOverlayContainer {
+  padding-top:2em;
+}
+
+.mobileOverlayHeadline {
+  font-size:2em;
+  font-weight:bold;
+}
+
+#mobileButton {
+  cursor:pointer;
+  color:white;
+  background-color:blue;
+  margin-top:1em;
+  padding:0.25em;
+  background-color:#173f5f;
+}
