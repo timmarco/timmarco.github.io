@@ -430,15 +430,22 @@ a:hover {
   width:100vw;
   height:100vh;
   background-color:white;
+  padding-left:4em;
+  padding-right:4em;
 }
 
 .mobileOverlayContainer {
   padding-top:2em;
+  width:75%
 }
 
 .mobileOverlayHeadline {
-  font-size:2em;
+  font-size:7em;
   font-weight:bold;
+}
+
+.mobileOverlay p {
+  font-size:3em;
 }
 
 #mobileButton {
@@ -448,4 +455,5 @@ a:hover {
   margin-top:1em;
   padding:0.25em;
   background-color:#173f5f;
+  font-size:3em;
 }

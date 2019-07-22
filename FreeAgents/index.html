@@ -15,14 +15,6 @@
 
   <body>
 
-    <div class="mobileOverlay" style="display:none">
-      <div class="mobileOverlayContainer">
-      <div class="mobileOverlayHeadline">Heads up!</div>
-        <p>This is a demo of a tool designed for analysts using a computer with a cursor. It isn't optimized for mobile devices.</p>
-        <p>To get the full experience, please check this page out on a computer.</p>
-        <div id="mobileButton">Got it! I want to check it out, anyway!</div>
-      </div>
-    </div>
 
     <div id="positionFilter" style="position:absolute; background-color:white;"></div>
     <div class="pageHeader">
@@ -84,6 +76,14 @@
 
     </div>
     <div id="_tooltip"></div>
+    <div class="mobileOverlay" style="display:none">
+      <div class="mobileOverlayContainer">
+      <div class="mobileOverlayHeadline">Heads up!</div>
+        <p>This is a demo of a tool designed for analysts using a computer with a cursor. It isn't optimized for mobile devices.</p>
+        <p>To get the full experience, please visit this page on a computer.</p>
+        <div id="mobileButton">Got it! I want to check it out, anyway!</div>
+      </div>
+    </div>
 
 
 
@@ -128,16 +128,14 @@
 
 
       if(detectmob()) {
-        console.log("DETECTED MOBILE!?");
 
         d3.select(".mobileOverlay")
           .style("display","block");
 
         d3.select("#mobileButton")
           .on('click',function() {
-            console.log("CLICKED!");
 
-            d3.select(".overlay")
+            d3.select(".mobileOverlay")
               .remove();
             });
       };
