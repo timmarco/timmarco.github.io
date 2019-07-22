@@ -531,6 +531,38 @@ function Modeler(options) {
 }
 
 /* jshint esversion:6 */
+ModelerKey = function(options) {
+  let key = this;
+
+  init(options);
+
+  return key;
+
+  function init(options) {
+
+    key.styles = key.defineStyles(options);
+    key.size = key.defineSize(options);
+    key.position = {"x":66.67,"y":425};
+
+    key.group = key.addGroup(options.where);
+    key.playerHistory = key.addPlayerHistory();
+    key.playerProjections = key.addPlayerProjections();
+    key.similarPlayers = key.addSimilarPlayers();
+    key.errorRange = key.addErrorRange();
+    key.contractValue = key.addContractValue();
+
+    key.visibleKeys = key.defineVisibleKeys();
+
+    key
+      .hideContractValue();
+
+    key
+      .layout();
+
+  }
+};
+
+/* jshint esversion:6 */
 function ModelerPane(options) {
   const pane = this;
 
@@ -584,38 +616,6 @@ function ModelerPane(options) {
   }
 
 }
-
-/* jshint esversion:6 */
-ModelerKey = function(options) {
-  let key = this;
-
-  init(options);
-
-  return key;
-
-  function init(options) {
-
-    key.styles = key.defineStyles(options);
-    key.size = key.defineSize(options);
-    key.position = {"x":66.67,"y":425};
-
-    key.group = key.addGroup(options.where);
-    key.playerHistory = key.addPlayerHistory();
-    key.playerProjections = key.addPlayerProjections();
-    key.similarPlayers = key.addSimilarPlayers();
-    key.errorRange = key.addErrorRange();
-    key.contractValue = key.addContractValue();
-
-    key.visibleKeys = key.defineVisibleKeys();
-
-    key
-      .hideContractValue();
-
-    key
-      .layout();
-
-  }
-};
 
 /* jshint esversion:6 */
 
@@ -712,6 +712,10 @@ function Player(options,tooltip) {
   return player;
 
   function init(options,tooltip) {
+
+    d3.select("#loadingRegion")
+      .style("display","block");
+
     player.metadata(options);
     player.tooltip = tooltip;
 
@@ -1041,6 +1045,7 @@ function WinChart(options) {
     chart.data = options.data;
     chart.domain = options.domain;
     chart.changeCallback = (() => { });
+    chart.callbacks = options.callbacks ? options.callbacks : {};
 
     chart.styles = chart.defineStyles(options);
     chart.size = chart.defineSize(options);
@@ -1285,7 +1290,7 @@ HitterConfig.prototype.defineBaseRunning = function() {
   group = {
     "display":"Baserunning",
     "description":"Measures of player's overall contribution to team offense via baserunning."
-  }
+  };
 
   let subGroups = [runPreventionTable()];
 
@@ -1329,7 +1334,7 @@ HitterConfig.prototype.defineBaseRunning = function() {
 
 
   }
-}
+};
 
 /* jshint esversion:6 */
 HitterConfig.prototype.defineBatting = function() {
@@ -1339,12 +1344,12 @@ HitterConfig.prototype.defineBatting = function() {
   group = {
     "display":"Batting",
     "description":"Measures of player's batting contributions."
-  }
+  };
 
   let subGroups = [config.defineBattingOverview(),config.defineBattingResults(),config.defineBattingApproach()];
 
   return subGroups;
-}
+};
 
 /* jshint esversion:6 */
 HitterConfig.prototype.defineBattingApproach = function() {
@@ -2651,365 +2656,6 @@ LineChart.prototype.defineStyles = function() {
 
 };
 
-/* jshint esversion:6 */
-ModelSlider.prototype.addActiveTrack = function() {
-  const slider = this;
-
-  let track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.referencePoints.xMin)
-    .attr("y",-slider.styles.trackHeight / 2)
-    .attr("height",slider.styles.trackHeight)
-    .attr("width",0)
-    .attr("fill",slider.styles.activeTrackFill);
-
-
-  return track;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addCircle = function() {
-  const slider = this;
-
-  let circle = slider.circleGroup
-    .append("circle")
-    .attr("r",slider.styles.circleRadius)
-    .attr("cx",0)
-    .attr("cy",0)
-    .attr("fill",slider.styles.circleFill)
-    .attr("stroke",slider.styles.circleStroke)
-    .attr("stroke-width",slider.styles.circleStrokeWidth);
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addCircleGroup = function() {
-  const slider = this;
-
-  let group = slider.layers.circle
-    .append("g")
-    .attr("cursor","pointer")
-    .on('mouseover',slider.circleGroupMouseover())
-    .on('mouseout',slider.circleGroupMouseout())
-    .call(d3.drag()
-      .on('start',slider.circleGroupDragStart())
-      .on('drag',slider.circleGroupDrag())
-      .on('end',slider.circleGroupDragEnd())
-    );
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addGroup = function(where) {
-  const slider = this;
-
-  let group = where
-    .append("g")
-    .attr("transform","translate("+slider.coordinates.x+","+slider.coordinates.y+")")
-    .on('mouseover',slider.groupMouseover())
-    .on('mouseout',slider.groupMouseout());
-
-  return group;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addHeading = function(labelText) {
-  const slider = this;
-
-  let heading;
-
-  header = slider.group
-    .append("text")
-    .attr("x",slider.margins.left)
-    .attr("y",-10)
-    .attr("font-size","8pt")
-    .attr("text-anchor","start")
-    .text(labelText)
-
-  return heading;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addHighlightCircle = function() {
-  const slider = this;
-
-  let circle = slider.circleGroup
-    .append("circle")
-    .attr("cx",0)
-    .attr("cy",0)
-    .attr("r",slider.styles.circleRadius)
-    .attr("fill",slider.styles.highlightCircleFill)
-    .attr("opacity",slider.styles.highlightCircleOpacity);
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addLayers = function() {
-  const slider = this;
-
-  let layers = {};
-  layers.track = slider.addSingleLayer();
-  layers.activeTrack = slider.addSingleLayer();
-  layers.circle = slider.addSingleLayer();
-  layers.heading = slider.addSingleLayer();
-
-  return layers;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addSingleLayer = function() {
-  const slider = this;
-
-  let layer = slider.group
-    .append("g");
-
-  return layer;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTextGhost = function() {
-  const slider = this;
-
-  let text = slider.circleGroup
-    .append("text")
-    .attr("x",10)
-    .attr("y",0)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","middle")
-    .attr("font-size",slider.styles.labelFontSize)
-    .attr("font-family",slider.styles.labelFontFamily)
-    .attr("stroke",slider.styles.labelGhostStroke)
-    .attr("stroke-width",slider.styles.labelGhostStrokeWidth)
-    .attr("opacity",slider.styles.labelFontOpacity)
-    .text("LABEL TEXT!");
-
-  return text;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTextLabel = function() {
-  const slider = this;
-
-  let text = slider.circleGroup
-    .append("text")
-    .attr("x",10)
-    .attr("y",0)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","middle")
-    .attr("font-size",slider.styles.labelFontSize)
-    .attr("font-family",slider.styles.labelFontFamily)
-    .attr("fill",slider.styles.labelFontFill)
-    .attr("opacity",slider.styles.labelFontOpacity)
-    .text("LABEL TEXT!");
-
-  return text;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.addTrack = function() {
-  const slider = this;
-
-  let track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.referencePoints.xMin)
-    .attr("y",-slider.styles.trackHeight / 2)
-    .attr("height",slider.styles.trackHeight)
-    .attr("width",slider.referencePoints.effectiveWidth)
-    .attr("fill",slider.styles.trackFill);
-
-
-  return track;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineCallbacks = function(options) {
-  const slider = this;
-
-  callbacks = defaulter(options.callbacks,{});
-  callbacks.groupMouseover = defaulter(callbacks.groupMouseover,() => {});
-  callbacks.groupMouseout = defaulter(callbacks.groupMouseout,() => {});
-  callbacks.circleGroupMouseover = defaulter(callbacks.circleGroupMouseover,() => {});
-  callbacks.circleGroupMouseout = defaulter(callbacks.circleGroupMouseout,() => {});
-  callbacks.dragStart = defaulter(callbacks.dragStart,() => {});
-  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {});
-  callbacks.change = defaulter(callbacks.change,() => {});
-
-  return callbacks;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineCoordinates = function(options) {
-  const slider = this;
-
-  let coordinates = defaulter(options.coordinates,{});
-  coordinates.x = defaulter(coordinates.x,0);
-  coordinates.y = defaulter(coordinates.y,0);
-
-  return coordinates;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineFormatter = function(options) {
-  const slider = this;
-
-  let formatter = defaulter(options.formatter,(value) => { return value.toFixed(0); });
-
-  return formatter;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineMargins = function(options) {
-  const slider = this;
-
-  let margins = defaulter(options.margins,{});
-  margins.left = defaulter(margins.left,10);
-  margins.right = defaulter(margins.right,10);
-  margins.top = defaulter(margins.top,10);
-  margins.bottom = defaulter(margins.bottom,10);
-
-  return margins;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineReferencePoints = function() {
-  const slider = this;
-
-  let referencePoints = {};
-  
-  referencePoints.xMin = slider.margins.left;
-  referencePoints.xMax = slider.size.width - slider.margins.right;
-
-  referencePoints.effectiveWidth = slider.size.width - slider.margins.right - slider.margins.left;
-
-  return referencePoints;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineScale = function(domain) {
-  const slider = this;
-
-  let scale = d3.scaleLinear()
-    .domain(domain)
-    .range([slider.referencePoints.xMin,slider.referencePoints.xMax]);
-
-  return scale;
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineSize = function(options) {
-  const slider = this;
-
-  let size = defaulter(options.size,{});
-  size.width = defaulter(size.width,200);
-  size.height = defaulter(size.height,20);
-
-  return size;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.defineStyles = function(options) {
-  const slider = this;
-
-  let styles = defaulter(options.styles,{});
-
-  styles.trackFill = defaulter(styles.trackfill,"#eee");
-  styles.trackHeight = defaulter(styles.trackHeight,4);
-  styles.activeTrackFill = defaulter(styles.activeTrackFill,"#ed553b");
-
-  styles.circleRadius = defaulter(styles.circleRadius,3);
-  styles.circleFill = defaulter(styles.circleFill,"white");
-  styles.circleStroke = defaulter(styles.circleStroke,"#aaa");
-  styles.circleStrokeWidth = defaulter(styles.circleStrokeWidth,1);
-
-  styles.highlightCircleRadius = defaulter(styles.highlightCircleRadius,7);
-  styles.highlightCircleFill = defaulter(styles.highlightCircleFill,"#ed553b");
-  styles.highlightCircleOpacity = defaulter(styles.highlightCircleOpacity,0.25);
-
-  styles.dragCircleOpacity = defaulter(styles.dragCircleOpacity,1);
-
-  styles.labelFontSize = defaulter(styles.labelFontSize,"10pt");
-  styles.labelFontFamily = defaulter(styles.labelFontFamily,"Source Sans Pro");
-  styles.labelFontFill = defaulter(styles.labelFontFill,"#333");
-  styles.labelFontOpacity = defaulter(styles.labelFontOpacity,1);
-  styles.labelActiveFontSize = defaulter(styles.labelActiveFontSize,"12pt");
-  styles.labelActiveFontFill = defaulter(styles.labelActiveFontFill,"black");
-  styles.labelGhostStroke = defaulter(styles.labelGhostStroke,"white");
-  styles.labelGhostStrokeWidth = defaulter(styles.labelGhostStrokeWidth,3);
-
-
-  return styles;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue === undefined ? defaultValue : setValue;
-  }
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.groupMouseout = function(d,i) {
-  const slider = this;
-
-  return function() {
-    if(!slider.dragLock) {
-      slider.highlightCircle
-        .transition()
-        .duration(150)
-        .attr("r",slider.styles.circleRadius);
-
-      slider.labelText
-        .transition()
-        .duration(150)
-        .attr("font-size",slider.styles.labelFontSize)
-        .attr("fill",slider.styles.labelFontFill);
-
-      slider.labelGhost
-        .transition()
-        .duration(150)
-        .attr("font-size",slider.styles.labelFontSize);
-
-      slider.callbacks
-        .groupMouseout();
-
-    }
-  };
-
-}
-
-/* jshint esversion:6 */
-ModelSlider.prototype.groupMouseover = function(d,i) {
-  const slider = this;
-
-  return function() {
-
-    slider.callbacks
-      .groupMouseover();
-
-  }
-}
-
 /* jshint esversion: 6 */
 LineChart.prototype.addCompData = function(data) {
   const chart = this;
@@ -4024,6 +3670,323 @@ LineChart.prototype.updateYScale = function(newExtent) {
 };
 
 /* jshint esversion:6 */
+ModelSlider.prototype.addActiveTrack = function() {
+  const slider = this;
+
+  let track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.referencePoints.xMin)
+    .attr("y",-slider.styles.trackHeight / 2)
+    .attr("height",slider.styles.trackHeight)
+    .attr("width",0)
+    .attr("fill",slider.styles.activeTrackFill);
+
+
+  return track;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addCircle = function() {
+  const slider = this;
+
+  let circle = slider.circleGroup
+    .append("circle")
+    .attr("r",slider.styles.circleRadius)
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("fill",slider.styles.circleFill)
+    .attr("stroke",slider.styles.circleStroke)
+    .attr("stroke-width",slider.styles.circleStrokeWidth);
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addCircleGroup = function() {
+  const slider = this;
+
+  let group = slider.layers.circle
+    .append("g")
+    .attr("cursor","pointer")
+    .on('mouseover',slider.circleGroupMouseover())
+    .on('mouseout',slider.circleGroupMouseout())
+    .call(d3.drag()
+      .on('start',slider.circleGroupDragStart())
+      .on('drag',slider.circleGroupDrag())
+      .on('end',slider.circleGroupDragEnd())
+    );
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addGroup = function(where) {
+  const slider = this;
+
+  let group = where
+    .append("g")
+    .attr("transform","translate("+slider.coordinates.x+","+slider.coordinates.y+")")
+    .on('mouseover',slider.groupMouseover())
+    .on('mouseout',slider.groupMouseout());
+
+  return group;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addHeading = function(labelText) {
+  const slider = this;
+
+  let heading;
+
+  header = slider.group
+    .append("text")
+    .attr("x",slider.margins.left)
+    .attr("y",-10)
+    .attr("font-size","8pt")
+    .attr("text-anchor","start")
+    .text(labelText)
+
+  return heading;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addHighlightCircle = function() {
+  const slider = this;
+
+  let circle = slider.circleGroup
+    .append("circle")
+    .attr("cx",0)
+    .attr("cy",0)
+    .attr("r",slider.styles.circleRadius)
+    .attr("fill",slider.styles.highlightCircleFill)
+    .attr("opacity",slider.styles.highlightCircleOpacity);
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addLayers = function() {
+  const slider = this;
+
+  let layers = {};
+  layers.track = slider.addSingleLayer();
+  layers.activeTrack = slider.addSingleLayer();
+  layers.circle = slider.addSingleLayer();
+  layers.heading = slider.addSingleLayer();
+
+  return layers;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addSingleLayer = function() {
+  const slider = this;
+
+  let layer = slider.group
+    .append("g");
+
+  return layer;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTextGhost = function() {
+  const slider = this;
+
+  let text = slider.circleGroup
+    .append("text")
+    .attr("x",10)
+    .attr("y",0)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","middle")
+    .attr("font-size",slider.styles.labelFontSize)
+    .attr("font-family",slider.styles.labelFontFamily)
+    .attr("stroke",slider.styles.labelGhostStroke)
+    .attr("stroke-width",slider.styles.labelGhostStrokeWidth)
+    .attr("opacity",slider.styles.labelFontOpacity)
+    .text("LABEL TEXT!");
+
+  return text;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTextLabel = function() {
+  const slider = this;
+
+  let text = slider.circleGroup
+    .append("text")
+    .attr("x",10)
+    .attr("y",0)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","middle")
+    .attr("font-size",slider.styles.labelFontSize)
+    .attr("font-family",slider.styles.labelFontFamily)
+    .attr("fill",slider.styles.labelFontFill)
+    .attr("opacity",slider.styles.labelFontOpacity)
+    .text("LABEL TEXT!");
+
+  return text;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.addTrack = function() {
+  const slider = this;
+
+  let track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.referencePoints.xMin)
+    .attr("y",-slider.styles.trackHeight / 2)
+    .attr("height",slider.styles.trackHeight)
+    .attr("width",slider.referencePoints.effectiveWidth)
+    .attr("fill",slider.styles.trackFill);
+
+
+  return track;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineCallbacks = function(options) {
+  const slider = this;
+
+  callbacks = defaulter(options.callbacks,{});
+  callbacks.groupMouseover = defaulter(callbacks.groupMouseover,() => {});
+  callbacks.groupMouseout = defaulter(callbacks.groupMouseout,() => {});
+  callbacks.circleGroupMouseover = defaulter(callbacks.circleGroupMouseover,() => {});
+  callbacks.circleGroupMouseout = defaulter(callbacks.circleGroupMouseout,() => {});
+  callbacks.dragStart = defaulter(callbacks.dragStart,() => {});
+  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {});
+  callbacks.change = defaulter(callbacks.change,() => {});
+
+  return callbacks;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineCoordinates = function(options) {
+  const slider = this;
+
+  let coordinates = defaulter(options.coordinates,{});
+  coordinates.x = defaulter(coordinates.x,0);
+  coordinates.y = defaulter(coordinates.y,0);
+
+  return coordinates;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineFormatter = function(options) {
+  const slider = this;
+
+  let formatter = defaulter(options.formatter,(value) => { return value.toFixed(0); });
+
+  return formatter;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineMargins = function(options) {
+  const slider = this;
+
+  let margins = defaulter(options.margins,{});
+  margins.left = defaulter(margins.left,10);
+  margins.right = defaulter(margins.right,10);
+  margins.top = defaulter(margins.top,10);
+  margins.bottom = defaulter(margins.bottom,10);
+
+  return margins;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineReferencePoints = function() {
+  const slider = this;
+
+  let referencePoints = {};
+  
+  referencePoints.xMin = slider.margins.left;
+  referencePoints.xMax = slider.size.width - slider.margins.right;
+
+  referencePoints.effectiveWidth = slider.size.width - slider.margins.right - slider.margins.left;
+
+  return referencePoints;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineScale = function(domain) {
+  const slider = this;
+
+  let scale = d3.scaleLinear()
+    .domain(domain)
+    .range([slider.referencePoints.xMin,slider.referencePoints.xMax]);
+
+  return scale;
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineSize = function(options) {
+  const slider = this;
+
+  let size = defaulter(options.size,{});
+  size.width = defaulter(size.width,200);
+  size.height = defaulter(size.height,20);
+
+  return size;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.defineStyles = function(options) {
+  const slider = this;
+
+  let styles = defaulter(options.styles,{});
+
+  styles.trackFill = defaulter(styles.trackfill,"#eee");
+  styles.trackHeight = defaulter(styles.trackHeight,4);
+  styles.activeTrackFill = defaulter(styles.activeTrackFill,"#ed553b");
+
+  styles.circleRadius = defaulter(styles.circleRadius,3);
+  styles.circleFill = defaulter(styles.circleFill,"white");
+  styles.circleStroke = defaulter(styles.circleStroke,"#aaa");
+  styles.circleStrokeWidth = defaulter(styles.circleStrokeWidth,1);
+
+  styles.highlightCircleRadius = defaulter(styles.highlightCircleRadius,7);
+  styles.highlightCircleFill = defaulter(styles.highlightCircleFill,"#ed553b");
+  styles.highlightCircleOpacity = defaulter(styles.highlightCircleOpacity,0.25);
+
+  styles.dragCircleOpacity = defaulter(styles.dragCircleOpacity,1);
+
+  styles.labelFontSize = defaulter(styles.labelFontSize,"10pt");
+  styles.labelFontFamily = defaulter(styles.labelFontFamily,"Source Sans Pro");
+  styles.labelFontFill = defaulter(styles.labelFontFill,"#333");
+  styles.labelFontOpacity = defaulter(styles.labelFontOpacity,1);
+  styles.labelActiveFontSize = defaulter(styles.labelActiveFontSize,"12pt");
+  styles.labelActiveFontFill = defaulter(styles.labelActiveFontFill,"black");
+  styles.labelGhostStroke = defaulter(styles.labelGhostStroke,"white");
+  styles.labelGhostStrokeWidth = defaulter(styles.labelGhostStrokeWidth,3);
+
+
+  return styles;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue === undefined ? defaultValue : setValue;
+  }
+}
+
+/* jshint esversion:6 */
 ModelSlider.prototype.circleGroupDrag = function(d,i) {
   const slider = this;
 
@@ -4159,6 +4122,48 @@ ModelSlider.prototype.circleGroupMouseover = function() {
 };
 
 /* jshint esversion:6 */
+ModelSlider.prototype.groupMouseout = function(d,i) {
+  const slider = this;
+
+  return function() {
+    if(!slider.dragLock) {
+      slider.highlightCircle
+        .transition()
+        .duration(150)
+        .attr("r",slider.styles.circleRadius);
+
+      slider.labelText
+        .transition()
+        .duration(150)
+        .attr("font-size",slider.styles.labelFontSize)
+        .attr("fill",slider.styles.labelFontFill);
+
+      slider.labelGhost
+        .transition()
+        .duration(150)
+        .attr("font-size",slider.styles.labelFontSize);
+
+      slider.callbacks
+        .groupMouseout();
+
+    }
+  };
+
+}
+
+/* jshint esversion:6 */
+ModelSlider.prototype.groupMouseover = function(d,i) {
+  const slider = this;
+
+  return function() {
+
+    slider.callbacks
+      .groupMouseover();
+
+  }
+}
+
+/* jshint esversion:6 */
 ModelSlider.prototype.updateValue = function(newValue) {
   const slider = this;
 
@@ -4262,10 +4267,10 @@ Modeler.prototype.addBBRefWARButton = function() {
 
   let group  = modeler.layers.base
     .append("g")
-    .attr("transform","translate("+(modeler.referencePoints.warFormulationCoordinates.x + 5)+","+modeler.referencePoints.warFormulationCoordinates.y+")")
+    .attr("transform","translate("+(modeler.referencePoints.warFormulationCoordinates.x + 5)+","+modeler.referencePoints.warFormulationCoordinates.y+")");
 
   let rect = group
-    .append("rect")
+    .append("rect");
 
   let text = group
     .append("text")
@@ -4285,7 +4290,7 @@ Modeler.prototype.addBBRefWARButton = function() {
 
       modeler.fangraphsWARButton
         .select("rect")
-        .attr("fill","none")
+        .attr("fill","none");
 
       rect
         .attr("fill","#ed553b");
@@ -4432,17 +4437,8 @@ Modeler.prototype.addEditMarketValueButton = function() {
     .attr("fill","black")
     .attr("x",0)
     .attr("y",3)
-    .text("Edit Market Value")
+    .text("Edit Value of Wins")
     .on('click',modeler.toggleEditView());
-
-  // let textSize = text.node().getBBox();
-  //
-  // rect
-  //   .attr("x",-textSize.width * 0.025)
-  //   .attr("y",-textSize.height * (1.25/2))
-  //   .attr("width",textSize.width * 1.05)
-  //   .attr("height",textSize.height * 1.1)
-  //   .attr("fill","none");
 
 
   return group;
@@ -4796,6 +4792,9 @@ Modeler.prototype.addSalaryChart = function() {
     "where":modeler.salaryChartGroup,
     "domain":[2,40],
     "data":modeler.projectionParameters.salary,
+    "callbacks":{
+      "groupMouseover":(d,i) => { console.log(d); console.log("GROUP MOUSEOVER"); }
+    }
   }).addAAVSlider();
 
   chart.changeCallback = function() {
@@ -4803,11 +4802,11 @@ Modeler.prototype.addSalaryChart = function() {
     modeler.projectionParameters.salary = chart.data;
     modeler
       .calculateContractValues();
-  }
+  };
 
 
   return chart;
-}
+};
 
 /* jshint esversion:6 */
 Modeler.prototype.addSalaryChartGroup = function() {
@@ -4815,10 +4814,10 @@ Modeler.prototype.addSalaryChartGroup = function() {
 
   let group = modeler.layers.rightPane
     .append("g")
-    .attr("transform","translate(550,255)");
+    .attr("transform","translate(545,225)");
 
   return group;
-}
+};
 
 /* jshint esversion:6 */
 Modeler.prototype.addSimilarPlayersButton = function() {
@@ -5011,11 +5010,11 @@ Modeler.prototype.addWinChartGroup = function() {
 
   let group = modeler.layers.rightPane
     .append("g")
-    .attr("transform","translate(550,255)")
+    .attr("transform","translate(545,225)")
     .attr("display","none");
 
   return group;
-}
+};
 
 /* jshint esversion:6 */
 Modeler.prototype.addWinValueSliders = function (yearsToProject) {
@@ -5287,7 +5286,7 @@ Modeler.prototype.defineReferencePoints = function() {
 
   referencePoints.editSalaryButtonCoordinates = {
     "x":566.67,
-    "y":197.92
+    "y":175
   };
 
   referencePoints.winValueButtonCoordinates = {
@@ -5450,20 +5449,30 @@ Modeler.prototype.calculateContractValues = function() {
     .attr("stroke","#ed553b")
     .attr("stroke-width",1)
     .attr("cursor","pointer")
-    .on('mouseover',function(d)  {
+    .on('mouseover',function(d,i)  {
       let element = d3.select(this);
 
       element
         .attr("fill","#ed553b");
 
-      let string = "At market rate of $";
-      string += d.winValue.toFixed(2);
-      string +="mm  per win, the proposed salary of $";
-      string += d.salary.toFixed(2);
-      string += "mm represents a projected surplus of $XXmm.";
+
+      let projectedWins = modeler.chart.projectionLine.data()[0].filter((a) => { return a.age === d.age; })[0];
+      let yearValue = (projectedWins[modeler.chart.currentWARType] * d.winValue).toFixed(2);
+      let surplus = (yearValue - d.salary).toFixed(2);
+      let surplusColor = surplus >= 0 ? "green" : "red";
+
+
+      let table = "<table>";
+      table += "<tr><td style='text-align:right'>Age:</td><td style='text-align:center'>" + d.age +"</td>";
+      table += "<tr><td style='text-align:right'>Projected WAR:</td><td style='text-align:center'>" + projectedWins[modeler.chart.currentWARType].toFixed(2) + "</td></tr>";
+      table += "<tr><td style='text-align:right'>Cost / WAR</td><td style='text-align:center'>$" + d.winValue.toFixed(2) + "mm</td></tr>";
+      table += "<tr><td style='text-align:right'>Projected Value</td><td style='text-align:center'>$" + yearValue + "mm</td></tr>";
+      table += "<tr><td style='text-align:right;border-bottom:1px solid black'>Proposed Salary</td><td style='text-align:center; border-bottom:1px solid black'>$"+d.salary.toFixed(2)+"mm</td></tr>";
+      table += "<tr style='font-weight:bold; color:"+surplusColor+"'><td style='text-align:right'>Year Surplus:</td><td style='text-align:center'>$"+ surplus +"mm</td></tr>";
+      table += "</table>";
 
       modeler.tooltip
-        .update(string)
+        .update(table)
         .show()
         .move();
     })
@@ -5529,6 +5538,32 @@ Modeler.prototype.dataFromPane = function(data) {
 
   modeler.winChart = modeler.addWinChart()
     .updateYears(modeler.projectionParameters.contractLength);
+
+  let salarySize = modeler.salaryButton
+    .select("text")
+    .node()
+    .getBBox();
+
+  modeler.salaryButton
+    .select("rect")
+    .attr("width",salarySize.width * 1.25)
+    .attr("height",salarySize.height * 1.1)
+    .attr("x",-5)
+    .attr("y",-10)
+    .attr("fill","#ed553b");
+
+  let winButtonSize = modeler.winValueButton
+    .select("text")
+    .node()
+    .getBBox();
+
+  modeler.winValueButton
+    .select("rect")
+    .attr("width",winButtonSize.width * 1.1)
+    .attr("height",winButtonSize.height * 1.1)
+    .attr("x",-5)
+    .attr("y",-10)
+    .attr("fill","white");
 
   return modeler;
 };
@@ -5631,140 +5666,475 @@ Modeler.prototype.toggleEditView = function() {
 }
 
 /* jshint esversion:6 */
-ModelerPane.prototype.finishEditing = function() {
-  const pane = this;
+ModelerKey.prototype.addContractValue = function() {
+  const key = this;
+  let toReturn = {};
 
-  pane.contractValues.aav = pane.salaryChart.aavSlider.currentValue;
+  toReturn.group = key.group
+    .append("g");
 
-  pane
-    .transitionOut();
+  toReturn.line = toReturn.group
+    .append("line")
+    .attr("x1",-7.5)
+    .attr("x2",7.5)
+    .attr("y1",0)
+    .attr("y2",0)
+    .attr("stroke",key.styles.contractValueStroke)
+    .attr("stroke-width",5);
 
-  pane.parent
-    .dataFromPane(pane.contractValues);
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.hintMouseout = function() {
-  return () => {
-    const pane = this;
-
-    pane.tooltip
-      .hide();
-      
-    return pane;
-  };
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.hintMouseover = function() {
-  return () => {
-    const pane = this;
-    if(!pane.hasDragged) {
-      pane.tooltip
-        .update("Click and drag to change value.")
-        .show()
-        .move();      
-    }
-    return pane;
-  };
-};
-
-/* jshint esversion:6 */
-ModelerPane.prototype.killAllGlows = function() {
-  const modeler = this;
-
-  modeler.contractSlider
-    .killGlow();
-
-  modeler.salarySlider
-    .killGlow();
-
-  modeler.winValueSliders.forEach((slider) => {
-    slider
-      .killGlow();
+  toReturn.playerNameLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Contract Fair"
+  }).show()
+  .move({
+    "x":10,
+    "y":-6
   });
 
-  return modeler;
+  toReturn.warLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Market Value"
+  }).show()
+  .move({
+    "x":10,
+    "y":6
+  });
+
+
+  return toReturn;
 };
 
 /* jshint esversion:6 */
-ModelerPane.prototype.registerTooltip = function(tooltip) {
-  const pane = this;
+ModelerKey.prototype.addErrorRange = function() {
+  const key = this;
+  let toReturn = {};
 
-  pane.tooltip = tooltip;
+  toReturn.group = key.group
+    .append("g");
 
-  return pane;
+  toReturn.rect = toReturn.group
+    .append("rect")
+    .attr("x",-5)
+    .attr("y",-5)
+    .attr("width",10)
+    .attr("height",10)
+    .attr("stroke","none")
+    .attr("fill",key.styles.errorRangeFill);
+
+  toReturn.errorRange = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Similar Players"
+  }).show()
+  .move({
+    "x":10,
+    "y":-7
+  });
+
+  toReturn.warLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Career WAR Range"
+  }).show()
+  .move({
+    "x":10,
+    "y":7
+  });
+
+
+  return toReturn;
 };
 
 /* jshint esversion:6 */
-ModelerPane.prototype.transitionIn = function() {
-  const pane = this;
+ModelerKey.prototype.addGroup = function(where) {
+  const key = this;
+  let group;
 
-  pane.group
-    .transition()
-    .duration(500)
-    .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
+  group = where
+    .append("g")
+    .attr("transform","translate("+key.position.x+","+key.position.y+")");
 
-  return pane;
+  return group;
 };
 
 /* jshint esversion:6 */
-ModelerPane.prototype.transitionOut = function() {
-  const pane = this;
+ModelerKey.prototype.addPlayerHistory = function() {
+  const key = this;
+  let toReturn = {};
 
-  pane.group
-    .transition()
-    .duration(225)
-    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
+  toReturn.group = key.group
+    .append("g");
 
-  return pane;
+  toReturn.line = toReturn.group
+    .append("line")
+    .attr("x1",-7.5)
+    .attr("x2",7.5)
+    .attr("y1",0)
+    .attr("y2",0)
+    .attr("stroke",key.styles.playerHistoryStroke)
+    .attr("stroke-width",key.styles.lineStrokeWidth);
+
+  toReturn.playerNameLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":""
+  }).show()
+  .move({
+    "x":10,
+    "y":-7
+  });
+
+
+  toReturn.warLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Career WAR"
+  }).show()
+  .move({
+    "x":10,
+    "y":7
+  });
+
+
+  return toReturn;
 };
 
 /* jshint esversion:6 */
-ModelerPane.prototype.updateContractValue = function() {
-  const pane = this;
+ModelerKey.prototype.addPlayerProjections = function() {
+  const key = this;
+  let toReturn = {};
+
+  toReturn.group = key.group
+    .append("g");
+
+  toReturn.line = toReturn.group
+    .append("line")
+    .attr("x1",-7.5)
+    .attr("x2",7.5)
+    .attr("y1",0)
+    .attr("y2",0)
+    .attr("stroke",key.styles.playerProjectionStroke)
+    .attr("stroke-width",key.styles.lineStrokeWidth)
+    .attr("stroke-dasharray",key.styles.playerProjectStrokeDasharray);
+
+  toReturn.playerNameLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":""
+  }).show()
+  .move({
+    "x":10,
+    "y":-6
+  });
+
+  toReturn.warLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Projected WAR"
+  }).show()
+  .move({
+    "x":10,
+    "y":6
+  });
 
 
-  let totalValue;
-  totalValue = 0;
-
-  totalValue = pane.contractValues.contractLength * pane.contractValues.aav;
-
-  // pane.salarySlider.valueLabel.updateText("$" + pane.contractValues.aav.toFixed(2) + "M");
-
-  // pane.contractValues.winValue.forEach((value,yearIndex) => {
-  //   pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
-  // });
-
-
-  // pane.totalContractValue.contractValueLabel
-  //   .updateText("$" + totalValue.toFixed(0) + "mm");
-
-  return pane;
+  return toReturn;
 };
 
 /* jshint esversion:6 */
-ModelerPane.prototype.updateContractYears = function() {
-  const pane = this;
+ModelerKey.prototype.addSimilarPlayers = function() {
+  const key = this;
+  let toReturn = {};
 
-  //
-  // pane.winValueSliders.forEach((slider,yearIndex) => {
-  //   if(yearIndex >= pane.contractValues.contractLength) {
-  //     slider
-  //       .hide();
-  //   } else {
-  //     slider
-  //       .show();
-  //   }
-  // });
+  toReturn.group = key.group
+    .append("g");
 
-  pane
-    .updateContractValue();
+  toReturn.line = toReturn.group
+    .append("line")
+    .attr("x1",-7.5)
+    .attr("x2",7.5)
+    .attr("y1",0)
+    .attr("y2",0)
+    .attr("stroke",key.styles.similarPlayersStroke)
+    .attr("stroke-width",key.styles.lineStrokeWidth);
+
+  toReturn.playerNameLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Similar Players"
+  }).show()
+  .move({
+    "x":10,
+    "y":-7
+  });
 
 
-  return pane;
+  toReturn.warLabel = new TextLabel({
+    "where":toReturn.group,
+    "textAnchor":"start",
+    "foregroundColor":key.styles.textColor,
+    "fontFamily":key.styles.fontFamily,
+    "fontWeight":key.styles.fontWeight,
+    "fontSize":key.styles.fontSize,
+    "text":"Career WAR"
+  }).show()
+  .move({
+    "x":10,
+    "y":7
+  });
+
+
+  return toReturn;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.defineSize = function(options) {
+  const key = this;
+  let size = defaulter(options.size,{});
+
+  size.height = defaulter(size.height,50);
+  size.width = defaulter(size.width,433.33);
+
+  return size;
+
+  function defaulter(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+  }
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.defineStyles = function(options) {
+  const key = this;
+  let styles = defaulter(options.styles,{});
+
+  styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
+  styles.fontSize = "10pt";
+  styles.fontWeight = defaulter(styles.fontWeight,"normal");
+  styles.lineStrokeWidth = defaulter(styles.lineStrokeWidth,4);
+  styles.playerHistoryStroke = defaulter(styles.playerHistoryStroke,"#173f5f");
+  styles.playerProjectionStroke = defaulter(styles.playerProjectionStroke,"#173f5f");
+  styles.playerProjectStrokeDasharray = defaulter(styles.playerPrjectionStrokeDasharray,"3,3");
+  styles.similarPlayersStroke = defaulter(styles.similarPlayersStroke,"#ddd");
+  styles.contractValueStroke = defaulter(styles.contractValueStroke,"#ed553b");
+  styles.errorRangeFill = defaulter(styles.errorRangeFill,"#bbd");
+  styles.textColor = defaulter(styles.textColor,"#173f5f");
+
+  return styles;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue !== undefined ? setValue : defaultValue;
+  }
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.defineVisibleKeys = function() {
+  const key = this;
+  let visible = {};
+
+  visible.playerHistory = true;
+  visible.playerProjections = true;
+  visible.similarPlayers = true;
+  visible.errorRange = true;
+  visible.contractValue = true;
+
+  return visible;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.changeWarType = function(newType) {
+  const key = this;
+
+  key.playerHistory.warLabel
+    .update("Career " + newType);
+
+  key.playerProjections.warLabel
+    .update("Projected " + newType);
+
+  key.similarPlayers.warLabel
+    .update("Career " + newType);
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.definePlayerName = function(name) {
+  const key = this;
+
+  key.playerHistory.playerNameLabel
+    .update(name);
+
+  lkey.playerProjections.playerNameLabel
+    .update(name);
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.hideContractValue = function() {
+  const key = this;
+
+  key.contractValue.group
+    .attr("display","none");
+
+  key
+    .layout();
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.hideErrorRange = function() {
+  const key = this;
+
+  key.errorRange.group
+    .attr("display","none");
+
+  key
+    .layout();
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.hideSimilarPlayers = function() {
+  const key = this;
+
+  key.similarPlayers.group
+    .attr("display","none");
+
+  key
+    .layout();
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.layout = function() {
+  const key = this;
+
+  let trueValues = Object.keys(key.visibleKeys).filter((a) => { return key.visibleKeys[a]; }).length;
+  let spacing = 140;
+
+  let currentIndex = 0;
+  let lastXPosition = 0;
+  let yPosition = 0;
+  let xPosition = 0;
+
+  Object.keys(key.visibleKeys).forEach((keyName) => {
+    if(key.visibleKeys[keyName]) {
+
+      if((lastXPosition + spacing) > key.size.width) {
+        yPosition += 45;
+        xPosition = 0;
+      } else {
+        xPosition = lastXPosition;
+      }
+
+      key[keyName].group
+        .attr("transform","translate("+xPosition+","+yPosition+")")
+        .attr("display","block");
+
+      currentIndex += 1;
+      lastXPosition = xPosition + spacing;
+
+    } else {
+      key[keyName].group
+        .attr("display","none");
+    }
+
+  });
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.playerName = function(name) {
+  const key = this;
+
+  key.playerHistory.playerNameLabel
+    .updateText(name);
+
+  key.playerProjections.playerNameLabel
+    .updateText(name);
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.showContractValue = function() {
+  const key = this;
+
+  key.contractValue.group
+    .attr("display","block");
+
+  key
+    .layout();
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.showErrorRange = function() {
+  const key = this;
+
+  key.errorRange.group
+    .attr("display","none");
+
+  key
+    .layout();
+
+  return key;
+};
+
+/* jshint esversion:6 */
+ModelerKey.prototype.showSimilarPlayers = function() {
+  const key = this;
+
+  key.similarPlayers.group
+    .attr("display","none");
+
+  key
+    .layout();
+
+  return key;
 };
 
 /* jshint esversion:6 */
@@ -6460,475 +6830,140 @@ ModelerPane.prototype.defineStyles = function(options) {
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.addContractValue = function() {
-  const key = this;
-  let toReturn = {};
+ModelerPane.prototype.finishEditing = function() {
+  const pane = this;
 
-  toReturn.group = key.group
-    .append("g");
+  pane.contractValues.aav = pane.salaryChart.aavSlider.currentValue;
 
-  toReturn.line = toReturn.group
-    .append("line")
-    .attr("x1",-7.5)
-    .attr("x2",7.5)
-    .attr("y1",0)
-    .attr("y2",0)
-    .attr("stroke",key.styles.contractValueStroke)
-    .attr("stroke-width",5);
+  pane
+    .transitionOut();
 
-  toReturn.playerNameLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Contract Fair"
-  }).show()
-  .move({
-    "x":10,
-    "y":-6
-  });
+  pane.parent
+    .dataFromPane(pane.contractValues);
 
-  toReturn.warLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Market Value"
-  }).show()
-  .move({
-    "x":10,
-    "y":6
-  });
-
-
-  return toReturn;
+  return pane;
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.addErrorRange = function() {
-  const key = this;
-  let toReturn = {};
+ModelerPane.prototype.hintMouseout = function() {
+  return () => {
+    const pane = this;
 
-  toReturn.group = key.group
-    .append("g");
-
-  toReturn.rect = toReturn.group
-    .append("rect")
-    .attr("x",-5)
-    .attr("y",-5)
-    .attr("width",10)
-    .attr("height",10)
-    .attr("stroke","none")
-    .attr("fill",key.styles.errorRangeFill);
-
-  toReturn.errorRange = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Similar Players"
-  }).show()
-  .move({
-    "x":10,
-    "y":-7
-  });
-
-  toReturn.warLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Career WAR Range"
-  }).show()
-  .move({
-    "x":10,
-    "y":7
-  });
-
-
-  return toReturn;
+    pane.tooltip
+      .hide();
+      
+    return pane;
+  };
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.addGroup = function(where) {
-  const key = this;
-  let group;
-
-  group = where
-    .append("g")
-    .attr("transform","translate("+key.position.x+","+key.position.y+")");
-
-  return group;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.addPlayerHistory = function() {
-  const key = this;
-  let toReturn = {};
-
-  toReturn.group = key.group
-    .append("g");
-
-  toReturn.line = toReturn.group
-    .append("line")
-    .attr("x1",-7.5)
-    .attr("x2",7.5)
-    .attr("y1",0)
-    .attr("y2",0)
-    .attr("stroke",key.styles.playerHistoryStroke)
-    .attr("stroke-width",key.styles.lineStrokeWidth);
-
-  toReturn.playerNameLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":""
-  }).show()
-  .move({
-    "x":10,
-    "y":-7
-  });
-
-
-  toReturn.warLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Career WAR"
-  }).show()
-  .move({
-    "x":10,
-    "y":7
-  });
-
-
-  return toReturn;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.addPlayerProjections = function() {
-  const key = this;
-  let toReturn = {};
-
-  toReturn.group = key.group
-    .append("g");
-
-  toReturn.line = toReturn.group
-    .append("line")
-    .attr("x1",-7.5)
-    .attr("x2",7.5)
-    .attr("y1",0)
-    .attr("y2",0)
-    .attr("stroke",key.styles.playerProjectionStroke)
-    .attr("stroke-width",key.styles.lineStrokeWidth)
-    .attr("stroke-dasharray",key.styles.playerProjectStrokeDasharray);
-
-  toReturn.playerNameLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":""
-  }).show()
-  .move({
-    "x":10,
-    "y":-6
-  });
-
-  toReturn.warLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Projected WAR"
-  }).show()
-  .move({
-    "x":10,
-    "y":6
-  });
-
-
-  return toReturn;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.addSimilarPlayers = function() {
-  const key = this;
-  let toReturn = {};
-
-  toReturn.group = key.group
-    .append("g");
-
-  toReturn.line = toReturn.group
-    .append("line")
-    .attr("x1",-7.5)
-    .attr("x2",7.5)
-    .attr("y1",0)
-    .attr("y2",0)
-    .attr("stroke",key.styles.similarPlayersStroke)
-    .attr("stroke-width",key.styles.lineStrokeWidth);
-
-  toReturn.playerNameLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Similar Players"
-  }).show()
-  .move({
-    "x":10,
-    "y":-7
-  });
-
-
-  toReturn.warLabel = new TextLabel({
-    "where":toReturn.group,
-    "textAnchor":"start",
-    "foregroundColor":key.styles.textColor,
-    "fontFamily":key.styles.fontFamily,
-    "fontWeight":key.styles.fontWeight,
-    "fontSize":key.styles.fontSize,
-    "text":"Career WAR"
-  }).show()
-  .move({
-    "x":10,
-    "y":7
-  });
-
-
-  return toReturn;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.defineSize = function(options) {
-  const key = this;
-  let size = defaulter(options.size,{});
-
-  size.height = defaulter(size.height,50);
-  size.width = defaulter(size.width,433.33);
-
-  return size;
-
-  function defaulter(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
-  }
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.defineStyles = function(options) {
-  const key = this;
-  let styles = defaulter(options.styles,{});
-
-  styles.fontFamily = defaulter(styles.fontFamily,"Source Sans Pro");
-  styles.fontSize = "10pt";
-  styles.fontWeight = defaulter(styles.fontWeight,"normal");
-  styles.lineStrokeWidth = defaulter(styles.lineStrokeWidth,4);
-  styles.playerHistoryStroke = defaulter(styles.playerHistoryStroke,"#173f5f");
-  styles.playerProjectionStroke = defaulter(styles.playerProjectionStroke,"#173f5f");
-  styles.playerProjectStrokeDasharray = defaulter(styles.playerPrjectionStrokeDasharray,"3,3");
-  styles.similarPlayersStroke = defaulter(styles.similarPlayersStroke,"#ddd");
-  styles.contractValueStroke = defaulter(styles.contractValueStroke,"orange");
-  styles.errorRangeFill = defaulter(styles.errorRangeFill,"#bbd");
-  styles.textColor = defaulter(styles.textColor,"#173f5f");
-
-  return styles;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue !== undefined ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.defineVisibleKeys = function() {
-  const key = this;
-  let visible = {};
-
-  visible.playerHistory = true;
-  visible.playerProjections = true;
-  visible.similarPlayers = true;
-  visible.errorRange = true;
-  visible.contractValue = true;
-
-  return visible;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.changeWarType = function(newType) {
-  const key = this;
-
-  key.playerHistory.warLabel
-    .update("Career " + newType);
-
-  key.playerProjections.warLabel
-    .update("Projected " + newType);
-
-  key.similarPlayers.warLabel
-    .update("Career " + newType);
-
-  return key;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.definePlayerName = function(name) {
-  const key = this;
-
-  key.playerHistory.playerNameLabel
-    .update(name);
-
-  lkey.playerProjections.playerNameLabel
-    .update(name);
-
-  return key;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.hideContractValue = function() {
-  const key = this;
-
-  key.contractValue.group
-    .attr("display","none");
-
-  key
-    .layout();
-
-  return key;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.hideErrorRange = function() {
-  const key = this;
-
-  key.errorRange.group
-    .attr("display","none");
-
-  key
-    .layout();
-
-  return key;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.hideSimilarPlayers = function() {
-  const key = this;
-
-  key.similarPlayers.group
-    .attr("display","none");
-
-  key
-    .layout();
-
-  return key;
-};
-
-/* jshint esversion:6 */
-ModelerKey.prototype.layout = function() {
-  const key = this;
-
-  let trueValues = Object.keys(key.visibleKeys).filter((a) => { return key.visibleKeys[a]; }).length;
-  let spacing = 140;
-
-  let currentIndex = 0;
-  let lastXPosition = 0;
-  let yPosition = 0;
-  let xPosition = 0;
-
-  Object.keys(key.visibleKeys).forEach((keyName) => {
-    if(key.visibleKeys[keyName]) {
-
-      if((lastXPosition + spacing) > key.size.width) {
-        yPosition += 45;
-        xPosition = 0;
-      } else {
-        xPosition = lastXPosition;
-      }
-
-      key[keyName].group
-        .attr("transform","translate("+xPosition+","+yPosition+")")
-        .attr("display","block");
-
-      currentIndex += 1;
-      lastXPosition = xPosition + spacing;
-
-    } else {
-      key[keyName].group
-        .attr("display","none");
+ModelerPane.prototype.hintMouseover = function() {
+  return () => {
+    const pane = this;
+    if(!pane.hasDragged) {
+      pane.tooltip
+        .update("Click and drag to change value.")
+        .show()
+        .move();      
     }
+    return pane;
+  };
+};
 
+/* jshint esversion:6 */
+ModelerPane.prototype.killAllGlows = function() {
+  const modeler = this;
+
+  modeler.contractSlider
+    .killGlow();
+
+  modeler.salarySlider
+    .killGlow();
+
+  modeler.winValueSliders.forEach((slider) => {
+    slider
+      .killGlow();
   });
 
-  return key;
+  return modeler;
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.playerName = function(name) {
-  const key = this;
+ModelerPane.prototype.registerTooltip = function(tooltip) {
+  const pane = this;
 
-  key.playerHistory.playerNameLabel
-    .updateText(name);
+  pane.tooltip = tooltip;
 
-  key.playerProjections.playerNameLabel
-    .updateText(name);
-
-  return key;
+  return pane;
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.showContractValue = function() {
-  const key = this;
+ModelerPane.prototype.transitionIn = function() {
+  const pane = this;
 
-  key.contractValue.group
-    .attr("display","block");
+  pane.group
+    .transition()
+    .duration(500)
+    .attr("transform","translate("+pane.referencePoints.onscreen.x+","+pane.referencePoints.onscreen.y+")");
 
-  key
-    .layout();
-
-  return key;
+  return pane;
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.showErrorRange = function() {
-  const key = this;
+ModelerPane.prototype.transitionOut = function() {
+  const pane = this;
 
-  key.errorRange.group
-    .attr("display","none");
+  pane.group
+    .transition()
+    .duration(225)
+    .attr("transform","translate("+pane.referencePoints.offscreen.x+","+pane.referencePoints.offscreen.y+")");
 
-  key
-    .layout();
-
-  return key;
+  return pane;
 };
 
 /* jshint esversion:6 */
-ModelerKey.prototype.showSimilarPlayers = function() {
-  const key = this;
+ModelerPane.prototype.updateContractValue = function() {
+  const pane = this;
 
-  key.similarPlayers.group
-    .attr("display","none");
 
-  key
-    .layout();
+  let totalValue;
+  totalValue = 0;
 
-  return key;
+  totalValue = pane.contractValues.contractLength * pane.contractValues.aav;
+
+  // pane.salarySlider.valueLabel.updateText("$" + pane.contractValues.aav.toFixed(2) + "M");
+
+  // pane.contractValues.winValue.forEach((value,yearIndex) => {
+  //   pane.winValueSliders[yearIndex].valueLabel.updateText("$" + pane.contractValues.winValue[yearIndex].toFixed(2) + "M");
+  // });
+
+
+  // pane.totalContractValue.contractValueLabel
+  //   .updateText("$" + totalValue.toFixed(0) + "mm");
+
+  return pane;
+};
+
+/* jshint esversion:6 */
+ModelerPane.prototype.updateContractYears = function() {
+  const pane = this;
+
+  //
+  // pane.winValueSliders.forEach((slider,yearIndex) => {
+  //   if(yearIndex >= pane.contractValues.contractLength) {
+  //     slider
+  //       .hide();
+  //   } else {
+  //     slider
+  //       .show();
+  //   }
+  // });
+
+  pane
+    .updateContractValue();
+
+
+  return pane;
 };
 
 /* jshint esversion:6 */
@@ -7349,9 +7384,9 @@ Numberline.prototype.addOneStandardDeviationIndicator = function() {
   indicator = chart.layers.summaryIndicators
     .append("rect")
     .attr("x",chart.scale(chart.summaryData.oneBelowStandardDeviation))
-    .attr("y",chart.margins.top)
+    .attr("y",chart.margins.top + 6)
     .attr("width",chart.scale(chart.summaryData.oneAboveStandardDeviation) - chart.scale(chart.summaryData.oneBelowStandardDeviation))
-    .attr("height",chart.size.height - chart.margins.top - chart.margins.bottom)
+    .attr("height",12)
     .attr("fill",chart.styles.oneStandardDeviationIndicatorFill);
 
   return indicator;
@@ -7435,9 +7470,9 @@ Numberline.prototype.addTwoStandardDeviationIndicators = function() {
   indicator = chart.layers.summaryIndicators
     .append("rect")
     .attr("x",chart.scale(chart.summaryData.twoBelowStandardDeviation))
-    .attr("y",chart.margins.top + 4)
+    .attr("y",chart.margins.top + 7)
     .attr("width",chart.scale(chart.summaryData.twoAboveStandardDeviation) - chart.scale(chart.summaryData.twoBelowStandardDeviation))
-    .attr("height",chart.referencePoints.effectiveHeight - 8)
+    .attr("height",10)
     .attr("fill",chart.styles.twoStandardDeviationIndicatorFill);
 
   return indicator;
@@ -7808,113 +7843,6 @@ NumberlineReference.prototype.defineStyles = function() {
 };
 
 /* jshint esversion:6 */
-Player.prototype.buildModeler = function() {
-  const player = this;
-  let compsArray = [];
-
-  player.stats.metadata.similarPlayers.forEach((player) =>{
-    let ageArray = [];
-    ageArray = player.data.map((a) => { return {"age":a.age,"bWar":+a.bWAR,"fWar":+a.fWar}});
-
-    compsArray.push({
-      "name":player.name,
-      "bWar":ageArray,
-    });
-  });
-
-
-  let modeler = new Modeler({
-    "where":"#modeler",
-    "tooltip":tooltip,
-    "name":player.stats.metadata.name,
-    "player":player,
-  })
-  .registerTooltip(tooltip)
-  .addPlayerData(player.stats,player.Name.replace("_"," "))
-  .addCompData(compsArray)
-  .addProjection(player.projection);
-
-  return player;
-}
-
-/* jshint esversion:6 */
-Player.prototype.buildTables = function() {
-  const player = this;
-  player.tables = new PlayerTable(player)
-    .registerTooltip(player.tooltip);
-
-  return player;
-}
-
-/* jshint esversion:6 */
-Player.prototype.getConfig = function() {
-  const player = this;
-
-  if(player.isPitcher) {
-    player.config = new PitcherConfig();
-    d3.json("rawData/2018_all_pitching.json")
-      .then((dataset) => {
-        player.comparePlayers = dataset;
-        player.checkIfReady();
-      });
-  } else {
-    player.config = new HitterConfig();
-    d3.json("yearlyData/2018_all_hitting.json")
-      .then((dataset) => {
-        player.comparePlayers = dataset;
-        player.checkIfReady();
-      });
-  }
-
-  return player.config;
-}
-
-/* jshint esversion:6 */
-Player.prototype.getProjection = function() {
-  const player = this;
-  let projection;
-
-  player.projection = new Projection(player.stats);
-
-  return player;
-};
-
-/* jshint esversion:6 */
-Player.prototype.getStats = function() {
-  const player = this;
-
-  let fileName = "combinedAgentData/" + player.Name.replace(" ","_") + ".json";
-
-
-  player.checkIfReady();
-
-  d3.json(fileName)
-  .then((stats,err) => {
-    player.stats = stats;
-    player.checkIfReady();
-  });
-
-
-  return false;
-};
-
-/* jshint esversion:6 */
-Player.prototype.metadata = function(options) {
-  const player = this;
-
-  player.Name = options.Name;
-  player.Position = options.Position;
-  if(player.Position == "SP" || player.Position == "RP") {
-    player.isPitcher = true;
-  } else {
-    player.isPitcher = false;
-  }
-
-
-  return player;
-}
-
-/* jshint esversion:6 */
 PitcherConfig.prototype.defineBBRefValue = function() {
   const config = this;
 
@@ -7937,7 +7865,7 @@ PitcherConfig.prototype.defineBBRefValue = function() {
 
   group.metrics.push({
     "key":"bWar",
-    "display":"WAR",
+    "display":"Baseball-Reference WAR",
     "description":"Baseball-Reference Wins Above Replacement. Measures total player contribution in terms of marginal team wins.",
     "source":"Baseball-Reference",
     "startGroup":true,
@@ -8092,9 +8020,10 @@ PitcherConfig.prototype.defineFangraphsValue = function() {
 
   group.metrics.push({
     "key":"fWar",
-    "display":"WAR",
+    "display":"Fangraphs WAR",
     "description":"Fangraphs Wins Above Replacement. Measures total player contribution in terms of marginal team wins.",
     "source":"Fangraphs",
+    "startGroup":true,
     "endGroup":true
   });
 
@@ -8481,20 +8410,10 @@ PitcherConfig.prototype.defineTeamResults = function() {
     "startGroup":true
   });
 
-  // group.metrics.push({
-  //   "key":"weighted_on_base_average_against",
-  //   "display":"wOBA",
-  //   "description":"Weighted On-Base Average for hitters facing this pitcher.",
-  //   "source":"Fangraphs",
-  //   "relatedToNext":true,
-  //   "shareScale":["expected_weighted_on_base_average"],
-  //   "startGroup":true
-  // });
-
   group.metrics.push({
     "key":"expected_weighted_on_base_average_against",
     "display":"xWOBA",
-    "description":"Expected Weighted On-Base Average for hitters facing this pitcher. Controls above measure for luck.",
+    "description":"Expected Weighted On-Base Average for hitters facing this pitcher.",
     "source":"Baseball Savant",
     "endGroup":true,
     "startGroup":true
@@ -8502,7 +8421,7 @@ PitcherConfig.prototype.defineTeamResults = function() {
 
   group.metrics.push({
     "isSpacer":true
-  })
+  });
 
   group.metrics.push({
     "isHeader":true,
@@ -8513,7 +8432,7 @@ PitcherConfig.prototype.defineTeamResults = function() {
   group.metrics.push({
     "key":"expected_slugging_against",
     "display":"xSlugging",
-    "description":"Expected slugging average for hitters facing this pitcher. Controls above measure for luck.",
+    "description":"Expected slugging average for hitters facing this pitcher.",
     "source":"Baseball Savant",
     "endGroup":true,
     "startGroup":true
@@ -8521,28 +8440,20 @@ PitcherConfig.prototype.defineTeamResults = function() {
 
   group.metrics.push({
     "isSpacer":true
-  })
+  });
 
-  // group.metrics.push({
-  //   "key":"batting_average_against",
-  //   "display":"Batting Average",
-  //   "description":"Batting average of hitters facing this pitcher.",
-  //   "source":"Baseball Savant",
-  //   "relatedToNext":true,
-  //   "shareScale":["expected_batting_average_against"]
-  // });
 
 
   group.metrics.push({
     "isHeader":true,
     "startGroup":true,
     "headerType":"fewer-hits-more-hits"
-  })
+  });
 
   group.metrics.push({
     "key":"expected_batting_average_against",
     "display":"xBatting Average",
-    "description":"Expected batting average of hitters facing this pitcher. Controls above measure for luck",
+    "description":"Expected batting average of hitters facing this pitcher.",
     "source":"Baseball Savant",
     "endGroup":true,
     "startGroup":true
@@ -8550,7 +8461,7 @@ PitcherConfig.prototype.defineTeamResults = function() {
 
 
   return group;
-}
+};
 
 /* jshint esversion:6 */
 PitcherConfig.prototype.defineTotalValue = function() {
@@ -8571,6 +8482,113 @@ PitcherConfig.prototype.defineTotalValue = function() {
 };
 
 /* jshint esversion:6 */
+Player.prototype.buildModeler = function() {
+  const player = this;
+  let compsArray = [];
+
+  player.stats.metadata.similarPlayers.forEach((player) =>{
+    let ageArray = [];
+    ageArray = player.data.map((a) => { return {"age":a.age,"bWar":+a.bWAR,"fWar":+a.fWar}});
+
+    compsArray.push({
+      "name":player.name,
+      "bWar":ageArray,
+    });
+  });
+
+
+  let modeler = new Modeler({
+    "where":"#modeler",
+    "tooltip":tooltip,
+    "name":player.stats.metadata.name,
+    "player":player,
+  })
+  .registerTooltip(tooltip)
+  .addPlayerData(player.stats,player.Name.replace("_"," "))
+  .addCompData(compsArray)
+  .addProjection(player.projection);
+
+  return player;
+}
+
+/* jshint esversion:6 */
+Player.prototype.buildTables = function() {
+  const player = this;
+  player.tables = new PlayerTable(player)
+    .registerTooltip(player.tooltip);
+
+  return player;
+}
+
+/* jshint esversion:6 */
+Player.prototype.getConfig = function() {
+  const player = this;
+
+  if(player.isPitcher) {
+    player.config = new PitcherConfig();
+    d3.json("rawData/2018_all_pitching.json")
+      .then((dataset) => {
+        player.comparePlayers = dataset;
+        player.checkIfReady();
+      });
+  } else {
+    player.config = new HitterConfig();
+    d3.json("yearlyData/2018_all_hitting.json")
+      .then((dataset) => {
+        player.comparePlayers = dataset;
+        player.checkIfReady();
+      });
+  }
+
+  return player.config;
+}
+
+/* jshint esversion:6 */
+Player.prototype.getProjection = function() {
+  const player = this;
+  let projection;
+
+  player.projection = new Projection(player.stats);
+
+  return player;
+};
+
+/* jshint esversion:6 */
+Player.prototype.getStats = function() {
+  const player = this;
+
+  let fileName = "combinedAgentData/" + player.Name.replace(" ","_") + ".json";
+
+
+  player.checkIfReady();
+
+  d3.json(fileName)
+  .then((stats,err) => {
+    player.stats = stats;
+    player.checkIfReady();
+  });
+
+
+  return false;
+};
+
+/* jshint esversion:6 */
+Player.prototype.metadata = function(options) {
+  const player = this;
+
+  player.Name = options.Name;
+  player.Position = options.Position;
+  if(player.Position == "SP" || player.Position == "RP") {
+    player.isPitcher = true;
+  } else {
+    player.isPitcher = false;
+  }
+
+
+  return player;
+}
+
+/* jshint esversion:6 */
 Player.prototype.checkIfReady = function() {
   const player = this;
   let toCheck = [player.stats,player.config,player.comparePlayers];
@@ -8582,13 +8600,20 @@ Player.prototype.checkIfReady = function() {
   });
 
   if(proceed) {
+    d3.select("#loadingRegion")
+      .style("display","none");
+
+    d3.select("#modelerAndStats")
+      .style("display","block");
+
+
     player.getProjection();
     player.buildModeler();
     player.buildTables();
   }
 
   return player;
-}
+};
 
 /* jshint esversion:6 */
 PlayerMenu.prototype.add2018PlayerBWar = function(where,player) {
@@ -8647,7 +8672,9 @@ PlayerMenu.prototype.addContainerElement = function() {
 
   element = d3.select("#_playerMenu")
     .append("div")
-    .classed("player-menu-container",true);
+    .classed("player-menu-container",true)
+    .style("display","table")
+    .style("width","100%");
 
   return element;
 
@@ -8673,10 +8700,6 @@ PlayerMenu.prototype.addFilterRow = function() {
     .append("div")
     .classed("player-menu-header-cell",true);
 
-
-  blankRow
-    .append("div")
-    .classed("player-menu-header-cell",true);
 
   blankRow
     .append("div")
@@ -8744,7 +8767,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .html("Position")
     .on('mouseover',function() {
       menu.tooltip
-        .update("Player's primary position. <em>Click to filter by position.</em>")
+        .update("Player's primary position.")
         .show()
         .move();
     })
@@ -8755,12 +8778,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .on('mouseout',function() {
       menu.tooltip
         .hide();
-    })
-    .on('click',function() {
-      menu
-        .showPositionRow();
     });
-
 
   headerRow
     .append("div")
@@ -8968,160 +8986,6 @@ PlayerMenu.prototype.addPlayerSparkline = function(where,player) {
 };
 
 /* jshint esversion:6 */
-PlayerMenu.prototype.addPositionRow = function() {
-  const menu = this;
-
-
-  let header = d3.select("#filterNameRow")
-    .node().getBoundingClientRect();
-
-  let positionFilterRow = d3.select("#positionFilter")
-    .style("display","none")
-    .style("width",header.width + "px")
-    .style("height",header.height + "px")
-    .style("top",header.y + "px")
-    .style("left",header.x + "px")
-    .style("border","1px solid black")
-    .style("margin","auto");
-
-
-  let positionFilter = positionFilterRow
-    .append("div")
-    .style("width","100%")
-    .style("height","100%")
-    .style("background-color","#20639b")
-    .style("color","#20639b")
-    .style("display","flex")
-    .style("justify-content","space-between");
-
-  let positions = [
-    {
-      "label":"Catchers",
-      "key":"catcher"
-    },
-    {
-      "label":"First Basemen",
-      "key":"firstBase"
-    },
-    {
-      "label":"Second Basemen",
-      "key":"secondBase"
-    },
-    {
-      "label":"Shortstops",
-      "key":"shortstop"
-    },
-    {
-      "label":"Third Basemen",
-      "key":"thirdBase"
-    },
-    {
-      "label":"Left Fielders",
-      "key":"leftField"
-    },
-    {
-      "label":"Center Fielders",
-      "key":"centerField"
-    },
-    {
-      "label":"Right Fielders",
-      "key":"rightField"
-    },
-    {
-      "label":"Starters",
-      "key":"starter"
-    },
-    {
-      "label":"Relievers",
-      "key":"reliever"
-    }
-  ];
-
-  let positionSpans = positionFilter.selectAll(".positionSpan")
-    .data(positions)
-    .enter()
-    .append("div")
-    .style("cursor","pointer")
-    .style("display","table")
-    .style("margin","0.25em");
-
-
-  positionSpans
-    .append("div")
-    .style("display","table-cell")
-    .style("vertical-align","middle")
-    .style("height","35px")
-    .style("padding-left","0.125em")
-    .style("padding-right","0.125em")
-    .classed("filter-active",function(d) {
-      return menu.filters[d.key];
-    })
-    .classed("filter-inactive",function(d) {
-      return !menu.filters[d.key];
-    })
-    .html((d) => { return d.label; })
-    .on('mouseover',function(d) {
-      let message;
-
-      if(menu.filters[d.key]) {
-        message = "Click to hide <strong>" + d.label + "</strong>";
-      } else {
-        message = "Click to show <strong>" + d.label + "</strong>";
-      }
-
-      menu.tooltip
-        .update(message)
-        .show()
-        .move();
-    })
-    .on('mousemove',function() {
-      menu.tooltip
-        .move();
-    })
-    .on('mouseout',function() {
-      menu.tooltip
-        .hide();
-    })
-    .on("click",function(d) {
-      menu.filters[d.key] = !menu.filters[d.key];
-
-      menu.tooltip
-        .hide();
-
-      menu
-        .updateFilters();
-
-      d3.select(this)
-        .classed("filter-active",function(d) {
-          return menu.filters[d.key];
-        })
-        .classed("filter-inactive",function(d) {
-          return !menu.filters[d.key];
-        });
-
-
-    });
-
-  window.addEventListener("resize",resizeRow);
-
-  menu
-    .definePositionFilters();
-
-
-  function resizeRow() {
-    let header = d3.select("#filterNameRow").node().getBoundingClientRect();
-    positionFilterRow = d3.select("#positionFilter")
-      .style("width",header.width + "px")
-      .style("height",header.height + "px")
-      .style("top",header.y + "px")
-      .style("left",header.x + "px");
-  }
-
-
-  return positionFilterRow;
-};
-
-/* jshint esversion:6 */
 PlayerMenu.prototype.addProjectedPlayerBWar = function(where,player) {
   const menu = this;
 
@@ -9198,6 +9062,182 @@ PlayerMenu.prototype.defineNameFilter = function() {
 PlayerMenu.prototype.definePositionFilters = function() {
   const menu = this;
 
+  menu.currentFilterRow = null;
+
+  d3.select("#playerPositionFilters")
+    .style("display","none");
+
+  d3.select("#pitcherFilters")
+    .style("display","none");
+
+  let allPlayersButton = d3.select("#allPlayersButton");
+  let positionPlayersButton = d3.select("#allPositionPlayers");
+  let allPitchersButton = d3.select("#allPitchers");
+  let positionFilterRow = d3.select("#playerPositionFilters");
+  let positionOption = d3.selectAll(".positionOption");
+  let allPositionOption = d3.select("#allPositionOption");
+
+  let allPositionsOption = d3.select("#allPositionOption");
+
+  let allPositionsActive = false;
+
+  allPlayersButton.on('click',function() {
+
+    allPlayersButton
+      .classed("playerFilterOptionActive",true);
+
+    positionPlayersButton
+      .classed("playerFilterOptionActive",false);
+
+    allPitchersButton
+      .classed("playerFilterOptionActive",false);
+
+    Object.keys(menu.filters).forEach((key) => {
+      if(key !== "name") {
+        menu.filters[key] = true;
+      }
+    });
+
+    menu
+      .updateFilters();
+
+
+    positionFilterRow
+      .style("display","none");
+
+
+
+  });
+
+  positionPlayersButton.on('click',function() {
+
+    allPlayersButton
+      .classed("playerFilterOptionActive",false);
+
+    positionPlayersButton
+      .classed("playerFilterOptionActive",true);
+
+    allPitchersButton
+      .classed("playerFilterOptionActive",false);
+
+    Object.keys(menu.filters).forEach((key) => {
+      if(key !== "name") {
+        menu.filters[key] = true;
+      }
+    });
+
+    menu.filters.starter = false;
+    menu.filters.reliever = false;
+
+    menu
+      .updateFilters();
+
+    positionFilterRow
+      .style("display","block");
+
+    allPositionsActive = true;
+
+  });
+
+  allPitchersButton.on('click',function() {
+
+    positionFilterRow
+      .style("display","none");
+
+    allPlayersButton
+      .classed("playerFilterOptionActive",false);
+
+    positionPlayersButton
+      .classed("playerFilterOptionActive",false);
+
+    allPitchersButton
+      .classed("playerFilterOptionActive",true);
+
+      Object.keys(menu.filters).forEach((key) => {
+        if(key !== "name") {
+          menu.filters[key] = false;
+        }
+      });
+
+      menu.filters.starter = true;
+      menu.filters.reliever = true;
+
+      menu
+        .updateFilters();
+
+  });
+
+  positionOption.each(function() {
+    let element = d3.select(this);
+    let key = element
+      .attr("data-key");
+
+    element
+      .on('click',function() {
+
+        if(key === "all") {
+
+          element
+            .attr("data-visible",true)
+            .style("background-color","rgba(96,147,190,0.75)");
+
+          Object.keys(menu.filters).forEach((key) => {
+            if(key !== "name" && key !== "SP" & key !== "RP") {
+              menu.filters[key] = true;
+            }
+          });
+
+          d3.selectAll(".realPositionOption")
+            .style("background-color","white")
+            .attr("data-visible","false");
+
+          allPositionsActive = true;
+
+
+        } else {
+          if(allPositionsActive) {
+            allPositionOption
+              .attr("data-visible","false")
+              .style("background-color","white");
+
+            Object.keys(menu.filters).forEach((key) => {
+              if(key !== "name") {
+                menu.filters[key] = false;
+              }
+            });
+            allPositionsActive = false;
+
+            allPositionOption
+              .classed("playerFilterOptionActive",false);
+
+          }
+
+          if(element.attr("data-visible") == "true") {
+
+            menu.filters[key] = false;
+            element
+              .style("background-color","white")
+              .attr("data-visible","false");
+
+          } else {
+
+            menu.filters[key] = true;
+
+            element
+              .style("background-color","rgba(96,147,190,0.75)")
+              .attr("data-visible","true");
+
+
+          }
+
+        }
+
+        menu
+          .updateFilters();
+      });
+
+  });
+
   d3.selectAll(".menu-position-filter")
     .on('input',function(d,i) {
       let element = d3.select(this);
@@ -9221,16 +9261,12 @@ PlayerMenu.prototype.showTable = function(menu,players) {
   menu.filterRow = menu
     .addFilterRow();
 
-  menu.positionRow = menu
-    .addPositionRow();
-
   players.forEach((player) => {
     menu.addPlayerLine(player);
   });
 
   menu.playerMenuRows = menu.containerElement
     .selectAll(".player-menu-row");
-
 
   menu
     .defineNameFilter()
@@ -9264,8 +9300,8 @@ PlayerMenu.prototype.filterByName = function(query) {
 PlayerMenu.prototype.hidePositionRow = function() {
   const menu = this;
 
-  menu.positionRow
-    .style("display","none");
+  // menu.positionRow
+  //   .style("display","none");
 
 }
 
@@ -9380,316 +9416,299 @@ PlayerMenu.prototype.updateFilters = function() {
 };
 
 /* jshint esversion:6 */
-Slider.prototype.addGlowCircle = function() {
-  const slider = this;
+PlayerTable.prototype.addContainer = function() {
+  const table = this;
 
-  // TODO: FILL IN VALUES
-  // UPDATE STYLES
-  let glowCircle = slider.layers.glow
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
-    .attr("r",slider.styles.glowCircleDefaultRadius)
-    .attr("fill",slider.styles.glowCircleFill)
-    .attr("display","none");
+  let container = d3.select("#showStats")
+    .append("div");
 
-  return glowCircle;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addGroup = function(where) {
-  const slider = this;
-  let group;
-
-  group = where
-    .append("g");
-
-  return group;
+  return container;
 }
 
 /* jshint esversion:6 */
-Slider.prototype.addLabel = function() {
-  const slider = this;
-  let text;
+PlayerTable.prototype.addMetricNames = function() {
+  const table = this;
 
-  text = new TextLabel({
-    "text":slider.labelText,
-    "where":slider.layers.text,
-    "text-anchor":"middle"
-  }).show()
-  .move(slider.referencePoints.labelPosition);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addLayers = function() {
-  const slider = this;
-  let layers = {};
-
-  layers.background = addSingleLayer();
-  layers.text = addSingleLayer();
-  layers.track = addSingleLayer();
-  layers.glow = addSingleLayer();
-  layers.circle = addSingleLayer();
-
-  return layers;
-
-  function addSingleLayer() {
-    let layer;
-
-    layer = slider.group
-      .append("g");
-
-    return layer;
-  }
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSliderTrack = function() {
-  const slider = this;
-  let track;
-
-  track = slider.layers.track
-    .append("rect")
-    .attr("x",slider.margins.left)
-    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
-    .attr("height",slider.styles.sliderTrackHeight)
-    .attr("width",slider.referencePoints.effectiveWidth)
-    .attr("fill",slider.styles.sliderTrackColor);
-
-  return track;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.addSlidingCircle = function() {
-  const slider = this;
-
-  let circle = slider.layers.circle
-    .append("circle")
-    .attr("cx",slider.scale(slider.currentValue))
-    .attr("cy",slider.referencePoints.circleCenterY)
-    .attr("r",slider.styles.circleRadius)
-    .attr("fill",slider.styles.circleFill)
-    .attr("stroke",slider.styles.circleStroke)
-    .attr("stroke-width",slider.styles.circleStrokeWidth)
-    .attr("cursor","pointer")
-    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
-    .on('mouseover',function() {
-      let element = d3.select(this);
-
-      element
-        .transition()
-        .duration(125)
-        .attr("fill",slider.styles.highlightFillColor)
-        .attr("stroke",slider.styles.highlightStrokeColor)
-        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
-        .attr("radius",slider.styles.highlightCircleRadius);
-
-      slider
-        .circleMouseover();
+  let metricNames = table.subSectionRows
+    .append("div")
+    .classed("stats-numberline-table-cell",true)
+    .classed("right-align",true)
+    .style("width","100px")
+    .style("padding-right","10px")
+    .style("height",(d) => {
+      if(d.isSpacer) {
+        return "25px"
+      }
     })
-    .on('mouseout',function() {
-      let element = d3.select(this);
+    .html((d) => {
 
-      if(!slider.dragLock) {
-        element
-          .transition()
-          .duration(125)
-          .attr("fill",slider.styles.circleFill)
-          .attr("stroke",slider.styles.circleStroke)
-          .attr("stroke-width",slider.styles.circleStrokeWidth)
-          .attr("radius",slider.styles.circleRadius);
+      if(d.isSpacer) {
+        return "&nbsp;"
       }
 
-      slider
-        .circleMouseout();
+      return d.display;
+    })
+    .on('mouseover',function(d) {
+      if(!d.isHeader && !d.isSpacer) {
+        let descriptionHtml = "<div class='tooltip-metric-description''>";
+        descriptionHtml += "<div class='tooltip-metric-description-text'>" + d.description + "</div>";
+
+        descriptionHtml += "<div class='tooltip-metric-source-header'>Source</div>"
+        if(d.source === "Fangraphs") {
+          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='fangraphs.png' class='tooltip-metric-icon' /> Fangraphs </div>"
+        }
+
+        if(d.source == "Baseball Savant") {
+          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='savant.png' class='tooltip-metric-icon' /> Baseball Savant </div>"
+        }
+
+        if(d.source == "Baseball-Reference") {
+          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='bbref.png' class='tooltip-metric-icon' /> Baseball-Reference.com </div>"
+        }
 
 
-    });
+        descriptionHtml += "</div>";
+        table.player.tooltip
+          .update(descriptionHtml)
+          .show()
+          .move();
+      }
+    })
+    .on('mousemove',() => { table.player.tooltip.move(); })
+    .on('mouseout',() => { table.player.tooltip.hide(); });
 
-  return circle;
-};
+
+  return metricNames;
+}
 
 /* jshint esversion:6 */
-Slider.prototype.addValueLabel = function() {
-  const slider = this;
-  let text;
+PlayerTable.prototype.addMetricNumberlineCells = function () {
+  const table = this;
 
-  text = new TextLabel({
-    "text":slider.datum.value,
-    "where":slider.layers.text,
-    "textAnchor":"start",
-    "fontSize":"16px"
-  }).show()
-  .move({
-    "x":slider.referencePoints.valueLabelCenterX,
-    "y":slider.referencePoints.circleCenterY
+  let numberlineCells = table.subSectionRows
+    .append("div")
+    .classed("stats-numberline-table-cell",true)
+    .classed("numberline",true)
+    .style("width","500px")
+    .attr("data-key",(d) => { return d.key; })
+    .html("");
+
+  numberlineCells.each(function(d,i) {
+    let element = d3.select(this);
+
+    if(!d.isHeader) {
+      if(!table.player.comparePlayers.stats.hasOwnProperty(d.key)) {
+      } else {
+        let numberline;
+
+        numberline = new Numberline({
+            "where":element,
+            "name":d.display,
+            "key":d.key,
+            "playerMap":table.player.comparePlayers.stats.playerMap
+          })
+          .addData(table.player.comparePlayers.stats[d.key])
+          .registerTooltip(table.player.tooltip)
+          .addHighlightValue(table.player.stats.stats['2018'][d.key],table.player);
+
+          table.numberlines[d.key] = {
+            "datum":d,
+            "numberline":numberline
+          };
+
+
+
+      }
+    } else {
+      let reference = new NumberlineReference({
+        "where":element,
+        "type":d.headerType,
+        "name":table.player.Name
+      });
+    }
   });
 
-  return text;
+  return numberlineCells;
+}
+
+/* jshint esversion:6 */
+PlayerTable.prototype.addPlayerMetricSparkline = function() {
+  const table = this;
+
+  let sparklines = table.subSectionRows
+    .append("div")
+    .classed("stats-numberline-table-cell",true)
+    .classed("center-align",true)
+    .style("margin","auto")
+    .style("font-weight","normal")
+    .style("font-size","8pt")
+    .html(function(d) {
+      if(d.isHeader) {
+        return "Career Performance";
+      }
+    });
+
+  sparklines
+    .each(function(datum,index) {
+      let element = d3.select(this);
+
+      if(!datum.isHeader && !datum.isSpacer) {
+        let statsArray = [];
+        Object.keys(table.player.stats.stats).forEach((year) => {
+          if(table.player.stats.stats[year][datum.key] !== undefined) {
+            statsArray.push(table.player.stats.stats[year][datum.key]);
+          }
+        });
+
+        let yDomain = d3.extent(statsArray);
+        let sparkline = new Sparkline({
+          "where":element,
+          "data":statsArray,
+          "yDomain":yDomain
+        })
+        .registerTooltip(tooltip);
+      }
+    });
+
+
+  return sparklines;
+}
+
+/* jshint esversion:6 */
+PlayerTable.prototype.addPlayerMetricValueCells = function() {
+  const table = this;
+
+  let playerValueCells = table.subSectionRows
+    .append("div")
+    .classed("stats-numberline-table-cell",true)
+    .classed("right-align",true)
+    .html((d) => {
+      if(!table.player.stats.stats['2018'].hasOwnProperty(d.key)) {
+      } else {
+        if(table.player.stats.stats['2018'][d.key] === null) {
+          return "n/a";
+        }
+        return table.player.stats.stats['2018'][d.key].toFixed(2);
+      }
+    });
+
+
+  return playerValueCells;
+}
+
+/* jshint esversion:6 */
+PlayerTable.prototype.addSectionHeadings = function() {
+  const table = this;
+
+  let headings = table.sections
+    .append("h1")
+    .html((d) => { return d.name; });
+
+  return headings;
 };
 
 /* jshint esversion:6 */
-Slider.prototype.defaulter = function(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
-};
+PlayerTable.prototype.addSections = function() {
+  const table = this;
+
+  let sections = table.container
+    .selectAll(".stat-group-numberline")
+    .data(table.player.config.tables)
+    .enter()
+    .append("div")
+    .classed("stat-group-numberline",true);
+
+  return sections;
+}
 
 /* jshint esversion:6 */
-Slider.prototype.defineDragFunctions = function() {
-  const slider = this;
+PlayerTable.prototype.addSubSectionHeaderRows = function() {
+  const table = this;
 
-  let dragFunctions = {};
+  let headerRows = table.subSectionTables
+    .append("div")
+    .classed("stats-numberline-table-row",true);
 
-  dragFunctions.start = function(d,i) {
-    let element = d3.select(this);
-    slider.dragLock = true;
-  };
+  headerRows
+    .append("div")
+    .classed("stats-numberline-header-cell",true)
+    .classed("right-align",true)
+    .html();
 
-  dragFunctions.drag = function(d,i) {
-    let element = d3.select(this);
-    let xPosition = d3.event.x;
+  headerRows
+    .append("div")
+    .classed("stats-numberline-header-cell",true)
+    .html((d) => { return d.headingType });
 
-    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
-      let newValue;
-      newValue = slider.scale.invert(xPosition);
+  headerRows
+    .append("div")
+    .classed("stats-numberline-header-cell",true)
+    .html(table.player.Name);
 
-      slider.currentValue = newValue;
-
-      slider.valueLabel
-        .updateText(newValue.toFixed(slider.significantDigits));
-
-      slider.dragCallback(newValue);
-
-      element
-        .attr("cx",xPosition);
-    }
-  };
+  headerRows
+    .append("div")
+    .classed("stats-numberline-header-cell",true)
+    .html("Career History");
 
 
-  dragFunctions.end = function(d,i) {
-    slider.dragLock = false;
-
-    let element = d3.select(this);
-
-    element
-      .transition()
-      .duration(125)
-      .attr("fill",slider.styles.circleFill)
-      .attr("stroke",slider.styles.circleStroke)
-      .attr("stroke-width",slider.styles.circleStrokeWidth)
-      .attr("radius",slider.styles.circleRadius);
-
-  };
-
-  return dragFunctions;
-};
+  return headerRows;
+}
 
 /* jshint esversion:6 */
-Slider.prototype.defineLayout = function() {
-  const slider = this;
-  let layout = {};
+PlayerTable.prototype.addSubSectionHeadings = function() {
+  const table = this;
 
-  layout.labelOrigin = {"x":0,"y":slider.margins.top};
-  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
+  let headings = table.subSections
+    .append("div")
+    .classed("stats-subsection-header",true);
 
-  return layout;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineMargins = function(presetMargins) {
-  const slider = this;
-  let margins = slider.defaulter(presetMargins,{});
-
-  margins.left = slider.defaulter(margins.left,10);
-  margins.right = slider.defaulter(margins.right,50);
-  margins.top = slider.defaulter(margins.top,10);
-  margins.bottom = slider.defaulter(margins.bottom,0);
-
-  return margins;
-};
+  return headings;
+}
 
 /* jshint esversion:6 */
-Slider.prototype.defineReferencePoints = function(isLeft) {
-  const slider = this;
-  let referencePoints = {};
+PlayerTable.prototype.addSubSectionRows = function() {
+  const table = this;
 
-  referencePoints.verticalCenter = slider.size.height / 2;
-  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
-  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
-  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
-  referencePoints.trackMin = slider.margins.left;
-  referencePoints.trackMax = slider.size.width - slider.margins.right;
-  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
-  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
+  let rows = table.subSectionTables
+    .selectAll(".stats-numberline-table-row")
+    .data((d) => { return d.metrics})
+    .enter()
+    .append("div")
+    .classed("stats-numberline-table-row",true)
+    .classed("stats-number-line-header-row",(d) => { return d.isHeader })
+    .classed("stats-numberline-start-group",(d) => { return d.startGroup})
+    .classed("stats-number-line-related-to-next",(d) => { return d.relatedToNext })
+    .classed("stats-number-line-related-to-previous",(d) => { return d.relatedToPrevious })
+    .classed("stats-number-line-end-group",(d) => { return d.endGroup });
 
-  if(isLeft) {
-    referencePoints.labelPosition = {"x":-10,"y":referencePoints.circleCenterY};
-  } else {
-    referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
-  }
-
-  return referencePoints;
-};
+  return rows;
+}
 
 /* jshint esversion:6 */
-Slider.prototype.defineScale = function() {
-  const slider = this;
-  let scale;
+PlayerTable.prototype.addSubSectionTables = function() {
+  const table = this;
 
-  scale = d3.scaleLinear()
-    .domain(slider.domain)
-    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
+  let tables = table.subSections
+    .append("div")
+    .classed("stats-numberline-table",true)
+    .html((d) => { return d.name; });
 
-  return scale;
-};
+  return tables;
+}
 
-/* jshint esversion:6 */
-Slider.prototype.defineSize = function(presetSize) {
-  const slider = this;
-  let size = slider.defaulter(presetSize,{});
+/* jshint esversion: 6 */
+PlayerTable.prototype.addSubSections = function() {
+  const table = this;
 
-  size.height = slider.defaulter(size.height,50);
-  size.width = slider.defaulter(size.width,200);
+  let subSections = table.sections
+    .selectAll(".stats-numberline-subsection")
+    .data((d) => { return d.tables})
+    .enter()
+    .append("div")
+    .classed("stats-numberline-subsection",true);
 
-  return size;
-};
-
-/* jshint esversion:6 */
-Slider.prototype.defineStyles = function(presetStyles) {
-  const slider = this;
-  let styles = slider.defaulter(presetStyles,{});
-
-  styles.sliderTrackColor = "#aaa";
-  styles.sliderTrackHeight = 5;
-  styles.circleRadius = 5;
-  styles.circleFill = "black";
-  styles.circleStroke = "#eee";
-  styles.circleStrokeWidth = 1;
-
-  styles.highlightFillColor = "#ed553b";
-  styles.highlightStrokeColor = "black";
-  styles.highlightFillStrokeWidth = 2;
-  styles.highlightCircleRadius = 7;
-
-  styles.glowCircleDefaultOpacity = 1.0;
-  styles.glowCircleDefaultRadius = 7;
-  styles.glowCircleFill = "#ed553b";
-
-  styles.glowCircleDefaultOpacity = 1;
-  styles.glowCircleDefaultRadius = 5;
-  styles.glowCircleFill = "#ed553b";
-
-  styles.glowDelay = 0;
-  styles.glowDuration = 1500;
-  styles.glowCircleEndOpacity = 0;
-  styles.glowCircleEndRadius = 15;
-  styles.glowCircleEndFill = "#ed553b";
-
-
-  return styles;
-};
+  return subSections;
+}
 
 /* jshint esversion:6 */
 Projection.prototype.getBWarAgingCurveProjection = function() {
@@ -10046,6 +10065,318 @@ Projection.prototype.defineWarCurveDeltas = function() {
 };
 
 /* jshint esversion:6 */
+Slider.prototype.addGlowCircle = function() {
+  const slider = this;
+
+  // TODO: FILL IN VALUES
+  // UPDATE STYLES
+  let glowCircle = slider.layers.glow
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("opacity",slider.styles.glowCircleDefaultOpacity)
+    .attr("r",slider.styles.glowCircleDefaultRadius)
+    .attr("fill",slider.styles.glowCircleFill)
+    .attr("display","none");
+
+  return glowCircle;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addGroup = function(where) {
+  const slider = this;
+  let group;
+
+  group = where
+    .append("g");
+
+  return group;
+}
+
+/* jshint esversion:6 */
+Slider.prototype.addLabel = function() {
+  const slider = this;
+  let text;
+
+  text = new TextLabel({
+    "text":slider.labelText,
+    "where":slider.layers.text,
+    "text-anchor":"middle"
+  }).show()
+  .move(slider.referencePoints.labelPosition);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addLayers = function() {
+  const slider = this;
+  let layers = {};
+
+  layers.background = addSingleLayer();
+  layers.text = addSingleLayer();
+  layers.track = addSingleLayer();
+  layers.glow = addSingleLayer();
+  layers.circle = addSingleLayer();
+
+  return layers;
+
+  function addSingleLayer() {
+    let layer;
+
+    layer = slider.group
+      .append("g");
+
+    return layer;
+  }
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addSliderTrack = function() {
+  const slider = this;
+  let track;
+
+  track = slider.layers.track
+    .append("rect")
+    .attr("x",slider.margins.left)
+    .attr("y",slider.referencePoints.sliderTrackVerticalCenter)
+    .attr("height",slider.styles.sliderTrackHeight)
+    .attr("width",slider.referencePoints.effectiveWidth)
+    .attr("fill",slider.styles.sliderTrackColor);
+
+  return track;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addSlidingCircle = function() {
+  const slider = this;
+
+  let circle = slider.layers.circle
+    .append("circle")
+    .attr("cx",slider.scale(slider.currentValue))
+    .attr("cy",slider.referencePoints.circleCenterY)
+    .attr("r",slider.styles.circleRadius)
+    .attr("fill",slider.styles.circleFill)
+    .attr("stroke",slider.styles.circleStroke)
+    .attr("stroke-width",slider.styles.circleStrokeWidth)
+    .attr("cursor","pointer")
+    .call(d3.drag().on("start",slider.dragFunctions.start).on("drag",slider.dragFunctions.drag).on("end",slider.dragFunctions.end))
+    .on('mouseover',function() {
+      let element = d3.select(this);
+
+      element
+        .transition()
+        .duration(125)
+        .attr("fill",slider.styles.highlightFillColor)
+        .attr("stroke",slider.styles.highlightStrokeColor)
+        .attr("stroke-width",slider.styles.highlightFillStrokeWidth)
+        .attr("radius",slider.styles.highlightCircleRadius);
+
+      slider
+        .circleMouseover();
+    })
+    .on('mouseout',function() {
+      let element = d3.select(this);
+
+      if(!slider.dragLock) {
+        element
+          .transition()
+          .duration(125)
+          .attr("fill",slider.styles.circleFill)
+          .attr("stroke",slider.styles.circleStroke)
+          .attr("stroke-width",slider.styles.circleStrokeWidth)
+          .attr("radius",slider.styles.circleRadius);
+      }
+
+      slider
+        .circleMouseout();
+
+
+    });
+
+  return circle;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.addValueLabel = function() {
+  const slider = this;
+  let text;
+
+  text = new TextLabel({
+    "text":slider.datum.value,
+    "where":slider.layers.text,
+    "textAnchor":"start",
+    "fontSize":"16px"
+  }).show()
+  .move({
+    "x":slider.referencePoints.valueLabelCenterX,
+    "y":slider.referencePoints.circleCenterY
+  });
+
+  return text;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defaulter = function(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineDragFunctions = function() {
+  const slider = this;
+
+  let dragFunctions = {};
+
+  dragFunctions.start = function(d,i) {
+    let element = d3.select(this);
+    slider.dragLock = true;
+  };
+
+  dragFunctions.drag = function(d,i) {
+    let element = d3.select(this);
+    let xPosition = d3.event.x;
+
+    if(xPosition >= slider.referencePoints.trackMin && xPosition <= slider.referencePoints.trackMax) {
+      let newValue;
+      newValue = slider.scale.invert(xPosition);
+
+      slider.currentValue = newValue;
+
+      slider.valueLabel
+        .updateText(newValue.toFixed(slider.significantDigits));
+
+      slider.dragCallback(newValue);
+
+      element
+        .attr("cx",xPosition);
+    }
+  };
+
+
+  dragFunctions.end = function(d,i) {
+    slider.dragLock = false;
+
+    let element = d3.select(this);
+
+    element
+      .transition()
+      .duration(125)
+      .attr("fill",slider.styles.circleFill)
+      .attr("stroke",slider.styles.circleStroke)
+      .attr("stroke-width",slider.styles.circleStrokeWidth)
+      .attr("radius",slider.styles.circleRadius);
+
+  };
+
+  return dragFunctions;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineLayout = function() {
+  const slider = this;
+  let layout = {};
+
+  layout.labelOrigin = {"x":0,"y":slider.margins.top};
+  layout.sliderOrigin = {"x":slider.margins.left,"y":slider.margins.top};
+
+  return layout;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineMargins = function(presetMargins) {
+  const slider = this;
+  let margins = slider.defaulter(presetMargins,{});
+
+  margins.left = slider.defaulter(margins.left,10);
+  margins.right = slider.defaulter(margins.right,50);
+  margins.top = slider.defaulter(margins.top,10);
+  margins.bottom = slider.defaulter(margins.bottom,0);
+
+  return margins;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineReferencePoints = function(isLeft) {
+  const slider = this;
+  let referencePoints = {};
+
+  referencePoints.verticalCenter = slider.size.height / 2;
+  referencePoints.effectiveWidth = slider.size.width - slider.margins.left - slider.margins.right;
+  referencePoints.effectiveHeight = slider.size.height - slider.margins.top - slider.margins.bottom;
+  referencePoints.sliderTrackVerticalCenter = slider.margins.top + (referencePoints.effectiveHeight / 2);
+  referencePoints.trackMin = slider.margins.left;
+  referencePoints.trackMax = slider.size.width - slider.margins.right;
+  referencePoints.circleCenterY = referencePoints.sliderTrackVerticalCenter + slider.styles.sliderTrackHeight / 2;
+  referencePoints.valueLabelCenterX = referencePoints.effectiveWidth + 15;
+
+  if(isLeft) {
+    referencePoints.labelPosition = {"x":-10,"y":referencePoints.circleCenterY};
+  } else {
+    referencePoints.labelPosition = {"x":slider.size.width / 2,"y":slider.margins.top};
+  }
+
+  return referencePoints;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineScale = function() {
+  const slider = this;
+  let scale;
+
+  scale = d3.scaleLinear()
+    .domain(slider.domain)
+    .range([slider.referencePoints.trackMin,slider.referencePoints.trackMax]);
+
+  return scale;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineSize = function(presetSize) {
+  const slider = this;
+  let size = slider.defaulter(presetSize,{});
+
+  size.height = slider.defaulter(size.height,50);
+  size.width = slider.defaulter(size.width,200);
+
+  return size;
+};
+
+/* jshint esversion:6 */
+Slider.prototype.defineStyles = function(presetStyles) {
+  const slider = this;
+  let styles = slider.defaulter(presetStyles,{});
+
+  styles.sliderTrackColor = "#aaa";
+  styles.sliderTrackHeight = 5;
+  styles.circleRadius = 5;
+  styles.circleFill = "black";
+  styles.circleStroke = "#eee";
+  styles.circleStrokeWidth = 1;
+
+  styles.highlightFillColor = "#ed553b";
+  styles.highlightStrokeColor = "black";
+  styles.highlightFillStrokeWidth = 2;
+  styles.highlightCircleRadius = 7;
+
+  styles.glowCircleDefaultOpacity = 1.0;
+  styles.glowCircleDefaultRadius = 7;
+  styles.glowCircleFill = "#ed553b";
+
+  styles.glowCircleDefaultOpacity = 1;
+  styles.glowCircleDefaultRadius = 5;
+  styles.glowCircleFill = "#ed553b";
+
+  styles.glowDelay = 0;
+  styles.glowDuration = 1500;
+  styles.glowCircleEndOpacity = 0;
+  styles.glowCircleEndRadius = 15;
+  styles.glowCircleEndFill = "#ed553b";
+
+
+  return styles;
+};
+
+/* jshint esversion:6 */
 Slider.prototype.hide = function() {
   const slider = this;
 
@@ -10138,301 +10469,6 @@ Slider.prototype.update = function(newValue) {
     .attr("cx",slider.scale(newValue));
 
   return slider;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addContainer = function() {
-  const table = this;
-
-  let container = d3.select("#showStats")
-    .append("div");
-
-  return container;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addMetricNames = function() {
-  const table = this;
-
-  let metricNames = table.subSectionRows
-    .append("div")
-    .classed("stats-numberline-table-cell",true)
-    .classed("right-align",true)
-    .style("width","100px")
-    .style("padding-right","10px")
-    .style("height",(d) => {
-      if(d.isSpacer) {
-        return "25px"
-      }
-    })
-    .html((d) => {
-
-      if(d.isSpacer) {
-        return "&nbsp;"
-      }
-
-      return d.display;
-    })
-    .on('mouseover',function(d) {
-      if(!d.isHeader && !d.isSpacer) {
-        let descriptionHtml = "<div class='tooltip-metric-description''>";
-        descriptionHtml += "<div class='tooltip-metric-description-text'>" + d.description + "</div>";
-
-        descriptionHtml += "<div class='tooltip-metric-source-header'>Source</div>"
-        if(d.source === "Fangraphs") {
-          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='fangraphs.png' class='tooltip-metric-icon' /> Fangraphs </div>"
-        }
-
-        if(d.source == "Baseball Savant") {
-          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='savant.png' class='tooltip-metric-icon' /> Baseball Savant </div>"
-        }
-
-        if(d.source == "Baseball-Reference") {
-          descriptionHtml += "<div class='tooltip-metric-description-source'><img src='bbref.png' class='tooltip-metric-icon' /> Baseball-Reference.com </div>"
-        }
-
-
-        descriptionHtml += "</div>";
-        table.player.tooltip
-          .update(descriptionHtml)
-          .show()
-          .move();
-      }
-    })
-    .on('mousemove',() => { table.player.tooltip.move(); })
-    .on('mouseout',() => { table.player.tooltip.hide(); });
-
-
-  return metricNames;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addMetricNumberlineCells = function () {
-  const table = this;
-
-  let numberlineCells = table.subSectionRows
-    .append("div")
-    .classed("stats-numberline-table-cell",true)
-    .classed("numberline",true)
-    .style("width","500px")
-    .attr("data-key",(d) => { return d.key; })
-    .html("");
-
-  numberlineCells.each(function(d,i) {
-    let element = d3.select(this);
-
-    if(!d.isHeader) {
-      if(!table.player.comparePlayers.stats.hasOwnProperty(d.key)) {
-      } else {
-        let numberline;
-
-        numberline = new Numberline({
-            "where":element,
-            "name":d.display,
-            "key":d.key,
-            "playerMap":table.player.comparePlayers.stats.playerMap
-          })
-          .addData(table.player.comparePlayers.stats[d.key])
-          .registerTooltip(table.player.tooltip)
-          .addHighlightValue(table.player.stats.stats['2018'][d.key],table.player);
-
-          table.numberlines[d.key] = {
-            "datum":d,
-            "numberline":numberline
-          };
-
-
-
-      }
-    } else {
-      let reference = new NumberlineReference({
-        "where":element,
-        "type":d.headerType,
-        "name":table.player.Name
-      });
-    }
-  });
-
-  return numberlineCells;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addPlayerMetricSparkline = function() {
-  const table = this;
-
-  let sparklines = table.subSectionRows
-    .append("div")
-    .classed("stats-numberline-table-cell",true)
-    .classed("center-align",true)
-    .style("margin","auto")
-    .style("font-weight","normal")
-    .style("font-size","8pt")
-    .html(function(d) {
-      if(d.isHeader) {
-        return "Career Performance";
-      }
-    });
-
-  sparklines
-    .each(function(datum,index) {
-      let element = d3.select(this);
-
-      if(!datum.isHeader && !datum.isSpacer) {
-        let statsArray = [];
-        Object.keys(table.player.stats.stats).forEach((year) => {
-          if(table.player.stats.stats[year][datum.key] !== undefined) {
-            statsArray.push(table.player.stats.stats[year][datum.key]);
-          }
-        });
-
-        let yDomain = d3.extent(statsArray);
-        let sparkline = new Sparkline({
-          "where":element,
-          "data":statsArray,
-          "yDomain":yDomain
-        })
-        .registerTooltip(tooltip);
-      }
-    });
-
-
-  return sparklines;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addPlayerMetricValueCells = function() {
-  const table = this;
-
-  let playerValueCells = table.subSectionRows
-    .append("div")
-    .classed("stats-numberline-table-cell",true)
-    .classed("right-align",true)
-    .html((d) => {
-      if(!table.player.stats.stats['2018'].hasOwnProperty(d.key)) {
-      } else {
-        if(table.player.stats.stats['2018'][d.key] === null) {
-          return "n/a";
-        }
-        return table.player.stats.stats['2018'][d.key].toFixed(2);
-      }
-    });
-
-
-  return playerValueCells;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSectionHeadings = function() {
-  const table = this;
-
-  let headings = table.sections
-    .append("h1")
-    .html((d) => { return d.name; });
-
-  return headings;
-};
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSections = function() {
-  const table = this;
-
-  let sections = table.container
-    .selectAll(".stat-group-numberline")
-    .data(table.player.config.tables)
-    .enter()
-    .append("div")
-    .classed("stat-group-numberline",true);
-
-  return sections;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSubSectionHeaderRows = function() {
-  const table = this;
-
-  let headerRows = table.subSectionTables
-    .append("div")
-    .classed("stats-numberline-table-row",true);
-
-  headerRows
-    .append("div")
-    .classed("stats-numberline-header-cell",true)
-    .classed("right-align",true)
-    .html();
-
-  headerRows
-    .append("div")
-    .classed("stats-numberline-header-cell",true)
-    .html((d) => { return d.headingType });
-
-  headerRows
-    .append("div")
-    .classed("stats-numberline-header-cell",true)
-    .html(table.player.Name);
-
-  headerRows
-    .append("div")
-    .classed("stats-numberline-header-cell",true)
-    .html("Career History");
-
-
-  return headerRows;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSubSectionHeadings = function() {
-  const table = this;
-
-  let headings = table.subSections
-    .append("div")
-    .classed("stats-subsection-header",true);
-
-  return headings;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSubSectionRows = function() {
-  const table = this;
-
-  let rows = table.subSectionTables
-    .selectAll(".stats-numberline-table-row")
-    .data((d) => { return d.metrics})
-    .enter()
-    .append("div")
-    .classed("stats-numberline-table-row",true)
-    .classed("stats-number-line-header-row",(d) => { return d.isHeader })
-    .classed("stats-numberline-start-group",(d) => { return d.startGroup})
-    .classed("stats-number-line-related-to-next",(d) => { return d.relatedToNext })
-    .classed("stats-number-line-related-to-previous",(d) => { return d.relatedToPrevious })
-    .classed("stats-number-line-end-group",(d) => { return d.endGroup });
-
-  return rows;
-}
-
-/* jshint esversion:6 */
-PlayerTable.prototype.addSubSectionTables = function() {
-  const table = this;
-
-  let tables = table.subSections
-    .append("div")
-    .classed("stats-numberline-table",true)
-    .html((d) => { return d.name; });
-
-  return tables;
-}
-
-/* jshint esversion: 6 */
-PlayerTable.prototype.addSubSections = function() {
-  const table = this;
-
-  let subSections = table.sections
-    .selectAll(".stats-numberline-subsection")
-    .data((d) => { return d.tables})
-    .enter()
-    .append("div")
-    .classed("stats-numberline-subsection",true);
-
-  return subSections;
 }
 
 /* jshint esversion:6 */
@@ -10748,126 +10784,6 @@ StatsTable.prototype.generateRowElements = function(rows) {
 };
 
 /* jshint esversion:6 */
-TextLabel.prototype.hide = function() {
-  const label = this;
-
-  label.group
-    .style("display","none");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.move = function(position) {
-  const label = this;
-
-  label.group
-    .attr("transform","translate("+position.x+","+position.y+")");
-
-  return this;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.show = function() {
-  const label = this;
-
-  label.group
-    .style("display","block");
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.updateText = function(newText) {
-  const label = this;
-
-  label.background.text(newText);
-  label.foreground.text(newText);
-
-  return label;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addBackground = function() {
-  const label = this;
-
-  let text;
-
-  text = label.group
-    .append("text")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("text-anchor",label.styles.textAnchor)
-    .attr("dominant-baseline","central")
-    .attr("font-family",label.styles.fontFamily)
-    .attr("font-size",label.styles.fontSize)
-    .attr("font-weight",label.styles.fontWeight)
-    .attr("stroke",label.styles.backgroundStroke)
-    .attr("fill","none")
-    .attr("stroke-width",label.styles.outlineWidth)
-    .text(label.text);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addForeground = function() {
-  const label = this;
-
-  let text;
-
-  text = label.group
-    .append("text")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("text-anchor",label.styles.textAnchor)
-    .attr("dominant-baseline","central")
-    .attr("font-family",label.styles.fontFamily)
-    .attr("font-size",label.styles.fontSize)
-    .attr("font-weight",label.styles.fontWeight)
-    .attr("stroke","none")
-    .attr("fill",label.styles.foregroundColor)
-    .text(label.text);
-
-  return text;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.addGroup = function(where) {
-  const label = this;
-  let group;
-
-  group = where
-    .append("g")
-    .style("display","none")
-    .attr("cursor","pointer");
-
-  return group;
-};
-
-/* jshint esversion:6 */
-TextLabel.prototype.defineStyles = function(options) {
-  const label = this;
-  let styles;
-
-  styles = defaulter(options.styles,{});
-
-  styles.fontFamily = defaulter(options.fontFamily,"Source Sans Pro");
-  styles.fontSize = defaulter(options.fontSize,"10pt");
-  styles.fontWeight = defaulter(options.fontWeight,"bold");
-  styles.backgroundStroke = defaulter(options.backgroundStroke,"white");
-  styles.outlineWidth = defaulter(options.outlineWidth,5);
-  styles.foregroundColor = defaulter(options.foregroundColor,"black");
-  styles.textAnchor = defaulter(options.textAnchor,"middle");
-
-  return styles;
-
-  function defaulter(value,defaultValue) {
-    return value === undefined ? defaultValue : value;
-  }
-};
-
-/* jshint esversion:6 */
 StatsTableRow.prototype.addNameCell = function(where) {
   const tableRow = this;
   let element;
@@ -10957,6 +10873,126 @@ StatsTableRow.prototype.addSparkline = function(where) {
 
 
   return element;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addBackground = function() {
+  const label = this;
+
+  let text;
+
+  text = label.group
+    .append("text")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("text-anchor",label.styles.textAnchor)
+    .attr("dominant-baseline","central")
+    .attr("font-family",label.styles.fontFamily)
+    .attr("font-size",label.styles.fontSize)
+    .attr("font-weight",label.styles.fontWeight)
+    .attr("stroke",label.styles.backgroundStroke)
+    .attr("fill","none")
+    .attr("stroke-width",label.styles.outlineWidth)
+    .text(label.text);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addForeground = function() {
+  const label = this;
+
+  let text;
+
+  text = label.group
+    .append("text")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("text-anchor",label.styles.textAnchor)
+    .attr("dominant-baseline","central")
+    .attr("font-family",label.styles.fontFamily)
+    .attr("font-size",label.styles.fontSize)
+    .attr("font-weight",label.styles.fontWeight)
+    .attr("stroke","none")
+    .attr("fill",label.styles.foregroundColor)
+    .text(label.text);
+
+  return text;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.addGroup = function(where) {
+  const label = this;
+  let group;
+
+  group = where
+    .append("g")
+    .style("display","none")
+    .attr("cursor","pointer");
+
+  return group;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.defineStyles = function(options) {
+  const label = this;
+  let styles;
+
+  styles = defaulter(options.styles,{});
+
+  styles.fontFamily = defaulter(options.fontFamily,"Source Sans Pro");
+  styles.fontSize = defaulter(options.fontSize,"10pt");
+  styles.fontWeight = defaulter(options.fontWeight,"bold");
+  styles.backgroundStroke = defaulter(options.backgroundStroke,"white");
+  styles.outlineWidth = defaulter(options.outlineWidth,5);
+  styles.foregroundColor = defaulter(options.foregroundColor,"black");
+  styles.textAnchor = defaulter(options.textAnchor,"middle");
+
+  return styles;
+
+  function defaulter(value,defaultValue) {
+    return value === undefined ? defaultValue : value;
+  }
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.hide = function() {
+  const label = this;
+
+  label.group
+    .style("display","none");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.move = function(position) {
+  const label = this;
+
+  label.group
+    .attr("transform","translate("+position.x+","+position.y+")");
+
+  return this;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.show = function() {
+  const label = this;
+
+  label.group
+    .style("display","block");
+
+  return label;
+};
+
+/* jshint esversion:6 */
+TextLabel.prototype.updateText = function(newText) {
+  const label = this;
+
+  label.background.text(newText);
+  label.foreground.text(newText);
+
+  return label;
 };
 
 /* jshint esversion:6 */
@@ -11599,10 +11635,11 @@ WinChart.prototype.groupMouseout = function() {
         });
 
 
+
     }
 
-  }
-}
+  };
+};
 
 /* jshint esversion:6 */
 WinChart.prototype.groupMouseover = function() {
@@ -11642,8 +11679,9 @@ WinChart.prototype.groupMouseover = function() {
         .transition()
         .duration(150)
         .attr("opacity",1);
+
     }
-  }
+  };
 
 };
 
@@ -11802,7 +11840,7 @@ WinChart.prototype.updateYears = function(years) {
     .call(yAxis);
 
   chart.circles
-    .attr("transform",(d,i) => { return "translate("+chart.scales.x(chart.data[i])+","+chart.scales.y(2019 + i)+")"})
+    .attr("transform",(d,i) => { return "translate("+chart.scales.x(chart.data[i])+","+chart.scales.y(2019 + i)+")" ;})
     .attr("display",function(datum,index) {
       if(index +1 <= years) { return "block"; }
       return "none";

@@ -35,10 +35,6 @@ PlayerMenu.prototype.addFilterRow = function() {
     .append("div")
     .classed("player-menu-header-cell",true);
 
-  blankRow
-    .append("div")
-    .classed("player-menu-header-cell",true);
-
 
 
   return blankRow;

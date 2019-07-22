@@ -19,17 +19,8 @@ Modeler.prototype.addEditMarketValueButton = function() {
     .attr("fill","black")
     .attr("x",0)
     .attr("y",3)
-    .text("Edit Market Value")
+    .text("Edit Value of Wins")
     .on('click',modeler.toggleEditView());
-
-  // let textSize = text.node().getBBox();
-  //
-  // rect
-  //   .attr("x",-textSize.width * 0.025)
-  //   .attr("y",-textSize.height * (1.25/2))
-  //   .attr("width",textSize.width * 1.05)
-  //   .attr("height",textSize.height * 1.1)
-  //   .attr("fill","none");
 
 
   return group;

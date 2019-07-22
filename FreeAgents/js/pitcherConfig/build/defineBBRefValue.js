@@ -21,7 +21,7 @@ PitcherConfig.prototype.defineBBRefValue = function() {
 
   group.metrics.push({
     "key":"bWar",
-    "display":"WAR",
+    "display":"Baseball-Reference WAR",
     "description":"Baseball-Reference Wins Above Replacement. Measures total player contribution in terms of marginal team wins.",
     "source":"Baseball-Reference",
     "startGroup":true,

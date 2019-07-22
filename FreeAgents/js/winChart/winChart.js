@@ -10,6 +10,7 @@ function WinChart(options) {
     chart.data = options.data;
     chart.domain = options.domain;
     chart.changeCallback = (() => { });
+    chart.callbacks = options.callbacks ? options.callbacks : {};
 
     chart.styles = chart.defineStyles(options);
     chart.size = chart.defineSize(options);

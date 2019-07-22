@@ -11,7 +11,7 @@ ModelerKey.prototype.defineStyles = function(options) {
   styles.playerProjectionStroke = defaulter(styles.playerProjectionStroke,"#173f5f");
   styles.playerProjectStrokeDasharray = defaulter(styles.playerPrjectionStrokeDasharray,"3,3");
   styles.similarPlayersStroke = defaulter(styles.similarPlayersStroke,"#ddd");
-  styles.contractValueStroke = defaulter(styles.contractValueStroke,"orange");
+  styles.contractValueStroke = defaulter(styles.contractValueStroke,"#ed553b");
   styles.errorRangeFill = defaulter(styles.errorRangeFill,"#bbd");
   styles.textColor = defaulter(styles.textColor,"#173f5f");
 

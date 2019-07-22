@@ -6,9 +6,9 @@ HitterConfig.prototype.defineBatting = function() {
   group = {
     "display":"Batting",
     "description":"Measures of player's batting contributions."
-  }
+  };
 
   let subGroups = [config.defineBattingOverview(),config.defineBattingResults(),config.defineBattingApproach()];
 
   return subGroups;
-}
+};

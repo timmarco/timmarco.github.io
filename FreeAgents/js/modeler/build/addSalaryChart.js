@@ -6,6 +6,9 @@ Modeler.prototype.addSalaryChart = function() {
     "where":modeler.salaryChartGroup,
     "domain":[2,40],
     "data":modeler.projectionParameters.salary,
+    "callbacks":{
+      "groupMouseover":(d,i) => { console.log(d); console.log("GROUP MOUSEOVER"); }
+    }
   }).addAAVSlider();
 
   chart.changeCallback = function() {
@@ -13,8 +16,8 @@ Modeler.prototype.addSalaryChart = function() {
     modeler.projectionParameters.salary = chart.data;
     modeler
       .calculateContractValues();
-  }
+  };
 
 
   return chart;
-}
+};

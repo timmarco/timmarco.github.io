@@ -5,6 +5,10 @@ function Player(options,tooltip) {
   return player;
 
   function init(options,tooltip) {
+
+    d3.select("#loadingRegion")
+      .style("display","block");
+
     player.metadata(options);
     player.tooltip = tooltip;
 

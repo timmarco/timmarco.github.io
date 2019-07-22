@@ -4,10 +4,10 @@ Modeler.prototype.addBBRefWARButton = function() {
 
   let group  = modeler.layers.base
     .append("g")
-    .attr("transform","translate("+(modeler.referencePoints.warFormulationCoordinates.x + 5)+","+modeler.referencePoints.warFormulationCoordinates.y+")")
+    .attr("transform","translate("+(modeler.referencePoints.warFormulationCoordinates.x + 5)+","+modeler.referencePoints.warFormulationCoordinates.y+")");
 
   let rect = group
-    .append("rect")
+    .append("rect");
 
   let text = group
     .append("text")
@@ -27,7 +27,7 @@ Modeler.prototype.addBBRefWARButton = function() {
 
       modeler.fangraphsWARButton
         .select("rect")
-        .attr("fill","none")
+        .attr("fill","none");
 
       rect
         .attr("fill","#ed553b");

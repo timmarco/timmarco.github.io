@@ -24,17 +24,40 @@
 
     <div class="pageBody">
       <div id="menuDiv">
-        <h1>Agent List</h1>
-        <p>This tool lists all 2018-2019 MLB Free Agents. Click on table headers to sort and filter the list, and <strong>click on a player name</strong> to project future performance, evaluate potential contracts, and see more detailed data.</p>
+        <p class="explanation">This tool lists all 2018-2019 MLB Free Agents. Click on table headers to sort and filter the list, and <strong>click on a player name</strong> to project future performance, evaluate potential contracts, and see more detailed data.</p>
+        <div id="playerFilter">
+          <div class="playerFilterOption playerFilterOptionActive" id="allPlayersButton">All Players</div>
+          <div class="playerFilterOption" id="allPositionPlayers">Position Players</div>
+          <div class="playerFilterOption" id="allPitchers">Pitchers</div>
+        </div>
 
+        <div id="playerPositionFilters">
+          <div class="positionOption playerFilterOptionActive" data-key="all" data-visible="true" id="allPositionOption">All</div>
+          <div class="positionOption realPositionOption" data-key="catcher" data-visible="false">C</div>
+          <div class="positionOption realPositionOption" data-key="firstBase" data-visible="false">1B</div>
+          <div class="positionOption realPositionOption" data-key="secondBase" data-visible="false">2B</div>
+          <div class="positionOption realPositionOption" data-key="thirdBase" data-visible="false">3B</div>
+          <div class="positionOption realPositionOption" data-key="shortstop" data-visible="false">SS</div>
+          <div class="positionOption realPositionOption" data-key="leftField" data-visible="false">LF</div>
+          <div class="positionOption realPositionOption" data-key="centerField" data-visible="false">CF</div>
+          <div class="positionOption realPositionOption" data-key="rightField" data-visible="false">RF</div>
+        </div>
+
+        <div id="pitcherFilters">
+          <div class="playerFilterOption playerFilterOptionActive">All Pitchers</div>
+          <div class="playerFilterOption">Starters</div>
+          <div class="playerFilterOption">Relievers</div>
+        </div>
         <div id="_playerMenu"></div>
       </div>
 
+      <div id="loadingRegion" style='display:none; height:100%; width:100%; z-index:2;'>
+        <h1>Loading Data...</h1>
+      </div>
 
       <div id="modelerAndStats" style="display:none">
         <div class="hero">
-          <h1>Career and Future Performance</h1>
-          <p>The tool below uses simplified models to provide a (very) rough pojection of <span class='playerName'>[player name]</span>'s overall performance. <strong>Scroll down</strong> to see additional stats, or click on the 'Contract Simulator' to estimate the value of a potential contract.</p>
+          <p class="explanation">The tool below uses simplified models to provide a (very) rough pojection of <span class='playerName'>[player name]</span>'s overall performance. <strong>Scroll down</strong> to see additional stats, or click on the 'Contract Simulator' to estimate the value of a potential contract.</p>
           <div>
             <div id="modeler" style="margin:0 auto; text-align:center"></div>
           </div>
@@ -66,16 +89,30 @@
         let thePlayer = new Player(player,tooltip);
         playerMenu.hidePositionRow();
         let statsDiv = d3.select("#showStats");
-        d3.select("#menuDiv").style("display","none");
-        d3.select("#modelerAndStats").style("display","block");
-        d3.select("#goBackButton").style("display","inline")
+
+        d3.select("#menuDiv")
+          .style("display","none");
+
+        d3.select("#goBackButton")
+          .style("display","inline")
           .on('click',() => {
-            d3.select("#modelerAndStats").style("display","none");
-            d3.select("#menuDiv").style("display","block");
-            d3.select("#modeler").html("");
-            d3.select("#showStats").html("");
-            d3.select("#mainHeaderTextSpan").html("2018-2019 MLB Free Agents");
-            d3.select("#goBackButton").style("display","none");
+            d3.select("#modelerAndStats")
+              .style("display","none");
+
+            d3.select("#menuDiv")
+              .style("display","block");
+
+            d3.select("#modeler")
+              .html("");
+
+            d3.select("#showStats")
+              .html("");
+
+            d3.select("#mainHeaderTextSpan")
+              .html("2018-2019 MLB Free Agents");
+
+            d3.select("#goBackButton")
+              .style("display","none");
           });
       }
 

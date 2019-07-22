@@ -20,9 +20,10 @@ PitcherConfig.prototype.defineFangraphsValue = function() {
 
   group.metrics.push({
     "key":"fWar",
-    "display":"WAR",
+    "display":"Fangraphs WAR",
     "description":"Fangraphs Wins Above Replacement. Measures total player contribution in terms of marginal team wins.",
     "source":"Fangraphs",
+    "startGroup":true,
     "endGroup":true
   });
 

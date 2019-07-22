@@ -10,16 +10,12 @@ PlayerMenu.prototype.showTable = function(menu,players) {
   menu.filterRow = menu
     .addFilterRow();
 
-  menu.positionRow = menu
-    .addPositionRow();
-
   players.forEach((player) => {
     menu.addPlayerLine(player);
   });
 
   menu.playerMenuRows = menu.containerElement
     .selectAll(".player-menu-row");
-
 
   menu
     .defineNameFilter()

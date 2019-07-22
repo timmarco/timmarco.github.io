@@ -43,7 +43,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .html("Position")
     .on('mouseover',function() {
       menu.tooltip
-        .update("Player's primary position. <em>Click to filter by position.</em>")
+        .update("Player's primary position.")
         .show()
         .move();
     })
@@ -54,12 +54,7 @@ PlayerMenu.prototype.addHeaderRow = function() {
     .on('mouseout',function() {
       menu.tooltip
         .hide();
-    })
-    .on('click',function() {
-      menu
-        .showPositionRow();
     });
-
 
   headerRow
     .append("div")

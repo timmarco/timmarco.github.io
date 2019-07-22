@@ -83,8 +83,10 @@ a:hover {
 
 .player-menu-header-row {
   display:table-row;
-  font-weight:bold;
   border-bottom:1px;
+  min-width:100%;
+  background-color:#aaa;
+  font-size:0.8em;
 }
 
 .player-menu-header-cell {
@@ -319,7 +321,7 @@ a:hover {
 
 
 .tooltip-metric-description-text {
-  
+
 }
 
 .tooltip-metric-source-header {
@@ -336,4 +338,83 @@ a:hover {
 
 .tooltip-metric-icon {
   height:12px;
+}
+
+
+
+
+#playerFilter {
+  width:100%;
+  font-size:1.25em;
+};
+
+.filterSubRow {
+  border:1px solid red;
+  height:0px;
+  overflow:hidden;
+  display:hidden;
+  margin-top:3em;
+  padding-top:3em;
+}
+
+#playerPositionFilters {
+  display:hidden;
+  margin-top:15px;
+}
+
+
+
+.playerFilterOption {
+  display:inline;
+  padding-left:2em;
+  padding-right:2em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  cursor:pointer;
+  font-weight:normal;
+  border:1px solid rgba(0,0,0,0);
+  font-size:0.8em;
+}
+
+.playerFilterOption:hover {
+  border:1px solid rgba(96,147,190,0.75);
+}
+
+
+.positionOption {
+  display:inline;
+  padding-left:2em;
+  padding-right:2em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  cursor:pointer;
+  font-weight:normal;
+  border:1px solid rgba(0,0,0,0);
+  font-size:0.8em;
+  user-select:none;
+}
+
+.positionOption:hover {
+  border:1px solid rgba(96,147,190,0.75);
+}
+
+
+.playerFilterOptionActive {
+  background-color:rgba(96,147,190,0.75);
+  color:black;
+  font-weight:normal;
+}
+
+.playerFilterOptionInActive {
+  color:black;
+  font-weight:normal;
+  background-color:white;
+}
+
+.explanation {
+  padding:1em;
+  border:2px dashed #173f5f;
+  border-radius:10px;
+  font-size:1.1em;
+  background-color:rgba(96,147,190,0.25);
 }

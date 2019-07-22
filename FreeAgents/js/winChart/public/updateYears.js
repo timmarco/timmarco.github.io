@@ -13,7 +13,7 @@ WinChart.prototype.updateYears = function(years) {
     .call(yAxis);
 
   chart.circles
-    .attr("transform",(d,i) => { return "translate("+chart.scales.x(chart.data[i])+","+chart.scales.y(2019 + i)+")"})
+    .attr("transform",(d,i) => { return "translate("+chart.scales.x(chart.data[i])+","+chart.scales.y(2019 + i)+")" ;})
     .attr("display",function(datum,index) {
       if(index +1 <= years) { return "block"; }
       return "none";

@@ -6,7 +6,7 @@ HitterConfig.prototype.defineBaseRunning = function() {
   group = {
     "display":"Baserunning",
     "description":"Measures of player's overall contribution to team offense via baserunning."
-  }
+  };
 
   let subGroups = [runPreventionTable()];
 
@@ -50,4 +50,4 @@ HitterConfig.prototype.defineBaseRunning = function() {
 
 
   }
-}
+};

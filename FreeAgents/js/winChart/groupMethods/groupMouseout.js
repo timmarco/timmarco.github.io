@@ -34,7 +34,8 @@ WinChart.prototype.groupMouseout = function() {
         });
 
 
+
     }
 
-  }
-}
+  };
+};

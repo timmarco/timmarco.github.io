@@ -63,20 +63,30 @@ Modeler.prototype.calculateContractValues = function() {
     .attr("stroke","#ed553b")
     .attr("stroke-width",1)
     .attr("cursor","pointer")
-    .on('mouseover',function(d)  {
+    .on('mouseover',function(d,i)  {
       let element = d3.select(this);
 
       element
         .attr("fill","#ed553b");
 
-      let string = "At market rate of $";
-      string += d.winValue.toFixed(2);
-      string +="mm  per win, the proposed salary of $";
-      string += d.salary.toFixed(2);
-      string += "mm represents a projected surplus of $XXmm.";
+
+      let projectedWins = modeler.chart.projectionLine.data()[0].filter((a) => { return a.age === d.age; })[0];
+      let yearValue = (projectedWins[modeler.chart.currentWARType] * d.winValue).toFixed(2);
+      let surplus = (yearValue - d.salary).toFixed(2);
+      let surplusColor = surplus >= 0 ? "green" : "red";
+
+
+      let table = "<table>";
+      table += "<tr><td style='text-align:right'>Age:</td><td style='text-align:center'>" + d.age +"</td>";
+      table += "<tr><td style='text-align:right'>Projected WAR:</td><td style='text-align:center'>" + projectedWins[modeler.chart.currentWARType].toFixed(2) + "</td></tr>";
+      table += "<tr><td style='text-align:right'>Cost / WAR</td><td style='text-align:center'>$" + d.winValue.toFixed(2) + "mm</td></tr>";
+      table += "<tr><td style='text-align:right'>Projected Value</td><td style='text-align:center'>$" + yearValue + "mm</td></tr>";
+      table += "<tr><td style='text-align:right;border-bottom:1px solid black'>Proposed Salary</td><td style='text-align:center; border-bottom:1px solid black'>$"+d.salary.toFixed(2)+"mm</td></tr>";
+      table += "<tr style='font-weight:bold; color:"+surplusColor+"'><td style='text-align:right'>Year Surplus:</td><td style='text-align:center'>$"+ surplus +"mm</td></tr>";
+      table += "</table>";
 
       modeler.tooltip
-        .update(string)
+        .update(table)
         .show()
         .move();
     })

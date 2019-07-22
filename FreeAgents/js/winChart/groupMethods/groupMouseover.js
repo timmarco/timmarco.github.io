@@ -36,7 +36,8 @@ WinChart.prototype.groupMouseover = function() {
         .transition()
         .duration(150)
         .attr("opacity",1);
+
     }
-  }
+  };
 
 };

@@ -202,7 +202,7 @@ Modeler.prototype.defineReferencePoints = function() {
 
   referencePoints.editSalaryButtonCoordinates = {
     "x":566.67,
-    "y":197.92
+    "y":175
   };
 
   referencePoints.winValueButtonCoordinates = {

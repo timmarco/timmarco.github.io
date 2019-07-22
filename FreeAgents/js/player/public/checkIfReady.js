@@ -10,10 +10,17 @@ Player.prototype.checkIfReady = function() {
   });
 
   if(proceed) {
+    d3.select("#loadingRegion")
+      .style("display","none");
+
+    d3.select("#modelerAndStats")
+      .style("display","block");
+
+
     player.getProjection();
     player.buildModeler();
     player.buildTables();
   }
 
   return player;
-}
+};
