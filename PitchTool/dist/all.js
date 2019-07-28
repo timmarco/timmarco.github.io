@@ -1,36 +1,4 @@
 /* jshint esversion:6 */
-function BrushBox(options) {
-  const box = this;
-  init(options);
-  return box;
-
-
-
-  function init(options) {
-    box.where = options.where;
-    box.worldCoordinates = options.worldCoordinates;
-
-    box.size = box.defineSize(options);
-    box.styles = box.defineStyles(options);
-    box.coordinates = box.defineCoordinates(options);
-    box.callbacks = box.defineCallbacks(options);
-    box.dragLock = false;
-    box.drag = box.defineDrag(options);
-    box.sizeFormatter = box.defineSizeFormatter(options);
-    box.worldCoordinatesFormatter = box.defineWorldCoordinatesFormatter(options);
-
-    box.group = box.addGroup();
-    box.layers = box.addLayers();
-    box.rect = box.addRect();
-    box.corners = box.addCorners();
-    box.edgeIndicators = box.addEdgeIndicators();
-    box.sizeIndicators = box.addSizeIndicators();
-    box.groundIndicators = box.addGroundIndicators();
-
-  }
-}
-
-/* jshint esversion:6 */
 function BrushBoxCorner(options) {
   const corner = this;
   init(options);
@@ -149,63 +117,6 @@ function Minibar(options) {
 }
 
 /* jshint esversion:6 */
-function Player(options) {
-  const player = this;
-  init(options);
-  return player;
-
-  function init(options) {
-    player.defineHighlightRules();
-    
-    if(options.position !== "P") {
-      d3.csv("data/hitters/" + options.id + ".csv")
-        .then((data) => {
-          player.rawData = data;
-          player.filteredData = JSON.parse(JSON.stringify(data));
-
-          player.filterValues = player.defineFilterValues();
-          player.filterPossibleValues = player.getFilterPossibleValues();
-
-          player.filterTables = player.addFilterTables();
-
-          player.playResultsSummary = player.summaryRollup("playResult");
-          player.pitchersFaced = player.summaryRollup("pitcherName");
-          player.teamsFaced = player.summaryRollup("opponents");
-          player.pitchTypes = player.summaryRollup("pitchType");
-          player.pitchResults = player.summaryRollup("pitchResult");
-
-          player.resultsPane = player.addResultsPane();
-
-          player.catcherView
-            .addPlayerCircles(player.rawData)
-            .addPlayerStrikeZone(options.strikeZone);
-
-        });
-    }
-  }
-}
-
-/* jshint esversion:6 */
-function PlayerList(options) {
-  const list = this;
-  init(options);
-  return list;
-
-  function init(options) {
-    list.views = options.views;
-    
-    d3.json('data/players.json')
-    .then((rawList) => {
-      list.listData = rawList;
-      list.asArray = list.recastAsArray();
-      list.table = list.addTable();
-      list.tableRows = list.addTableRows();
-      list.playerNames = list.addPlayerNames();
-    });
-  }
-}
-
-/* jshint esversion:6 */
 function ResultsPane(options) {
   const pane = this;
   init(options);
@@ -256,754 +167,92 @@ function pitch(options) {
 }
 
 /* jshint esversion:6 */
-BrushBox.prototype.addCorners = function() {
-  const box = this;
-  let corners = {};
-
-  corners.topLeft = box
-    .addTopLeftCorner();
-
-  corners.topRight = box
-    .addTopRightCorner();
-
-  corners.bottomLeft = box
-    .addBottomLeftCorner();
-
-  corners.bottomRight = box
-    .addBottomRightCorner();
-
-
-  return corners;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addEdgeIndicators = function() {
-  const box = this;
-
-  let indicators = {};
-
-  indicators.left = box.layers.hints
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",box.size.height)
-    .attr("stroke",box.styles.edgeIndicators.stroke)
-    .attr("stroke-width",0);
-
-  indicators.top = box.layers.hints
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",box.size.width)
-    .attr("y1",0)
-    .attr("y2",0)
-    .attr("stroke",box.styles.edgeIndicators.stroke)
-    .attr("stroke-width",0);
-
-  indicators.right = box.layers.hints
-    .append("line")
-    .attr("x1",box.size.width)
-    .attr("x2",box.size.width)
-    .attr("y1",0)
-    .attr("y2",box.size.height)
-    .attr("stroke",box.styles.edgeIndicators.stroke)
-    .attr("stroke-width",0);
-
-  indicators.bottom = box.layers.hints
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",box.size.width)
-    .attr("y1",box.size.height)
-    .attr("y2",box.size.height)
-    .attr("stroke",box.styles.edgeIndicators.stroke)
-    .attr("stroke-width",0);
-
-
-  return indicators;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addGroundIndicators = function() {
-  const box = this;
-
-  let indicators = this;
-
-  indicators.line = box.layers.hints
-    .append("line")
-    .attr("x1",box.size.width / 2)
-    .attr("x2",box.size.width / 2)
-    .attr("y1",0)
-    .attr("y2",1000)
-    .attr("stroke",box.styles.groundIndicator.stroke)
-    .attr("stroke-width",0)
-    .attr("stroke-dasharray",box.styles.groundIndicator.strokeDashArray);
-
-  indicators.bottomCircle = box.layers.hints
-    .append("circle")
-    .attr("cx",box.size.width / 2)
-    .attr("cy",box.size.height)
-    .attr("r",0)
-    .attr("stroke",box.styles.groundIndicator.circleStroke)
-    .attr("stroke-width",box.styles.groundIndicator.circleStrokeWidth)
-    .attr("fill",box.styles.groundIndicator.circleFill);
-
-  indicators.bottomText = box.layers.hints
-    .append("text")
-    .attr("x",box.size.width/2 + 5)
-    .attr("y",box.size.height + 5)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","hanging")
-    .attr("fill",box.styles.groundIndicator.fontFill)
-    .attr("font-size",box.styles.groundIndicator.fontSize)
-    .attr("font-family",box.styles.groundIndicator.fontFamily);
-
-  indicators.topCircle = box.layers.hints
-    .append("circle")
-    .attr("cx",box.size.width / 2)
-    .attr("cy",0)
-    .attr("r",0)
-    .attr("stroke",box.styles.groundIndicator.circleStroke)
-    .attr("stroke-width",box.styles.groundIndicator.circleStrokeWidth)
-    .attr("fill",box.styles.groundIndicator.circleFill);
-
-  indicators.topText = box.layers.hints
-    .append("text")
-    .attr("x",box.size.width / 2 + 5)
-    .attr("y",-5)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","baseline")
-    .attr("fill",box.styles.groundIndicator.fontFill)
-    .attr("font-size",box.styles.groundIndicator.fontSize)
-    .attr("font-family",box.styles.groundIndicator.fontFamily);
-
-
-  return indicators;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addGroup = function() {
-  const box = this;
-
-  let group = box.where
-    .append("g")
-    .attr("transform","translate("+box.coordinates.x+","+box.coordinates.y+")")
-    .attr("cursor","all-scroll")
-    .call(box.drag);
-
-
-  return group;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addLayers = function() {
-  const box = this;
-
-  let layers = {};
-  layers.rect = addLayer();
-  layers.hints = addLayer();
-  layers.corners = addLayer();
-
-  return layers;
-
-  function addLayer() {
-    return box.group
-      .append("g");
-  }
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.addRect = function() {
-  const box = this;
-
-  let rect = box.layers.rect
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",box.size.width)
-    .attr("height",box.size.height)
-    .attr("fill",box.styles.defaultRect.fill)
-    .attr("stroke",box.styles.defaultRect.stroke)
-    .attr("stroke-width",box.styles.defaultRect.strokeWidth)
-    .attr("stroke-dasharray",box.styles.defaultRect.strokeDashArray)
-    .on('mouseover',box.rectMouseover())
-    .on('mouseout',box.rectMouseout());
-
-
-  return rect;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addSizeIndicators = function() {
-  const box = this;
-
-  let indicators = {};
-
-  indicators.left = box.layers.hints
-    .append("text")
-    .attr("x",-5)
-    .attr("y",box.size.height / 2)
-    .attr("text-anchor","end")
-    .attr("dominant-baseline","middle")
-    .attr("font-family",box.styles.sizeIndicator.fontFamily)
-    .attr("font-size",box.styles.sizeIndicator.fontSize)
-    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
-    .attr("fill",box.styles.sizeIndicator.fill)
-    .attr("stroke",box.styles.sizeIndicator.stroke)
-    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
-    .attr("opacity",0)
-    .text(box.sizeFormatter(box.size.height));
-
-  indicators.right = box.layers.hints
-    .append("text")
-    .attr("x",box.size.width + 5)
-    .attr("y",box.size.height / 2)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","start")
-    .attr("font-family",box.styles.sizeIndicator.fontFamily)
-    .attr("font-size",box.styles.sizeIndicator.fontSize)
-    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
-    .attr("fill",box.styles.sizeIndicator.fill)
-    .attr("stroke",box.styles.sizeIndicator.stroke)
-    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
-    .attr("opacity",0)
-    .text(box.sizeFormatter(box.size.height));
-
-  indicators.top = box.layers.hints
-    .append("text")
-    .attr("x",box.size.width / 2)
-    .attr("y",-5)
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","baseline")
-    .attr("font-family",box.styles.sizeIndicator.fontFamily)
-    .attr("font-size",box.styles.sizeIndicator.fontSize)
-    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
-    .attr("fill",box.styles.sizeIndicator.fill)
-    .attr("stroke",box.styles.sizeIndicator.stroke)
-    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
-    .attr("opacity",0)
-    .text(box.sizeFormatter(box.size.width));
-
-  indicators.bottom = box.layers.hints
-    .append("text")
-    .attr("x",box.size.width / 2)
-    .attr("y",box.size.height + 5)
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","hanging")
-    .attr("font-family",box.styles.sizeIndicator.fontFamily)
-    .attr("font-size",box.styles.sizeIndicator.fontSize)
-    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
-    .attr("fill",box.styles.sizeIndicator.fill)
-    .attr("stroke",box.styles.sizeIndicator.stroke)
-    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
-    .attr("opacity",0)
-    .text(box.sizeFormatter(box.size.width));
-
-
-  return indicators;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineCallbacks = function(options) {
-  const box = this;
-  let callbacks = defaulter(options.callbacks,{});
-
-  callbacks.dragStart = defaulter(callbacks.dragStart,() => {  });
-  callbacks.dragging = defaulter(callbacks.dragging,() => {  });
-  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {  });
-  callbacks.mouseover = defaulter(callbacks.mouseover,() => {  });
-  callbacks.mouseout = defaulter(callbacks.mouseout,() => {  });
-  callbacks.valueChanged = defaulter(callbacks.valueChanged,(attributes) => {  });
-
-  return callbacks;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineCoordinates = function(options) {
-  const box = this;
-
-  let coordinates = defaulter(options.coordinates,{});
-  coordinates.x = defaulter(coordinates.x,0);
-  coordinates.y = defaulter(coordinates.y,0);
-
-  return coordinates;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineDrag = function() {
-  const box = this;
-  let drag = d3.drag();
-
-  drag.on('start',box.rectDragStart());
-  drag.on('drag',box.rectDragging());
-  drag.on('end',box.rectDragEnd());
-
-  return drag;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineSize = function(options) {
-  const box = this;
-
-  let size = defaulter(options.size,{});
-  size.height = defaulter(size.height,100);
-  size.width = defaulter(size.width,100);
-  return size;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineSizeFormatter = function(options) {
-  const box = this;
-
-  let formatter = defaulter(options.sizeFormatter,(v) => { return v.toFixed(1); });
-
-  return formatter;
-
-  function defaulter(s,v) {
-    return s ? s : v;
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineStyles = function(options) {
-  const box = this;
-
-  let styles = defaulter(options.styles,{});
-
-  styles.defaultRect = defaulter(styles.defaultRect,{});
-  styles.defaultRect.fill = defaulter(styles.defaultRect.fill,"rgba(0,0,0,0)");
-  styles.defaultRect.stroke = defaulter(styles.defaultRect.stroke,"#999");
-  styles.defaultRect.strokeWidth = defaulter(styles.defaultRect.strokeWidth,1);
-  styles.defaultRect.strokeDashArray = defaulter(styles.defaultRect.strokeDashArray,"4,4");
-
-  styles.rectHighlightTransition = defaulter(styles.rectHighlightTransition,{});
-  styles.rectHighlightTransition.duration = defaulter(styles.rectHighlightTransition.duration,100);
-
-  styles.highlightRect = defaulter(styles.highlightRect,{});
-  styles.highlightRect.fill = defaulter(styles.highlightRect.fill,"rgba(0,0,255,0.0675)");
-  styles.highlightRect.stroke = defaulter(styles.highlightRect.stroke,"blue");
-  styles.highlightRect.strokeWidth = defaulter(styles.highlightRect.strokeWidth,1);
-  styles.highlightRect.strokeDashArray = defaulter(styles.highlightRect.strokeDashArray,"4,4");
-
-  styles.groundIndicator = defaulter(styles.groundIndicator,{});
-  styles.groundIndicator.stroke = defaulter(styles.groundIndicator.stroke,"rgba(255,0,0,0.5)");
-  styles.groundIndicator.strokeWidth = defaulter(styles.groundIndicator.strokeWidth,3);
-  styles.groundIndicator.strokeDashArray = defaulter(styles.groundIndicator.strokeDashArray,"5,3");
-  styles.groundIndicator.radius = defaulter(styles.groundIndicator.radius,3);
-  styles.groundIndicator.circleFill = defaulter(styles.groundIndicator.circleFill,"rgba(255,0,0,1)");
-  styles.groundIndicator.circleStroke = defaulter(styles.groundIndicator.circleStroke,"black");
-  styles.groundIndicator.circleStrokeWidth = defaulter(styles.groundIndicator.circleStrokeWidth,1);
-  styles.groundIndicator.fontFamily = defaulter(styles.groundIndicator.fontFamily,"sans serif");
-  styles.groundIndicator.fontSize = defaulter(styles.groundIndicator.fontSize,"10px");
-  styles.groundIndicator.fontFill = defaulter(styles.groundIndicator.fontFill,"rgba(255,0,0,1)");
-
-
-
-  styles.defaultCorner = defaulter(styles.defaultCorner,{});
-  styles.defaultCorner.radius = defaulter(styles.defaultCorner.radius,3);
-  styles.defaultCorner.fill = defaulter(styles.defaultCorner.fill,"white");
-  styles.defaultCorner.stroke = defaulter(styles.defaultCorner.stroke,"green");
-  styles.defaultCorner.strokeWidth = defaulter(styles.defaultCorner.strokeWidth,"1");
-
-  styles.cornerHotspot = defaulter(styles.cornerHotspot,{});
-  styles.cornerHotspot.radius = defaulter(styles.cornerHotspot.radius,10);
-  styles.cornerHotspot.fill = defaulter(styles.cornerHotspot.fill,"rgba(0,0,0,0)");
-  styles.cornerHotspot.stroke = defaulter(styles.cornerHotspot.stroke,"none");
-  styles.cornerHotspot.strokeWidth = defaulter(styles.cornerHotspot.strokeWidth,0);
-
-  styles.cornerHotspotTransition = defaulter(styles.cornerHotspotTransition,{});
-  styles.cornerHotspotTransition.duration = defaulter(styles.cornerHotspotTransition.duration,150);
-
-  styles.highlightCorner = defaulter(styles.highlightCorner,{});
-  styles.highlightCorner.radius = defaulter(styles.highlightCorner.radius,10);
-  styles.highlightCorner.fill = defaulter(styles.highlightCorner.fill,"rgba(0,255,0,1)");
-  styles.highlightCorner.stroke = defaulter(styles.highlightCorner.stroke,"blue");
-  styles.highlightCorner.strokeWidth = defaulter(styles.highlightCorner.strokeWidth,0);
-
-  styles.edgeIndicators = defaulter(styles.edgeIndicators,{});
-  styles.edgeIndicators.stroke = defaulter(styles.edgeIndicators.stroke,"rgba(0,255,0,1)");
-  styles.edgeIndicators.strokeWidth = defaulter(styles.edgeIndicators.strokeWidth,3);
-
-  styles.activeCorner = defaulter(styles.activeCorner,{});
-  styles.activeCorner.radius = defaulter(styles.activeCorner.radius,5);
-  styles.activeCorner.fill = defaulter(styles.activeCorner.fill,"rgba(0,255,0,1)");
-  styles.activeCorner.stroke = defaulter(styles.activeCorner.stroke,"blue");
-  styles.activeCorner.strokeWidth = defaulter(styles.activeCorner.strokeWidth,2);
-
-  styles.sizeIndicator = defaulter(styles.sizeIndicator,{});
-  styles.sizeIndicator.fill = defaulter(styles.sizeIndicator.fill,"rgba(0,255,0,1)");
-  styles.sizeIndicator.stroke = defaulter(styles.sizeIndicator.stroke,"black");
-  styles.sizeIndicator.strokeWidth = defaulter(styles.sizeIndicator.strokeWidth,1);
-  styles.sizeIndicator.fontFamily = defaulter(styles.sizeIndicator.fontFamily,"sans serif");
-  styles.sizeIndicator.fontWeight = defaulter(styles.sizeIndicator.fontWeight,"bold");
-  styles.sizeIndicator.fontSize = defaulter(styles.sizeIndicator.fontSize,"10px");
-
-
-
-  return styles;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.defineWorldCoordinatesFormatter = function() {
-  const box = this;
-
-  let formatter = (coordinates) => {
-    let outputCoordinates = {};
-    outputCoordinates.x = coordinates.x - (box.worldCoordinates.width / 2);
-    outputCoordinates.y = box.worldCoordinates.height - coordinates.y;
-    return outputCoordinates;
-  }
-
-  return formatter;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.hideIndicators = function(indicators) {
-  const box = this;
-
-  return function() {
-    indicators.forEach((indicator) => {
-      box.edgeIndicators[indicator]
-        .transition()
-        .duration(box.styles.cornerHotspotTransition)
-        .attr("stroke-width",0);
-
-      box.sizeIndicators[indicator]
-        .transition()
-        .duration(box.styles.cornerHotspotTransition)
-        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth)
-        .attr("opacity",0);
-
-    });
-  }
-
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.moveCorners = function() {
-  const box = this;
-
-  box.corners.topLeft
-    .move({"x":0,"y":0});
-
-  box.corners.topRight
-    .move({"x":box.size.width,"y":0});
-
-  box.corners.bottomLeft
-    .move({"x":0,"y":box.size.height});
-
-  box.corners.bottomRight
-    .move({"x":box.size.width,"y":box.size.height});
-
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.moveEdgeIndicators = function() {
-  const box = this;
-
-  box.edgeIndicators.left
-    .attr("y2",box.size.height);
-
-  box.edgeIndicators.top
-    .attr("x2",box.size.width);
-
-  box.edgeIndicators.right
-    .attr("x1",box.size.width)
-    .attr("x2",box.size.width)
-    .attr("y2",box.size.height);
-
-  box.edgeIndicators.bottom
-    .attr("y1",box.size.height)
-    .attr("y2",box.size.height)
-    .attr("x2",box.size.width);
-
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.moveGroup = function() {
-  const box = this;
-
-  box.group
-    .attr("transform","translate("+box.coordinates.x+","+box.coordinates.y+")");
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.movePositionIndicators = function() {
-  const box = this;
-
-  box.groundIndicators.line
-    .attr("x1",box.size.width / 2)
-    .attr("x2",box.size.width / 2)
-    .attr("y1",0)
-
-  box.groundIndicators.bottomCircle
-    .attr("cy",0)
-    .attr("cx",box.size.width / 2);
-
-  box.groundIndicators.topCircle
-    .attr("cx",box.size.width / 2)
-    .attr("cy",box.size.height);
-
-  box.groundIndicators.topText
-    .attr("x",box.size.width / 2 + 5)
-    .attr("y",-5)
-
-  if(!box.dragLock) {
-    box.groundIndicators.topText
-      .text(box.sizeFormatter(box.coordinates.y));
-
-    box.groundIndicators.bottomText
-      .text(box.sizeFormatter(box.coordinates.y - box.size.height));
-
-  }
-
-
-  box.groundIndicators.bottomText
-    .attr("x",box.size.width / 2 + 5)
-    .attr("y",box.size.height + 5);
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.moveTextIndicators = function() {
-  const box = this;
-
-  box.sizeIndicators.left
-    .attr("y",box.size.height / 2);
-
-  box.sizeIndicators.right
-    .attr("x",box.size.width + 5)
-    .attr("y",box.size.height / 2);
-
-  box.sizeIndicators.top
-    .attr("x",box.size.width / 2);
-
-  box.sizeIndicators.bottom
-    .attr("x",box.size.width / 2)
-    .attr("y",box.size.height + 5)
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.resizeRect = function() {
-  const box = this;
-
-  box.rect
-    .attr("width",box.size.width)
-    .attr("height",box.size.height);
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.resized = function() {
-  const box = this;
-
-  box
-    .moveGroup()
-    .resizeRect()
-    .moveCorners()
-    .moveEdgeIndicators()
-    .moveTextIndicators()
-    .updateTextIndicators()
-    .movePositionIndicators();
-
-  // box.callbacks
-  //   .valueChanged({
-  //     "size":box.size,
-  //     "coordinates":box.coordinates
-  //   });
-
-
-  return box;
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.showIndicators = function(indicators) {
-  const box = this;
-
-  return function() {
-    indicators.forEach((indicator) => {
-      box.edgeIndicators[indicator]
-        .transition()
-        .duration(box.styles.cornerHotspotTransition)
-        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth);
-
-      box.sizeIndicators[indicator]
-        .transition()
-        .duration(box.styles.cornerHotspotTransition)
-        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth)
-        .attr("opacity",1);
-    });
-  }
-
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.updateTextIndicators = function() {
-  const box = this;
-
-  box.sizeIndicators.top
-    .text(box.sizeFormatter(box.size.width));
-
-  box.sizeIndicators.bottom
-    .text(box.sizeFormatter(box.size.width));
-
-  box.sizeIndicators.left
-    .text(box.sizeFormatter(box.size.height));
-
-  box.sizeIndicators.right
-    .text(box.sizeFormatter(box.size.height));
-
-  return box;
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.rectDragEnd = function() {
-  const box = this;
-  return function() {
-
-    box.callbacks
-      .valueChanged({
-        "size":box.size,
-        "coordinates":box.coordinates
-      });
-
-    box.callbacks
-      .dragEnd();
-
-  }
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.rectDragStart = function() {
-  const box = this;
-  return function() {
-    box.cursorOffset = {};
-    box.cursorOffset.x = d3.event.x - box.coordinates.x;
-    box.cursorOffset.y = d3.event.y - box.coordinates.y;
-
-    box.callbacks
-      .dragStart();
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.rectDragging = function() {
-  const box = this;
-  return function() {
-
-    box.coordinates.x = d3.event.x - box.cursorOffset.x;
-    box.coordinates.y = d3.event.y - box.cursorOffset.y;
-
-    box
-      .resized();
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.rectMouseout = function(datum,index) {
-  const box = this;
-
-  return function() {
-
-    box.rect
-      .transition()
-      .duration(box.styles.rectHighlightTransition.duration)
-      .attr("fill",box.styles.defaultRect.fill)
-      .attr("stroke",box.styles.defaultRect.stroke)
-      .attr("stroke-width",box.styles.defaultRect.strokeWidth)
-      .attr("stroke-dasharray",box.styles.defaultRect.strokeDashArray);
-
-    box.groundIndicators.line
-      .transition()
-      .duration(box.styles.rectHighlightTransition.duration)
-      .attr("stroke-width",0);
-
-    box.groundIndicators.bottomCircle
-      .transition()
-      .duration(box.styles.rectHighlightTransition.duration)
-      .attr("r",0);
-
-    box.groundIndicators.topCircle
-      .transition()
-      .duration(box.styles.rectHighlightTransition.duration)
-      .attr("r",0);
-
-    box.groundIndicators.bottomText
-      .text("");
-
-    box.groundIndicators.topText
-      .text("");
-
-
-    box.callbacks
-      .mouseout();
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.rectMouseover = function(datum,index) {
-  const box = this;
-  return function() {
-    if(!box.dragLock) {
-      box.rect
-        .transition()
-        .duration(box.styles.rectHighlightTransition.duration)
-        .attr("fill",box.styles.highlightRect.fill)
-        .attr("stroke",box.styles.highlightRect.stroke)
-        .attr("stroke-width",box.styles.highlightRect.strokeWidth)
-        .attr("stroke-dasharray",box.styles.highlightRect.strokeDashArray);
-
-      box.groundIndicators.line
-        .transition()
-        .duration(box.styles.rectHighlightTransition.duration)
-        .attr("stroke-width",box.styles.groundIndicator.strokeWidth);
-
-      box.groundIndicators.bottomCircle
-        .transition()
-        .duration(box.styles.rectHighlightTransition.duration)
-        .attr("r",box.styles.groundIndicator.radius);
-
-      box.groundIndicators.topCircle
-        .transition()
-        .duration(box.styles.rectHighlightTransition.duration)
-        .attr("r",box.styles.groundIndicator.radius);
-
-      box.groundIndicators.topText
-        .text(box.sizeFormatter(box.coordinates.y));
-
-      box.groundIndicators.bottomText
-        .text(box.sizeFormatter(box.coordinates.y - box.size.height));
-
-      box.callbacks
-        .mouseover();
+function Player(options) {
+  const player = this;
+  init(options);
+  return player;
+
+  function init(options) {
+    player.defineHighlightRules();
+
+    if(options.position !== "P") {
+      d3.csv("data/hitters/" + options.id + ".csv")
+        .then((data) => {
+          player.rawData = data;
+          console.log(JSON.stringify(player.rawData.filter((a) => { return a.pitchType == "CU"}).sort((a,b) => { return +a.pfxZ - (+b.pfxZ)})[0]));
+          player.filteredData = JSON.parse(JSON.stringify(data));
+
+          player.filterValues = player.defineFilterValues();
+          player.filterPossibleValues = player.getFilterPossibleValues();
+
+          player.filterTables = player.addFilterTables();
+
+          player.playResultsSummary = player.summaryRollup("playResult");
+          player.pitchersFaced = player.summaryRollup("pitcherName");
+          player.teamsFaced = player.summaryRollup("opponents");
+          player.pitchTypes = player.summaryRollup("pitchType");
+          player.pitchResults = player.summaryRollup("pitchResult");
+
+          player.resultsPane = player.addResultsPane();
+
+          player.catcherView
+            .addPlayerCircles(player.rawData)
+            .addPlayerStrikeZone(options.strikeZone);
+
+        });
     }
+  }
+}
+
+/* jshint esversion:6 */
+function BrushBox(options) {
+  const box = this;
+  init(options);
+  return box;
+
+
+
+  function init(options) {
+    box.where = options.where;
+    box.worldCoordinates = options.worldCoordinates;
+
+    box.size = box.defineSize(options);
+    box.styles = box.defineStyles(options);
+    box.coordinates = box.defineCoordinates(options);
+    box.callbacks = box.defineCallbacks(options);
+    box.dragLock = false;
+    box.drag = box.defineDrag(options);
+    box.sizeFormatter = box.defineSizeFormatter(options);
+    box.worldCoordinatesFormatter = box.defineWorldCoordinatesFormatter(options);
+
+    box.group = box.addGroup();
+    box.layers = box.addLayers();
+    box.rect = box.addRect();
+    box.corners = box.addCorners();
+    box.edgeIndicators = box.addEdgeIndicators();
+    box.sizeIndicators = box.addSizeIndicators();
+    box.groundIndicators = box.addGroundIndicators();
+
+  }
+}
+
+/* jshint esversion:6 */
+function PlayerList(options) {
+  const list = this;
+  init(options);
+  return list;
+
+  function init(options) {
+    list.views = options.views;
+    
+    d3.json('data/players.json')
+    .then((rawList) => {
+      list.listData = rawList;
+      list.asArray = list.recastAsArray();
+      list.table = list.addTable();
+      list.tableRows = list.addTableRows();
+      list.playerNames = list.addPlayerNames();
+    });
   }
 }
 
@@ -1806,6 +1055,119 @@ Minibar.prototype.addData = function(data) {
 };
 
 /* jshint esversion:6 */
+ResultsPane.prototype.addDiv = function() {
+  const pane = this;
+
+  let div = d3.select("#resultsPane")
+    .append("div")
+    .classed("resultsPane",true);
+
+  return div;
+};
+
+/* jshint esversion:6 */
+ResultsPane.prototype.addGroups = function() {
+  const pane = this;
+  let groups = {};
+
+  groups.summary = singleGroup();
+  groups.battedBallResults = singleGroup();
+  groups.swingResults = singleGroup();
+
+  return groups;
+  function singleGroup() {
+
+    return pane.div
+      .append("div")
+      .classed("resultsPaneGroup",true);
+  }
+};
+
+/* jshint esversion:6 */
+ResultsPane.prototype.defineStyles = function(options) {
+  const pane = this;
+  let styles = {};
+  styles.width = 300;
+  styles.margins = {
+    "left":100,
+    "right":50
+  };
+  return styles;
+};
+
+/* jshint esversion:6 */
+ResultsPane.prototype.updateData = function(data) {
+  const pane = this;
+
+  pane.insideRegionOutsideRegion
+    .addData({"value":data.pitchesInRegion,"max":data.totalPitches});
+
+  pane.swingsNoSwings
+    .addData({"value":data.swings,"max":data.pitchesInRegion});
+
+  pane.totalStrikes
+    .addData({"value":data.totalStrikes,"max":data.pitchesInRegion});
+
+  pane.whiffs
+    .addData({"value":data.swingingStrikes,"max":data.pitchesInRegion});
+
+  pane.calledStrikes
+    .addData({"value":data.calledStrikes,"max":data.pitchesInRegion});
+
+  pane.balls
+    .addData({"value":data.balls,"max":data.pitchesInRegion});
+
+  pane.homeRuns
+    .addData({"value":data.homeRuns,"max":data.pitchesInRegion});
+
+  pane.triples
+    .addData({"value":data.triples,"max":data.pitchesInRegion});
+
+  pane.doubles
+    .addData({"value":data.doubles,"max":data.pitchesInRegion});
+
+  pane.singles
+    .addData({"value":data.singles,"max":data.pitchesInRegion});
+
+  // pane.strikes
+  //   .addData({"value":data.strikes,"max":data.totalStrikes});
+
+
+    // results.totalPitches = player.rawData.length;
+    // results.pitchesInRegion = player.filteredData.length;
+    // results.balls = player.filteredData.filter((item) => { return a.pitchResultCode === "B"; });
+    // results.whiffs = player.filteredData.filter((item) => { return a.pitchResultCode === "S"; });
+    // results.inPlayNoOuts = player.filteredData.filter((item) => { return a.pitchResultCode === "D"; });
+    // results.inPlayOuts = player.filteredData.filter((item) => { return a.pitchResultCode === "X"; });
+    // results.fouls = player.filteredData.filter((item) => { return a.pitchResultCode === "F"; });
+    // results.foulTips = player.filteredData.filter((item) => { return a.pitchResultCode === "T"; });
+    // resuls.calledStrike = player.filteredData.filter((item) => { return a.pitchResultCode === "C"; });
+    // results.swings = results.pitchesInRegion - results.balls - results.calledStrike;
+
+
+  // pane.insideRegionOutsideRegion = pane.addInsideRegionOutsideRegion();
+  //
+  // pane.swingsNoSwings = pane.addSwingsNoSwings();
+  // pane.whiffs = pane.addWhiffs();
+  // pane.balls = pane.addBalls();
+  // pane.calledStrikes = pane.addCalledStrikes();
+  //
+  // pane.sluggingOnContact = pane.addSluggingOnContact();
+  // pane.homeRuns = pane.addHomeRuns();
+  // pane.triples = pane.addTriples();
+  // pane.doubles = pane.addDoubles();
+  // pane.singles = pane.addSingles();
+  //
+  // pane.ballsInPlay = pane.addBallsInPlay();
+  // pane.outs = pane.addOuts();
+  // pane.flyBalls = pane.addFlyBalls();
+  // pane.lineDrives = pane.addLineDrives();
+  // pane.groundBalls = pane.addGroundBalls();
+
+  return pane;
+};
+
+/* jshint esversion:6 */
 Player.prototype.addFilterTables = function() {
   const player = this;
 
@@ -2062,6 +1424,758 @@ Player.prototype.registerCatcherView = function(catcherView) {
 };
 
 /* jshint esversion:6 */
+BrushBox.prototype.hideIndicators = function(indicators) {
+  const box = this;
+
+  return function() {
+    indicators.forEach((indicator) => {
+      box.edgeIndicators[indicator]
+        .transition()
+        .duration(box.styles.cornerHotspotTransition)
+        .attr("stroke-width",0);
+
+      box.sizeIndicators[indicator]
+        .transition()
+        .duration(box.styles.cornerHotspotTransition)
+        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth)
+        .attr("opacity",0);
+
+    });
+  }
+
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.moveCorners = function() {
+  const box = this;
+
+  box.corners.topLeft
+    .move({"x":0,"y":0});
+
+  box.corners.topRight
+    .move({"x":box.size.width,"y":0});
+
+  box.corners.bottomLeft
+    .move({"x":0,"y":box.size.height});
+
+  box.corners.bottomRight
+    .move({"x":box.size.width,"y":box.size.height});
+
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.moveEdgeIndicators = function() {
+  const box = this;
+
+  box.edgeIndicators.left
+    .attr("y2",box.size.height);
+
+  box.edgeIndicators.top
+    .attr("x2",box.size.width);
+
+  box.edgeIndicators.right
+    .attr("x1",box.size.width)
+    .attr("x2",box.size.width)
+    .attr("y2",box.size.height);
+
+  box.edgeIndicators.bottom
+    .attr("y1",box.size.height)
+    .attr("y2",box.size.height)
+    .attr("x2",box.size.width);
+
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.moveGroup = function() {
+  const box = this;
+
+  box.group
+    .attr("transform","translate("+box.coordinates.x+","+box.coordinates.y+")");
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.movePositionIndicators = function() {
+  const box = this;
+
+  box.groundIndicators.line
+    .attr("x1",box.size.width / 2)
+    .attr("x2",box.size.width / 2)
+    .attr("y1",0)
+
+  box.groundIndicators.bottomCircle
+    .attr("cy",0)
+    .attr("cx",box.size.width / 2);
+
+  box.groundIndicators.topCircle
+    .attr("cx",box.size.width / 2)
+    .attr("cy",box.size.height);
+
+  box.groundIndicators.topText
+    .attr("x",box.size.width / 2 + 5)
+    .attr("y",-5)
+
+  if(!box.dragLock) {
+    box.groundIndicators.topText
+      .text(box.sizeFormatter(box.coordinates.y));
+
+    box.groundIndicators.bottomText
+      .text(box.sizeFormatter(box.coordinates.y - box.size.height));
+
+  }
+
+
+  box.groundIndicators.bottomText
+    .attr("x",box.size.width / 2 + 5)
+    .attr("y",box.size.height + 5);
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.moveTextIndicators = function() {
+  const box = this;
+
+  box.sizeIndicators.left
+    .attr("y",box.size.height / 2);
+
+  box.sizeIndicators.right
+    .attr("x",box.size.width + 5)
+    .attr("y",box.size.height / 2);
+
+  box.sizeIndicators.top
+    .attr("x",box.size.width / 2);
+
+  box.sizeIndicators.bottom
+    .attr("x",box.size.width / 2)
+    .attr("y",box.size.height + 5)
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.resizeRect = function() {
+  const box = this;
+
+  box.rect
+    .attr("width",box.size.width)
+    .attr("height",box.size.height);
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.resized = function() {
+  const box = this;
+
+  box
+    .moveGroup()
+    .resizeRect()
+    .moveCorners()
+    .moveEdgeIndicators()
+    .moveTextIndicators()
+    .updateTextIndicators()
+    .movePositionIndicators();
+
+  // box.callbacks
+  //   .valueChanged({
+  //     "size":box.size,
+  //     "coordinates":box.coordinates
+  //   });
+
+
+  return box;
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.showIndicators = function(indicators) {
+  const box = this;
+
+  return function() {
+    indicators.forEach((indicator) => {
+      box.edgeIndicators[indicator]
+        .transition()
+        .duration(box.styles.cornerHotspotTransition)
+        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth);
+
+      box.sizeIndicators[indicator]
+        .transition()
+        .duration(box.styles.cornerHotspotTransition)
+        .attr("stroke-width",box.styles.edgeIndicators.strokeWidth)
+        .attr("opacity",1);
+    });
+  }
+
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.updateTextIndicators = function() {
+  const box = this;
+
+  box.sizeIndicators.top
+    .text(box.sizeFormatter(box.size.width));
+
+  box.sizeIndicators.bottom
+    .text(box.sizeFormatter(box.size.width));
+
+  box.sizeIndicators.left
+    .text(box.sizeFormatter(box.size.height));
+
+  box.sizeIndicators.right
+    .text(box.sizeFormatter(box.size.height));
+
+  return box;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addCorners = function() {
+  const box = this;
+  let corners = {};
+
+  corners.topLeft = box
+    .addTopLeftCorner();
+
+  corners.topRight = box
+    .addTopRightCorner();
+
+  corners.bottomLeft = box
+    .addBottomLeftCorner();
+
+  corners.bottomRight = box
+    .addBottomRightCorner();
+
+
+  return corners;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addEdgeIndicators = function() {
+  const box = this;
+
+  let indicators = {};
+
+  indicators.left = box.layers.hints
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",box.size.height)
+    .attr("stroke",box.styles.edgeIndicators.stroke)
+    .attr("stroke-width",0);
+
+  indicators.top = box.layers.hints
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",box.size.width)
+    .attr("y1",0)
+    .attr("y2",0)
+    .attr("stroke",box.styles.edgeIndicators.stroke)
+    .attr("stroke-width",0);
+
+  indicators.right = box.layers.hints
+    .append("line")
+    .attr("x1",box.size.width)
+    .attr("x2",box.size.width)
+    .attr("y1",0)
+    .attr("y2",box.size.height)
+    .attr("stroke",box.styles.edgeIndicators.stroke)
+    .attr("stroke-width",0);
+
+  indicators.bottom = box.layers.hints
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",box.size.width)
+    .attr("y1",box.size.height)
+    .attr("y2",box.size.height)
+    .attr("stroke",box.styles.edgeIndicators.stroke)
+    .attr("stroke-width",0);
+
+
+  return indicators;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addGroundIndicators = function() {
+  const box = this;
+
+  let indicators = this;
+
+  indicators.line = box.layers.hints
+    .append("line")
+    .attr("x1",box.size.width / 2)
+    .attr("x2",box.size.width / 2)
+    .attr("y1",0)
+    .attr("y2",1000)
+    .attr("stroke",box.styles.groundIndicator.stroke)
+    .attr("stroke-width",0)
+    .attr("stroke-dasharray",box.styles.groundIndicator.strokeDashArray);
+
+  indicators.bottomCircle = box.layers.hints
+    .append("circle")
+    .attr("cx",box.size.width / 2)
+    .attr("cy",box.size.height)
+    .attr("r",0)
+    .attr("stroke",box.styles.groundIndicator.circleStroke)
+    .attr("stroke-width",box.styles.groundIndicator.circleStrokeWidth)
+    .attr("fill",box.styles.groundIndicator.circleFill);
+
+  indicators.bottomText = box.layers.hints
+    .append("text")
+    .attr("x",box.size.width/2 + 5)
+    .attr("y",box.size.height + 5)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","hanging")
+    .attr("fill",box.styles.groundIndicator.fontFill)
+    .attr("font-size",box.styles.groundIndicator.fontSize)
+    .attr("font-family",box.styles.groundIndicator.fontFamily);
+
+  indicators.topCircle = box.layers.hints
+    .append("circle")
+    .attr("cx",box.size.width / 2)
+    .attr("cy",0)
+    .attr("r",0)
+    .attr("stroke",box.styles.groundIndicator.circleStroke)
+    .attr("stroke-width",box.styles.groundIndicator.circleStrokeWidth)
+    .attr("fill",box.styles.groundIndicator.circleFill);
+
+  indicators.topText = box.layers.hints
+    .append("text")
+    .attr("x",box.size.width / 2 + 5)
+    .attr("y",-5)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","baseline")
+    .attr("fill",box.styles.groundIndicator.fontFill)
+    .attr("font-size",box.styles.groundIndicator.fontSize)
+    .attr("font-family",box.styles.groundIndicator.fontFamily);
+
+
+  return indicators;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addGroup = function() {
+  const box = this;
+
+  let group = box.where
+    .append("g")
+    .attr("transform","translate("+box.coordinates.x+","+box.coordinates.y+")")
+    .attr("cursor","all-scroll")
+    .call(box.drag);
+
+
+  return group;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addLayers = function() {
+  const box = this;
+
+  let layers = {};
+  layers.rect = addLayer();
+  layers.hints = addLayer();
+  layers.corners = addLayer();
+
+  return layers;
+
+  function addLayer() {
+    return box.group
+      .append("g");
+  }
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.addRect = function() {
+  const box = this;
+
+  let rect = box.layers.rect
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",box.size.width)
+    .attr("height",box.size.height)
+    .attr("fill",box.styles.defaultRect.fill)
+    .attr("stroke",box.styles.defaultRect.stroke)
+    .attr("stroke-width",box.styles.defaultRect.strokeWidth)
+    .attr("stroke-dasharray",box.styles.defaultRect.strokeDashArray)
+    .on('mouseover',box.rectMouseover())
+    .on('mouseout',box.rectMouseout());
+
+
+  return rect;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addSizeIndicators = function() {
+  const box = this;
+
+  let indicators = {};
+
+  indicators.left = box.layers.hints
+    .append("text")
+    .attr("x",-5)
+    .attr("y",box.size.height / 2)
+    .attr("text-anchor","end")
+    .attr("dominant-baseline","middle")
+    .attr("font-family",box.styles.sizeIndicator.fontFamily)
+    .attr("font-size",box.styles.sizeIndicator.fontSize)
+    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
+    .attr("fill",box.styles.sizeIndicator.fill)
+    .attr("stroke",box.styles.sizeIndicator.stroke)
+    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
+    .attr("opacity",0)
+    .text(box.sizeFormatter(box.size.height));
+
+  indicators.right = box.layers.hints
+    .append("text")
+    .attr("x",box.size.width + 5)
+    .attr("y",box.size.height / 2)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","start")
+    .attr("font-family",box.styles.sizeIndicator.fontFamily)
+    .attr("font-size",box.styles.sizeIndicator.fontSize)
+    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
+    .attr("fill",box.styles.sizeIndicator.fill)
+    .attr("stroke",box.styles.sizeIndicator.stroke)
+    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
+    .attr("opacity",0)
+    .text(box.sizeFormatter(box.size.height));
+
+  indicators.top = box.layers.hints
+    .append("text")
+    .attr("x",box.size.width / 2)
+    .attr("y",-5)
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","baseline")
+    .attr("font-family",box.styles.sizeIndicator.fontFamily)
+    .attr("font-size",box.styles.sizeIndicator.fontSize)
+    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
+    .attr("fill",box.styles.sizeIndicator.fill)
+    .attr("stroke",box.styles.sizeIndicator.stroke)
+    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
+    .attr("opacity",0)
+    .text(box.sizeFormatter(box.size.width));
+
+  indicators.bottom = box.layers.hints
+    .append("text")
+    .attr("x",box.size.width / 2)
+    .attr("y",box.size.height + 5)
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","hanging")
+    .attr("font-family",box.styles.sizeIndicator.fontFamily)
+    .attr("font-size",box.styles.sizeIndicator.fontSize)
+    .attr("font-weight",box.styles.sizeIndicator.fontWeight)
+    .attr("fill",box.styles.sizeIndicator.fill)
+    .attr("stroke",box.styles.sizeIndicator.stroke)
+    .attr("stroke-width",box.styles.sizeIndicator.strokeWidth)
+    .attr("opacity",0)
+    .text(box.sizeFormatter(box.size.width));
+
+
+  return indicators;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineCallbacks = function(options) {
+  const box = this;
+  let callbacks = defaulter(options.callbacks,{});
+
+  callbacks.dragStart = defaulter(callbacks.dragStart,() => {  });
+  callbacks.dragging = defaulter(callbacks.dragging,() => {  });
+  callbacks.dragEnd = defaulter(callbacks.dragEnd,() => {  });
+  callbacks.mouseover = defaulter(callbacks.mouseover,() => {  });
+  callbacks.mouseout = defaulter(callbacks.mouseout,() => {  });
+  callbacks.valueChanged = defaulter(callbacks.valueChanged,(attributes) => {  });
+
+  return callbacks;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineCoordinates = function(options) {
+  const box = this;
+
+  let coordinates = defaulter(options.coordinates,{});
+  coordinates.x = defaulter(coordinates.x,0);
+  coordinates.y = defaulter(coordinates.y,0);
+
+  return coordinates;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineDrag = function() {
+  const box = this;
+  let drag = d3.drag();
+
+  drag.on('start',box.rectDragStart());
+  drag.on('drag',box.rectDragging());
+  drag.on('end',box.rectDragEnd());
+
+  return drag;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineSize = function(options) {
+  const box = this;
+
+  let size = defaulter(options.size,{});
+  size.height = defaulter(size.height,100);
+  size.width = defaulter(size.width,100);
+  return size;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineSizeFormatter = function(options) {
+  const box = this;
+
+  let formatter = defaulter(options.sizeFormatter,(v) => { return v.toFixed(1); });
+
+  return formatter;
+
+  function defaulter(s,v) {
+    return s ? s : v;
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineStyles = function(options) {
+  const box = this;
+
+  let styles = defaulter(options.styles,{});
+
+  styles.defaultRect = defaulter(styles.defaultRect,{});
+  styles.defaultRect.fill = defaulter(styles.defaultRect.fill,"rgba(0,0,0,0)");
+  styles.defaultRect.stroke = defaulter(styles.defaultRect.stroke,"#999");
+  styles.defaultRect.strokeWidth = defaulter(styles.defaultRect.strokeWidth,1);
+  styles.defaultRect.strokeDashArray = defaulter(styles.defaultRect.strokeDashArray,"4,4");
+
+  styles.rectHighlightTransition = defaulter(styles.rectHighlightTransition,{});
+  styles.rectHighlightTransition.duration = defaulter(styles.rectHighlightTransition.duration,100);
+
+  styles.highlightRect = defaulter(styles.highlightRect,{});
+  styles.highlightRect.fill = defaulter(styles.highlightRect.fill,"rgba(0,0,255,0.0675)");
+  styles.highlightRect.stroke = defaulter(styles.highlightRect.stroke,"blue");
+  styles.highlightRect.strokeWidth = defaulter(styles.highlightRect.strokeWidth,1);
+  styles.highlightRect.strokeDashArray = defaulter(styles.highlightRect.strokeDashArray,"4,4");
+
+  styles.groundIndicator = defaulter(styles.groundIndicator,{});
+  styles.groundIndicator.stroke = defaulter(styles.groundIndicator.stroke,"rgba(255,0,0,0.5)");
+  styles.groundIndicator.strokeWidth = defaulter(styles.groundIndicator.strokeWidth,3);
+  styles.groundIndicator.strokeDashArray = defaulter(styles.groundIndicator.strokeDashArray,"5,3");
+  styles.groundIndicator.radius = defaulter(styles.groundIndicator.radius,3);
+  styles.groundIndicator.circleFill = defaulter(styles.groundIndicator.circleFill,"rgba(255,0,0,1)");
+  styles.groundIndicator.circleStroke = defaulter(styles.groundIndicator.circleStroke,"black");
+  styles.groundIndicator.circleStrokeWidth = defaulter(styles.groundIndicator.circleStrokeWidth,1);
+  styles.groundIndicator.fontFamily = defaulter(styles.groundIndicator.fontFamily,"sans serif");
+  styles.groundIndicator.fontSize = defaulter(styles.groundIndicator.fontSize,"10px");
+  styles.groundIndicator.fontFill = defaulter(styles.groundIndicator.fontFill,"rgba(255,0,0,1)");
+
+
+
+  styles.defaultCorner = defaulter(styles.defaultCorner,{});
+  styles.defaultCorner.radius = defaulter(styles.defaultCorner.radius,3);
+  styles.defaultCorner.fill = defaulter(styles.defaultCorner.fill,"white");
+  styles.defaultCorner.stroke = defaulter(styles.defaultCorner.stroke,"green");
+  styles.defaultCorner.strokeWidth = defaulter(styles.defaultCorner.strokeWidth,"1");
+
+  styles.cornerHotspot = defaulter(styles.cornerHotspot,{});
+  styles.cornerHotspot.radius = defaulter(styles.cornerHotspot.radius,10);
+  styles.cornerHotspot.fill = defaulter(styles.cornerHotspot.fill,"rgba(0,0,0,0)");
+  styles.cornerHotspot.stroke = defaulter(styles.cornerHotspot.stroke,"none");
+  styles.cornerHotspot.strokeWidth = defaulter(styles.cornerHotspot.strokeWidth,0);
+
+  styles.cornerHotspotTransition = defaulter(styles.cornerHotspotTransition,{});
+  styles.cornerHotspotTransition.duration = defaulter(styles.cornerHotspotTransition.duration,150);
+
+  styles.highlightCorner = defaulter(styles.highlightCorner,{});
+  styles.highlightCorner.radius = defaulter(styles.highlightCorner.radius,10);
+  styles.highlightCorner.fill = defaulter(styles.highlightCorner.fill,"rgba(0,255,0,1)");
+  styles.highlightCorner.stroke = defaulter(styles.highlightCorner.stroke,"blue");
+  styles.highlightCorner.strokeWidth = defaulter(styles.highlightCorner.strokeWidth,0);
+
+  styles.edgeIndicators = defaulter(styles.edgeIndicators,{});
+  styles.edgeIndicators.stroke = defaulter(styles.edgeIndicators.stroke,"rgba(0,255,0,1)");
+  styles.edgeIndicators.strokeWidth = defaulter(styles.edgeIndicators.strokeWidth,3);
+
+  styles.activeCorner = defaulter(styles.activeCorner,{});
+  styles.activeCorner.radius = defaulter(styles.activeCorner.radius,5);
+  styles.activeCorner.fill = defaulter(styles.activeCorner.fill,"rgba(0,255,0,1)");
+  styles.activeCorner.stroke = defaulter(styles.activeCorner.stroke,"blue");
+  styles.activeCorner.strokeWidth = defaulter(styles.activeCorner.strokeWidth,2);
+
+  styles.sizeIndicator = defaulter(styles.sizeIndicator,{});
+  styles.sizeIndicator.fill = defaulter(styles.sizeIndicator.fill,"rgba(0,255,0,1)");
+  styles.sizeIndicator.stroke = defaulter(styles.sizeIndicator.stroke,"black");
+  styles.sizeIndicator.strokeWidth = defaulter(styles.sizeIndicator.strokeWidth,1);
+  styles.sizeIndicator.fontFamily = defaulter(styles.sizeIndicator.fontFamily,"sans serif");
+  styles.sizeIndicator.fontWeight = defaulter(styles.sizeIndicator.fontWeight,"bold");
+  styles.sizeIndicator.fontSize = defaulter(styles.sizeIndicator.fontSize,"10px");
+
+
+
+  return styles;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.defineWorldCoordinatesFormatter = function() {
+  const box = this;
+
+  let formatter = (coordinates) => {
+    let outputCoordinates = {};
+    outputCoordinates.x = coordinates.x - (box.worldCoordinates.width / 2);
+    outputCoordinates.y = box.worldCoordinates.height - coordinates.y;
+    return outputCoordinates;
+  }
+
+  return formatter;
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.rectDragEnd = function() {
+  const box = this;
+  return function() {
+
+    box.callbacks
+      .valueChanged({
+        "size":box.size,
+        "coordinates":box.coordinates
+      });
+
+    box.callbacks
+      .dragEnd();
+
+  }
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.rectDragStart = function() {
+  const box = this;
+  return function() {
+    box.cursorOffset = {};
+    box.cursorOffset.x = d3.event.x - box.coordinates.x;
+    box.cursorOffset.y = d3.event.y - box.coordinates.y;
+
+    box.callbacks
+      .dragStart();
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.rectDragging = function() {
+  const box = this;
+  return function() {
+
+    box.coordinates.x = d3.event.x - box.cursorOffset.x;
+    box.coordinates.y = d3.event.y - box.cursorOffset.y;
+
+    box
+      .resized();
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.rectMouseout = function(datum,index) {
+  const box = this;
+
+  return function() {
+
+    box.rect
+      .transition()
+      .duration(box.styles.rectHighlightTransition.duration)
+      .attr("fill",box.styles.defaultRect.fill)
+      .attr("stroke",box.styles.defaultRect.stroke)
+      .attr("stroke-width",box.styles.defaultRect.strokeWidth)
+      .attr("stroke-dasharray",box.styles.defaultRect.strokeDashArray);
+
+    box.groundIndicators.line
+      .transition()
+      .duration(box.styles.rectHighlightTransition.duration)
+      .attr("stroke-width",0);
+
+    box.groundIndicators.bottomCircle
+      .transition()
+      .duration(box.styles.rectHighlightTransition.duration)
+      .attr("r",0);
+
+    box.groundIndicators.topCircle
+      .transition()
+      .duration(box.styles.rectHighlightTransition.duration)
+      .attr("r",0);
+
+    box.groundIndicators.bottomText
+      .text("");
+
+    box.groundIndicators.topText
+      .text("");
+
+
+    box.callbacks
+      .mouseout();
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.rectMouseover = function(datum,index) {
+  const box = this;
+  return function() {
+    if(!box.dragLock) {
+      box.rect
+        .transition()
+        .duration(box.styles.rectHighlightTransition.duration)
+        .attr("fill",box.styles.highlightRect.fill)
+        .attr("stroke",box.styles.highlightRect.stroke)
+        .attr("stroke-width",box.styles.highlightRect.strokeWidth)
+        .attr("stroke-dasharray",box.styles.highlightRect.strokeDashArray);
+
+      box.groundIndicators.line
+        .transition()
+        .duration(box.styles.rectHighlightTransition.duration)
+        .attr("stroke-width",box.styles.groundIndicator.strokeWidth);
+
+      box.groundIndicators.bottomCircle
+        .transition()
+        .duration(box.styles.rectHighlightTransition.duration)
+        .attr("r",box.styles.groundIndicator.radius);
+
+      box.groundIndicators.topCircle
+        .transition()
+        .duration(box.styles.rectHighlightTransition.duration)
+        .attr("r",box.styles.groundIndicator.radius);
+
+      box.groundIndicators.topText
+        .text(box.sizeFormatter(box.coordinates.y));
+
+      box.groundIndicators.bottomText
+        .text(box.sizeFormatter(box.coordinates.y - box.size.height));
+
+      box.callbacks
+        .mouseover();
+    }
+  }
+}
+
+/* jshint esversion:6 */
 PlayerList.prototype.addPlayerNames = function() {
   const list = this;
 
@@ -2124,324 +2238,6 @@ PlayerList.prototype.recastAsArray = function() {
   });
 
   return recast;
-};
-
-/* jshint esversion:6 */
-ResultsPane.prototype.addDiv = function() {
-  const pane = this;
-
-  let div = d3.select("#resultsPane")
-    .append("div")
-    .classed("resultsPane",true);
-
-  return div;
-};
-
-/* jshint esversion:6 */
-ResultsPane.prototype.addGroups = function() {
-  const pane = this;
-  let groups = {};
-
-  groups.summary = singleGroup();
-  groups.battedBallResults = singleGroup();
-  groups.swingResults = singleGroup();
-
-  return groups;
-  function singleGroup() {
-
-    return pane.div
-      .append("div")
-      .classed("resultsPaneGroup",true);
-  }
-};
-
-/* jshint esversion:6 */
-ResultsPane.prototype.defineStyles = function(options) {
-  const pane = this;
-  let styles = {};
-  styles.width = 300;
-  styles.margins = {
-    "left":100,
-    "right":50
-  };
-  return styles;
-};
-
-/* jshint esversion:6 */
-ResultsPane.prototype.updateData = function(data) {
-  const pane = this;
-
-  pane.insideRegionOutsideRegion
-    .addData({"value":data.pitchesInRegion,"max":data.totalPitches});
-
-  pane.swingsNoSwings
-    .addData({"value":data.swings,"max":data.pitchesInRegion});
-
-  pane.totalStrikes
-    .addData({"value":data.totalStrikes,"max":data.pitchesInRegion});
-
-  pane.whiffs
-    .addData({"value":data.swingingStrikes,"max":data.pitchesInRegion});
-
-  pane.calledStrikes
-    .addData({"value":data.calledStrikes,"max":data.pitchesInRegion});
-
-  pane.balls
-    .addData({"value":data.balls,"max":data.pitchesInRegion});
-
-  pane.homeRuns
-    .addData({"value":data.homeRuns,"max":data.pitchesInRegion});
-
-  pane.triples
-    .addData({"value":data.triples,"max":data.pitchesInRegion});
-
-  pane.doubles
-    .addData({"value":data.doubles,"max":data.pitchesInRegion});
-
-  pane.singles
-    .addData({"value":data.singles,"max":data.pitchesInRegion});
-
-  // pane.strikes
-  //   .addData({"value":data.strikes,"max":data.totalStrikes});
-
-
-    // results.totalPitches = player.rawData.length;
-    // results.pitchesInRegion = player.filteredData.length;
-    // results.balls = player.filteredData.filter((item) => { return a.pitchResultCode === "B"; });
-    // results.whiffs = player.filteredData.filter((item) => { return a.pitchResultCode === "S"; });
-    // results.inPlayNoOuts = player.filteredData.filter((item) => { return a.pitchResultCode === "D"; });
-    // results.inPlayOuts = player.filteredData.filter((item) => { return a.pitchResultCode === "X"; });
-    // results.fouls = player.filteredData.filter((item) => { return a.pitchResultCode === "F"; });
-    // results.foulTips = player.filteredData.filter((item) => { return a.pitchResultCode === "T"; });
-    // resuls.calledStrike = player.filteredData.filter((item) => { return a.pitchResultCode === "C"; });
-    // results.swings = results.pitchesInRegion - results.balls - results.calledStrike;
-
-
-  // pane.insideRegionOutsideRegion = pane.addInsideRegionOutsideRegion();
-  //
-  // pane.swingsNoSwings = pane.addSwingsNoSwings();
-  // pane.whiffs = pane.addWhiffs();
-  // pane.balls = pane.addBalls();
-  // pane.calledStrikes = pane.addCalledStrikes();
-  //
-  // pane.sluggingOnContact = pane.addSluggingOnContact();
-  // pane.homeRuns = pane.addHomeRuns();
-  // pane.triples = pane.addTriples();
-  // pane.doubles = pane.addDoubles();
-  // pane.singles = pane.addSingles();
-  //
-  // pane.ballsInPlay = pane.addBallsInPlay();
-  // pane.outs = pane.addOuts();
-  // pane.flyBalls = pane.addFlyBalls();
-  // pane.lineDrives = pane.addLineDrives();
-  // pane.groundBalls = pane.addGroundBalls();
-
-  return pane;
-};
-
-/* jshint esversion:6 */
-BrushBox.prototype.addBottomLeftCorner = function() {
-  const box = this;
-
-  let corner = new BrushBoxCorner({
-    "parent":box,
-    "coordinates": {
-      "x":0,
-      "y":box.size.height
-    },
-    "callbacks":{
-      "checkBounds":checkBounds,
-      "moved":moved,
-      "mouseover":box.showIndicators(["left","bottom"]),
-      "mouseout":box.hideIndicators(["left","bottom"])
-    }
-  });
-
-  return corner;
-
-  function checkBounds() {
-    let bounds = {};
-    bounds.min = {"x":-Infinity,"y":10};
-    bounds.max = {"x":box.size.width - 10,"y":Infinity};
-    return bounds;
-  }
-
-  function moved(coordinates) {
-    box.coordinates.x += coordinates.x;
-    box.size.height = coordinates.y;
-    box.size.width -= coordinates.x
-
-    box
-      .resized();
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addBottomRightCorner = function() {
-  const box = this;
-
-  let corner = new BrushBoxCorner({
-    "parent":box,
-    "coordinates":{
-      "x":box.size.width,
-      "y":box.size.height
-    },
-    "callbacks":{
-      "checkBounds":checkBounds,
-      "moved":moved,
-      "mouseover":box.showIndicators(["right","bottom"]),
-      "mouseout":box.hideIndicators(["right","bottom"])
-    }
-  });
-
-  return corner;
-
-  function checkBounds() {
-    let bounds = {};
-    bounds.max = {"x":Infinity,"y":Infinity};
-    bounds.min = {"x":10,"y":10};
-    return bounds;
-  }
-
-  function moved(coordinates) {
-    box.size.width = coordinates.x;
-    box.size.height = coordinates.y;
-
-    box
-      .resized();
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addTopLeftCorner = function() {
-  const box = this;
-  let corner = new BrushBoxCorner({
-    "parent":box,
-    "coordinates":{
-      "x":0,
-      "y":0
-    },
-    "callbacks":{
-      "checkBounds":checkBounds,
-      "moved":moved,
-      "mouseover":box.showIndicators(["left","top"]),
-      "mouseout":box.hideIndicators(["left","top"])
-    }
-  });
-
-  return corner;
-
-  function checkBounds() {
-    let bounds = {};
-    bounds.min = {"x":-Infinity,"y":-Infinity};
-    bounds.max = {"x":box.size.width - 10,"y":box.size.height - 10};
-    return bounds;
-  }
-
-  function moved(coordinates) {
-    box.coordinates.x += coordinates.x;
-    box.coordinates.y += coordinates.y;
-    box.size.width -= coordinates.x;
-    box.size.height -= coordinates.y;
-    // box.size.height = coordinates.y;
-    // box.size.width -= coordinates.x
-
-    box
-      .resized();
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBox.prototype.addTopRightCorner = function() {
-  const box = this;
-  let corner = new BrushBoxCorner({
-    "parent":box,
-    "coordinates":{
-      "x":box.size.width,
-      "y":0
-    },
-    "callbacks":{
-      "checkBounds":checkBounds,
-      "moved":moved,
-      "mouseover":box.showIndicators(["top","right"]),
-      "mouseout":box.hideIndicators(["top","right"])
-    }
-  });
-
-  return corner;
-
-  function checkBounds() {
-    let bounds = {};
-    bounds.min = {"x":10,"y":-Infinity};
-    bounds.max = {"x":Infinity,"y":box.size.height - 10};
-    return bounds;
-  }
-
-  function moved(coordinates) {
-    box.size.width = coordinates.x;
-    box.coordinates.y += coordinates.y;
-    box.size.height -= coordinates.y;
-
-    box
-      .resized();
-
-  }
-}
-
-/* jshint esversion:6 */
-Player.prototype.filterRules = {};
-Player.prototype.filterRules.balls = (a) => { return a.pitchResultCode === "B"; };
-Player.prototype.filterRules.swingingStrikes = (a) => { return a.pitchResultCode === "S"; };
-Player.prototype.filterRules.inPlayNoOuts = (a) => { return a.pitchResultCode === "D"; };
-Player.prototype.filterRules.inPlayOuts = (a) => { return a.pitchResultCode === "X"; };
-Player.prototype.filterRules.fouls = (a) => { return a.pitchResultCode === "F"; };
-Player.prototype.filterRules.foulTips = (a) => { return a.pitchResultCode === "T"; };
-Player.prototype.filterRules.calledStrikes = (a) => { return a.pitchResultCode === "C"; };
-Player.prototype.filterRules.homeRuns = (a) => { return a.playResult === "Home Run" && a.pitchResultCode == "E"; };
-Player.prototype.filterRules.triples = (a) => { return a.playResult === "Triple" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
-Player.prototype.filterRules.doubles = (a) => { return a.playResult === "Double" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
-Player.prototype.filterRules.singles = (a) => { return a.playResult === "Single" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
-
-/* jshint esversion:6 */
-Player.prototype.clearHighlights = function() {
-  const player = this;
-
-  player.catcherView
-    .clearHighlight();
-    
-  return player;
-};
-
-/* jshint esversion:6 */
-Player.prototype.constructHighlightRule = function(rule) {
-  const player = this;
-
-  return () => {
-    player.catcherView
-      .updateHighlight(player.filteredData.filter(rule));
-  };
-};
-
-/* jshint esversion:6 */
-Player.prototype.defineHighlightRules = function() {
-  const player = this;
-
-  player.highlightBalls = player.constructHighlightRule(player.filterRules.balls);
-  player.highlightSwingingStrikes = player.constructHighlightRule(player.filterRules.swingingStrikes);
-  player.highlightInPlayNoOuts = player.constructHighlightRule(player.filterRules.inPlayNoOuts);
-  player.highlightInPlayOuts = player.constructHighlightRule(player.filterRules.inPlayOuts);
-  player.highlightFouls = player.constructHighlightRule(player.filterRules.fouls);
-  player.highlightFoulTips = player.constructHighlightRule(player.filterRules.foulTips);
-  player.highlightCalledStrikes = player.constructHighlightRule(player.filterRules.calledStrikes);
-
-  player.highlightHomeRuns = player.constructHighlightRule(player.filterRules.homeRuns);
-  player.highlightTriples = player.constructHighlightRule(player.filterRules.triples);
-  player.highlightDoubles = player.constructHighlightRule(player.filterRules.doubles);
-  player.highlightSingles = player.constructHighlightRule(player.filterRules.singles);
-
-
 };
 
 /* jshint esversion:6 */
@@ -2735,3 +2531,208 @@ ResultsPane.prototype.addWhiffs = function() {
 
   return bar;
 };
+
+/* jshint esversion:6 */
+Player.prototype.filterRules = {};
+Player.prototype.filterRules.balls = (a) => { return a.pitchResultCode === "B"; };
+Player.prototype.filterRules.swingingStrikes = (a) => { return a.pitchResultCode === "S"; };
+Player.prototype.filterRules.inPlayNoOuts = (a) => { return a.pitchResultCode === "D"; };
+Player.prototype.filterRules.inPlayOuts = (a) => { return a.pitchResultCode === "X"; };
+Player.prototype.filterRules.fouls = (a) => { return a.pitchResultCode === "F"; };
+Player.prototype.filterRules.foulTips = (a) => { return a.pitchResultCode === "T"; };
+Player.prototype.filterRules.calledStrikes = (a) => { return a.pitchResultCode === "C"; };
+Player.prototype.filterRules.homeRuns = (a) => { return a.playResult === "Home Run" && a.pitchResultCode == "E"; };
+Player.prototype.filterRules.triples = (a) => { return a.playResult === "Triple" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
+Player.prototype.filterRules.doubles = (a) => { return a.playResult === "Double" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
+Player.prototype.filterRules.singles = (a) => { return a.playResult === "Single" && (a.pitchResultCode == "E" || a.pitchResultCode == "D" || a.pitchResultCode == "X"); };
+
+/* jshint esversion:6 */
+Player.prototype.clearHighlights = function() {
+  const player = this;
+
+  player.catcherView
+    .clearHighlight();
+    
+  return player;
+};
+
+/* jshint esversion:6 */
+Player.prototype.constructHighlightRule = function(rule) {
+  const player = this;
+
+  return () => {
+    player.catcherView
+      .updateHighlight(player.filteredData.filter(rule));
+  };
+};
+
+/* jshint esversion:6 */
+Player.prototype.defineHighlightRules = function() {
+  const player = this;
+
+  player.highlightBalls = player.constructHighlightRule(player.filterRules.balls);
+  player.highlightSwingingStrikes = player.constructHighlightRule(player.filterRules.swingingStrikes);
+  player.highlightInPlayNoOuts = player.constructHighlightRule(player.filterRules.inPlayNoOuts);
+  player.highlightInPlayOuts = player.constructHighlightRule(player.filterRules.inPlayOuts);
+  player.highlightFouls = player.constructHighlightRule(player.filterRules.fouls);
+  player.highlightFoulTips = player.constructHighlightRule(player.filterRules.foulTips);
+  player.highlightCalledStrikes = player.constructHighlightRule(player.filterRules.calledStrikes);
+
+  player.highlightHomeRuns = player.constructHighlightRule(player.filterRules.homeRuns);
+  player.highlightTriples = player.constructHighlightRule(player.filterRules.triples);
+  player.highlightDoubles = player.constructHighlightRule(player.filterRules.doubles);
+  player.highlightSingles = player.constructHighlightRule(player.filterRules.singles);
+
+
+};
+
+/* jshint esversion:6 */
+BrushBox.prototype.addBottomLeftCorner = function() {
+  const box = this;
+
+  let corner = new BrushBoxCorner({
+    "parent":box,
+    "coordinates": {
+      "x":0,
+      "y":box.size.height
+    },
+    "callbacks":{
+      "checkBounds":checkBounds,
+      "moved":moved,
+      "mouseover":box.showIndicators(["left","bottom"]),
+      "mouseout":box.hideIndicators(["left","bottom"])
+    }
+  });
+
+  return corner;
+
+  function checkBounds() {
+    let bounds = {};
+    bounds.min = {"x":-Infinity,"y":10};
+    bounds.max = {"x":box.size.width - 10,"y":Infinity};
+    return bounds;
+  }
+
+  function moved(coordinates) {
+    box.coordinates.x += coordinates.x;
+    box.size.height = coordinates.y;
+    box.size.width -= coordinates.x
+
+    box
+      .resized();
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addBottomRightCorner = function() {
+  const box = this;
+
+  let corner = new BrushBoxCorner({
+    "parent":box,
+    "coordinates":{
+      "x":box.size.width,
+      "y":box.size.height
+    },
+    "callbacks":{
+      "checkBounds":checkBounds,
+      "moved":moved,
+      "mouseover":box.showIndicators(["right","bottom"]),
+      "mouseout":box.hideIndicators(["right","bottom"])
+    }
+  });
+
+  return corner;
+
+  function checkBounds() {
+    let bounds = {};
+    bounds.max = {"x":Infinity,"y":Infinity};
+    bounds.min = {"x":10,"y":10};
+    return bounds;
+  }
+
+  function moved(coordinates) {
+    box.size.width = coordinates.x;
+    box.size.height = coordinates.y;
+
+    box
+      .resized();
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addTopLeftCorner = function() {
+  const box = this;
+  let corner = new BrushBoxCorner({
+    "parent":box,
+    "coordinates":{
+      "x":0,
+      "y":0
+    },
+    "callbacks":{
+      "checkBounds":checkBounds,
+      "moved":moved,
+      "mouseover":box.showIndicators(["left","top"]),
+      "mouseout":box.hideIndicators(["left","top"])
+    }
+  });
+
+  return corner;
+
+  function checkBounds() {
+    let bounds = {};
+    bounds.min = {"x":-Infinity,"y":-Infinity};
+    bounds.max = {"x":box.size.width - 10,"y":box.size.height - 10};
+    return bounds;
+  }
+
+  function moved(coordinates) {
+    box.coordinates.x += coordinates.x;
+    box.coordinates.y += coordinates.y;
+    box.size.width -= coordinates.x;
+    box.size.height -= coordinates.y;
+    // box.size.height = coordinates.y;
+    // box.size.width -= coordinates.x
+
+    box
+      .resized();
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBox.prototype.addTopRightCorner = function() {
+  const box = this;
+  let corner = new BrushBoxCorner({
+    "parent":box,
+    "coordinates":{
+      "x":box.size.width,
+      "y":0
+    },
+    "callbacks":{
+      "checkBounds":checkBounds,
+      "moved":moved,
+      "mouseover":box.showIndicators(["top","right"]),
+      "mouseout":box.hideIndicators(["top","right"])
+    }
+  });
+
+  return corner;
+
+  function checkBounds() {
+    let bounds = {};
+    bounds.min = {"x":10,"y":-Infinity};
+    bounds.max = {"x":Infinity,"y":box.size.height - 10};
+    return bounds;
+  }
+
+  function moved(coordinates) {
+    box.size.width = coordinates.x;
+    box.coordinates.y += coordinates.y;
+    box.size.height -= coordinates.y;
+
+    box
+      .resized();
+
+  }
+}

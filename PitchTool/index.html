@@ -28,6 +28,25 @@
     <script>
 
       let theList = new PlayerList({});
+
+      d3.json("data/players.json")
+        .then((data) => {
+          Object.keys(data).forEach((key) => {
+            if(data[key].lastName === "Giolito") {
+              console.log(key);
+
+              d3.csv("data/pitchers/" + key + ".csv")
+                .then((data) => {
+                  let filterData = data.filter((a) => { return a.opponent === "BOS" && a.batterName === "Michael Chavis"})
+                  console.log("F",filterData);
+                  filterData.forEach((datum) => {
+                    console.log(JSON.stringify(datum));
+                  })
+                })
+            }
+          })
+        });
+
     </script>
   </body>
 

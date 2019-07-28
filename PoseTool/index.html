@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+    <title>Pose Tool</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style/style.css"/ >
@@ -18,26 +19,159 @@
         <p>Select a pitch below to analyze mechanics.</p>
         <div id="datasets"></div>
       </div>
-      <div id="viewer" style="display:none">
-        <div id="frameViewer"></div>
-        <div id="frames"></div>
-        <div id="framesSlider"></div>
-        <div id="frameDate">[date]</div>
-        <div id="frameInning">[inning]</div>
-        <div id="frameCount">[count]</div>
-        <div id="frameOpponentTeam">[opponentTeam]</div>
-        <div id="framePlayerName">[playername]</div>
-        <div id="frameOpponentName">[opponentname]</div>
 
-        <div id="frameVelocity">[velocity]</div>
-        <div id="framePitchType">[pitchtype]</div>
-        <div id="frameSpinRate">[spinrate]</div>
-        <div id="frameBreak">[break]</div>
-        <div id="framePlayResult">[playresult]</div>
+
+      <div id="viewer" style="display:none">
+        <h1>Pitch Details <a href="">Go Back</a></h1>
+        <table style="width:1000px; height:500px; border-top:1px solid black; border-bottom:1px solid black">
+          <tr>
+            <td style="width:500px;">
+              <div id="loadingMessage" style="font-size:2em">Loading Data...</div>
+              <div id="frameViewer" style="position:relative; background-color:white;"></div>
+              <div id="framesSlider" style="background-color:white">
+              <div id="frameCallout" style="margin-left:50px; margin-right:50px; font-weight:normal; background-color:rgba(255,0,0,0.25); border:1px dashed red">
+                &darr; Move the Circle Below to Scrub Video
+              </div>
+            </td>
+            <td>
+              <div style="display:table; padding-bottom:1em; padding-top:0.5em">
+                <div style="display:table-row">
+                  <div style="display:table-cell; width:133px"><span id="framePlayerName"></span></div>
+                  <div style="display:table-cell; width:133px; text-align:center"><span id="frameDate"></span></div>
+                  <div style="display:table-cell; width:133px; text-align:right">vs. <span id="frameOpponentName"></span></div>
+                </div>
+
+                <div style="display:table-row">
+                  <div style="display:table-cell; width:133px">Inning: <strong><span id="frameInning"></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:center">Outs: <strong><span id="frameOuts"></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:right">Count: <strong><span id="frameCount"></span></strong></div>
+                </div>
+
+              </div>
+
+              <div style="display:table">
+                <div style="display:table-row">
+                    <span id="playDescription"></span>
+                </div>
+              </div>
+
+
+              <div style="display:table; padding-bottom:1em; padding-top:0.5em">
+
+                <div style="display:table-row">
+                  <div style="display:table-cell; width:133px; text-align:center"><div style="text-decoration:underline">Pitch Type:</div> <strong><span id='pitchType'></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:center"><div style="text-decoration:underline">Start Velocity:</div><strong><span id='pitchStartVelocity'></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:center"><div style="text-decoration:underline">End Velocity:</div> <strong><span id='pitchEndVelocity'></span></strong></div>
+                </div>
+
+
+                <div style="display:table-row">
+                  <div style="display:table-cell; padding-top:1em; width:133px; text-align:center"><div style="text-decoration:underline">Spin Rate:</div> <strong><span id='spinRate'></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:center"><div style="text-decoration:underline">Break Angle:</div><strong><span id='breakAngle'></span></strong></div>
+                  <div style="display:table-cell; width:133px; text-align:center"><div style="text-decoration:underline">Break Length:</div> <strong><span id='breakLength'></span></strong></div>
+                </div>
+
+              </div>
+
+              <div style="font-size:0.8em; color:#666">
+                Catcher's Perspective:
+              </div>
+              <div style="margin:auto; background-color:#fafafa; border-top: 1px solid #666; border-bottom:1px solid #666; border-top:1px solid #666; padding-left:1em; padding-right:1em; margin-bottom:3em; padding-top:0.5em; padding-bottom:0.25em">
+                <div>
+                  <div id="pitchSmallPlot" style="float:left;"></div>
+                  <div style="float:left; padding-left:2em">
+                    <table>
+                      <tr>
+                        <td style="padding-bottom:1em">Horizontal Movement:</td>
+                        <td style="padding-bottom:1em"><span style="font-weight:bold" id="pitchHorizontalMovement"></span></td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom:1em">Vertical Movement:</td>
+                        <td style="padding-bottom:1em"><span style="font-weight:bold" id="pitchVerticalMovement">XX</span></td>
+                      </tr>
+                    </table>
+                    <svg width="200" height="40" style="border:1px solid black; background-color:white">
+
+                      <circle cx="10" cy="10" fill="red" stroke="red" r="3" />
+                      <text x="25" y="10" dominant-baseline="middle" font-size="12px">
+                        Actual Pitch Location
+                      </text>
+
+                      <circle cx="10" cy="30" fill="white" stroke="red" r="3" />
+                      <text x="25" y="30" dominant-baseline="middle" font-size="12px">
+                        Expected Location (no break)
+                      </text>
+
+                    </svg>
+
+
+                  </div>
+                </div>
+                <div style="clear:both"></div>
+
+              </div>
+
+              <div style="font-size:0.8em; color:#666">
+                Side Ortho Perspective:
+              </div>
+
+              <div style="margin:auto; background-color:#fafafa; border-top: 1px solid #666; border-bottom:1px solid #666; border-top:1px solid #666; padding-left:1em; padding-right:1em; padding-top:0.5em; padding-bottom:0.25em">
+                <div id="pitchSidePlot"></div>
+                <svg width="200" height="40" style="border:1px solid black; background-color:white">
+
+                  <circle cx="10" cy="10" fill="red" stroke="red" r="3" />
+                  <text x="25" y="10" dominant-baseline="middle" font-size="12px">
+                    Actual Pitch Location
+                  </text>
+
+                  <circle cx="10" cy="30" fill="white" stroke="red" r="3" />
+                  <text x="25" y="30" dominant-baseline="middle" font-size="12px">
+                    Expected Location (no break)
+                  </text>
+
+                </svg>
+
+                <svg width="200" height="40" style="border:1px solid black; background-color:white">
+
+                  <line x1="2" x2="23" y1="10" y2="10" stroke="black" />
+                  <text x="25" y="10" dominant-baseline="middle" font-size="12px">
+                    Measured Trajectory
+                  </text>
+
+                  <line x1="2" x2="23" y1="30" y2="30" stroke="black" stroke-dasharray="2,2"/>
+                  <text x="25" y="30" dominant-baseline="middle" font-size="12px">
+                    Expected Tractjectory (no break)
+                  </text>
+
+                </svg>
+
+
+              </div>
+            </td>
+          </tr>
+        </table>
+
       </div>
     </div>
 
     <script>
+      let callout = d3.select("#frameCallout");
+      let calloutAnim = true;
+      animateCallout();
+
+      function animateCallout() {
+        if(calloutAnim) {
+          callout
+            .transition()
+            .duration(2000)
+            .style("background-color","#ffffff")
+            .transition()
+            .duration(2000)
+            .style("background-color","#ff0000")
+            .on('end',animateCallout);
+        }
+      }
+
       let datasets = menuDataset();
       MenuTables(datasets);
 
@@ -50,43 +184,47 @@
             .style("display","block");
 
 
-          let svg = d3.select("#frameViewer")
+          let container = d3.select("#frameViewer")
+            .append("div")
+            .style("text-align","middle")
+            .style("margin","auto");
+
+          let innerContainer = container
+            .append("div")
+            .style("width",d.size.width + "px")
+            .style("position","relative")
+            .style("margin","auto");
+
+          let image = innerContainer
+            .append("img")
+            .style("left",0)
+            .style("top",0)
+            .style("padding",0)
+            .style("margin",0)
+            .style("z-index",0)
+            .attr("width",d.size.width)
+            .attr("height",d.size.height);
+
+          let svg = innerContainer
             .append("svg")
             .attr("height",d.size.height)
             .attr("width",d.size.width)
-            .style("border","1px solid black");
+            .style("position","absolute")
+            .style("left",0)
+            .style("top",0)
+            .style("padding",0)
+            .style("margin",0)
+            .style("z-index",1);
 
-          let image = svg
-            .append("image")
-            .attr("xlink:href",d.path + "/0001.png")
-            .attr("width",d.size.width)
-            .attr("height",d.size.height);
 
           let circles = svg
             .selectAll("circles");
 
-          d3.select("#framePlayerName")
-            .html(d.name);
-
-
-          d3.select("#frameOpponentName")
-            .html(d.opponent_player);
-
-          d3.select("#frameDate")
-            .html(d.date);
-
-          d3.select("#frameInning")
-            .html(d.inning);
-
-          d3.select("#frameCount")
-            .html(d.count.balls + " - " + d.count.strikes);
-
-          d3.select("#frameOpponentTeam")
-            .html(d.opponent_team_name);
+          PitchUpdateView(d);
 
           d3.json(d.json)
             .then((data) => {
-              console.log(data);
+              preloadImages(d,data);
               let frameCount = data.length;
 
 
@@ -99,55 +237,97 @@
               };
 
 
-              let links = d3.select("#frames")
-                .data(data)
-                .enter()
-                .append("a")
-                .text((d,i) => { return " "+  i +" "})
-                .on('click',updateImage);
-
-
-                updateImage(data[0]);
-
-
-              let sliderSvg = d3.select("#framesSlider")
-                .append("svg")
-                .attr("width",500)
-                .attr("height",200)
-                .style("border","1px solid black");
-
-              let slider = new ModelSlider({
-                "where":sliderSvg,
-                "coordinates":{"x":50,"y":50},
-                "formatter":(x) => { return x.toFixed(0)},
-                "domain":[1,90],
-                "styles":{
-                  "labelFontFill":"black",
-                  "labelFontSize":"12pt",
-                  "labelActiveFontSize":"14pt"
-                },
-                "size":{
-                  "width":400,
-                },
-                "labelText":"Frame:",
-                "callbacks":{
-                  "change":(newValue) => {
-                    let frame = Math.floor(newValue);
-                    updateImage(data[frame]);
-                  }
-                }
-              });
-
 
             });
 
 
-          function updateImage(datum) {
-            let swap = datum.image.split(".");
-            let compressed = swap[0] + "-fs8." + swap[1];
-            console.log(compressed);
+          function preloadImages(d,data) {
+            let imagesToLoad = [];
+            data.forEach((datum) => {
+              let path = d.imagePath;
+              let swap = datum.image.split(".");
+              let compressed = path +  "/" + swap[0] + "-fs8." + swap[1];
+              imagesToLoad.push({
+                "path":compressed,
+                "imageData":false
+              });
+            });
+
+            imagesToLoad.forEach((image) =>{
+              let actualImage = new Image();
+              actualImage.src = image.path;
+              actualImage.onload = () => {
+                image.imageData = actualImage;
+                checkCountToLoad(data,imagesToLoad);
+              }
+            });
+
+
+          }
+
+          function checkCountToLoad(data,imagesToLoad) {
+            let flag = imagesToLoad.map((a) => { return a.imageData}).includes(false);
+            if(!flag) {
+
+                d3.select("#loadingMessage")
+                  .style("display","none");
+
+              // updateImage(data[0]);
+
+                let smallPlot = new PitchSmallPlot({
+                  "where":d3.select("#pitchSmallPlot"),
+                  "pitchData":d.pitchData
+
+                });
+
+                let sidePlot = new PitchSidePlot({
+                  "where":d3.select("#pitchSidePlot"),
+                  "pitchData":d.pitchData
+
+
+
+                });
+
+                let sliderSvg = d3.select("#framesSlider")
+                  .append("svg")
+                  .attr("width",500)
+                  .attr("height",50);
+
+                let slider = new ModelSlider({
+                  "where":sliderSvg,
+                  "coordinates":{"x":50,"y":25},
+                  "formatter":(x) => { return x.toFixed(0)},
+                  "domain":[1,90],
+                  "styles":{
+                    "labelFontFill":"black",
+                    "labelFontSize":"12pt",
+                    "labelActiveFontSize":"14pt"
+                  },
+                  "size":{
+                    "width":400,
+                  },
+                  "labelText":"Frame:",
+                  "callbacks":{
+                    "dragStart":() =>{
+                      calloutAnim = false;
+                      callout
+                        .style("display","none");
+                    },
+                    "change":(newValue) => {
+                      let frame = Math.floor(newValue) - 1;
+                      updateImage(data[frame],frame,imagesToLoad);
+                    }
+                  }
+                });
+                updateImage(data[0],0,imagesToLoad);
+            }
+          }
+
+
+          function updateImage(datum,frame,imageSet) {
+
             image
-              .attr("xlink:href",d.path + "/" + compressed);
+              .attr("src",imageSet[frame].imageData.src);
 
             svg.selectAll("circle")
               .remove();
@@ -194,8 +374,27 @@
               })
             });
 
+            let circleGroup = svg.append("g");
+            let textGroup = svg.append("g");
 
-            svg.selectAll("circle")
+            let ghost = textGroup.append("text")
+              .attr("stroke","black")
+              .attr("stroke-width",2)
+              .attr("font-size","14px")
+              .attr("display","none")
+              .attr("font-weight","bold")
+              .attr("dx",8)
+              .attr("dy",0);
+
+            let text = textGroup.append("text")
+              .attr("fill","yellow")
+              .attr("font-size","14px")
+              .attr("display","none")
+              .attr("font-weight","bold")
+              .attr("dx",8)
+              .attr("dy",0);
+
+            circleGroup.selectAll("circle")
               .data(datum.keypoints)
               .enter()
               .append("circle")
@@ -204,7 +403,30 @@
               .attr("r",5)
               .attr("fill","yellow")
               .attr("stroke","black")
-              .on('mouseover',(d) => { console.log(d.name); });
+              .on('mouseover',function(d) {
+                let element = d3.select(this);
+                let coords = {
+                  "x":element.attr("cx"),
+                  "y":element.attr("cy")
+                }
+
+                ghost
+                 .attr("display","block")
+                 .text(d.name)
+                 .attr("x",coords.x)
+                 .attr("y",coords.y);
+
+                 text
+                  .attr("display","block")
+                  .text(d.name)
+                  .attr("x",coords.x)
+                  .attr("y",coords.y);
+
+               })
+               .on('mouseout',() => {
+                 text.attr("display","none");
+                 ghost.attr("display","none");
+               })
 
           }
 

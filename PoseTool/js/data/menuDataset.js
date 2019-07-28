@@ -17,7 +17,7 @@ function menuDataset() {
       "json":"giolito1.json",
       "path":"giolito1",
       "size":{"width":258,"height":384},
-
+      "pitchData":{"gameNumber":"29","location":"h","weather":"Cloudy","opponent":"BOS","date":"2019-05-02","pitchNumber":"25","mlbAtBatIndex":"5","realAtBatIndex":"5","batterName":"Michael Chavis","battingSide":"R","playResult":"Strikeout","playResultType":"strikeout","countBalls":"0","countStrikes":"2","pitchResultCode":"S","pitchType":"FF","startSpeed":"94.6","endSpeed":"86.8","aY":"29.79","aZ":"-10.5","pfxX":"-5.92","pfxZ":"11.25","pX":"-0.11","pZ":"3.23","vX0":"5.43","vY0":"-137.75","vZ0":"-7.02","x":"121.29","y":"151.55","x0":"-1.34","y0":"50","z0":"6.52","aX":"-11.4","breakAngle":"40.8","breakLength":"3.6","breakY":"24","spinRate":"2309","spinDirection":"206","plateTime":"0.39","extension":"7.32","strikeZoneTop":"3.48","strikeZoneBottom":"1.65","":""}
     },
     {
       "name":"Lucas Giolito",
@@ -35,7 +35,8 @@ function menuDataset() {
       "against":"Rafael Devers",
       "json":"giolito2.json",
       "path":"giolito2",
-      "size":{"width":476,"height":376}
+      "size":{"width":476,"height":376},
+      "pitchData":{"gameNumber":"76","location":"a","weather":"Partly Cloudy","opponent":"BOS","date":"2019-06-24","pitchNumber":"14","mlbAtBatIndex":"6","realAtBatIndex":"3","batterName":"Rafael Devers","battingSide":"L","playResult":"Strikeout","playResultType":"strikeout","countBalls":"0","countStrikes":"2","pitchResultCode":"S","pitchType":"FF","startSpeed":"94.9","endSpeed":"87.1","aY":"29.67","aZ":"-11.42","pfxX":"-7.01","pfxZ":"10.72","pX":"0.11","pZ":"3","vX0":"5.86","vY0":"-138.04","vZ0":"-7.41","x":"112.82","y":"157.73","x0":"-1.13","y0":"50","z0":"6.48","aX":"-13.58","breakAngle":"43.2","breakLength":"3.6","breakY":"24","spinRate":"2287","spinDirection":"212","plateTime":"0.39","extension":"6.59","strikeZoneTop":"3.49","strikeZoneBottom":"1.57","":""}
     },
     {
       "name":"Lucas Giolito",
@@ -53,13 +54,14 @@ function menuDataset() {
       "against":"Aldemys Diaz",
       "json":"giolito3.json",
       "path":"giolito3",
-      "size":{"width":450,"height":350}
+      "size":{"width":450,"height":350},
+      "pitchData":{"gameNumber":"49","location":"a","weather":"Roof Closed","opponent":"HOU","date":"2019-05-23","pitchNumber":"24","mlbAtBatIndex":"12","realAtBatIndex":"5","batterName":"Aledmys Diaz","battingSide":"R","playResult":"Strikeout","playResultType":"strikeout","countBalls":"0","countStrikes":"2","pitchResultCode":"S","pitchType":"SL","startSpeed":"88.4","endSpeed":"81.8","aY":"25.55","aZ":"-25.61","pfxX":"0.66","pfxZ":"3.9","pX":"1.22","pZ":"1.62","vX0":"5.62","vY0":"-128.68","vZ0":"-7.1","x":"70.4","y":"195.09","x0":"-1.07","y0":"50","z0":"6.38","aX":"1.11","breakAngle":"4.8","breakLength":"6","breakY":"24","spinRate":"2092","spinDirection":"157","plateTime":"0.42","extension":"6.72","strikeZoneTop":"3.35","strikeZoneBottom":"1.63","":""}
     },
     {
       "name":"Dylan Cease",
       "imagePath":"cease1/",
       "player_image":"thumbnails/cease.png",
-      "description":"Near-HBP of Jeimer Candelario",
+      "description":"HBP of Jeimer Candelario",
       "opponent_player":"Jeimer Candelario",
       "opponent_team":"thumbnails/det.gif",
       "opponent_team_name":"Tigers",
@@ -71,27 +73,28 @@ function menuDataset() {
       "against":"Jeimer Candelario",
       "json":"cease1.json",
       "path":"cease1",
-      "size":{"width":350,"height":400}
+      "size":{"width":350,"height":400},
+      "pitchData":{"gameNumber":"82","location":"h","weather":"Cloudy","opponent":"DET","date":"2019-07-03","pitchNumber":"22","mlbAtBatIndex":"4","realAtBatIndex":"4","batterName":"Jeimer Candelario","battingSide":"L","playResult":"Hit By Pitch","playResultType":"hit_by_pitch","countBalls":"1","countStrikes":"2","pitchResultCode":"H","pitchType":"FF","startSpeed":"96.7","endSpeed":"88.5","aY":"31.38","aZ":"-15.6","pfxX":"0.97","pfxZ":"8.28","pX":"1.68","pZ":"4.03","vX0":"8.47","vY0":"-140.49","vZ0":"-3.51","x":"undefined","y":"undefined","x0":"-1.5","y0":"50","z0":"6.31","aX":"1.93","breakAngle":"13.2","breakLength":"3.6","breakY":"24","spinRate":"2424","spinDirection":"166","plateTime":"0.39","extension":"5.91","strikeZoneTop":"3.46","strikeZoneBottom":"1.69","":""}
     },
-    {
-      "name":"Dylan Cease",
-      "imagePath":"cease2/",
-      "player_image":"thumbnails/cease.png",
-      "description":"Single allowed to Harold Castro",
-      "opponent_player":"Harold Castro",
-      "opponent_team":"thumbnails/det.gif",
-      "opponent_team_name":"Tigers",
-      "result":"ball",
-      "count":{"balls":0,"strikes":1},
-      "results":"Single",
-      "inning":1,
-      "date":"7/3/2019",
-      "against":"Chrsitin Stewart",
-
-      "json":"cease2.json",
-      "path":"cease2",
-      "size":{"width":350,"height":400}
-    },
+    // {
+    //   "name":"Dylan Cease",
+    //   "imagePath":"cease2/",
+    //   "player_image":"thumbnails/cease.png",
+    //   "description":"Single allowed to Harold Castro",
+    //   "opponent_player":"Harold Castro",
+    //   "opponent_team":"thumbnails/det.gif",
+    //   "opponent_team_name":"Tigers",
+    //   "result":"ball",
+    //   "count":{"balls":0,"strikes":1},
+    //   "results":"Single",
+    //   "inning":1,
+    //   "date":"7/3/2019",
+    //   "against":"Chrsitin Stewart",
+    //
+    //   "json":"cease2.json",
+    //   "path":"cease2",
+    //   "size":{"width":350,"height":400}
+    // },
     {
       "name":"Dylan Cease",
       "imagePath":"cease3/",
@@ -108,7 +111,8 @@ function menuDataset() {
       "against":"Christin Stewart",
       "json":"cease3.json",
       "path":"cease3",
-      "size":{"width":350,"height":400}
+      "size":{"width":350,"height":400},
+      "pitchData":{"gameNumber":"82","location":"h","weather":"Cloudy","opponent":"DET","date":"2019-07-03","pitchNumber":"86","mlbAtBatIndex":"33","realAtBatIndex":"19","batterName":"Christin Stewart","battingSide":"L","playResult":"Strikeout","playResultType":"strikeout","countBalls":"0","countStrikes":"2","pitchResultCode":"C","pitchType":"CH","startSpeed":"80.6","endSpeed":"75.4","aY":"18.42","aZ":"-23.93","pfxX":"-0.72","pfxZ":"5.79","pX":"-0.91","pZ":"1.88","vX0":"0.8","vY0":"-117.48","vZ0":"-4.64","x":"151.54","y":"188.09","x0":"-1.15","y0":"50","z0":"6.06","aX":"-1.02","breakAngle":"2.4","breakLength":"7.2","breakY":"24","spinRate":"1440","spinDirection":"186","plateTime":"0.46","extension":"6.32","strikeZoneTop":"3.09","strikeZoneBottom":"1.49","":""}
     },
     {
       "name":"Eloy Jimenez",
@@ -126,7 +130,8 @@ function menuDataset() {
       "against":"Jonathan Holder",
       "json":"jimenez1.json",
       "path":"jimenez1",
-      "size":{"width":350,"height":400}
+      "size":{"width":350,"height":400},
+      "pitchData":{"gameNumber":"12","location":"a","weather":"Cloudy","opponent":"NYY","date":"2019-04-12","mlbAtBatIndex":"43","realAtBatIndex":"2","pitcherName":"Jonathan Holder","battingSide":"R","playResult":"Home Run","playResultType":"home_run","countBalls":"2","countStrikes":"1","pitchResultCode":"E","pitchType":"FF","startSpeed":"92.2","endSpeed":"84.8","aY":"27.17","aZ":"-13.33","pfxX":"-2.53","pfxZ":"10.26","pX":"-0.33","pZ":"3.38","vX0":"2.78","vY0":"-134.22","vZ0":"-4.34","x":"129.41","y":"147.62","x0":"-1.04","y0":"50","z0":"5.95","aX":"-4.64","breakAngle":"15.6","breakLength":"3.6","breakY":"24","spinRate":"2423","spinDirection":"192","plateTime":"undefined","extension":"undefined","":"","strikeZoneTop":3.5,"strikeZoneBottom":1.65}
     },
     {
       "name":"Eloy Jimenez",
@@ -144,7 +149,8 @@ function menuDataset() {
       "against":"Chad Green",
       "json":"jimenez2.json",
       "path":"jimenez2",
-      "size":{"width":350,"height":400}
+      "size":{"width":350,"height":400},
+      "pitchData":{"gameNumber":"12","location":"a","weather":"Cloudy","opponent":"NYY","date":"2019-04-12","mlbAtBatIndex":"62","realAtBatIndex":"3","pitcherName":"Chad Green","battingSide":"R","playResult":"Home Run","playResultType":"home_run","countBalls":"1","countStrikes":"1","pitchResultCode":"E","pitchType":"FF","startSpeed":"93.7","endSpeed":"86","aY":"28.73","aZ":"-14.89","pfxX":"-3.51","pfxZ":"9.13","pX":"-0.61","pZ":"3.06","vX0":"3.83","vY0":"-136.41","vZ0":"-4.8","x":"140.11","y":"156.22","x0":"-1.57","y0":"50","z0":"5.86","aX":"-6.64","breakAngle":"20.4","breakLength":"3.6","breakY":"24","spinRate":"2123","spinDirection":"199","plateTime":"undefined","extension":"undefined","":"","strikeZoneTop":3.5,"strikeZoneBottom":1.65}
     }
   ];
 }

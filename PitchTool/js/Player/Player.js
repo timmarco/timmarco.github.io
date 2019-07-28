@@ -6,11 +6,12 @@ function Player(options) {
 
   function init(options) {
     player.defineHighlightRules();
-    
+
     if(options.position !== "P") {
       d3.csv("data/hitters/" + options.id + ".csv")
         .then((data) => {
           player.rawData = data;
+          console.log(JSON.stringify(player.rawData.filter((a) => { return a.pitchType == "CU"}).sort((a,b) => { return +a.pfxZ - (+b.pfxZ)})[0]));
           player.filteredData = JSON.parse(JSON.stringify(data));
 
           player.filterValues = player.defineFilterValues();

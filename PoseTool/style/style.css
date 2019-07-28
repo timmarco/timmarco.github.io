@@ -2,8 +2,16 @@ body {
   font-family:Source Sans Pro;
 }
 
+#frameViewer {
+  position:relative;
+  background-color:#eee;
+  display:block;
+  width:258;
+  height:384;
+}
+
 .container {
-  width:800px;
+  width:1000px;
   margin:auto;
 }
 
