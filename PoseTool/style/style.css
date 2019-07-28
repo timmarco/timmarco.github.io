@@ -1,0 +1,105 @@
+body {
+  font-family:Source Sans Pro;
+}
+
+.container {
+  width:800px;
+  margin:auto;
+}
+
+.note {
+  border:2px dashed red;
+  padding-left:4em;
+  padding-right:4em;
+  padding-top:2em;
+  padding-bottom:2em;
+}
+
+.table {
+  display:table;
+  table-layout:fixed;
+  margin-bottom:50px;
+}
+
+.row {
+  display:table-row;
+}
+
+.row-cell {
+  display:table-cell;
+}
+
+.spacer {
+  height:25px;
+}
+
+.player-thumbnail {
+  height:25px;
+}
+
+.player-name {
+  font-weight:bold;
+}
+
+.player-name-cell {
+  width:125px;
+  font-size:1.125em;
+  font-weight:bold;
+  text-align:right;
+}
+
+.date-cell {
+  width:100px;
+  text-align:right;
+  padding-top:20px;
+}
+
+.team-cell {
+  width:150px;
+}
+
+.play-description {
+  width:200px;
+}
+
+.play-result {
+  text-align:left;
+  width:85px;
+}
+
+.team-thumbnail {
+  height:20px;
+}
+
+.play-header {
+  font-size:0.85em;
+  border-bottom:1px solid #666;
+  color:#666;
+}
+
+.play-row div {
+  cursor:pointer;
+  text-decoration:underline;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  margin-top:0.5em;
+  margin-bottom:0.5em;
+}
+
+.play-row:hover {
+  color:blue;
+}
+
+.play-odd {
+  background-color:#e7e7e7;
+}
+
+.play-inning {
+  width:50px;
+  text-align:center;
+}
+
+.play-count {
+  width:50px;
+  text-align:center;
+}

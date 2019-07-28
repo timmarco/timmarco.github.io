@@ -1,0 +1,41 @@
+body {
+  font-family:Source Sans Pro;
+}
+
+#filterAndResults {
+  height:600px;
+  overflow-y:scroll;
+};
+
+.filterTable {
+  background-color:#fff;
+  border:1px solid #eee;
+  padding:0.25em;
+  margin:0.5em;
+}
+
+.filterTableTitle {
+  font-weight:bold;
+}
+
+.filterTableListItem {
+  cursor:pointer;
+}
+
+.filterTableListItem:hover {
+  color:blue;
+}
+
+.filterTableListItemName {
+  font-weight:bold;
+}
+
+.resultsPane {
+  border:3px solid black;
+  width:300px;
+}
+
+.resultsPaneGroup {
+  padding-bottom:10px;
+  border-bottom:3px solid orange;
+}

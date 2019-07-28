@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Zone Plotter</title>
+    <script src="dist/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.min.js"></script>
+    <link rel="stylesheet" href="style/style.css" />
+  </head>
+
+  <body>
+    <div>
+      <div style="float:left">
+        <svg width="1000" height="600" style="border:2px solid black" id="tempCatcher"></svg>
+      </div>
+      <div style="float:left">
+        <div id="filterAndResults">
+          <div id="resultsPane"></div>
+          <div id="filterTables"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="clear:both"></div>
+    <div id="playerList"></div>
+    <div id="zoneContainer"></div>
+
+
+    <script>
+
+      let theList = new PlayerList({});
+    </script>
+  </body>
+
+</html>
