@@ -5,7 +5,7 @@ ResultsPane.prototype.addInsideRegionOutsideRegion = function() {
   let bar = new Minibar({
     "where":pane.groups.sampleSize,
     "title":"Sample Size",
-    "leftLabel":"In Region",
+    "leftLabel":"Pitches",
     "rightLabel":"Outside",
     "styles":{
       "active":{
