@@ -49,8 +49,19 @@ CatcherView.prototype.updateActive = function(data) {
       let tooltipMessage = "";
       tooltipMessage += "<div style='text-align:center; font-size:1.2em; font-weight:bold; margin-bottom:0.5em; color:white; background-color:"+colorScheme[d.pitchResultCode]+"'>" + mapPitchResult(d.pitchResultCode) + "</div>";
       tooltipMessage += "<table style='width:100%; margin-bottom:25px;>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td><td style='border-bottom:1px solid black'>Pitcher</td><td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td><td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td>";
+      if(d.pitcherName === undefined) {
+        tooltipMessage += "<td style='border-bottom:1px solid black'>Hitter</td>";
+      } else {
+        tooltipMessage += "<td style='border-bottom:1px solid black'>Pitcher</td>";
+      }
+      tooltipMessage += "<td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td>";
+      if(d.pitcherName === undefined) {
+        tooltipMessage+= "<td>"+d.batterName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      } else {
+        tooltipMessage+= "<td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      }
       tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Spin Rate</td><td style='border-bottom:1px solid black'>Start Velo</td><td style='border-bottom:1px solid black'>End Velo</td></tr>";
       tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.spinRate+" rpm</td><td>"+d.startSpeed+" mph</td><td>"+d.endSpeed+" mph</td></tr>";
       tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Break Angle</td><td style='border-bottom:1px solid black'>Horizontal Movement</td><td style='border-bottom:1px solid black'>Vertical Movement</td></tr>";

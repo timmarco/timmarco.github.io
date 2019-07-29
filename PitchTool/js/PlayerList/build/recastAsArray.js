@@ -8,5 +8,7 @@ PlayerList.prototype.recastAsArray = function() {
     recast.push(list.listData[playerId]);
   });
 
+  recast.sort((a,b) => { return a.name - b.name ;});
+  console.log(recast);
   return recast;
 };

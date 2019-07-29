@@ -1,4 +1,26 @@
 /* jshint esversion:6 */
+function BrushBoxCorner(options) {
+  const corner = this;
+  init(options);
+  return corner;
+
+  function init(options) {
+    corner.parent = options.parent;
+    corner.coordinates = options.coordinates;
+
+    corner.dragLock = false;
+    
+    corner.drag = corner.defineDrag();
+    corner.callbacks = corner.defineCallbacks(options);
+
+    corner.group = corner.addGroup();
+    corner.hotspot = corner.addHotspot();
+    corner.circle = corner.addCircle();
+
+  }
+};
+
+/* jshint esversion:6 */
 function BrushBox(options) {
   const box = this;
   init(options);
@@ -29,28 +51,6 @@ function BrushBox(options) {
 
   }
 }
-
-/* jshint esversion:6 */
-function BrushBoxCorner(options) {
-  const corner = this;
-  init(options);
-  return corner;
-
-  function init(options) {
-    corner.parent = options.parent;
-    corner.coordinates = options.coordinates;
-
-    corner.dragLock = false;
-    
-    corner.drag = corner.defineDrag();
-    corner.callbacks = corner.defineCallbacks(options);
-
-    corner.group = corner.addGroup();
-    corner.hotspot = corner.addHotspot();
-    corner.circle = corner.addCircle();
-
-  }
-};
 
 /* jshint esversion:6 */
 function CatcherView(options) {
@@ -282,8 +282,14 @@ function Player(options) {
   function init(options) {
     player.defineHighlightRules();
 
-    if(options.position !== "P") {
-      d3.csv("data/hitters/" + options.id + ".csv")
+    let path;
+    if(options.position === "P") {
+      path = "data/pitchers/";
+    } else {
+      path = "data/hitters/";
+    }
+    
+      d3.csv(path + options.id + ".csv")
         .then((data) => {
           player.rawData = data;
 
@@ -340,7 +346,6 @@ function Player(options) {
 
 
         });
-    }
   }
 }
 
@@ -352,7 +357,7 @@ function PlayerList(options) {
 
   function init(options) {
     list.views = options.views;
-    
+
     d3.json('data/players.json')
     .then((rawList) => {
       list.listData = rawList;
@@ -466,6 +471,201 @@ function pitch(options) {
 
   function init(options) {
   }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.addCircle = function() {
+  const corner = this;
+
+  let circle = corner.group
+    .append("circle")
+    .attr("r",corner.parent.styles.defaultCorner.radius)
+    .attr("fill",corner.parent.styles.defaultCorner.fill)
+    .attr("stroke",corner.parent.styles.defaultCorner.stroke)
+    .attr("stroke-width",corner.parent.styles.defaultCorner.strokeWidth);
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.addGroup = function() {
+  const corner = this;
+
+  let group = corner.parent.layers.corners
+    .append("g")
+    .attr("transform","translate("+corner.coordinates.x+","+corner.coordinates.y+")")
+    .call(corner.drag)
+    .on('mouseover',corner.groupMouseover())
+    .on('mouseout',corner.groupMouseout());
+
+
+  return group;
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.addHotspot = function() {
+  const corner = this;
+
+  let circle = corner.group
+    .append("circle")
+    .attr("r",corner.parent.styles.cornerHotspot.radius)
+    .attr("fill",corner.parent.styles.cornerHotspot.fill)
+    .attr("stroke",corner.parent.styles.cornerHotspot.stroke)
+    .attr("stroke-width",corner.parent.styles.cornerHotspot.strokeWidth);
+
+
+  return circle;
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.defineCallbacks = function(options) {
+  const corner = this;
+
+  let callbacks = defaulter(options.callbacks,{});
+  callbacks.checkBounds = defaulter(callbacks.checkBounds,() =>{  });
+  callbacks.moved = defaulter(callbacks.moved,() => {  });
+  callbacks.mouseover = defaulter(callbacks.mouseover,() => { });
+  callbacks.mouseout = defaulter(callbacks.mouseout,() => { });
+
+  return callbacks;
+
+  function defaulter(s,v) {
+    return s ? s : v;
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.defineDrag = function() {
+  const corner = this;
+
+  let drag = d3.drag()
+    .on('start',corner.dragStart())
+    .on('drag',corner.dragging())
+    .on('end',corner.dragEnd());
+
+  return drag;
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.dragEnd = function() {
+  const corner = this;
+  return function() {
+    corner.parent.dragLock = false;
+    corner.dragLock = false;
+    corner.groupMouseout();
+
+    corner.parent.callbacks
+      .valueChanged({
+        "size":corner.parent.size,
+        "coordinates":corner.parent.coordinates
+      });
+
+    corner.parent.callbacks
+      .dragEnd();
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.dragStart = function() {
+  const corner = this;
+  return function() {
+    corner.dragLock = true;
+    corner.parent.dragLock = true;
+
+    corner.parent.callbacks
+      .dragStart();
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.dragging = function() {
+  const corner = this;
+  return function() {
+    corner
+      .verifyBounds();
+
+    corner.group
+      .attr("transform","translate("+corner.coordinates.x+","+corner.coordinates.y+")");
+
+    corner.callbacks
+      .moved(corner.coordinates);
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.groupMouseout = function() {
+  const corner = this;
+  return function() {
+
+    if(!corner.parent.dragLock) {
+      corner.hotspot
+        .transition()
+        .duration(corner.parent.styles.cornerHotspotTransition.duration)
+        .attr("r",corner.parent.styles.cornerHotspot.radius)
+        .attr("fill",corner.parent.styles.cornerHotspot.fill)
+        .attr("stroke",corner.parent.styles.cornerHotspot.stroke)
+        .attr("stroke-width",corner.parent.styles.cornerHotspot.strokeWidth);
+
+      
+      corner.callbacks
+        .mouseout();
+    }
+
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.groupMouseover = function() {
+  const corner = this;
+  return function() {
+
+    if(!corner.parent.dragLock) {
+      corner.hotspot
+        .transition()
+        .duration(corner.parent.styles.cornerHotspotTransition.duration)
+        .attr("r",corner.parent.styles.highlightCorner.radius)
+        .attr("fill",corner.parent.styles.highlightCorner.fill)
+        .attr("stroke",corner.parent.styles.highlightCorner.stroke)
+        .attr("stroke-width",corner.parent.styles.highlightCorner.strokeWidth);
+
+      corner.callbacks
+        .mouseover();
+    }
+  }
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.verifyBounds = function() {
+  const corner = this;
+
+  corner.bounds = corner.callbacks
+    .checkBounds();
+
+  let attemptedCoordinates = {};
+  attemptedCoordinates.x = d3.event.x > corner.bounds.max.x ? corner.bounds.max.x : d3.event.x;
+  attemptedCoordinates.x = attemptedCoordinates.x < corner.bounds.min.x ? corner.bounds.min.x : attemptedCoordinates.x;
+
+  attemptedCoordinates.y = d3.event.y > corner.bounds.max.y ? corner.bounds.max.y : d3.event.y;
+  attemptedCoordinates.y = attemptedCoordinates.y < corner.bounds.min.y ? corner.bounds.min.y : attemptedCoordinates.y;
+
+  corner.coordinates.x = attemptedCoordinates.x;
+  corner.coordinates.y = attemptedCoordinates.y;
+
+  return corner;
+}
+
+/* jshint esversion:6 */
+BrushBoxCorner.prototype.move = function(coordinates) {
+  const corner = this;
+
+  corner.coordinates = coordinates;
+
+  corner.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
+
+  return corner;
 }
 
 /* jshint esversion:6 */
@@ -1221,201 +1421,6 @@ BrushBox.prototype.rectMouseover = function(datum,index) {
 };
 
 /* jshint esversion:6 */
-BrushBoxCorner.prototype.addCircle = function() {
-  const corner = this;
-
-  let circle = corner.group
-    .append("circle")
-    .attr("r",corner.parent.styles.defaultCorner.radius)
-    .attr("fill",corner.parent.styles.defaultCorner.fill)
-    .attr("stroke",corner.parent.styles.defaultCorner.stroke)
-    .attr("stroke-width",corner.parent.styles.defaultCorner.strokeWidth);
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.addGroup = function() {
-  const corner = this;
-
-  let group = corner.parent.layers.corners
-    .append("g")
-    .attr("transform","translate("+corner.coordinates.x+","+corner.coordinates.y+")")
-    .call(corner.drag)
-    .on('mouseover',corner.groupMouseover())
-    .on('mouseout',corner.groupMouseout());
-
-
-  return group;
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.addHotspot = function() {
-  const corner = this;
-
-  let circle = corner.group
-    .append("circle")
-    .attr("r",corner.parent.styles.cornerHotspot.radius)
-    .attr("fill",corner.parent.styles.cornerHotspot.fill)
-    .attr("stroke",corner.parent.styles.cornerHotspot.stroke)
-    .attr("stroke-width",corner.parent.styles.cornerHotspot.strokeWidth);
-
-
-  return circle;
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.defineCallbacks = function(options) {
-  const corner = this;
-
-  let callbacks = defaulter(options.callbacks,{});
-  callbacks.checkBounds = defaulter(callbacks.checkBounds,() =>{  });
-  callbacks.moved = defaulter(callbacks.moved,() => {  });
-  callbacks.mouseover = defaulter(callbacks.mouseover,() => { });
-  callbacks.mouseout = defaulter(callbacks.mouseout,() => { });
-
-  return callbacks;
-
-  function defaulter(s,v) {
-    return s ? s : v;
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.defineDrag = function() {
-  const corner = this;
-
-  let drag = d3.drag()
-    .on('start',corner.dragStart())
-    .on('drag',corner.dragging())
-    .on('end',corner.dragEnd());
-
-  return drag;
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.dragEnd = function() {
-  const corner = this;
-  return function() {
-    corner.parent.dragLock = false;
-    corner.dragLock = false;
-    corner.groupMouseout();
-
-    corner.parent.callbacks
-      .valueChanged({
-        "size":corner.parent.size,
-        "coordinates":corner.parent.coordinates
-      });
-
-    corner.parent.callbacks
-      .dragEnd();
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.dragStart = function() {
-  const corner = this;
-  return function() {
-    corner.dragLock = true;
-    corner.parent.dragLock = true;
-
-    corner.parent.callbacks
-      .dragStart();
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.dragging = function() {
-  const corner = this;
-  return function() {
-    corner
-      .verifyBounds();
-
-    corner.group
-      .attr("transform","translate("+corner.coordinates.x+","+corner.coordinates.y+")");
-
-    corner.callbacks
-      .moved(corner.coordinates);
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.groupMouseout = function() {
-  const corner = this;
-  return function() {
-
-    if(!corner.parent.dragLock) {
-      corner.hotspot
-        .transition()
-        .duration(corner.parent.styles.cornerHotspotTransition.duration)
-        .attr("r",corner.parent.styles.cornerHotspot.radius)
-        .attr("fill",corner.parent.styles.cornerHotspot.fill)
-        .attr("stroke",corner.parent.styles.cornerHotspot.stroke)
-        .attr("stroke-width",corner.parent.styles.cornerHotspot.strokeWidth);
-
-      
-      corner.callbacks
-        .mouseout();
-    }
-
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.groupMouseover = function() {
-  const corner = this;
-  return function() {
-
-    if(!corner.parent.dragLock) {
-      corner.hotspot
-        .transition()
-        .duration(corner.parent.styles.cornerHotspotTransition.duration)
-        .attr("r",corner.parent.styles.highlightCorner.radius)
-        .attr("fill",corner.parent.styles.highlightCorner.fill)
-        .attr("stroke",corner.parent.styles.highlightCorner.stroke)
-        .attr("stroke-width",corner.parent.styles.highlightCorner.strokeWidth);
-
-      corner.callbacks
-        .mouseover();
-    }
-  }
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.verifyBounds = function() {
-  const corner = this;
-
-  corner.bounds = corner.callbacks
-    .checkBounds();
-
-  let attemptedCoordinates = {};
-  attemptedCoordinates.x = d3.event.x > corner.bounds.max.x ? corner.bounds.max.x : d3.event.x;
-  attemptedCoordinates.x = attemptedCoordinates.x < corner.bounds.min.x ? corner.bounds.min.x : attemptedCoordinates.x;
-
-  attemptedCoordinates.y = d3.event.y > corner.bounds.max.y ? corner.bounds.max.y : d3.event.y;
-  attemptedCoordinates.y = attemptedCoordinates.y < corner.bounds.min.y ? corner.bounds.min.y : attemptedCoordinates.y;
-
-  corner.coordinates.x = attemptedCoordinates.x;
-  corner.coordinates.y = attemptedCoordinates.y;
-
-  return corner;
-}
-
-/* jshint esversion:6 */
-BrushBoxCorner.prototype.move = function(coordinates) {
-  const corner = this;
-
-  corner.coordinates = coordinates;
-
-  corner.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return corner;
-}
-
-/* jshint esversion:6 */
 CatcherView.prototype.addBrushBox = function() {
   const view = this;
 
@@ -1704,8 +1709,19 @@ CatcherView.prototype.updateActive = function(data) {
       let tooltipMessage = "";
       tooltipMessage += "<div style='text-align:center; font-size:1.2em; font-weight:bold; margin-bottom:0.5em; color:white; background-color:"+colorScheme[d.pitchResultCode]+"'>" + mapPitchResult(d.pitchResultCode) + "</div>";
       tooltipMessage += "<table style='width:100%; margin-bottom:25px;>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td><td style='border-bottom:1px solid black'>Pitcher</td><td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td><td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td>";
+      if(d.pitcherName === undefined) {
+        tooltipMessage += "<td style='border-bottom:1px solid black'>Hitter</td>";
+      } else {
+        tooltipMessage += "<td style='border-bottom:1px solid black'>Pitcher</td>";
+      }
+      tooltipMessage += "<td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td>";
+      if(d.pitcherName === undefined) {
+        tooltipMessage+= "<td>"+d.batterName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      } else {
+        tooltipMessage+= "<td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      }
       tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Spin Rate</td><td style='border-bottom:1px solid black'>Start Velo</td><td style='border-bottom:1px solid black'>End Velo</td></tr>";
       tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.spinRate+" rpm</td><td>"+d.startSpeed+" mph</td><td>"+d.endSpeed+" mph</td></tr>";
       tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Break Angle</td><td style='border-bottom:1px solid black'>Horizontal Movement</td><td style='border-bottom:1px solid black'>Vertical Movement</td></tr>";
@@ -1822,6 +1838,33 @@ FilterTable.prototype.addTitleDiv = function() {
     .html(table.title);
 
   return div;
+};
+
+/* jshint esversion:6 */
+Minibar.prototype.addData = function(data) {
+  const bar = this;
+
+  bar.data = data;
+
+  bar.scale
+    .domain([0,bar.data.max]);
+
+  bar.active
+    .attr("width",bar.scale(data.value) - bar.scale(0));
+
+  bar.line
+    .attr("x1",bar.scale(data.value))
+    .attr("x2",bar.scale(data.value));
+
+  bar.valueLabelGhost
+    .attr("x",bar.scale(data.value))
+    .text(bar.valueFormatter(data.value));
+
+  bar.valueLabel
+    .attr("x",bar.scale(data.value))
+    .text(bar.valueFormatter(data.value));
+
+  return bar;
 };
 
 /* jshint esversion:6 */
@@ -2146,33 +2189,6 @@ Minibar.prototype.defineValueFormatter = function(options) {
 }
 
 /* jshint esversion:6 */
-Minibar.prototype.addData = function(data) {
-  const bar = this;
-
-  bar.data = data;
-
-  bar.scale
-    .domain([0,bar.data.max]);
-
-  bar.active
-    .attr("width",bar.scale(data.value) - bar.scale(0));
-
-  bar.line
-    .attr("x1",bar.scale(data.value))
-    .attr("x2",bar.scale(data.value));
-
-  bar.valueLabelGhost
-    .attr("x",bar.scale(data.value))
-    .text(bar.valueFormatter(data.value));
-
-  bar.valueLabel
-    .attr("x",bar.scale(data.value))
-    .text(bar.valueFormatter(data.value));
-
-  return bar;
-};
-
-/* jshint esversion:6 */
 Player.prototype.addFilterTables = function() {
   const player = this;
 
@@ -2449,7 +2465,7 @@ PlayerList.prototype.addPlayerNames = function() {
   let names = list.tableRows
     .append("div")
     .classed("playerListTableCell",true)
-    .style("display",(player) => { if(player.position === "P") { return "none"; } return "block"; })
+    .style("display",(player) => { return "block"; })
     .html((player) => { return player.name; })
     .on('click',function(player,index) {
       let display = new Player(player);
@@ -2503,6 +2519,8 @@ PlayerList.prototype.recastAsArray = function() {
     recast.push(list.listData[playerId]);
   });
 
+  recast.sort((a,b) => { return a.name - b.name ;});
+  console.log(recast);
   return recast;
 };
 

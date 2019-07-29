@@ -7,8 +7,14 @@ function Player(options) {
   function init(options) {
     player.defineHighlightRules();
 
-    if(options.position !== "P") {
-      d3.csv("data/hitters/" + options.id + ".csv")
+    let path;
+    if(options.position === "P") {
+      path = "data/pitchers/";
+    } else {
+      path = "data/hitters/";
+    }
+    
+      d3.csv(path + options.id + ".csv")
         .then((data) => {
           player.rawData = data;
 
@@ -65,6 +71,5 @@ function Player(options) {
 
 
         });
-    }
   }
 }

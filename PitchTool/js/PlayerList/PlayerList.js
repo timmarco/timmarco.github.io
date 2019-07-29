@@ -6,7 +6,7 @@ function PlayerList(options) {
 
   function init(options) {
     list.views = options.views;
-    
+
     d3.json('data/players.json')
     .then((rawList) => {
       list.listData = rawList;
