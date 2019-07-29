@@ -47,7 +47,7 @@ function PitchUpdateView(d) {
     .html(d.pitchData.pfxX + "\"");
 
   d3.select("#pitchVerticalMovement")
-    .html(d.pitchData.pfxX + "\"");
+    .html(d.pitchData.pfxZ + "\"");
 
 
 

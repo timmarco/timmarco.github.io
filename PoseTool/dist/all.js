@@ -191,44 +191,21 @@ function MenuTables(datasets) {
 }
 
 /* jshint esversion:6 */
-function ModelSlider(options) {
-  const slider = this;
-
+function PitchSidePlot(options) {
+  const plot = this;
   init(options);
-
-
-  return slider;
+  return plot;
 
   function init(options) {
-    slider.domain = options.domain;
-    slider.currentValue = options.domain[0];
+    plot.where = options.where;
+    plot.pitchData = options.pitchData;
 
-    slider.callbacks = slider.defineCallbacks(options);
-    slider.formatter = slider.defineFormatter(options);
-    slider.coordinates = slider.defineCoordinates(options);
-    slider.size = slider.defineSize(options);
-    slider.margins = slider.defineMargins(options);
-    slider.styles = slider.defineStyles(options);
+    plot.svg = plot.addSvg();
+    plot.layout = plot.defineLayout();
+    plot.layers = plot.addLayers();
 
-    slider.referencePoints = slider.defineReferencePoints();
-    slider.scale = slider.defineScale(options.domain);
-
-    slider.group = slider.addGroup(options.where);
-    slider.layers = slider.addLayers();
-
-    slider.track = slider.addTrack();
-    slider.activeTrack = slider.addActiveTrack();
-    slider.circleGroup = slider.addCircleGroup();
-    slider.highlightCircle = slider.addHighlightCircle();
-    slider.circle = slider.addCircle();
-    slider.labelGhost = slider.addTextGhost();
-    slider.labelText = slider.addTextLabel();
-    slider.heading = slider.addHeading(options.labelText);
-
-    slider.updateValue(slider.currentValue);
-
-    slider.dragLock = false;
-
+    plot.batter = plot.addBatter();
+    plot.addVisuals();
   }
 }
 
@@ -390,6 +367,48 @@ function menuDataset() {
 }
 
 /* jshint esversion:6 */
+function ModelSlider(options) {
+  const slider = this;
+
+  init(options);
+
+
+  return slider;
+
+  function init(options) {
+    slider.domain = options.domain;
+    slider.currentValue = options.domain[0];
+
+    slider.callbacks = slider.defineCallbacks(options);
+    slider.formatter = slider.defineFormatter(options);
+    slider.coordinates = slider.defineCoordinates(options);
+    slider.size = slider.defineSize(options);
+    slider.margins = slider.defineMargins(options);
+    slider.styles = slider.defineStyles(options);
+
+    slider.referencePoints = slider.defineReferencePoints();
+    slider.scale = slider.defineScale(options.domain);
+
+    slider.group = slider.addGroup(options.where);
+    slider.layers = slider.addLayers();
+
+    slider.track = slider.addTrack();
+    slider.activeTrack = slider.addActiveTrack();
+    slider.circleGroup = slider.addCircleGroup();
+    slider.highlightCircle = slider.addHighlightCircle();
+    slider.circle = slider.addCircle();
+    slider.labelGhost = slider.addTextGhost();
+    slider.labelText = slider.addTextLabel();
+    slider.heading = slider.addHeading(options.labelText);
+
+    slider.updateValue(slider.currentValue);
+
+    slider.dragLock = false;
+
+  }
+}
+
+/* jshint esversion:6 */
 function PitchSmallPlot(options) {
   const plot = this;
   init(options);
@@ -455,35 +474,151 @@ function PitchUpdateView(d) {
     .html(d.pitchData.pfxX + "\"");
 
   d3.select("#pitchVerticalMovement")
-    .html(d.pitchData.pfxX + "\"");
+    .html(d.pitchData.pfxZ + "\"");
 
 
 
-}
-
-/* jshint esversion:6 */
-function PitchSidePlot(options) {
-  const plot = this;
-  init(options);
-  return plot;
-
-  function init(options) {
-    plot.where = options.where;
-    plot.pitchData = options.pitchData;
-
-    plot.svg = plot.addSvg();
-    plot.layout = plot.defineLayout();
-    plot.layers = plot.addLayers();
-
-    plot.batter = plot.addBatter();
-    plot.addVisuals();
-  }
 }
 
 /* jshint esversion:6 */
 function updateImage(datum) {
 
 }
+
+/* jshint esversion:6 */
+PitchSidePlot.prototype.addBatter = function() {
+  const plot = this;
+  let image;
+  image = plot.layers.batter
+    .append("image")
+    .attr("xlink:href","miniBatter.png")
+    .attr("x",370)
+    .attr("y",6)
+    .attr("height",41)
+    .attr("width",27)
+    .attr("opacity",0.5);
+};
+
+/* jshint esversion:6 */
+PitchSidePlot.prototype.addLayers = function() {
+  const plot = this;
+  let layers = {};
+  layers.batter = addLayer();
+  layers.lines = addLayer();
+  layers.circles = addLayer();
+  return layers;
+
+  function addLayer() {
+    return plot.svg.append("g");
+  }
+};
+
+/* jshint esversion:6 */
+PitchSidePlot.prototype.addSvg = function() {
+  const plot = this;
+  let svg = plot.where
+    .append("svg")
+    .attr("width",450)
+    .attr("height",50)
+    .style("background-color","white");
+
+  return svg;
+};
+
+/* jshint esversion:6 */
+PitchSidePlot.prototype.addVisuals = function() {
+  const plot = this;
+
+  let scales = {};
+  scales.x = d3.scaleLinear()
+    .domain([0,60])
+    .range([plot.layout.minX,plot.layout.maxX]);
+
+  scales.y = d3.scaleLinear()
+    .domain([0,8])
+    .range([plot.layout.minY,plot.layout.maxY]);
+
+
+  // SO THIS IS THE REAL GRADIENT
+  let gradient = (scales.y(plot.pitchData.z0) - scales.y(plot.pitchData.pZ)) / (-scales.x(plot.pitchData.y0) + scales.x(0));
+  let linearFunction = (inputX) => {
+    return -(gradient * (inputX - scales.x(plot.pitchData.y0)) - scales.y(plot.pitchData.z0));
+  };
+
+
+  let verticalBreakFeet = (plot.pitchData.pfxZ / 12);
+  let expectedVertical = +plot.pitchData.pZ - verticalBreakFeet;
+
+  let expectedEndPoint = {
+    "x":scales.x(0),
+    "y":scales.y(expectedVertical)
+  };
+
+  // NOW MAKE AN EXPECTED GRADIENT
+  let perceivedGradient = (scales.y(plot.pitchData.z0) - expectedEndPoint.y) / (-scales.x(plot.pitchData.y0) + expectedEndPoint.x);
+  let perceivedLinearFunction = (inputX) => {
+    return -(perceivedGradient * (inputX - scales.x(plot.pitchData.y0)) - scales.y(plot.pitchData.z0));
+  };
+
+  plot.layers.lines
+    .append("line")
+    .attr("x1",scales.x(plot.pitchData.y0))
+    .attr("x2",expectedEndPoint.x)
+    .attr("y1",scales.y(plot.pitchData.z0))
+    .attr("y2",expectedEndPoint.y)
+    .attr("stroke-dasharray","3,3")
+    .attr("stroke","black");
+
+  let points = [
+    {"x":scales.x(60),"y":linearFunction(scales.x(60))},
+    {"x":scales.x(plot.pitchData.y0),"y":scales.y(plot.pitchData.z0)},
+    {"x":scales.x(40),"y":perceivedLinearFunction(scales.x(40))},
+    {"x":scales.x(0),"y":scales.y(plot.pitchData.pZ)}
+  ];
+
+  plot.layers.circles
+    .append("circle")
+    .attr("cx",scales.x(0))
+    .attr("cy",expectedEndPoint.y)
+    .attr("r",3)
+    .attr("fill","white")
+    .attr("stroke","red");
+
+  plot.layers.circles.selectAll(".f")
+    .data(points)
+    .enter()
+    .append("circle")
+    .attr("cx",(d) => { return d.x; })
+    .attr("cy",(d) => { return d.y; })
+    .attr("fill","red")
+    .attr("r",3);
+
+  let lineGen = d3.line().x((d) => { return d.x; }).y((d) => { return d.y; }).curve(d3.curveCardinal);
+  plot.layers.lines
+    .append("path")
+    .datum(points)
+    .attr("stroke","black")
+    .attr("stroke-width",1)
+    .attr("fill","none")
+    .attr("d",lineGen);
+
+
+};
+
+/* jshint esversion:6 */
+PitchSidePlot.prototype.defineLayout = function() {
+  const plot = this;
+  let layout = {};
+
+  layout.minX = 365;
+  layout.maxX = 10;
+  layout.effectiveWidth = 355;
+  layout.effectiveHeight = 47.33;
+  layout.minY = 47.33;
+  layout.maxY = 0;
+
+  return layout;
+};
 
 /* jshint esversion:6 */
 ModelSlider.prototype.addActiveTrack = function() {
@@ -1131,140 +1266,5 @@ PitchSmallPlot.prototype.defineLayout = function() {
   layout.sideViewCoordinates = {"x":160,"y":10};
   layout.sideViewSize = {"width":180,"height":65};
   layout.sideViewBounds = {"width":180,"height":130};
-  return layout;
-};
-
-/* jshint esversion:6 */
-PitchSidePlot.prototype.addBatter = function() {
-  const plot = this;
-  let image;
-  image = plot.layers.batter
-    .append("image")
-    .attr("xlink:href","miniBatter.png")
-    .attr("x",370)
-    .attr("y",6)
-    .attr("height",41)
-    .attr("width",27)
-    .attr("opacity",0.5);
-};
-
-/* jshint esversion:6 */
-PitchSidePlot.prototype.addLayers = function() {
-  const plot = this;
-  let layers = {};
-  layers.batter = addLayer();
-  layers.lines = addLayer();
-  layers.circles = addLayer();
-  return layers;
-
-  function addLayer() {
-    return plot.svg.append("g");
-  }
-};
-
-/* jshint esversion:6 */
-PitchSidePlot.prototype.addSvg = function() {
-  const plot = this;
-  let svg = plot.where
-    .append("svg")
-    .attr("width",450)
-    .attr("height",50)
-    .style("background-color","white");
-
-  return svg;
-};
-
-/* jshint esversion:6 */
-PitchSidePlot.prototype.addVisuals = function() {
-  const plot = this;
-
-  let scales = {};
-  scales.x = d3.scaleLinear()
-    .domain([0,60])
-    .range([plot.layout.minX,plot.layout.maxX]);
-
-  scales.y = d3.scaleLinear()
-    .domain([0,8])
-    .range([plot.layout.minY,plot.layout.maxY]);
-
-
-  // SO THIS IS THE REAL GRADIENT
-  let gradient = (scales.y(plot.pitchData.z0) - scales.y(plot.pitchData.pZ)) / (-scales.x(plot.pitchData.y0) + scales.x(0));
-  let linearFunction = (inputX) => {
-    return -(gradient * (inputX - scales.x(plot.pitchData.y0)) - scales.y(plot.pitchData.z0));
-  };
-
-
-  let verticalBreakFeet = (plot.pitchData.pfxZ / 12);
-  let expectedVertical = +plot.pitchData.pZ - verticalBreakFeet;
-
-  let expectedEndPoint = {
-    "x":scales.x(0),
-    "y":scales.y(expectedVertical)
-  };
-
-  // NOW MAKE AN EXPECTED GRADIENT
-  let perceivedGradient = (scales.y(plot.pitchData.z0) - expectedEndPoint.y) / (-scales.x(plot.pitchData.y0) + expectedEndPoint.x);
-  let perceivedLinearFunction = (inputX) => {
-    return -(perceivedGradient * (inputX - scales.x(plot.pitchData.y0)) - scales.y(plot.pitchData.z0));
-  };
-
-  plot.layers.lines
-    .append("line")
-    .attr("x1",scales.x(plot.pitchData.y0))
-    .attr("x2",expectedEndPoint.x)
-    .attr("y1",scales.y(plot.pitchData.z0))
-    .attr("y2",expectedEndPoint.y)
-    .attr("stroke-dasharray","3,3")
-    .attr("stroke","black");
-
-  let points = [
-    {"x":scales.x(60),"y":linearFunction(scales.x(60))},
-    {"x":scales.x(plot.pitchData.y0),"y":scales.y(plot.pitchData.z0)},
-    {"x":scales.x(40),"y":perceivedLinearFunction(scales.x(40))},
-    {"x":scales.x(0),"y":scales.y(plot.pitchData.pZ)}
-  ];
-
-  plot.layers.circles
-    .append("circle")
-    .attr("cx",scales.x(0))
-    .attr("cy",expectedEndPoint.y)
-    .attr("r",3)
-    .attr("fill","white")
-    .attr("stroke","red");
-
-  plot.layers.circles.selectAll(".f")
-    .data(points)
-    .enter()
-    .append("circle")
-    .attr("cx",(d) => { return d.x; })
-    .attr("cy",(d) => { return d.y; })
-    .attr("fill","red")
-    .attr("r",3);
-
-  let lineGen = d3.line().x((d) => { return d.x; }).y((d) => { return d.y; }).curve(d3.curveCardinal);
-  plot.layers.lines
-    .append("path")
-    .datum(points)
-    .attr("stroke","black")
-    .attr("stroke-width",1)
-    .attr("fill","none")
-    .attr("d",lineGen);
-
-
-};
-
-/* jshint esversion:6 */
-PitchSidePlot.prototype.defineLayout = function() {
-  const plot = this;
-  let layout = {};
-
-  layout.minX = 365;
-  layout.maxX = 10;
-  layout.effectiveWidth = 355;
-  layout.effectiveHeight = 47.33;
-  layout.minY = 47.33;
-  layout.maxY = 0;
-
   return layout;
 };
