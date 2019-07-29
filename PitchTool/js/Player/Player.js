@@ -69,7 +69,8 @@ function Player(options) {
                 .classed("perspectiveCurrentChoice",true);
 
               player.catcherView
-                .switchPerspective(choice);
+                .switchPerspective(choice)
+                .updateActive();
 
             });
 
