@@ -60,6 +60,11 @@ CatcherView.prototype.switchPerspective = function(perspective) {
   view
     .updateActive();
 
+  console.log("REMOVING ACTIVE?");
+  
+  view.layers.activeCircles
+    .selectAll("circle")
+    .remove();
 
   return view;
 };

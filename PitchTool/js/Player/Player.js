@@ -10,10 +10,14 @@ function Player(options) {
     let path;
     if(options.position === "P") {
       path = "data/pitchers/";
+      d3.select("#thrownFaced")
+        .text("thrown");
     } else {
       path = "data/hitters/";
+      d3.select("#thrownFaced")
+        .text("faced");
     }
-    
+
       d3.csv(path + options.id + ".csv")
         .then((data) => {
           player.rawData = data;

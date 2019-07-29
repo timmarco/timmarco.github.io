@@ -55,4 +55,5 @@ CatcherView.prototype.addBrushBox = function() {
   }
 
 
+  return box;
 };
