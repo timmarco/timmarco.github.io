@@ -7,9 +7,9 @@ CatcherView.prototype.addLayers = function() {
   layers.base = addSingleLayer();
   layers.axis = addSingleLayer();
   layers.pitchCircles = addSingleLayer();
+  layers.zone = addSingleLayer();
   layers.activeCircles = addSingleLayer();
   layers.highlightCircles = addSingleLayer();
-  layers.zone = addSingleLayer();
   layers.brush = addSingleLayer();
 
   return layers;

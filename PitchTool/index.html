@@ -8,44 +8,43 @@
   </head>
 
   <body>
-    <div>
-      <div style="float:left">
-        <svg width="1000" height="600" style="border:2px solid black" id="tempCatcher"></svg>
-      </div>
-      <div style="float:left">
-        <div id="filterAndResults">
-          <div id="resultsPane"></div>
-          <div id="filterTables"></div>
+
+    <div id="centerAll" style="width:1000px;margin:auto">
+      <div id="selector">
+        <h1>Pitch Plotter Tool</h1>
+        <div class="note">
+          <p>This is the note about what this page is and how to use it there are many lines and it goes on so it takes up more than one line.</p>
+          <p><strong>Click on a player below</strong> to see every pitch they've faced through in 2019 (Updated July 28th).</p>
         </div>
+
+        <div id="playerList"></div>
       </div>
+
+      <div id="viewer" style="display:none">
+        <h1>Pitches faced by <span class='playerName'></span> in 2019 <a href="">Go Back</a></h1>
+        <div>
+          <div style="float:left">
+            <svg width="700" height="700" id="tempCatcher"></svg>
+          </div>
+          <div style="float:left">
+            <div id="filterAndResults">
+              <div id="resultsPane"></div>
+              <div id="filterTables"></div>
+            </div>
+          </div>
+        </div>
+        <div style="clear:both"></div>
+
+      </div>
+
     </div>
 
-    <div style="clear:both"></div>
-    <div id="playerList"></div>
-    <div id="zoneContainer"></div>
-
+    <!-- <div id="zoneContainer"></div> -->
+    <div id="tooltip" style="display:none"></div>
 
     <script>
 
       let theList = new PlayerList({});
-
-      d3.json("data/players.json")
-        .then((data) => {
-          Object.keys(data).forEach((key) => {
-            if(data[key].lastName === "Giolito") {
-              console.log(key);
-
-              d3.csv("data/pitchers/" + key + ".csv")
-                .then((data) => {
-                  let filterData = data.filter((a) => { return a.opponent === "BOS" && a.batterName === "Michael Chavis"})
-                  console.log("F",filterData);
-                  filterData.forEach((datum) => {
-                    console.log(JSON.stringify(datum));
-                  })
-                })
-            }
-          })
-        });
 
     </script>
   </body>

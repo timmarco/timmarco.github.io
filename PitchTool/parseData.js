@@ -89,6 +89,9 @@ function saveAllData(rawData) {
 
   /*
   Pitch Codes:
+
+    B,*B,C,
+
     F: Foul,
     B: Ball,
     X: In Play, Out(s),

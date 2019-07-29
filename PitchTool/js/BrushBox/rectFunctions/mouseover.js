@@ -35,5 +35,5 @@ BrushBox.prototype.rectMouseover = function(datum,index) {
       box.callbacks
         .mouseover();
     }
-  }
-}
+  };
+};

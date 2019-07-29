@@ -42,4 +42,4 @@ BrushBox.prototype.addEdgeIndicators = function() {
 
 
   return indicators;
-}
+};

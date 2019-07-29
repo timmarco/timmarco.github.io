@@ -1,5 +1,23 @@
 body {
   font-family:Source Sans Pro;
+  user-select:none;
+}
+
+.playerListTable {
+  width:100%;
+  padding-top:1em;
+  padding-bottom:1em;
+  border-top:1px solid #eee;
+}
+
+.playerListTableCell {
+  text-decoration:underline;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+}
+
+.playerListTableCell:hover {
+  color:red;
 }
 
 #filterAndResults {
@@ -12,6 +30,9 @@ body {
   border:1px solid #eee;
   padding:0.25em;
   margin:0.5em;
+  width:100%;
+  padding-top:0.5em;
+  margin-top:0.5em;
 }
 
 .filterTableTitle {
@@ -31,11 +52,24 @@ body {
 }
 
 .resultsPane {
-  border:3px solid black;
   width:300px;
 }
 
 .resultsPaneGroup {
+  padding-top:10px;
   padding-bottom:10px;
-  border-bottom:3px solid orange;
+  border-bottom:1px solid #aaa;
+}
+
+#tooltip {
+  width:300px;
+  min-height:150px;
+  background-color:white;
+  position:absolute;
+  border:1px solid black;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+
 }

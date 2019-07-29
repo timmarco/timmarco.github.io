@@ -5,10 +5,18 @@ ResultsPane.prototype.addTotalStrikes = function() {
   let bar = new Minibar({
     "where":pane.groups.summary,
     "leftLabel":"Total Strikes",
+    "styles":{
+      "active":{
+        "fill":d3.schemeCategory10[1]
+      }
+    },
     "size":{
       "width":pane.styles.width
     },
-    // "margins":pane.styles.margins
+    "callbacks":{
+      "mouseover":function() { pane.parent.highlightTotalStrikes(); },
+      "mouseout":function() { pane.parent.clearHighlights(); }
+    }
   });
 
   return bar;

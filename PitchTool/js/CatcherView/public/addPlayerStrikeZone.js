@@ -8,9 +8,9 @@ CatcherView.prototype.addPlayerStrikeZone = function(zone) {
     .attr("y",view.scales.y(zone.top))
     .attr("width",view.scales.x(6.5/12) - view.scales.x(-8.15/12))
     .attr("height",view.scales.y(6 - zone.bottom))
-    .attr("fill","none")
-    .attr("stroke","#333")
-    .attr("stroke-width",3);
+    .attr("fill","rgba(0,0,255,0.125)")
+    .attr("stroke","red")
+    .attr("stroke-width",2);
 
   return view;
 };

@@ -25,6 +25,16 @@ Player.prototype.filterByRegion = function(region) {
   results.doubles = player.filteredData.filter(player.filterRules.doubles).length;
   results.singles = player.filteredData.filter(player.filterRules.singles).length;
 
+  results.ballsInPlay = player.filteredData.filter(player.filterRules.ballsInPlay).length;
+  results.outs = player.filteredData.filter(player.filterRules.outs).length;
+  results.hits = player.filteredData.filter(player.filterRules.hits).length;
+
+  results.pitches = {};
+  let pitchTypes = ["FT","SL","FF","SI","CU","CH","FC","KC","FS","KN"];
+  pitchTypes.forEach((pitch) => {
+    results.pitches[pitch] = player.filteredData.filter(player.filterRules[pitch]).length;
+  });
+
   player.resultsPane
     .updateData(results);
 

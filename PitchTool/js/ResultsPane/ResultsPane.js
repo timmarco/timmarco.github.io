@@ -15,22 +15,21 @@ function ResultsPane(options) {
     pane.insideRegionOutsideRegion = pane.addInsideRegionOutsideRegion();
 
     pane.swingsNoSwings = pane.addSwingsNoSwings();
-    pane.whiffs = pane.addWhiffs();
     pane.balls = pane.addBalls();
     pane.totalStrikes = pane.addTotalStrikes();
+    pane.whiffs = pane.addWhiffs();
     pane.calledStrikes = pane.addCalledStrikes();
 
-    pane.sluggingOnContact = pane.addSluggingOnContact();
     pane.homeRuns = pane.addHomeRuns();
     pane.triples = pane.addTriples();
     pane.doubles = pane.addDoubles();
     pane.singles = pane.addSingles();
 
     pane.ballsInPlay = pane.addBallsInPlay();
+    pane.hits = pane.addHits();
     pane.outs = pane.addOuts();
-    pane.flyBalls = pane.addFlyBalls();
-    pane.lineDrives = pane.addLineDrives();
-    pane.groundBalls = pane.addGroundBalls();
+
+    pane.addPitchTypes();
 
 
   }

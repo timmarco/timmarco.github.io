@@ -8,7 +8,15 @@ ResultsPane.prototype.addBallsInPlay = function() {
     "size":{
       "width":pane.styles.width
     },
-    "margins":pane.styles.margins
+    "styles":{
+      "active":{
+        "fill":"#666"
+      }
+    },
+    "callbacks":{
+      "mouseover":function() { pane.parent.highlightBallsInPlay(); },
+      "mouseout":function() { pane.parent.clearHighlights(); }
+    }
   });
 
   return bar;

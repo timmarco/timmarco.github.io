@@ -4,7 +4,8 @@ FilterTable.prototype.addDiv = function() {
 
   let div = d3.select("#filterTables")
     .append("div")
-    .classed("filterTable",true);
+    .classed("filterTable",true)
+    .style("display","none");
 
   return div;
 };

@@ -8,7 +8,11 @@ ResultsPane.prototype.addWhiffs = function() {
     "size":{
       "width":pane.styles.width
     },
-    "margins":pane.styles.margins,
+    "styles":{
+      "active":{
+        "fill":d3.schemeCategory10[1]
+      }
+    },
     "callbacks":{
       "mouseover":function() { pane.parent.highlightSwingingStrikes(); },
       "mouseout":function() { pane.parent.clearHighlights(); }

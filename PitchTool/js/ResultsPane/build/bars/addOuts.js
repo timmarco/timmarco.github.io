@@ -8,7 +8,16 @@ ResultsPane.prototype.addOuts = function() {
     "size":{
       "width":pane.styles.width
     },
-    "margins":pane.styles.margins
+    "styles":{
+      "active":{
+        "fill":d3.schemeCategory10[3]
+      }
+    },
+    "callbacks":{
+      "mouseover":function() { pane.parent.highlightOuts(); },
+      "mouseout":function() { pane.parent.clearHighlights(); }
+    }
+
   });
 
   return bar;

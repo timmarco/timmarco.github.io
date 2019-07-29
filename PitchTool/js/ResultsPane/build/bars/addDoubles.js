@@ -8,7 +8,11 @@ ResultsPane.prototype.addDoubles = function() {
     "size":{
       "width":pane.styles.width
     },
-    "margins":pane.styles.margins,
+    "styles":{
+      "active":{
+        "fill":d3.schemeCategory10[2]
+      }
+    },
     "callbacks":{
       "mouseover":function() { pane.parent.highlightDoubles(); },
       "mouseout":function() { pane.parent.clearHighlights(); }

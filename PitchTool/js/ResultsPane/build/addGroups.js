@@ -3,9 +3,11 @@ ResultsPane.prototype.addGroups = function() {
   const pane = this;
   let groups = {};
 
+  groups.sampleSize = singleGroup();
   groups.summary = singleGroup();
-  groups.battedBallResults = singleGroup();
   groups.swingResults = singleGroup();
+  groups.battedBallResults = singleGroup();
+  groups.pitches = singleGroup();
 
   return groups;
   function singleGroup() {

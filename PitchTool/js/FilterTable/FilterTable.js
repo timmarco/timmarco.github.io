@@ -16,7 +16,6 @@ function FilterTable(options) {
       table.list = table.addList();
       table.listItems = table.addListItems();
     } else {
-      // console.log("ADDING SLIDER!");
     }
 
   }

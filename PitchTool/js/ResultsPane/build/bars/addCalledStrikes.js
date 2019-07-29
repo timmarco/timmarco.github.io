@@ -8,12 +8,15 @@ ResultsPane.prototype.addCalledStrikes = function() {
     "size":{
       "width":pane.styles.width
     },
+    "styles":{
+      "active":{
+        "fill":d3.schemeCategory10[1]
+      }
+    },
     "callbacks":{
       "mouseover":function() { pane.parent.highlightCalledStrikes(); },
       "mouseout":function() { pane.parent.clearHighlights(); }
     }
-
-    // "margins":pane.styles.margins
   });
 
   return bar;

@@ -11,7 +11,7 @@ function Player(options) {
       d3.csv("data/hitters/" + options.id + ".csv")
         .then((data) => {
           player.rawData = data;
-          console.log(JSON.stringify(player.rawData.filter((a) => { return a.pitchType == "CU"}).sort((a,b) => { return +a.pfxZ - (+b.pfxZ)})[0]));
+
           player.filteredData = JSON.parse(JSON.stringify(data));
 
           player.filterValues = player.defineFilterValues();
@@ -30,6 +30,24 @@ function Player(options) {
           player.catcherView
             .addPlayerCircles(player.rawData)
             .addPlayerStrikeZone(options.strikeZone);
+
+          player.filterByRegion({
+            "minX":-Infinity,
+            "maxX":Infinity,
+            "minY":-Infinity,
+            "maxY":Infinity
+          });
+
+          d3.select("#selector")
+            .style("display","none");
+
+          d3.select("#viewer")
+            .style("display","block");
+
+          d3.selectAll(".playerName")
+            .html(options.name);
+
+
 
         });
     }

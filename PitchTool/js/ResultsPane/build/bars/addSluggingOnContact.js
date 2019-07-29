@@ -7,8 +7,7 @@ ResultsPane.prototype.addSluggingOnContact = function() {
     "leftLabel":"Slugging On Contact",
     "size":{
       "width":pane.styles.width
-    },
-    "margins":pane.styles.margins
+    }
   });
 
   return bar;
