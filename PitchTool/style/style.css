@@ -91,3 +91,21 @@ body {
   padding-bottom:0.5em;
   border:2px dashed red;
 }
+
+.switchPerspective {
+  color:black;
+  background-color:white;
+  width:200px;
+  display:inline;
+  border:1px solid black;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  cursor:pointer;
+}
+
+.perspectiveCurrentChoice {
+  background-color:orange;
+  color:white;
+}

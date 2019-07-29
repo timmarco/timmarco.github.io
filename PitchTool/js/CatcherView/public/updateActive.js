@@ -2,17 +2,20 @@
 CatcherView.prototype.updateActive = function(data) {
   const view = this;
 
+  if(data !== undefined) {
+    view.activeData = data;
+  }
 
   view.layers.activeCircles
     .selectAll("*")
     .remove();
 
 
-    let colorScheme = colorSchemePitchResults();
+  let colorScheme = colorSchemePitchResults();
 
   view.layers.activeCircles
     .selectAll("circle")
-    .data(data)
+    .data(view.activeData)
     .enter()
     .append("circle")
     .attr("cx",(pitch) => { return view.scales.x(pitch.pX); })

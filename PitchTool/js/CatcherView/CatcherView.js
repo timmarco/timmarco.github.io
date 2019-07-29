@@ -75,7 +75,7 @@ function CatcherView(options) {
       .attr("font-weight","bold")
       .text("Home Plate");
 
-    view.layers.axis
+    view.leftBoxLabel = view.layers.axis
       .append("text")
       .attr("y",view.scales.y(0))
       .attr("x",view.scales.x(2))
@@ -86,7 +86,7 @@ function CatcherView(options) {
       .attr("font-weight","bold")
       .html("LHB Batter's Box &rarr;");
 
-    view.layers.axis
+    view.rightBoxLabel = view.layers.axis
       .append("text")
       .attr("y",view.scales.y(0))
       .attr("x",view.scales.x(-2))

@@ -31,6 +31,28 @@ function BrushBox(options) {
 }
 
 /* jshint esversion:6 */
+function BrushBoxCorner(options) {
+  const corner = this;
+  init(options);
+  return corner;
+
+  function init(options) {
+    corner.parent = options.parent;
+    corner.coordinates = options.coordinates;
+
+    corner.dragLock = false;
+    
+    corner.drag = corner.defineDrag();
+    corner.callbacks = corner.defineCallbacks(options);
+
+    corner.group = corner.addGroup();
+    corner.hotspot = corner.addHotspot();
+    corner.circle = corner.addCircle();
+
+  }
+};
+
+/* jshint esversion:6 */
 function CatcherView(options) {
   const view = this;
   init(options);
@@ -107,7 +129,7 @@ function CatcherView(options) {
       .attr("font-weight","bold")
       .text("Home Plate");
 
-    view.layers.axis
+    view.leftBoxLabel = view.layers.axis
       .append("text")
       .attr("y",view.scales.y(0))
       .attr("x",view.scales.x(2))
@@ -118,7 +140,7 @@ function CatcherView(options) {
       .attr("font-weight","bold")
       .html("LHB Batter's Box &rarr;");
 
-    view.layers.axis
+    view.rightBoxLabel = view.layers.axis
       .append("text")
       .attr("y",view.scales.y(0))
       .attr("x",view.scales.x(-2))
@@ -205,28 +227,6 @@ function CatcherView(options) {
 
   }
 }
-
-/* jshint esversion:6 */
-function BrushBoxCorner(options) {
-  const corner = this;
-  init(options);
-  return corner;
-
-  function init(options) {
-    corner.parent = options.parent;
-    corner.coordinates = options.coordinates;
-
-    corner.dragLock = false;
-    
-    corner.drag = corner.defineDrag();
-    corner.callbacks = corner.defineCallbacks(options);
-
-    corner.group = corner.addGroup();
-    corner.hotspot = corner.addHotspot();
-    corner.circle = corner.addCircle();
-
-  }
-};
 
 /* jshint esversion:6 */
 function FilterTable(options) {
@@ -334,6 +334,21 @@ function Player(options) {
           d3.selectAll(".playerName")
             .html(options.name);
 
+          d3.selectAll(".switchPerspective")
+            .on('click',function() {
+              let element = d3.select(this);
+              let choice = element.attr("data-perspective");
+
+              d3.selectAll(".switchPerspective")
+                .classed("perspectiveCurrentChoice",false);
+
+              element
+                .classed("perspectiveCurrentChoice",true);
+
+              player.catcherView
+                .switchPerspective(choice);
+
+            });
 
 
         });
@@ -1218,296 +1233,6 @@ BrushBox.prototype.rectMouseover = function(datum,index) {
 };
 
 /* jshint esversion:6 */
-CatcherView.prototype.addBrushBox = function() {
-  const view = this;
-
-  let box = new BrushBox({
-    "where":view.layers.brush,
-    "size":{
-      "width":500,
-      "height":500
-    },
-    "callbacks":{
-      "dragStart":() => {
-        view.layers.pitchCircles
-          .transition()
-          .duration(275)
-          .attr("opacity",0.75);
-
-        view.layers.activeCircles
-          .selectAll("*")
-          .remove();
-
-      },
-      "dragEnd":() => {
-        view.layers.pitchCircles
-          .transition()
-          .duration(275)
-          .attr("opacity",0);
-      },
-      "valueChanged":(info) => {
-        let minX = view.scales.x.invert(info.coordinates.x);
-        let maxX = view.scales.x.invert(info.coordinates.x + info.size.width);
-        let maxY = view.scales.y.invert(info.coordinates.y);
-        let minY = view.scales.y.invert(info.coordinates.y + info.size.height);
-
-        view.player
-          .filterByRegion({
-            "minX":minX,
-            "maxX":maxX,
-            "minY":minY,
-            "maxY":maxY
-          });
-
-      }
-    }
-  });
-
-  function summarize(data,key) {
-    let summary = d3.nest()
-        .key((d) => { return d[key]; })
-        .rollup((d) => { return d.length; })
-        .entries(data)
-        .sort((a,b) => { return b.value - a.value; });
-
-    return summary;
-  }
-
-
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.addGroup = function() {
-  const view = this;
-  let group = view.where
-    .append("g");
-  return group;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.addLayers = function() {
-  const view = this;
-  let layers = {};
-
-
-  layers.base = addSingleLayer();
-  layers.axis = addSingleLayer();
-  layers.pitchCircles = addSingleLayer();
-  layers.zone = addSingleLayer();
-  layers.activeCircles = addSingleLayer();
-  layers.highlightCircles = addSingleLayer();
-  layers.brush = addSingleLayer();
-
-  return layers;
-
-  function addSingleLayer() {
-    let layer = view.group
-      .append("g")
-      .attr("opacity",1);
-
-    return layer;
-  }
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.defineScales = function() {
-  const view = this;
-
-  let scales = {};
-
-  scales.x = d3.scaleLinear()
-    .domain([-3,3])
-    .range([0,view.size.width]);
-
-  scales.y = d3.scaleLinear()
-    .domain([0,6])
-    .range([view.size.height,0]);
-
-  return scales;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.defineSize = function(options) {
-  const view = this;
-  let size = defaulter(options.size,{});
-  size.width = 500;
-  size.height = 500;
-  return size;
-
-  function defaulter(setValue,defaultValue) {
-    return setValue ? setValue : defaultValue;
-  }
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.addPlayerCircles = function(data) {
-  const view = this;
-
-  view.pitchRawData = data;
-
-  view.pitchCircles = view.layers.pitchCircles
-    .selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-    // .attr("r",view.scales.x(0.0675) - view.scales.x(0))
-    .attr("r",4)
-    .attr("fill","rgba(0,0,0,0.06275)")
-    .attr("stroke","rgba(0,0,0,0.06275)")
-    .attr("stroke-width",0.5)
-    .attr("cx",(d) => { return view.scales.x(d.pX); })
-    .attr("cy",(d) => { return view.scales.y(d.pZ); });
-
-  return view;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.addPlayerStrikeZone = function(zone) {
-  const view = this;
-
-  view.playerStrikeZone = view.layers.zone
-    .append("rect")
-    .attr("x",view.scales.x(-8.5 / 12))
-    .attr("y",view.scales.y(zone.top))
-    .attr("width",view.scales.x(6.5/12) - view.scales.x(-8.15/12))
-    .attr("height",view.scales.y(6 - zone.bottom))
-    .attr("fill","rgba(0,0,255,0.125)")
-    .attr("stroke","red")
-    .attr("stroke-width",2);
-
-  return view;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.clearHighlight = function() {
-  const view = this;
-
-  view.layers.highlightCircles
-    .selectAll("*")
-    .remove();
-
-  return view;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.updateActive = function(data) {
-  const view = this;
-
-
-  view.layers.activeCircles
-    .selectAll("*")
-    .remove();
-
-
-    let colorScheme = colorSchemePitchResults();
-
-  view.layers.activeCircles
-    .selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("cx",(pitch) => { return view.scales.x(pitch.pX); })
-    .attr("cy",(pitch) => { return view.scales.y(pitch.pZ); })
-    .attr("r",4)
-    .attr("fill",(d) => {
-        return colorScheme[d.pitchResultCode];
-    })
-    .attr("fill-opacity",0.00675)
-    .attr("stroke",(d) => {
-        return colorScheme[d.pitchResultCode];
-    })
-    .attr("stroke-opacity",0.25)
-    .on('mouseover',function(d,i) {
-      let element = d3.select(this);
-      let tooltip = d3.select("#tooltip");
-
-      element
-        .attr("fill",colorScheme[d.pitchResultCode])
-        .attr("fill-opacity",1)
-        .attr("stroke-opacity",1)
-        .attr("r",8);
-
-      let xPosition = d3.event.x + 15;
-      let yPosition = d3.event.y - 75;
-      tooltip
-        .style("display","block")
-        .style("left",xPosition + "px")
-        .style("top",yPosition + "px");
-
-      let tooltipMessage = "";
-      tooltipMessage += "<div style='text-align:center; font-size:1.2em; font-weight:bold; margin-bottom:0.5em; color:white; background-color:"+colorScheme[d.pitchResultCode]+"'>" + mapPitchResult(d.pitchResultCode) + "</div>";
-      tooltipMessage += "<table style='width:100%; margin-bottom:25px;>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td><td style='border-bottom:1px solid black'>Pitcher</td><td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td><td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Spin Rate</td><td style='border-bottom:1px solid black'>Start Velo</td><td style='border-bottom:1px solid black'>End Velo</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.spinRate+" rpm</td><td>"+d.startSpeed+" mph</td><td>"+d.endSpeed+" mph</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Break Angle</td><td style='border-bottom:1px solid black'>Horizontal Movement</td><td style='border-bottom:1px solid black'>Vertical Movement</td></tr>";
-      tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.breakAngle+"</td><td>"+d.pfxX+"\"</td><td>"+d.pfxZ+"\"</td></tr>";
-      tooltipMessage += "</table>";
-
-      // tooltipMessage += "<table>";
-      // tooltipMessage += "<tr><td>Start Speed</td><td>"+d.startSpeed+" mph</td></tr>";
-      // tooltipMessage += "<tr><td>End Speed</td><td>"+d.endSpeed+" mph</td></tr>";
-      // tooltipMessage += "<tr><td>Spin Rate</td><td>"+d.spinRate+" rpm</td></tr>";
-      // tooltipMessage += "</table>";
-
-      tooltip.html(tooltipMessage);
-
-    })
-    .on('mouseout',function(d,i) {
-      let element = d3.select(this);
-      let tooltip = d3.select("#tooltip");
-
-      element
-        .attr("fill",colorScheme[d.pitchResultCode])
-        .attr("fill-opacity",0.00675)
-        .attr("stroke-opacity",0.25)
-        .attr("r",5);
-
-      element
-        .attr("fill","rgba(0,0,0,0.00675)");
-
-      tooltip
-        .style("display","none");
-
-    })
-    .on('mousemove',function() {
-      let tooltip = d3.select("#tooltip");
-      let xPosition = d3.event.x + 15;
-      let yPosition = d3.event.y - 75;
-      tooltip
-        .style("display","block")
-        .style("left",xPosition + "px")
-        .style("top",yPosition + "px");
-    });
-
-
-  return view;
-};
-
-/* jshint esversion:6 */
-CatcherView.prototype.updateHighlight = function(data,fill) {
-  const view = this;
-
-  view
-    .clearHighlight();
-
-  view.layers.highlightCircles
-    .selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("cx",(pitch) => { return view.scales.x(pitch.pX); })
-    .attr("cy",(pitch) => { return view.scales.y(pitch.pZ); })
-    .attr("r",4)
-    .attr("fill",fill)
-    .attr("stroke","black");
-
-
-  return view;
-};
-
-/* jshint esversion:6 */
 BrushBoxCorner.prototype.addCircle = function() {
   const corner = this;
 
@@ -1701,6 +1426,339 @@ BrushBoxCorner.prototype.move = function(coordinates) {
 
   return corner;
 }
+
+/* jshint esversion:6 */
+CatcherView.prototype.addBrushBox = function() {
+  const view = this;
+
+  let box = new BrushBox({
+    "where":view.layers.brush,
+    "size":{
+      "width":500,
+      "height":500
+    },
+    "callbacks":{
+      "dragStart":() => {
+        view.layers.pitchCircles
+          .transition()
+          .duration(275)
+          .attr("opacity",0.75);
+
+        view.layers.activeCircles
+          .selectAll("*")
+          .remove();
+
+      },
+      "dragEnd":() => {
+        view.layers.pitchCircles
+          .transition()
+          .duration(275)
+          .attr("opacity",0);
+      },
+      "valueChanged":(info) => {
+        let minX = view.scales.x.invert(info.coordinates.x);
+        let maxX = view.scales.x.invert(info.coordinates.x + info.size.width);
+        let maxY = view.scales.y.invert(info.coordinates.y);
+        let minY = view.scales.y.invert(info.coordinates.y + info.size.height);
+
+        view.player
+          .filterByRegion({
+            "minX":minX,
+            "maxX":maxX,
+            "minY":minY,
+            "maxY":maxY
+          });
+
+      }
+    }
+  });
+
+  function summarize(data,key) {
+    let summary = d3.nest()
+        .key((d) => { return d[key]; })
+        .rollup((d) => { return d.length; })
+        .entries(data)
+        .sort((a,b) => { return b.value - a.value; });
+
+    return summary;
+  }
+
+
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.addGroup = function() {
+  const view = this;
+  let group = view.where
+    .append("g");
+  return group;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.addLayers = function() {
+  const view = this;
+  let layers = {};
+
+
+  layers.base = addSingleLayer();
+  layers.axis = addSingleLayer();
+  layers.pitchCircles = addSingleLayer();
+  layers.zone = addSingleLayer();
+  layers.activeCircles = addSingleLayer();
+  layers.highlightCircles = addSingleLayer();
+  layers.brush = addSingleLayer();
+
+  return layers;
+
+  function addSingleLayer() {
+    let layer = view.group
+      .append("g")
+      .attr("opacity",1);
+
+    return layer;
+  }
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.defineScales = function() {
+  const view = this;
+
+  let scales = {};
+
+  scales.x = d3.scaleLinear()
+    .domain([-3,3])
+    .range([0,view.size.width]);
+
+  scales.y = d3.scaleLinear()
+    .domain([0,6])
+    .range([view.size.height,0]);
+
+  return scales;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.defineSize = function(options) {
+  const view = this;
+  let size = defaulter(options.size,{});
+  size.width = 500;
+  size.height = 500;
+  return size;
+
+  function defaulter(setValue,defaultValue) {
+    return setValue ? setValue : defaultValue;
+  }
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.addPlayerCircles = function(data) {
+  const view = this;
+
+  view.pitchRawData = data;
+
+  view.pitchCircles = view.layers.pitchCircles
+    .selectAll("circle")
+    .data(data)
+    .enter()
+    .append("circle")
+    // .attr("r",view.scales.x(0.0675) - view.scales.x(0))
+    .attr("r",4)
+    .attr("fill","rgba(0,0,0,0.06275)")
+    .attr("stroke","rgba(0,0,0,0.06275)")
+    .attr("stroke-width",0.5)
+    .attr("cx",(d) => { return view.scales.x(d.pX); })
+    .attr("cy",(d) => { return view.scales.y(d.pZ); });
+
+  return view;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.addPlayerStrikeZone = function(zone) {
+  const view = this;
+
+  view.playerStrikeZone = view.layers.zone
+    .append("rect")
+    .attr("x",view.scales.x(-8.5 / 12))
+    .attr("y",view.scales.y(zone.top))
+    .attr("width",view.scales.x(6.5/12) - view.scales.x(-8.15/12))
+    .attr("height",view.scales.y(6 - zone.bottom))
+    .attr("fill","rgba(0,0,255,0.125)")
+    .attr("stroke","red")
+    .attr("stroke-width",2);
+
+  return view;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.clearHighlight = function() {
+  const view = this;
+
+  view.layers.highlightCircles
+    .selectAll("*")
+    .remove();
+
+  return view;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.switchPerspective = function(perspective) {
+  const view = this;
+
+  if(perspective === "catcher") {
+    view.player.isInverted = false;
+
+    view.scales.x
+      .domain([-3,3]);
+
+      view.leftBoxLabel
+        .html("RHB Batter's Box &rarr;");
+
+      view.rightBoxLabel
+        .html("&larr; LHB Batter's Box");
+
+  }
+
+  if(perspective === "pitcher") {
+    view.player.isInverted = true;
+    view.scales.x
+      .domain([3,-3]);
+
+    view.leftBoxLabel
+      .html("LHB Batter's Box &rarr;");
+
+    view.rightBoxLabel
+      .html("&larr; RHB Batter's Box");
+  }
+
+  view.pitchCircles
+    .attr("cx",(d) => { return view.scales.x(d.pX) ;});
+
+  view
+    .updateActive();
+
+
+  return view;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.updateActive = function(data) {
+  const view = this;
+
+  if(data !== undefined) {
+    view.activeData = data;
+  }
+
+  view.layers.activeCircles
+    .selectAll("*")
+    .remove();
+
+
+  let colorScheme = colorSchemePitchResults();
+
+  view.layers.activeCircles
+    .selectAll("circle")
+    .data(view.activeData)
+    .enter()
+    .append("circle")
+    .attr("cx",(pitch) => { return view.scales.x(pitch.pX); })
+    .attr("cy",(pitch) => { return view.scales.y(pitch.pZ); })
+    .attr("r",4)
+    .attr("fill",(d) => {
+        return colorScheme[d.pitchResultCode];
+    })
+    .attr("fill-opacity",0.00675)
+    .attr("stroke",(d) => {
+        return colorScheme[d.pitchResultCode];
+    })
+    .attr("stroke-opacity",0.25)
+    .on('mouseover',function(d,i) {
+      let element = d3.select(this);
+      let tooltip = d3.select("#tooltip");
+
+      element
+        .attr("fill",colorScheme[d.pitchResultCode])
+        .attr("fill-opacity",1)
+        .attr("stroke-opacity",1)
+        .attr("r",8);
+
+      let xPosition = d3.event.x + 15;
+      let yPosition = d3.event.y - 75;
+      tooltip
+        .style("display","block")
+        .style("left",xPosition + "px")
+        .style("top",yPosition + "px");
+
+      let tooltipMessage = "";
+      tooltipMessage += "<div style='text-align:center; font-size:1.2em; font-weight:bold; margin-bottom:0.5em; color:white; background-color:"+colorScheme[d.pitchResultCode]+"'>" + mapPitchResult(d.pitchResultCode) + "</div>";
+      tooltipMessage += "<table style='width:100%; margin-bottom:25px;>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Date</td><td style='border-bottom:1px solid black'>Pitcher</td><td style='border-bottom:1px solid black'>Pitch Type</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td>"+d.date+"</td><td>"+d.pitcherName+"</td><td>"+mapPitch(d.pitchType)+"</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Spin Rate</td><td style='border-bottom:1px solid black'>Start Velo</td><td style='border-bottom:1px solid black'>End Velo</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.spinRate+" rpm</td><td>"+d.startSpeed+" mph</td><td>"+d.endSpeed+" mph</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.75em'><td style='border-bottom:1px solid black'>Break Angle</td><td style='border-bottom:1px solid black'>Horizontal Movement</td><td style='border-bottom:1px solid black'>Vertical Movement</td></tr>";
+      tooltipMessage += "<tr style='font-size:0.85em'><td>"+d.breakAngle+"</td><td>"+d.pfxX+"\"</td><td>"+d.pfxZ+"\"</td></tr>";
+      tooltipMessage += "</table>";
+
+      // tooltipMessage += "<table>";
+      // tooltipMessage += "<tr><td>Start Speed</td><td>"+d.startSpeed+" mph</td></tr>";
+      // tooltipMessage += "<tr><td>End Speed</td><td>"+d.endSpeed+" mph</td></tr>";
+      // tooltipMessage += "<tr><td>Spin Rate</td><td>"+d.spinRate+" rpm</td></tr>";
+      // tooltipMessage += "</table>";
+
+      tooltip.html(tooltipMessage);
+
+    })
+    .on('mouseout',function(d,i) {
+      let element = d3.select(this);
+      let tooltip = d3.select("#tooltip");
+
+      element
+        .attr("fill",colorScheme[d.pitchResultCode])
+        .attr("fill-opacity",0.00675)
+        .attr("stroke-opacity",0.25)
+        .attr("r",5);
+
+      element
+        .attr("fill","rgba(0,0,0,0.00675)");
+
+      tooltip
+        .style("display","none");
+
+    })
+    .on('mousemove',function() {
+      let tooltip = d3.select("#tooltip");
+      let xPosition = d3.event.x + 15;
+      let yPosition = d3.event.y - 75;
+      tooltip
+        .style("display","block")
+        .style("left",xPosition + "px")
+        .style("top",yPosition + "px");
+    });
+
+
+  return view;
+};
+
+/* jshint esversion:6 */
+CatcherView.prototype.updateHighlight = function(data,fill) {
+  const view = this;
+
+  view
+    .clearHighlight();
+
+  view.layers.highlightCircles
+    .selectAll("circle")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("cx",(pitch) => { return view.scales.x(pitch.pX); })
+    .attr("cy",(pitch) => { return view.scales.y(pitch.pZ); })
+    .attr("r",4)
+    .attr("fill",fill)
+    .attr("stroke","black");
+
+
+  return view;
+};
 
 /* jshint esversion:6 */
 FilterTable.prototype.addDiv = function() {
@@ -2353,6 +2411,9 @@ Player.prototype.filterByRegion = function(region) {
   return player;
 
   function regionFilter(item) {
+    if(player.isInverted) {
+      return ![+item.pX >= +region.maxX,+item.pX <= +region.minX,+item.pZ >= +region.minY,+item.pZ <= +region.maxY].includes(false);
+    }
     return ![+item.pX >= +region.minX,+item.pX <= +region.maxX,+item.pZ >= +region.minY,+item.pZ <= +region.maxY].includes(false);
     }
 };

@@ -47,6 +47,21 @@ function Player(options) {
           d3.selectAll(".playerName")
             .html(options.name);
 
+          d3.selectAll(".switchPerspective")
+            .on('click',function() {
+              let element = d3.select(this);
+              let choice = element.attr("data-perspective");
+
+              d3.selectAll(".switchPerspective")
+                .classed("perspectiveCurrentChoice",false);
+
+              element
+                .classed("perspectiveCurrentChoice",true);
+
+              player.catcherView
+                .switchPerspective(choice);
+
+            });
 
 
         });

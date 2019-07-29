@@ -44,6 +44,9 @@ Player.prototype.filterByRegion = function(region) {
   return player;
 
   function regionFilter(item) {
+    if(player.isInverted) {
+      return ![+item.pX >= +region.maxX,+item.pX <= +region.minX,+item.pZ >= +region.minY,+item.pZ <= +region.maxY].includes(false);
+    }
     return ![+item.pX >= +region.minX,+item.pX <= +region.maxX,+item.pZ >= +region.minY,+item.pZ <= +region.maxY].includes(false);
     }
 };
