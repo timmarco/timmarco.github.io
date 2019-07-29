@@ -42,15 +42,15 @@ function CatcherView(options) {
         {"x":view.scales.x(-8.5/12),"y":view.scales.y(0)}
       ];
 
-      let pathGen = d3.line().x((d) => { return d.x; }).y((d) => { return d.y;});
+    view.homePlatePathGen = d3.line().x((d) => { return d.x; }).y((d) => { return d.y;});
 
-    let homePlate = view.layers.axis
+    view.homePlate = view.layers.axis
       .append("path")
       .datum(hpPoints)
       .attr("stroke","black")
       .attr("fill","white")
       .attr("stroke-width",2)
-      .attr("d",pathGen);
+      .attr("d",view.homePlatePathGen);
 
 
     view.layers.axis
@@ -63,17 +63,6 @@ function CatcherView(options) {
       .attr("font-size","8pt")
       .attr("font-weight","bold")
       .html("&larr; Distance (feet) &rarr;");
-
-    view.layers.axis
-      .append("text")
-      .attr("y",view.scales.y(0))
-      .attr("x",view.scales.x(0))
-      .attr("dy",30)
-      .attr("text-anchor","middle")
-      .attr("dominant-baseline","baseline")
-      .attr("font-size","10pt")
-      .attr("font-weight","bold")
-      .text("Home Plate");
 
     view.leftBoxLabel = view.layers.axis
       .append("text")
@@ -151,7 +140,6 @@ function CatcherView(options) {
       .attr("dominant-baseline","middle")
       .attr("font-size","12px")
       .text("Hits");
-
 
     view.layers.axis
       .append("rect")

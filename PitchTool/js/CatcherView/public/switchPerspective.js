@@ -9,11 +9,23 @@ CatcherView.prototype.switchPerspective = function(perspective) {
       .domain([-3,3]);
 
       view.leftBoxLabel
-        .html("RHB Batter's Box &rarr;");
+        .html("LHB Batter's Box &rarr;");
 
       view.rightBoxLabel
-        .html("&larr; LHB Batter's Box");
+        .html("&larr; RHB Batter's Box");
 
+    let hpPoints = [
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(0)},
+      {"x":view.scales.x(8.5/12),"y":view.scales.y(0)},
+      {"x":view.scales.x(8.5/12),"y":view.scales.y(-4.25/12)},
+      {"x":view.scales.x(0),"y":view.scales.y(-8.5/12)},
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(-4.25/12)},
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(0)}
+    ];
+
+    view.homePlate
+      .datum(hpPoints)
+      .attr("d",view.homePlatePathGen);
   }
 
   if(perspective === "pitcher") {
@@ -22,10 +34,24 @@ CatcherView.prototype.switchPerspective = function(perspective) {
       .domain([3,-3]);
 
     view.leftBoxLabel
-      .html("LHB Batter's Box &rarr;");
+      .html("RHB Batter's Box &rarr;");
 
     view.rightBoxLabel
-      .html("&larr; RHB Batter's Box");
+      .html("&larr; LHB Batter's Box");
+
+    let hpPoints = [
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(0)},
+      {"x":view.scales.x(8.5/12),"y":view.scales.y(0)},
+      {"x":view.scales.x(8.5/12),"y":view.scales.y(4.25/12)},
+      {"x":view.scales.x(0),"y":view.scales.y(8.5/12)},
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(4.25/12)},
+      {"x":view.scales.x(-8.5/12),"y":view.scales.y(0)}
+    ];
+
+    view.homePlate
+      .datum(hpPoints)
+      .attr("d",view.homePlatePathGen);
+
   }
 
   view.pitchCircles
