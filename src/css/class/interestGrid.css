@@ -1,0 +1,5 @@
+.interestGrid {
+  display:grid;
+  grid-column-gap:25px;
+  grid-template-columns:20% 80% auto;
+}

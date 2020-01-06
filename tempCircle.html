@@ -1,0 +1,125 @@
+<!doctype html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="node_modules/d3/dist/d3.min.js"></script>
+    <script src="src/dist/all.js"></script>
+  </head>
+
+  <body>
+    <div id="svg">
+    </div>
+
+    <script>
+      const container = new SvgTutorialContainer({
+        "where":"#svg",
+        "style":{
+          "stageFill":"green"
+        },
+      })
+      .addLineOfCode({
+        "html":"&lt;svg",
+        "indent":0,
+        "mouseover":() => {
+          container.svgElement.container.attr("stroke-opacity",1);
+        },
+        "mouseout":() => {
+          container.svgElement.container.attr("stroke-opacity",0);
+        }
+      })
+      .addLineOfCode({
+        "html":"width=500",
+        "indent":1,
+        "mouseover":() => {
+          container.svgElement.widthIndicator.attr("stroke-width",3);
+        },
+        "mouseout":() => {
+          container.svgElement.widthIndicator.attr("stroke-width",0);
+        }
+      })
+      .addLineOfCode({
+        "html":"height=300",
+        "indent":1,
+        "mouseover":() => {
+          container.svgElement.heightIndicator.attr("stroke-width",3);
+        },
+        "mouseout":() => {
+          container.svgElement.heightIndicator.attr("stroke-width",0);
+        }
+      })
+      .addLineOfCode({
+        "html":"&gt;",
+        "indent":0
+      })
+      .addLineOfCode({
+        "html":"&nbsp;",
+        "indent":0
+      })
+      .addLineOfCode({
+        "html":"&lt;circle",
+        "indent":1
+      })
+      .addLineOfCode({
+        "html":"r='25'",
+        "indent":2,
+        "mouseover":() => {
+          container.svgElement.radiusIndicator.attr("stroke-width",3);
+        },
+        "mouseout":() => {
+          container.svgElement.radiusIndicator.attr("stroke-width",0);
+        }
+      })
+      .addLineOfCode({
+        "html":"cx='250'",
+        "indent":2,
+        "mouseover":() => {
+          container.svgElement.xIndicator.attr("stroke-width",3);
+        },
+        "mouseout":() => {
+          container.svgElement.xIndicator.attr("stroke-width",0);
+        }
+      })
+      .addLineOfCode({
+        "html":"cy='150'",
+        "indent":2,
+        "mouseover":() => {
+          container.svgElement.yIndicator.attr("stroke-width",3);
+        },
+        "mouseout":() => {
+          container.svgElement.yIndicator.attr("stroke-width",0);
+        }
+
+      })
+      .addLineOfCode({
+        "html":"fill='red'",
+        "indent":2
+      })
+      .addLineOfCode({
+        "html":"stroke='black'",
+        "indent":2
+      })
+      .addLineOfCode({
+        "html":"stroke-width-'2'",
+        "indent":2
+      })
+      .addLineOfCode({
+        "html":"/&gt;",
+        "indent":1
+      })
+      .addLineOfCode({
+        "html":"&nbsp;",
+        "indent":0
+      })
+      .addLineOfCode({
+        "html":"&lt;/svg&gt;",
+        "indent":0,
+        "mouseover":() => {
+          container.svgElement.container.attr("stroke-opacity",1);
+        },
+        "mouseout":() => {
+          container.svgElement.container.attr("stroke-opacity",0);
+        }
+      });
+
+    </script>
+  </body>
+</html>

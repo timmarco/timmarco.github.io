@@ -3,3 +3,5 @@ FreeAgents/dev_local/
 FreeAgents/node_modules/
 FreeAgents/newAgentData/
 composeFunctions/
+node_modules
+temp/

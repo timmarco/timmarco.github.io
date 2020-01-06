@@ -1,0 +1,7 @@
+.section {
+  margin-top:2em;
+  margin-bottom:2em;
+  display:grid;
+  grid-column-gap:25px;
+  grid-template-columns:20% 80%;
+}

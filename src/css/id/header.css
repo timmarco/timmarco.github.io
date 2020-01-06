@@ -1,0 +1,75 @@
+#header {
+  position:fixed;
+  width:100vw;
+  min-height:30px;
+  border-bottom:1px solid black;
+  margin:0;
+  padding:0;
+  z-index:9999;
+  background-color:rgba(0,0,0,0.25);
+  font-family:Oswald;
+  font-weight:400;
+}
+
+#header a {
+  color:white;
+  display:inline-block;
+  background-color:black;
+  padding-left:0.25em;
+  padding-right:0.25em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  margin-top:0.125em;
+  margin-bottom:0.125em;
+  margin-left:0.5em;
+}
+
+#header a:hover {
+  text-decoration:none;
+}
+
+#nameLink {
+  border-left:3px solid #FE8000;
+}
+
+#nameLink:hover {
+  background-color:#fe8000;
+  color:black;
+}
+
+#linkedInLink {
+  border-left:3px solid #FEFF33;
+}
+
+#linkedInLink:hover {
+  background-color:#FEFF33;
+  color:black;
+}
+
+#aboutMeLink {
+  border-left:3px solid #E31A1C;
+  cursor:pointer;
+}
+
+#aboutMeLink:hover {
+  background-color:#E31A1C;
+  color:white;
+}
+
+#examplesLink {
+  border-left:3px solid #4DB04A;
+  cursor:pointer;
+}
+
+#examplesLink:hover {
+  background-color:#4DB04A
+}
+
+#bioLink {
+  border-left:3px solid #984BA3;
+  cursor:pointer;
+}
+
+#bioLink:hover {
+  background-color:#984BA3;
+}

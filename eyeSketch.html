@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="node_modules/d3/dist/d3.min.js"></script>
+  </head>
+
+  <body>
+    <div id="eye" style="padding:0;margin:0"></div>
+    <br/><br/>
+    <h1 id="triggerAnimation">CLICK</h1>
+    <script>
+
+      const svgCode = d3.xml("assets/eye.svg").then((eyeSvg) => {
+        d3.select("#eye")
+          .node()
+          .append(eyeSvg.documentElement);
+
+        const svg = d3.select("#eye")
+          .select("svg");
+
+
+        const topRay = new rayOfLight({
+          "where":svg,
+          "data":{
+            "first":{"x1":1920,"x2":954,"y1":489,"y2":489},
+            "second":{"x1":940,"x2":797,"y1":489,"y2":511},
+            "third":{"x1":797,"x2":158,"y1":511,"y2":535}
+          }
+        });
+
+        const middleRay = new rayOfLight({
+          "where":svg,
+          "data":{
+            "first":{"x1":1920,"x2":962,"y1":535,"y2":535},
+            "second":{"x1":944,"x2":797,"y1":535,"y2":535},
+            "third":{"x1":797,"x2":158,"y1":535,"y2":535}
+          }
+        });
+
+        const bottomRay = new rayOfLight({
+          "where":svg,
+          "data":{
+            "first":{"x1":1920,"x2":946,"y1":579,"y2":579},
+            "second":{"x1":944,"x2":797,"y1":579,"y2":561},
+            "third":{"x1":797,"x2":158,"y1":561,"y2":535}
+          }
+        });
+
+        d3.select("#triggerAnimation")
+          .on('click',() => {
+            topRay.animate(500);
+            middleRay.animate(2250);
+            bottomRay.animate(4000);
+          });
+
+
+        svg.on('mousemove',() => {
+          console.log(d3.event.pageX,d3.event.pageY);
+        });
+
+      });
+
+      function rayOfLight(options) {
+        const ray = this;
+        init(options);
+        return ray;
+
+        function init(options) {
+            ray.where = options.where;
+            ray.data = options.data;
+            ray.firstSegment = ray.addSegment(ray.data.first,7);
+            ray.secondSegment = ray.addSegment(ray.data.second,5);
+            ray.thirdSegment = ray.addSegment(ray.data.third,3);
+
+        }
+      }
+
+      rayOfLight.prototype.addSegment = function(data,width) {
+        const ray = this;
+        const segment = ray.where
+          .append("line")
+          .attr("x1",data.x1)
+          .attr("x2",data.x2)
+          .attr("y1",data.y1)
+          .attr("y2",data.y2)
+          .attr("stroke","yellow")
+          .attr("stroke-width",width);
+
+        return segment;
+      }
+
+      rayOfLight.prototype.animate = function(delay) {
+        const ray = this;
+
+        const firstLength = ray.firstSegment.node().getTotalLength();
+        const secondLength = ray.secondSegment.node().getTotalLength();
+        const thirdLength = ray.thirdSegment.node().getTotalLength();
+        const totalLength = firstLength + secondLength + thirdLength;
+
+        ray.firstSegment
+          .attr("stroke-dasharray",firstLength + "," + firstLength)
+          .attr("stroke-dashoffset",firstLength)
+          .transition()
+          .delay(delay)
+          .duration(1000)
+          .ease(d3.easeLinear)
+          .attr("stroke-dashoffset",0);
+
+        ray.secondSegment
+          .attr("stroke-dasharray",secondLength + "," + secondLength)
+          .attr("stroke-dashoffset",secondLength)
+          .transition()
+          .duration(500)
+          .delay(1000 + delay)
+          .ease(d3.easeLinear)
+          .attr("stroke-dashoffset",0);
+
+        ray.thirdSegment
+          .attr("stroke-dasharray",thirdLength + "," + thirdLength)
+          .attr("stroke-dashoffset",thirdLength)
+          .transition()
+          .ease(d3.easeLinear)
+          .duration(750)
+          .delay(1500 + delay)
+          .attr("stroke-dashoffset",0)
+          .on('end',function() {
+            ray.firstSegment.attr("opacity",1).transition().duration(500).attr("opacity",0.5);
+            ray.secondSegment.attr("opacity",1).transition().duration(500).attr("opacity",0.5);
+            ray.thirdSegment.attr("opacity",1).transition().duration(500).attr("opacity",0.5);
+          })
+
+
+      }
+
+
+    </script>
+  </body>
+</html>

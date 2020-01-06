@@ -1,0 +1,15 @@
+.skillItem {
+  display:inline-block;
+  background-color:#ccc;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  margin-top:0.5em;
+  cursor:pointer;
+}
+
+.skillItem:hover {
+  background-color:#984BA3;
+  color:white;
+}

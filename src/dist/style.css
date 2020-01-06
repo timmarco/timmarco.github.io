@@ -1,0 +1,213 @@
+.headline {
+  padding-top:0.5em;
+  padding-left:1em;
+  padding-bottom:0.5em;
+}
+
+.interestDates {
+  font-family:Oswald;
+  font-weight:300;
+  color:#aaa;
+  font-size:1.25em;
+}
+
+.interestGrid {
+  display:grid;
+  grid-column-gap:25px;
+  grid-template-columns:20% 80% auto;
+}
+
+.interestSection {
+  border:1px solid #eee;
+  min-height:75vh;
+}
+
+.interestTitle {
+  font-family:Oswald;
+  text-align:right;
+  font-size:1.25em;
+  font-weight:300;
+}
+
+.section {
+  margin-top:2em;
+  margin-bottom:2em;
+  display:grid;
+  grid-column-gap:25px;
+  grid-template-columns:20% 80%;
+}
+
+.sectionContent {
+}
+
+.sectionHeader {
+  text-align:right;
+}
+
+.skillItem {
+  display:inline-block;
+  background-color:#ccc;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  margin-top:0.5em;
+  cursor:pointer;
+}
+
+.skillItem:hover {
+  background-color:#984BA3;
+  color:white;
+}
+
+.triggerPoint {
+  height:0;
+  padding:0;
+  margin:0;
+}
+
+#container {
+  max-width:1000px;
+  margin:auto;
+  padding-top:50px;
+}
+
+#header-content {
+  max-width:1000px;
+  margin:auto;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  font-family:Oswald;
+  font-weight:300;
+}
+
+#header {
+  position:fixed;
+  width:100vw;
+  min-height:30px;
+  border-bottom:1px solid black;
+  margin:0;
+  padding:0;
+  z-index:9999;
+  background-color:rgba(0,0,0,0.25);
+  font-family:Oswald;
+  font-weight:400;
+}
+
+#header a {
+  color:white;
+  display:inline-block;
+  background-color:black;
+  padding-left:0.25em;
+  padding-right:0.25em;
+  padding-top:0.25em;
+  padding-bottom:0.25em;
+  margin-top:0.125em;
+  margin-bottom:0.125em;
+  margin-left:0.5em;
+}
+
+#header a:hover {
+  text-decoration:none;
+}
+
+#nameLink {
+  border-left:3px solid #FE8000;
+}
+
+#nameLink:hover {
+  background-color:#fe8000;
+  color:black;
+}
+
+#linkedInLink {
+  border-left:3px solid #FEFF33;
+}
+
+#linkedInLink:hover {
+  background-color:#FEFF33;
+  color:black;
+}
+
+#aboutMeLink {
+  border-left:3px solid #E31A1C;
+  cursor:pointer;
+}
+
+#aboutMeLink:hover {
+  background-color:#E31A1C;
+  color:white;
+}
+
+#examplesLink {
+  border-left:3px solid #4DB04A;
+  cursor:pointer;
+}
+
+#examplesLink:hover {
+  background-color:#4DB04A
+}
+
+#bioLink {
+  border-left:3px solid #984BA3;
+  cursor:pointer;
+}
+
+#bioLink:hover {
+  background-color:#984BA3;
+}
+
+#hero {
+  height:56.25vw;
+  width:100vw;
+  color:white;
+  padding:0;
+  margin:0;
+}
+
+a {
+  color:#C82506;
+  text-decoration:none;
+}
+
+a:hover {
+  text-decoration:underline;
+  color:black;
+}
+
+body {
+  font-family:Merriweather;
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family:Oswald;
+}
+
+h1 {
+  font-weight:400;
+  font-size:1.5em;
+  margin-block-end:0;
+  margin-block-start:0;
+  vertical-align:-5%;
+}
+
+h2 {
+  margin-block-end:0;
+  margin-block-start:0;
+  font-weight:400;
+  font-size:2em;
+}
+
+p {
+  padding:0;
+  margin:0;
+  
+}
+
+svg {
+  user-select:none;
+  font-family:Oswald;
+}
