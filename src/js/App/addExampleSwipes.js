@@ -18,8 +18,7 @@ TimApp.prototype.addExampleSwipes = function() {
     .style("float","left")
     .style("width","100%")
     .style("position","relative")
-    .style("overflow","hidden")
-    .html("<div style='font-size:4em'>[EXAPLAIN HOW THE SWIPING WORKS HERE]</div>");
+    .style("overflow","hidden");
 
   app.swipe = new Swipe(container.node(),{
     "callback":(index) => {

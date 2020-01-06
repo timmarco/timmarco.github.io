@@ -1,3 +1,46 @@
+function Headline(options) {
+  const headline = this;
+  init(options);
+  return headline;
+
+  function init(options) {
+    headline.parent = options.parent;
+    headline.where = options.where;
+    headline.string = options.string;
+
+    headline.hasTransitioned = false;
+
+    headline.layout = headline.defineLayout(options);
+    headline.style = headline.defineStyle(options);
+
+    headline.svg = headline.addSvg();
+    headline.defs = headline.addDefs();
+    headline.background = headline.addBackground();
+    headline.text = headline.addText();
+    headline.curtainGroup = headline.addCurtainGroup();
+    headline.accent = headline.addAccent();
+
+    headline.resize();
+
+  }
+}
+
+function LineChart(options) {
+  const chart = this;
+  init(options);
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.container = chart.addContainer();
+    chart.svg = chart.addSvg();
+    chart.axes = chart.addAxes();
+    chart.labels = chart.addLabels();
+    chart.grid = chart.addGrid();
+    chart.line = chart.addLine();
+  }
+}
+
 function TimApp(options) {
   const app = this;
   init(options)
@@ -144,8 +187,7 @@ TimApp.prototype.addExampleSwipes = function() {
     .style("float","left")
     .style("width","100%")
     .style("position","relative")
-    .style("overflow","hidden")
-    .html("<div style='font-size:4em'>[EXAPLAIN HOW THE SWIPING WORKS HERE]</div>");
+    .style("overflow","hidden");
 
   app.swipe = new Swipe(container.node(),{
     "callback":(index) => {
@@ -200,49 +242,6 @@ TimApp.prototype.getBrowserInfo = function() {
   return browserInfo;
 }
 
-function Headline(options) {
-  const headline = this;
-  init(options);
-  return headline;
-
-  function init(options) {
-    headline.parent = options.parent;
-    headline.where = options.where;
-    headline.string = options.string;
-
-    headline.hasTransitioned = false;
-
-    headline.layout = headline.defineLayout(options);
-    headline.style = headline.defineStyle(options);
-
-    headline.svg = headline.addSvg();
-    headline.defs = headline.addDefs();
-    headline.background = headline.addBackground();
-    headline.text = headline.addText();
-    headline.curtainGroup = headline.addCurtainGroup();
-    headline.accent = headline.addAccent();
-
-    headline.resize();
-
-  }
-}
-
-function LineChart(options) {
-  const chart = this;
-  init(options);
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.container = chart.addContainer();
-    chart.svg = chart.addSvg();
-    chart.axes = chart.addAxes();
-    chart.labels = chart.addLabels();
-    chart.grid = chart.addGrid();
-    chart.line = chart.addLine();
-  }
-}
-
 function MobileWorkExample(options,index,app) {
   const example = this;
   init(options,index,app);
@@ -275,6 +274,23 @@ function MobileWorkExample(options,index,app) {
   }
 }
 
+function ScrollManager(options) {
+  const manager = this;
+  init(options);
+  return manager;
+
+  function init(options) {
+    manager.parent = options.parent;
+
+    manager.attachResizeListener();
+    manager.scrollOffset = manager.defineOffset();
+    manager.triggerPoints = manager.defineTriggerPoints();
+    manager.scrollEvents = manager.defineEvents();
+    manager.attachScrollListener();
+
+  }
+}
+
 function SkillBox(parent) {
     const box = this;
 
@@ -300,21 +316,26 @@ function SkillBox(parent) {
     }
 }
 
-function ScrollManager(options) {
-  const manager = this;
+function SkillBoxButton(options) {
+  const button = this;
   init(options);
-  return manager;
+  return button;
 
   function init(options) {
-    manager.parent = options.parent;
+    button.parent = options.parent;
+    button.key = options.key;
+    button.group = button.addGroup();
+    button.rect = button.addRect();
+    button.curtain = button.addCurtain();
+    button.text = button.addText(options.text);
+    button.highlightLine = button.addHighlight();
 
-    manager.attachResizeListener();
-    manager.scrollOffset = manager.defineOffset();
-    manager.triggerPoints = manager.defineTriggerPoints();
-    manager.scrollEvents = manager.defineEvents();
-    manager.attachScrollListener();
+    button.skillGroup = button.addSkillGroup(options.skills);
+
+    button.resizeRect();
 
   }
+
 }
 
 function SkillBoxCard(options) {
@@ -349,28 +370,6 @@ function SkillBoxCard(options) {
   }
 }
 
-function SkillBoxButton(options) {
-  const button = this;
-  init(options);
-  return button;
-
-  function init(options) {
-    button.parent = options.parent;
-    button.key = options.key;
-    button.group = button.addGroup();
-    button.rect = button.addRect();
-    button.curtain = button.addCurtain();
-    button.text = button.addText(options.text);
-    button.highlightLine = button.addHighlight();
-
-    button.skillGroup = button.addSkillGroup(options.skills);
-
-    button.resizeRect();
-
-  }
-
-}
-
 function SkillBoxGroup(options) {
   const skillGroup = this;
   init(options);
@@ -382,6 +381,27 @@ function SkillBoxGroup(options) {
     skillGroup.layout = skillGroup.defineLayout();
     skillGroup.group = skillGroup.addGroup();
     skillGroup.skillCards = skillGroup.addSkillCards();
+  }
+}
+
+function SwipeIndicator(app,count) {
+  const indicator = this;
+  init(app,count);
+  return indicator;
+
+  function init(app,count) {
+    indicator.parent = app;
+    indicator.count = count;
+
+    indicator.currentIndex = 0;
+
+    indicator.layout = indicator.defineLayout();
+    indicator.scale = indicator.defineScale();
+    indicator.svg = indicator.addSvg();
+    indicator.circles = indicator.addCircles();
+
+    indicator
+      .update(indicator.currentIndex);
   }
 }
 
@@ -410,27 +430,6 @@ function Timeline(options) {
 
     timeline.applyLayout();
 
-  }
-}
-
-function SwipeIndicator(app,count) {
-  const indicator = this;
-  init(app,count);
-  return indicator;
-
-  function init(app,count) {
-    indicator.parent = app;
-    indicator.count = count;
-
-    indicator.currentIndex = 0;
-
-    indicator.layout = indicator.defineLayout();
-    indicator.scale = indicator.defineScale();
-    indicator.svg = indicator.addSvg();
-    indicator.circles = indicator.addCircles();
-
-    indicator
-      .update(indicator.currentIndex);
   }
 }
 
@@ -597,6 +596,108 @@ Headline.prototype.addText = function() {
     .text(headline.string);
 
   return text;
+}
+
+Headline.prototype.animateIn = function() {
+  const headline = this;
+
+  if(!headline.hasTransitioned) {
+
+    headline.accent
+      .transition()
+      .duration(250)
+      .ease(d3.easeCubic)
+      .attr("height",headline.layout.accent.size.height)
+      .attr("y",0)
+      .transition()
+      .delay(500)
+      .duration(250)
+      .ease(d3.easeCubicOut)
+      .attr("height",0)
+      .attr("y",headline.layout.size.height / 2);
+
+    const endX = headline.background
+      .node()
+      .getBBox()
+      .width;
+
+    headline.curtainGroup
+      .transition()
+      .ease(d3.easeLinear)
+      .duration(375)
+      .delay(250)
+      .attr("transform","translate("+endX+",0)");
+
+    headline.hasTransitioned = true;
+  }
+
+  const textEndPosition = headline.text
+    .attr("x");
+
+  const textStartWidth = headline.text.node()
+    .getBBox()
+    .width;
+
+  const textStartPosition = -textEndPosition - textStartWidth;
+
+  const backgroundEndPosition = headline.background
+    .attr("width");
+
+  const accentEndHeight = headline.accent
+    .attr("height");
+
+
+  // headline.accent
+  //   .transition()
+  //   .duration(250)
+  //   .delay(0)
+  //   .ease(d3.easeCubic)
+  //   .attr("height",headline.animationFactors.accentEndHeight)
+  //   .attr("y",0);
+  //
+  // headline.background
+  //   .transition()
+  //   .delay(175)
+  //   .duration(625)
+  //   .ease(d3.easeExp)
+  //   .attr("x",0);
+  //
+  // headline.text
+  //   .transition()
+  //   .duration(250)
+  //   .delay(250)
+  //   .ease(d3.easeExp)
+  //   .attr("opacity",1)
+  //   .attr("x",headline.animationFactors.textEndPosition);
+
+  return headline;
+}
+
+Headline.prototype.resize = function() {
+  const headline = this;
+  const factors = {};
+
+  const textDesiredHeight = headline.layout.size.height - headline.layout.text.verticalPadding;
+  const textRenderedHeight = headline.text
+    .node()
+    .getBBox()
+    .height;
+
+  const textRatio = textDesiredHeight / textRenderedHeight;
+
+  headline.text
+    .attr("font-size",textRatio + "em");
+
+  const updatedTextRenderedSize = headline.text
+    .node()
+    .getBBox();
+
+  const newRectWidth = (2 * updatedTextRenderedSize.x) + updatedTextRenderedSize.width;
+
+  headline.background
+    .attr("width",newRectWidth);
+
+  return headline;
 }
 
 MobileWorkExample.prototype.addDefs = function() {
@@ -780,106 +881,102 @@ MobileWorkExample.prototype.defineLayout = function() {
   return layout;
 }
 
-Headline.prototype.animateIn = function() {
-  const headline = this;
+ScrollManager.prototype.attachResizeListener = function() {
+  const manager = this;
 
-  if(!headline.hasTransitioned) {
-
-    headline.accent
-      .transition()
-      .duration(250)
-      .ease(d3.easeCubic)
-      .attr("height",headline.layout.accent.size.height)
-      .attr("y",0)
-      .transition()
-      .delay(500)
-      .duration(250)
-      .ease(d3.easeCubicOut)
-      .attr("height",0)
-      .attr("y",headline.layout.size.height / 2);
-
-    const endX = headline.background
-      .node()
-      .getBBox()
-      .width;
-
-    headline.curtainGroup
-      .transition()
-      .ease(d3.easeLinear)
-      .duration(375)
-      .delay(250)
-      .attr("transform","translate("+endX+",0)");
-
-    headline.hasTransitioned = true;
-  }
-
-  const textEndPosition = headline.text
-    .attr("x");
-
-  const textStartWidth = headline.text.node()
-    .getBBox()
-    .width;
-
-  const textStartPosition = -textEndPosition - textStartWidth;
-
-  const backgroundEndPosition = headline.background
-    .attr("width");
-
-  const accentEndHeight = headline.accent
-    .attr("height");
-
-
-  // headline.accent
-  //   .transition()
-  //   .duration(250)
-  //   .delay(0)
-  //   .ease(d3.easeCubic)
-  //   .attr("height",headline.animationFactors.accentEndHeight)
-  //   .attr("y",0);
-  //
-  // headline.background
-  //   .transition()
-  //   .delay(175)
-  //   .duration(625)
-  //   .ease(d3.easeExp)
-  //   .attr("x",0);
-  //
-  // headline.text
-  //   .transition()
-  //   .duration(250)
-  //   .delay(250)
-  //   .ease(d3.easeExp)
-  //   .attr("opacity",1)
-  //   .attr("x",headline.animationFactors.textEndPosition);
-
-  return headline;
+  window.addEventListener("resize",function() {
+    manager.parent.examples.forEach((example) => {
+      example.resize();
+    });
+  });
 }
 
-Headline.prototype.resize = function() {
-  const headline = this;
-  const factors = {};
+ScrollManager.prototype.attachScrollListener = function() {
+  const manager = this;
 
-  const textDesiredHeight = headline.layout.size.height - headline.layout.text.verticalPadding;
-  const textRenderedHeight = headline.text
-    .node()
-    .getBBox()
-    .height;
+  window.addEventListener('scroll',manager.scrollMethod());
 
-  const textRatio = textDesiredHeight / textRenderedHeight;
 
-  headline.text
-    .attr("font-size",textRatio + "em");
+}
 
-  const updatedTextRenderedSize = headline.text
-    .node()
-    .getBBox();
+ScrollManager.prototype.defineEvents = function() {
+  const manager = this;
 
-  const newRectWidth = (2 * updatedTextRenderedSize.x) + updatedTextRenderedSize.width;
+  const events = {};
 
-  headline.background
-    .attr("width",newRectWidth);
+  events.resume = () => {
+    manager.parent.timeline
+      .animateIn();
+  }
 
-  return headline;
+
+
+  return events;
+}
+
+ScrollManager.prototype.defineOffset = function() {
+  const manager = this;
+
+  scrollOffset = window.innerHeight * 0.125;
+
+
+  return scrollOffset;
+}
+
+ScrollManager.prototype.defineTriggerPoints = function() {
+  const manager = this;
+
+  const triggerPoints = {};
+
+  d3.selectAll(".triggerPoint")
+    .each(function() {
+      const element = d3.select(this);
+
+      const triggerName = d3.select(this)
+        .attr("data-trigger-point");
+
+      const triggerPosition = element.node()
+        .getBoundingClientRect()
+        .top;
+
+      triggerPoints[triggerPosition] = triggerName;
+    });
+
+  return triggerPoints;
+}
+
+ScrollManager.prototype.scrollMethod = function() {
+  return () => {
+    const manager = this;
+
+    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
+    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
+
+    let current;
+    let next;
+
+    triggerPositions.forEach((position) => {
+      if(scrollPosition >= position) {
+        current = position;
+      }
+    });
+
+    if(current) {
+      manager.triggerEvent(manager.triggerPoints[current]);
+    }
+
+  }
+
+}
+
+ScrollManager.prototype.triggerEvent = function(eventName) {
+  const manager = this;
+
+  if(eventName in manager.scrollEvents) {
+    manager.scrollEvents[eventName]();
+  } else {
+  }
+
 }
 
 SkillBox.prototype.showSkill = function(skill) {
@@ -1173,102 +1270,179 @@ SkillBox.prototype.layoutButtons = function() {
 
 }
 
-ScrollManager.prototype.scrollMethod = function() {
-  return () => {
-    const manager = this;
+SkillBoxButton.prototype.activate = function() {
+  const button = this;
 
-    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
-    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",0)
+    .attr("height",button.getSize().height);
 
-    let current;
-    let next;
+  button.skillGroup
+    .activate();
 
-    triggerPositions.forEach((position) => {
-      if(scrollPosition >= position) {
-        current = position;
-      }
-    });
+  return button;
+}
 
-    if(current) {
-      manager.triggerEvent(manager.triggerPoints[current]);
-    }
+SkillBoxButton.prototype.deactivate = function() {
+  const button = this;
 
-  }
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",button.getSize().height)
+    .attr("height",0);
+
+  button.skillGroup
+    .deactivate();
+
+  return button;
 
 }
 
-ScrollManager.prototype.triggerEvent = function(eventName) {
-  const manager = this;
+SkillBoxButton.prototype.highlight = function() {
+  const button = this;
 
-  if(eventName in manager.scrollEvents) {
-    manager.scrollEvents[eventName]();
-  } else {
-  }
+  button.highlightLine
+    .transition()
+    .duration(250)
+    .attr("x1",0)
+    .attr("x2",button.getSize().width);
 
+  return button;
 }
 
-ScrollManager.prototype.attachResizeListener = function() {
-  const manager = this;
+SkillBoxButton.prototype.unhighlight = function() {
+  const button = this;
 
-  window.addEventListener("resize",function() {
-    manager.parent.examples.forEach((example) => {
-      example.resize();
-    });
+  const width = button.getSize().width / 2;
+
+  button.highlightLine
+    .transition()
+    .duration(125)
+    .attr("x1",button.getSize().width / 2)
+    .attr("x2",button.getSize().width / 2);
+
+  return button;
+}
+
+SkillBoxButton.prototype.addCurtain = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","#984BA3");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addGroup = function() {
+  const button = this;
+
+  const group = button.parent.layers.nav
+    .append("g")
+    .attr("cursor","pointer")
+    .attr("transform","translate(0,0)")
+    .on('mouseover',function() { button.highlight(); })
+    .on('mouseout',function() { button.unhighlight(); })
+    .on('click',function() { button.parent.showSkill(button.key); });
+
+  return group;
+}
+
+SkillBoxButton.prototype.addHighlight = function() {
+  const button = this;
+
+  const highlight = button.group
+    .append("line")
+    .attr("stroke-width",5)
+    .attr("stroke","#984BA3");
+
+  return highlight;
+}
+
+SkillBoxButton.prototype.addRect = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","black");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addSkillGroup = function(skills) {
+  const button = this;
+  const skillGroup = new SkillBoxGroup({
+    "parent":button.parent,
+    "skills":skills
   });
+  return skillGroup;
 }
 
-ScrollManager.prototype.attachScrollListener = function() {
-  const manager = this;
+SkillBoxButton.prototype.addText = function(textString) {
+  const button = this;
 
-  window.addEventListener('scroll',manager.scrollMethod());
+  const text = button.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-family","Oswald")
+    .attr("font-weight",400)
+    .attr("font-size","1.25em")
+    .attr("fill","white")
+    .text(textString);
+
+  return text;
+}
+
+SkillBoxButton.prototype.resizeRect = function() {
+  const button = this;
+
+  const textSize = button.text.node().getBBox();
+  const horizontalPadding = 30;
+
+  button.rect
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",textSize.height);
+
+  button.curtain
+    .attr("x",0)
+    .attr("y",textSize.height)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",0);
+
+  button.text
+    .attr("x",textSize.width / 2 + horizontalPadding / 2)
+    .attr("y",textSize.height / 2 + 2);
+
+  button.highlightLine
+    .attr("x1",textSize.width / 2)
+    .attr("x2",textSize.width / 2)
+    .attr("y1",textSize.height)
+    .attr("y2",textSize.height);
 
 
 }
 
-ScrollManager.prototype.defineEvents = function() {
-  const manager = this;
+SkillBoxButton.prototype.getSize = function() {
+  const box = this;
 
-  const events = {};
-
-  events.resume = () => {
-    manager.parent.timeline
-      .animateIn();
-  }
-
-
-
-  return events;
+  return box.rect
+    .node()
+    .getBBox();
 }
 
-ScrollManager.prototype.defineOffset = function() {
-  const manager = this;
+SkillBoxButton.prototype.move = function(coordinates) {
+  const button = this;
 
-  scrollOffset = window.innerHeight * 0.125;
+  button.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
 
-
-  return scrollOffset;
-}
-
-ScrollManager.prototype.defineTriggerPoints = function() {
-  const manager = this;
-
-  const triggerPoints = {};
-
-  d3.selectAll(".triggerPoint")
-    .each(function() {
-      const element = d3.select(this);
-
-      const triggerName = d3.select(this)
-        .attr("data-trigger-point");
-
-      const triggerPosition = element.node()
-        .getBoundingClientRect()
-        .top;
-
-      triggerPoints[triggerPosition] = triggerName;
-    });
-
-  return triggerPoints;
+  return button;
 }
 
 SkillBoxCard.prototype.activate = function(delayStart) {
@@ -1483,179 +1657,24 @@ SkillBoxCard.prototype.resizeRect = function() {
 
 }
 
-SkillBoxButton.prototype.addCurtain = function() {
-  const button = this;
+SkillBoxGroup.prototype.activate = function() {
+  const skillGroup = this;
 
-  const rect = button.group
-    .append("rect")
-    .attr("fill","#984BA3");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addGroup = function() {
-  const button = this;
-
-  const group = button.parent.layers.nav
-    .append("g")
-    .attr("cursor","pointer")
-    .attr("transform","translate(0,0)")
-    .on('mouseover',function() { button.highlight(); })
-    .on('mouseout',function() { button.unhighlight(); })
-    .on('click',function() { button.parent.showSkill(button.key); });
-
-  return group;
-}
-
-SkillBoxButton.prototype.addHighlight = function() {
-  const button = this;
-
-  const highlight = button.group
-    .append("line")
-    .attr("stroke-width",5)
-    .attr("stroke","#984BA3");
-
-  return highlight;
-}
-
-SkillBoxButton.prototype.addRect = function() {
-  const button = this;
-
-  const rect = button.group
-    .append("rect")
-    .attr("fill","black");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addSkillGroup = function(skills) {
-  const button = this;
-  const skillGroup = new SkillBoxGroup({
-    "parent":button.parent,
-    "skills":skills
+  skillGroup.skillCards.forEach((card,index) =>{
+    card.activate(index * 200);
   });
+
   return skillGroup;
 }
 
-SkillBoxButton.prototype.addText = function(textString) {
-  const button = this;
+SkillBoxGroup.prototype.deactivate = function() {
+  const skillGroup = this;
 
-  const text = button.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-family","Oswald")
-    .attr("font-weight",400)
-    .attr("font-size","1.25em")
-    .attr("fill","white")
-    .text(textString);
+  skillGroup.skillCards.forEach((card) => {
+    card.deactivate();
+  });
 
-  return text;
-}
-
-SkillBoxButton.prototype.resizeRect = function() {
-  const button = this;
-
-  const textSize = button.text.node().getBBox();
-  const horizontalPadding = 30;
-
-  button.rect
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",textSize.height);
-
-  button.curtain
-    .attr("x",0)
-    .attr("y",textSize.height)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",0);
-
-  button.text
-    .attr("x",textSize.width / 2 + horizontalPadding / 2)
-    .attr("y",textSize.height / 2 + 2);
-
-  button.highlightLine
-    .attr("x1",textSize.width / 2)
-    .attr("x2",textSize.width / 2)
-    .attr("y1",textSize.height)
-    .attr("y2",textSize.height);
-
-
-}
-
-SkillBoxButton.prototype.activate = function() {
-  const button = this;
-
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",0)
-    .attr("height",button.getSize().height);
-
-  button.skillGroup
-    .activate();
-
-  return button;
-}
-
-SkillBoxButton.prototype.deactivate = function() {
-  const button = this;
-
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",button.getSize().height)
-    .attr("height",0);
-
-  button.skillGroup
-    .deactivate();
-
-  return button;
-
-}
-
-SkillBoxButton.prototype.highlight = function() {
-  const button = this;
-
-  button.highlightLine
-    .transition()
-    .duration(250)
-    .attr("x1",0)
-    .attr("x2",button.getSize().width);
-
-  return button;
-}
-
-SkillBoxButton.prototype.unhighlight = function() {
-  const button = this;
-
-  const width = button.getSize().width / 2;
-
-  button.highlightLine
-    .transition()
-    .duration(125)
-    .attr("x1",button.getSize().width / 2)
-    .attr("x2",button.getSize().width / 2);
-
-  return button;
-}
-
-SkillBoxButton.prototype.getSize = function() {
-  const box = this;
-
-  return box.rect
-    .node()
-    .getBBox();
-}
-
-SkillBoxButton.prototype.move = function(coordinates) {
-  const button = this;
-
-  button.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return button;
+  return skillGroup;
 }
 
 SkillBoxGroup.prototype.defineLayout = function() {
@@ -1675,26 +1694,6 @@ SkillBoxGroup.prototype.defineLayout = function() {
   layout.gridHeight = layout.size.height / 2;
 
   return layout;
-}
-
-SkillBoxGroup.prototype.activate = function() {
-  const skillGroup = this;
-
-  skillGroup.skillCards.forEach((card,index) =>{
-    card.activate(index * 200);
-  });
-
-  return skillGroup;
-}
-
-SkillBoxGroup.prototype.deactivate = function() {
-  const skillGroup = this;
-
-  skillGroup.skillCards.forEach((card) => {
-    card.deactivate();
-  });
-
-  return skillGroup;
 }
 
 SkillBoxGroup.prototype.addGroup = function() {
@@ -1732,6 +1731,75 @@ SkillBoxGroup.prototype.addSkillCards = function() {
   return skillCards;
 }
 
+SwipeIndicator.prototype.addCircles = function() {
+  const indicator = this;
+
+
+  const circles = indicator.svg
+    .selectAll("circles")
+    .data(d3.range(0,indicator.count))
+    .enter()
+    .append("circle")
+    .attr("cx",function(d,i) { return indicator.scale(i)})
+    .attr("cy",indicator.layout.size.height / 2)
+    .attr("r",indicator.layout.circleRadius)
+    .attr("fill","#aaa");
+
+  return circles;
+}
+
+SwipeIndicator.prototype.addSvg = function() {
+  const indicator = this;
+
+  const svg = d3.select("#exampleIndicator")
+    .append("svg")
+    .attr("width",indicator.layout.size.width)
+    .attr("height",indicator.layout.size.height);
+
+  return svg;
+}
+
+SwipeIndicator.prototype.defineLayout = function() {
+  const indicator = this;
+  const layout = {};
+
+  layout.size = {};
+  layout.size.width = window.innerWidth;
+  layout.size.height = window.innerHeight * 0.1;
+
+  layout.circleRadius = layout.size.height * 0.05;
+
+  layout.scaleMin = layout.size.width * 0.125;
+  layout.scaleMax = layout.size.width * 0.875;
+
+  return layout;
+}
+
+SwipeIndicator.prototype.defineScale = function() {
+  const indicator = this;
+
+  const scale = d3.scaleLinear()
+    .domain([0,indicator.count])
+    .range([indicator.layout.scaleMin,indicator.layout.scaleMax]);
+
+  return scale;
+}
+
+SwipeIndicator.prototype.update = function(currentIndex) {
+  const indicator = this;
+  indicator.currentIndex = currentIndex;
+
+  indicator.circles
+    .transition()
+    .duration(250)
+    .attr("fill",function(d,i) {
+      if(i == indicator.currentIndex) { return "green"; };
+      return "#aaa";
+    });
+
+  return indicator;
+}
+
 function TimelineCompany(options) {
   const company = this;
   init(options);
@@ -1748,6 +1816,26 @@ function TimelineCompany(options) {
     company.roleGroup = company.addRoleGroup();
     company.roles = company.addRoles();
     company.body = company.addBody();
+
+  }
+}
+
+function TimelineRole(options) {
+  const role = this;
+  init(options);
+  return role;
+
+  function init(options) {
+    role.where = options.where;
+    role.data = options.role;
+    role.index = options.index;
+    role.parent = options.parent;
+    role.company = options.company;
+
+    role.group = role.addGroup();
+    role.backgroundRect = role.addBackgroundRect();
+    role.name = role.addName();
+    role.dates = role.addDates();
 
   }
 }
@@ -1787,127 +1875,6 @@ Timeline.prototype.animateIn = function() {
   });
 
   timeline.hasStarted = true;
-}
-
-function TimelineRole(options) {
-  const role = this;
-  init(options);
-  return role;
-
-  function init(options) {
-    role.where = options.where;
-    role.data = options.role;
-    role.index = options.index;
-    role.parent = options.parent;
-    role.company = options.company;
-
-    role.group = role.addGroup();
-    role.backgroundRect = role.addBackgroundRect();
-    role.name = role.addName();
-    role.dates = role.addDates();
-
-  }
-}
-
-Timeline.prototype.addAxis = function() {
-  const timeline = this;
-
-  const axis = d3.axisTop(timeline.scale);
-
-
-  return axis;
-}
-
-Timeline.prototype.addAxisGroup = function() {
-  const timeline = this;
-
-  const group = timeline.layers.axis
-    .append("g")
-    .call(timeline.axis)
-    .attr("transform",timeline.layout.translateAxisGroup);
-
-  group.selectAll("path")
-    .attr("stroke",timeline.style.axisLineColor);
-
-  group.selectAll("line")
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","3,3")
-    .attr("y1",window.innerHeight)
-    .attr("stroke",timeline.style.axisDashColor);
-
-  group.selectAll("text")
-    .attr("text-anchor", "start")
-    .attr("alignment-baseline","central")
-    .attr("font-size",timeline.style.axisFontSize)
-    .attr("fill",timeline.style.axisFontColor)
-    .attr("font-weight",timeline.style.axisFontWeight)
-    .attr("font-family","Oswald")
-    .attr("dx", ".8em")
-    .attr("dy", "-.15em")
-    .attr("transform", "rotate(-45)");
-
-
-  return group;
-}
-
-Timeline.prototype.addCompanies = function() {
-  const timeline = this;
-  const companies = [];
-
-  timeline.data.forEach((company) => {
-    companies.push(
-      new TimelineCompany({
-        "where":timeline.layers.companies,
-        "parent":timeline,
-        "company":company
-      })
-    );
-  });
-
-  return companies;
-}
-
-Timeline.prototype.addLayers = function() {
-  const timeline = this;
-  const layers = {};
-  layers.axis = timeline.svg.append("g");
-  layers.companies = timeline.svg.append("g");
-  return layers;
-}
-
-Timeline.prototype.addSvg = function() {
-  const timeline = this;
-
-  const svg = d3.select(timeline.where)
-    .append("svg")
-    .attr("width",timeline.layout.size.width)
-    .attr("height",timeline.layout.size.height)
-    .style("background-color",timeline.style.backgroundColor);
-
-  return svg;
-}
-
-Timeline.prototype.applyLayout = function() {
-  const timeline = this;
-
-  let runningYPosition = 0;
-
-  timeline.companies.forEach((company) => {
-    const translateY = 50 + timeline.layout.margins.top + runningYPosition;
-    const translateX = timeline.layout.margins.left + timeline.scale(company.data.endDate);
-    const translateString = "translate(0,"+translateY+")";
-
-    company.group
-      .attr("transform",translateString);
-
-    runningYPosition += company.group.node().getBBox().height + 25;
-  });
-
-
-  const lastNode = timeline.companies[timeline.companies.length-1].group.node().getBBox();
-  timeline.svg.attr("height",runningYPosition + lastNode.height);
-
-  return timeline;
 }
 
 Timeline.prototype.defineData = function() {
@@ -2043,73 +2010,105 @@ Timeline.prototype.defineTimeScale = function() {
     return scale;
 }
 
-SwipeIndicator.prototype.update = function(currentIndex) {
-  const indicator = this;
-  indicator.currentIndex = currentIndex;
+Timeline.prototype.addAxis = function() {
+  const timeline = this;
 
-  indicator.circles
-    .transition()
-    .duration(250)
-    .attr("fill",function(d,i) {
-      if(i == indicator.currentIndex) { return "green"; };
-      return "#aaa";
-    });
+  const axis = d3.axisTop(timeline.scale);
 
-  return indicator;
+
+  return axis;
 }
 
-SwipeIndicator.prototype.addCircles = function() {
-  const indicator = this;
+Timeline.prototype.addAxisGroup = function() {
+  const timeline = this;
+
+  const group = timeline.layers.axis
+    .append("g")
+    .call(timeline.axis)
+    .attr("transform",timeline.layout.translateAxisGroup);
+
+  group.selectAll("path")
+    .attr("stroke",timeline.style.axisLineColor);
+
+  group.selectAll("line")
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","3,3")
+    .attr("y1",window.innerHeight)
+    .attr("stroke",timeline.style.axisDashColor);
+
+  group.selectAll("text")
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline","central")
+    .attr("font-size",timeline.style.axisFontSize)
+    .attr("fill",timeline.style.axisFontColor)
+    .attr("font-weight",timeline.style.axisFontWeight)
+    .attr("font-family","Oswald")
+    .attr("dx", ".8em")
+    .attr("dy", "-.15em")
+    .attr("transform", "rotate(-45)");
 
 
-  const circles = indicator.svg
-    .selectAll("circles")
-    .data(d3.range(0,indicator.count))
-    .enter()
-    .append("circle")
-    .attr("cx",function(d,i) { return indicator.scale(i)})
-    .attr("cy",indicator.layout.size.height / 2)
-    .attr("r",indicator.layout.circleRadius)
-    .attr("fill","#aaa");
-
-  return circles;
+  return group;
 }
 
-SwipeIndicator.prototype.addSvg = function() {
-  const indicator = this;
+Timeline.prototype.addCompanies = function() {
+  const timeline = this;
+  const companies = [];
 
-  const svg = d3.select("#exampleIndicator")
+  timeline.data.forEach((company) => {
+    companies.push(
+      new TimelineCompany({
+        "where":timeline.layers.companies,
+        "parent":timeline,
+        "company":company
+      })
+    );
+  });
+
+  return companies;
+}
+
+Timeline.prototype.addLayers = function() {
+  const timeline = this;
+  const layers = {};
+  layers.axis = timeline.svg.append("g");
+  layers.companies = timeline.svg.append("g");
+  return layers;
+}
+
+Timeline.prototype.addSvg = function() {
+  const timeline = this;
+
+  const svg = d3.select(timeline.where)
     .append("svg")
-    .attr("width",indicator.layout.size.width)
-    .attr("height",indicator.layout.size.height);
+    .attr("width",timeline.layout.size.width)
+    .attr("height",timeline.layout.size.height)
+    .style("background-color",timeline.style.backgroundColor);
 
   return svg;
 }
 
-SwipeIndicator.prototype.defineLayout = function() {
-  const indicator = this;
-  const layout = {};
+Timeline.prototype.applyLayout = function() {
+  const timeline = this;
 
-  layout.size = {};
-  layout.size.width = window.innerWidth;
-  layout.size.height = window.innerHeight * 0.1;
+  let runningYPosition = 0;
 
-  layout.circleRadius = layout.size.height * 0.05;
+  timeline.companies.forEach((company) => {
+    const translateY = 50 + timeline.layout.margins.top + runningYPosition;
+    const translateX = timeline.layout.margins.left + timeline.scale(company.data.endDate);
+    const translateString = "translate(0,"+translateY+")";
 
-  layout.scaleMin = layout.size.width * 0.125;
-  layout.scaleMax = layout.size.width * 0.875;
+    company.group
+      .attr("transform",translateString);
 
-  return layout;
-}
+    runningYPosition += company.group.node().getBBox().height + 25;
+  });
 
-SwipeIndicator.prototype.defineScale = function() {
-  const indicator = this;
 
-  const scale = d3.scaleLinear()
-    .domain([0,indicator.count])
-    .range([indicator.layout.scaleMin,indicator.layout.scaleMax]);
+  const lastNode = timeline.companies[timeline.companies.length-1].group.node().getBBox();
+  timeline.svg.attr("height",runningYPosition + lastNode.height);
 
-  return scale;
+  return timeline;
 }
 
 WorkExample.prototype.addDefs = function() {
@@ -2594,57 +2593,6 @@ TimelineCompany.prototype.mouseover = function() {
 
 }
 
-TimelineRole.prototype.animateIn = function(delay) {
-  const role = this;
-
-  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
-  const startTime = delay;
-
-  role.name
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);
-
-  role.dates
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);;
-
-  role.backgroundRect
-    .attr("width",0)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("width",timelineWidth);
-
-}
-
-TimelineRole.prototype.mouseout = function() {
-  const role = this;
-
-  return () => {
-    role.backgroundRect.attr("fill","#984BA3");
-  }
-
-}
-
-TimelineRole.prototype.mouseover = function() {
-  const role = this;
-
-  return () => {
-    // role.backgroundRect.attr("fill","orange");
-  }
-
-}
-
 TimelineCompany.prototype.addBackgroundRect = function() {
   const company = this;
 
@@ -2799,6 +2747,57 @@ TimelineCompany.prototype.addToplineGroup = function() {
   return group;
 }
 
+TimelineRole.prototype.animateIn = function(delay) {
+  const role = this;
+
+  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
+  const startTime = delay;
+
+  role.name
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);
+
+  role.dates
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);;
+
+  role.backgroundRect
+    .attr("width",0)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("width",timelineWidth);
+
+}
+
+TimelineRole.prototype.mouseout = function() {
+  const role = this;
+
+  return () => {
+    role.backgroundRect.attr("fill","#984BA3");
+  }
+
+}
+
+TimelineRole.prototype.mouseover = function() {
+  const role = this;
+
+  return () => {
+    // role.backgroundRect.attr("fill","orange");
+  }
+
+}
+
 TimelineRole.prototype.addBackgroundRect = function() {
   const role = this;
 
@@ -2873,35 +2872,6 @@ TimelineRole.prototype.addName = function() {
   return name;
 }
 
-SvgTutorialCodeBlock.prototype.addLine = function(options) {
-  const block = this;
-
-  const indentSize = 2 * options.indent + "em"
-
-  const addedLine = block.div.append("div")
-    .style("padding-left",indentSize)
-    .html(options.html)
-    .on("mouseover",function() {
-      d3.select(this)
-        .style("background-color","#9FDE9C")
-        .style("font-weight","bold")
-        .style("color","black");
-
-      if(options.mouseover) { options.mouseover(); }
-      
-    })
-    .on("mouseout",function() {
-      d3.select(this)
-        .style("background-color",block.parent.style.codeBlock.background)
-        .style("font-weight",block.parent.style.codeBlock.fontWeight)
-        .style("color","white");
-
-        if(options.mouseover) { options.mouseout(); }
-    })
-
-  return block;
-}
-
 SvgTutorialCodeBlock.prototype.addBackground = function() {
   const container = this;
 
@@ -2957,6 +2927,35 @@ SvgTutorialCodeBlock.prototype.addForeignObject = function() {
     .attr("height",container.parent.layout.gridVertical(11.25));
 
   return foreignObject;
+}
+
+SvgTutorialCodeBlock.prototype.addLine = function(options) {
+  const block = this;
+
+  const indentSize = 2 * options.indent + "em"
+
+  const addedLine = block.div.append("div")
+    .style("padding-left",indentSize)
+    .html(options.html)
+    .on("mouseover",function() {
+      d3.select(this)
+        .style("background-color","#9FDE9C")
+        .style("font-weight","bold")
+        .style("color","black");
+
+      if(options.mouseover) { options.mouseover(); }
+      
+    })
+    .on("mouseout",function() {
+      d3.select(this)
+        .style("background-color",block.parent.style.codeBlock.background)
+        .style("font-weight",block.parent.style.codeBlock.fontWeight)
+        .style("color","white");
+
+        if(options.mouseover) { options.mouseout(); }
+    })
+
+  return block;
 }
 
 SvgTutorialContainer.prototype.defineLayout = function(options) {
