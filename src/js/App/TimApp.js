@@ -55,6 +55,17 @@ function TimApp(options) {
           "height":1080
         },
         "description":"Using Blender to create animated charts and graphics."
+      },
+      {
+        "text":["3D MODEL SKETCHES"],
+        "imagePaths":["assets/arduino.png"],
+        "identifier":"three",
+        "href":"modelViewer",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"An assortment of 3D models I've created."
       }
       // {
       //   "text":["K-MEANS EXPLAINED"],
@@ -66,17 +77,6 @@ function TimApp(options) {
       //     "height":872
       //   },
       //   "description":"An explorable explanation about the foundational machine learning algorithm."
-      // },
-      // {
-      //   "text":["THREE.JS SKETCHES"],
-      //   "imagePaths":["assets/arduino.png"],
-      //   "identifier":"three",
-      //   "href":"threejs-sketches",
-      //   "imageSize":{
-      //     "width":1920,
-      //     "height":1080
-      //   },
-      //   "description":"A random assortment of 3D models I've created."
       // },
       // {
       //   "text":["LEARNABLE SVG"],

@@ -1,46 +1,3 @@
-function Headline(options) {
-  const headline = this;
-  init(options);
-  return headline;
-
-  function init(options) {
-    headline.parent = options.parent;
-    headline.where = options.where;
-    headline.string = options.string;
-
-    headline.hasTransitioned = false;
-
-    headline.layout = headline.defineLayout(options);
-    headline.style = headline.defineStyle(options);
-
-    headline.svg = headline.addSvg();
-    headline.defs = headline.addDefs();
-    headline.background = headline.addBackground();
-    headline.text = headline.addText();
-    headline.curtainGroup = headline.addCurtainGroup();
-    headline.accent = headline.addAccent();
-
-    headline.resize();
-
-  }
-}
-
-function LineChart(options) {
-  const chart = this;
-  init(options);
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.container = chart.addContainer();
-    chart.svg = chart.addSvg();
-    chart.axes = chart.addAxes();
-    chart.labels = chart.addLabels();
-    chart.grid = chart.addGrid();
-    chart.line = chart.addLine();
-  }
-}
-
 function TimApp(options) {
   const app = this;
   init(options)
@@ -98,6 +55,17 @@ function TimApp(options) {
           "height":1080
         },
         "description":"Using Blender to create animated charts and graphics."
+      },
+      {
+        "text":["3D MODEL SKETCHES"],
+        "imagePaths":["assets/arduino.png"],
+        "identifier":"three",
+        "href":"modelViewer",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"An assortment of 3D models I've created."
       }
       // {
       //   "text":["K-MEANS EXPLAINED"],
@@ -109,17 +77,6 @@ function TimApp(options) {
       //     "height":872
       //   },
       //   "description":"An explorable explanation about the foundational machine learning algorithm."
-      // },
-      // {
-      //   "text":["THREE.JS SKETCHES"],
-      //   "imagePaths":["assets/arduino.png"],
-      //   "identifier":"three",
-      //   "href":"threejs-sketches",
-      //   "imageSize":{
-      //     "width":1920,
-      //     "height":1080
-      //   },
-      //   "description":"A random assortment of 3D models I've created."
       // },
       // {
       //   "text":["LEARNABLE SVG"],
@@ -242,6 +199,49 @@ TimApp.prototype.getBrowserInfo = function() {
   return browserInfo;
 }
 
+function Headline(options) {
+  const headline = this;
+  init(options);
+  return headline;
+
+  function init(options) {
+    headline.parent = options.parent;
+    headline.where = options.where;
+    headline.string = options.string;
+
+    headline.hasTransitioned = false;
+
+    headline.layout = headline.defineLayout(options);
+    headline.style = headline.defineStyle(options);
+
+    headline.svg = headline.addSvg();
+    headline.defs = headline.addDefs();
+    headline.background = headline.addBackground();
+    headline.text = headline.addText();
+    headline.curtainGroup = headline.addCurtainGroup();
+    headline.accent = headline.addAccent();
+
+    headline.resize();
+
+  }
+}
+
+function LineChart(options) {
+  const chart = this;
+  init(options);
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.container = chart.addContainer();
+    chart.svg = chart.addSvg();
+    chart.axes = chart.addAxes();
+    chart.labels = chart.addLabels();
+    chart.grid = chart.addGrid();
+    chart.line = chart.addLine();
+  }
+}
+
 function MobileWorkExample(options,index,app) {
   const example = this;
   init(options,index,app);
@@ -291,6 +291,28 @@ function ScrollManager(options) {
   }
 }
 
+function SkillBoxButton(options) {
+  const button = this;
+  init(options);
+  return button;
+
+  function init(options) {
+    button.parent = options.parent;
+    button.key = options.key;
+    button.group = button.addGroup();
+    button.rect = button.addRect();
+    button.curtain = button.addCurtain();
+    button.text = button.addText(options.text);
+    button.highlightLine = button.addHighlight();
+
+    button.skillGroup = button.addSkillGroup(options.skills);
+
+    button.resizeRect();
+
+  }
+
+}
+
 function SkillBox(parent) {
     const box = this;
 
@@ -316,26 +338,18 @@ function SkillBox(parent) {
     }
 }
 
-function SkillBoxButton(options) {
-  const button = this;
+function SkillBoxGroup(options) {
+  const skillGroup = this;
   init(options);
-  return button;
+  return skillGroup;
 
   function init(options) {
-    button.parent = options.parent;
-    button.key = options.key;
-    button.group = button.addGroup();
-    button.rect = button.addRect();
-    button.curtain = button.addCurtain();
-    button.text = button.addText(options.text);
-    button.highlightLine = button.addHighlight();
-
-    button.skillGroup = button.addSkillGroup(options.skills);
-
-    button.resizeRect();
-
+    skillGroup.parent = options.parent;
+    skillGroup.skills = options.skills;
+    skillGroup.layout = skillGroup.defineLayout();
+    skillGroup.group = skillGroup.addGroup();
+    skillGroup.skillCards = skillGroup.addSkillCards();
   }
-
 }
 
 function SkillBoxCard(options) {
@@ -367,20 +381,6 @@ function SkillBoxCard(options) {
 
 
 
-  }
-}
-
-function SkillBoxGroup(options) {
-  const skillGroup = this;
-  init(options);
-  return skillGroup;
-
-  function init(options) {
-    skillGroup.parent = options.parent;
-    skillGroup.skills = options.skills;
-    skillGroup.layout = skillGroup.defineLayout();
-    skillGroup.group = skillGroup.addGroup();
-    skillGroup.skillCards = skillGroup.addSkillCards();
   }
 }
 
@@ -514,90 +514,6 @@ Headline.prototype.defineStyle = function(options) {
   return style;
 }
 
-Headline.prototype.addAccent = function() {
-  const headline = this;
-
-  const curtain = headline.curtainGroup
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",headline.layout.size.width)
-    .attr("height",headline.layout.size.height)
-    .attr("fill","white");
-
-  const accent = headline.curtainGroup
-    .append("rect")
-    .attr("x",0)
-    .attr("y",headline.layout.size.height / 2)
-    .attr("width",headline.layout.accent.size.width)
-    .attr("height",0)
-    .attr("fill",headline.style.accent.fill);
-
-
-  return accent;
-}
-
-Headline.prototype.addBackground = function() {
-  const headline = this;
-
-  const background = headline.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",headline.layout.background.size.width)
-    .attr("height",headline.layout.background.size.height)
-    .attr("fill",headline.style.background.fill);
-
-  return background;
-}
-
-Headline.prototype.addCurtainGroup = function() {
-  const headline = this;
-  const group = headline.svg
-    .append("g")
-    .attr("transform","translate(0,0)");
-
-  return group;    
-}
-
-Headline.prototype.addDefs = function() {
-  const headline = this;
-
-  const defs = headline.svg
-    .append("defs");
-
-  return defs;
-}
-
-Headline.prototype.addSvg = function() {
-  const headline = this;
-
-  const svg = d3.select(headline.where)
-    .append("svg")
-    .attr("width",headline.layout.size.width)
-    .attr("height",headline.layout.size.height);
-
-  return svg;
-}
-
-Headline.prototype.addText = function() {
-  const headline = this;
-
-  const text = headline.svg
-    .append("text")
-    .attr("x",headline.layout.text.x)
-    .attr("y",headline.layout.text.y)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","central")
-    .attr("fill",headline.style.text.fontFill)
-    .attr("font-family",headline.style.text.fontFamily)
-    .attr("font-weight",headline.style.text.fontWeight)
-    .attr("font-size","1em")
-    .text(headline.string);
-
-  return text;
-}
-
 Headline.prototype.animateIn = function() {
   const headline = this;
 
@@ -698,6 +614,90 @@ Headline.prototype.resize = function() {
     .attr("width",newRectWidth);
 
   return headline;
+}
+
+Headline.prototype.addAccent = function() {
+  const headline = this;
+
+  const curtain = headline.curtainGroup
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",headline.layout.size.width)
+    .attr("height",headline.layout.size.height)
+    .attr("fill","white");
+
+  const accent = headline.curtainGroup
+    .append("rect")
+    .attr("x",0)
+    .attr("y",headline.layout.size.height / 2)
+    .attr("width",headline.layout.accent.size.width)
+    .attr("height",0)
+    .attr("fill",headline.style.accent.fill);
+
+
+  return accent;
+}
+
+Headline.prototype.addBackground = function() {
+  const headline = this;
+
+  const background = headline.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",headline.layout.background.size.width)
+    .attr("height",headline.layout.background.size.height)
+    .attr("fill",headline.style.background.fill);
+
+  return background;
+}
+
+Headline.prototype.addCurtainGroup = function() {
+  const headline = this;
+  const group = headline.svg
+    .append("g")
+    .attr("transform","translate(0,0)");
+
+  return group;    
+}
+
+Headline.prototype.addDefs = function() {
+  const headline = this;
+
+  const defs = headline.svg
+    .append("defs");
+
+  return defs;
+}
+
+Headline.prototype.addSvg = function() {
+  const headline = this;
+
+  const svg = d3.select(headline.where)
+    .append("svg")
+    .attr("width",headline.layout.size.width)
+    .attr("height",headline.layout.size.height);
+
+  return svg;
+}
+
+Headline.prototype.addText = function() {
+  const headline = this;
+
+  const text = headline.svg
+    .append("text")
+    .attr("x",headline.layout.text.x)
+    .attr("y",headline.layout.text.y)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","central")
+    .attr("fill",headline.style.text.fontFill)
+    .attr("font-family",headline.style.text.fontFamily)
+    .attr("font-weight",headline.style.text.fontWeight)
+    .attr("font-size","1em")
+    .text(headline.string);
+
+  return text;
 }
 
 MobileWorkExample.prototype.addDefs = function() {
@@ -979,6 +979,181 @@ ScrollManager.prototype.triggerEvent = function(eventName) {
 
 }
 
+SkillBoxButton.prototype.activate = function() {
+  const button = this;
+
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",0)
+    .attr("height",button.getSize().height);
+
+  button.skillGroup
+    .activate();
+
+  return button;
+}
+
+SkillBoxButton.prototype.deactivate = function() {
+  const button = this;
+
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",button.getSize().height)
+    .attr("height",0);
+
+  button.skillGroup
+    .deactivate();
+
+  return button;
+
+}
+
+SkillBoxButton.prototype.highlight = function() {
+  const button = this;
+
+  button.highlightLine
+    .transition()
+    .duration(250)
+    .attr("x1",0)
+    .attr("x2",button.getSize().width);
+
+  return button;
+}
+
+SkillBoxButton.prototype.unhighlight = function() {
+  const button = this;
+
+  const width = button.getSize().width / 2;
+
+  button.highlightLine
+    .transition()
+    .duration(125)
+    .attr("x1",button.getSize().width / 2)
+    .attr("x2",button.getSize().width / 2);
+
+  return button;
+}
+
+SkillBoxButton.prototype.addCurtain = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","#984BA3");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addGroup = function() {
+  const button = this;
+
+  const group = button.parent.layers.nav
+    .append("g")
+    .attr("cursor","pointer")
+    .attr("transform","translate(0,0)")
+    .on('mouseover',function() { button.highlight(); })
+    .on('mouseout',function() { button.unhighlight(); })
+    .on('click',function() { button.parent.showSkill(button.key); });
+
+  return group;
+}
+
+SkillBoxButton.prototype.addHighlight = function() {
+  const button = this;
+
+  const highlight = button.group
+    .append("line")
+    .attr("stroke-width",5)
+    .attr("stroke","#984BA3");
+
+  return highlight;
+}
+
+SkillBoxButton.prototype.addRect = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","black");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addSkillGroup = function(skills) {
+  const button = this;
+  const skillGroup = new SkillBoxGroup({
+    "parent":button.parent,
+    "skills":skills
+  });
+  return skillGroup;
+}
+
+SkillBoxButton.prototype.addText = function(textString) {
+  const button = this;
+
+  const text = button.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-family","Oswald")
+    .attr("font-weight",400)
+    .attr("font-size","1.25em")
+    .attr("fill","white")
+    .text(textString);
+
+  return text;
+}
+
+SkillBoxButton.prototype.resizeRect = function() {
+  const button = this;
+
+  const textSize = button.text.node().getBBox();
+  const horizontalPadding = 30;
+
+  button.rect
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",textSize.height);
+
+  button.curtain
+    .attr("x",0)
+    .attr("y",textSize.height)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",0);
+
+  button.text
+    .attr("x",textSize.width / 2 + horizontalPadding / 2)
+    .attr("y",textSize.height / 2 + 2);
+
+  button.highlightLine
+    .attr("x1",textSize.width / 2)
+    .attr("x2",textSize.width / 2)
+    .attr("y1",textSize.height)
+    .attr("y2",textSize.height);
+
+
+}
+
+SkillBoxButton.prototype.getSize = function() {
+  const box = this;
+
+  return box.rect
+    .node()
+    .getBBox();
+}
+
+SkillBoxButton.prototype.move = function(coordinates) {
+  const button = this;
+
+  button.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
+
+  return button;
+}
+
 SkillBox.prototype.showSkill = function(skill) {
   const box = this;
 
@@ -1001,6 +1176,23 @@ SkillBox.prototype.defineLayout = function() {
   layout.size.height = window.innerHeight / 12;
 
   return layout;
+}
+
+SkillBox.prototype.layoutButtons = function() {
+  const box = this;
+
+  let runningX = 0;
+
+  Object.keys(box.buttons).forEach((key) => {
+    const button = box.buttons[key];
+    button.move({
+      "x":runningX,
+      "y":0
+    });
+
+    runningX += button.getSize().width + 20;
+  });
+
 }
 
 SkillBox.prototype.addButtons = function() {
@@ -1253,196 +1445,78 @@ SkillBox.prototype.applyLayout = function() {
   return box;
 }
 
-SkillBox.prototype.layoutButtons = function() {
-  const box = this;
+SkillBoxGroup.prototype.activate = function() {
+  const skillGroup = this;
 
-  let runningX = 0;
-
-  Object.keys(box.buttons).forEach((key) => {
-    const button = box.buttons[key];
-    button.move({
-      "x":runningX,
-      "y":0
-    });
-
-    runningX += button.getSize().width + 20;
+  skillGroup.skillCards.forEach((card,index) =>{
+    card.activate(index * 200);
   });
 
+  return skillGroup;
 }
 
-SkillBoxButton.prototype.activate = function() {
-  const button = this;
+SkillBoxGroup.prototype.deactivate = function() {
+  const skillGroup = this;
 
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",0)
-    .attr("height",button.getSize().height);
+  skillGroup.skillCards.forEach((card) => {
+    card.deactivate();
+  });
 
-  button.skillGroup
-    .activate();
-
-  return button;
+  return skillGroup;
 }
 
-SkillBoxButton.prototype.deactivate = function() {
-  const button = this;
+SkillBoxGroup.prototype.defineLayout = function() {
+  const skillGroup = this;
 
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",button.getSize().height)
-    .attr("height",0);
+  const layout = {};
 
-  button.skillGroup
-    .deactivate();
+  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
 
-  return button;
+  layout.size = {};
+  layout.size.width = skillGroup.parent.layout.size.width;
+  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
 
+  layout.verticalOffset = navHeight * 1.5;
+
+  layout.gridWidth = layout.size.width / 2;
+  layout.gridHeight = layout.size.height / 2;
+
+  return layout;
 }
 
-SkillBoxButton.prototype.highlight = function() {
-  const button = this;
+SkillBoxGroup.prototype.addGroup = function() {
+  const skillGroup = this;
 
-  button.highlightLine
-    .transition()
-    .duration(250)
-    .attr("x1",0)
-    .attr("x2",button.getSize().width);
-
-  return button;
-}
-
-SkillBoxButton.prototype.unhighlight = function() {
-  const button = this;
-
-  const width = button.getSize().width / 2;
-
-  button.highlightLine
-    .transition()
-    .duration(125)
-    .attr("x1",button.getSize().width / 2)
-    .attr("x2",button.getSize().width / 2);
-
-  return button;
-}
-
-SkillBoxButton.prototype.addCurtain = function() {
-  const button = this;
-
-  const rect = button.group
-    .append("rect")
-    .attr("fill","#984BA3");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addGroup = function() {
-  const button = this;
-
-  const group = button.parent.layers.nav
+  const group = skillGroup.parent.layers.skillGroups
     .append("g")
-    .attr("cursor","pointer")
-    .attr("transform","translate(0,0)")
-    .on('mouseover',function() { button.highlight(); })
-    .on('mouseout',function() { button.unhighlight(); })
-    .on('click',function() { button.parent.showSkill(button.key); });
+    .attr("transform","translate(0,"+skillGroup.layout.verticalOffset+")");
 
   return group;
 }
 
-SkillBoxButton.prototype.addHighlight = function() {
-  const button = this;
+SkillBoxGroup.prototype.addSkillCards = function() {
+  const skillGroup = this;
 
-  const highlight = button.group
-    .append("line")
-    .attr("stroke-width",5)
-    .attr("stroke","#984BA3");
+  const skillCards = [];
+  skillGroup.skills.forEach((skill,index) => {
+    const coords = {};
+    coords.x = (index % 2) * skillGroup.layout.gridWidth;
+    coords.y = Math.floor(index / 2) * skillGroup.layout.gridHeight;
+    const bounds = {};
+    bounds.width = skillGroup.layout.gridWidth;
+    bounds.height = skillGroup.layout.gridHeight;
 
-  return highlight;
-}
+    skillCards.push(new SkillBoxCard({
+      "parent":skillGroup.parent,
+      "skillGroup":skillGroup,
+      "coords":coords,
+      "bounds":bounds,
+      "skill":skill,
+      "index":index
+    }));
+  })
 
-SkillBoxButton.prototype.addRect = function() {
-  const button = this;
-
-  const rect = button.group
-    .append("rect")
-    .attr("fill","black");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addSkillGroup = function(skills) {
-  const button = this;
-  const skillGroup = new SkillBoxGroup({
-    "parent":button.parent,
-    "skills":skills
-  });
-  return skillGroup;
-}
-
-SkillBoxButton.prototype.addText = function(textString) {
-  const button = this;
-
-  const text = button.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-family","Oswald")
-    .attr("font-weight",400)
-    .attr("font-size","1.25em")
-    .attr("fill","white")
-    .text(textString);
-
-  return text;
-}
-
-SkillBoxButton.prototype.resizeRect = function() {
-  const button = this;
-
-  const textSize = button.text.node().getBBox();
-  const horizontalPadding = 30;
-
-  button.rect
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",textSize.height);
-
-  button.curtain
-    .attr("x",0)
-    .attr("y",textSize.height)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",0);
-
-  button.text
-    .attr("x",textSize.width / 2 + horizontalPadding / 2)
-    .attr("y",textSize.height / 2 + 2);
-
-  button.highlightLine
-    .attr("x1",textSize.width / 2)
-    .attr("x2",textSize.width / 2)
-    .attr("y1",textSize.height)
-    .attr("y2",textSize.height);
-
-
-}
-
-SkillBoxButton.prototype.getSize = function() {
-  const box = this;
-
-  return box.rect
-    .node()
-    .getBBox();
-}
-
-SkillBoxButton.prototype.move = function(coordinates) {
-  const button = this;
-
-  button.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return button;
+  return skillCards;
 }
 
 SkillBoxCard.prototype.activate = function(delayStart) {
@@ -1657,80 +1731,6 @@ SkillBoxCard.prototype.resizeRect = function() {
 
 }
 
-SkillBoxGroup.prototype.activate = function() {
-  const skillGroup = this;
-
-  skillGroup.skillCards.forEach((card,index) =>{
-    card.activate(index * 200);
-  });
-
-  return skillGroup;
-}
-
-SkillBoxGroup.prototype.deactivate = function() {
-  const skillGroup = this;
-
-  skillGroup.skillCards.forEach((card) => {
-    card.deactivate();
-  });
-
-  return skillGroup;
-}
-
-SkillBoxGroup.prototype.defineLayout = function() {
-  const skillGroup = this;
-
-  const layout = {};
-
-  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
-
-  layout.size = {};
-  layout.size.width = skillGroup.parent.layout.size.width;
-  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
-
-  layout.verticalOffset = navHeight * 1.5;
-
-  layout.gridWidth = layout.size.width / 2;
-  layout.gridHeight = layout.size.height / 2;
-
-  return layout;
-}
-
-SkillBoxGroup.prototype.addGroup = function() {
-  const skillGroup = this;
-
-  const group = skillGroup.parent.layers.skillGroups
-    .append("g")
-    .attr("transform","translate(0,"+skillGroup.layout.verticalOffset+")");
-
-  return group;
-}
-
-SkillBoxGroup.prototype.addSkillCards = function() {
-  const skillGroup = this;
-
-  const skillCards = [];
-  skillGroup.skills.forEach((skill,index) => {
-    const coords = {};
-    coords.x = (index % 2) * skillGroup.layout.gridWidth;
-    coords.y = Math.floor(index / 2) * skillGroup.layout.gridHeight;
-    const bounds = {};
-    bounds.width = skillGroup.layout.gridWidth;
-    bounds.height = skillGroup.layout.gridHeight;
-
-    skillCards.push(new SkillBoxCard({
-      "parent":skillGroup.parent,
-      "skillGroup":skillGroup,
-      "coords":coords,
-      "bounds":bounds,
-      "skill":skill,
-      "index":index
-    }));
-  })
-
-  return skillCards;
-}
-
 SwipeIndicator.prototype.addCircles = function() {
   const indicator = this;
 
@@ -1877,6 +1877,107 @@ Timeline.prototype.animateIn = function() {
   timeline.hasStarted = true;
 }
 
+Timeline.prototype.addAxis = function() {
+  const timeline = this;
+
+  const axis = d3.axisTop(timeline.scale);
+
+
+  return axis;
+}
+
+Timeline.prototype.addAxisGroup = function() {
+  const timeline = this;
+
+  const group = timeline.layers.axis
+    .append("g")
+    .call(timeline.axis)
+    .attr("transform",timeline.layout.translateAxisGroup);
+
+  group.selectAll("path")
+    .attr("stroke",timeline.style.axisLineColor);
+
+  group.selectAll("line")
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","3,3")
+    .attr("y1",window.innerHeight)
+    .attr("stroke",timeline.style.axisDashColor);
+
+  group.selectAll("text")
+    .attr("text-anchor", "start")
+    .attr("alignment-baseline","central")
+    .attr("font-size",timeline.style.axisFontSize)
+    .attr("fill",timeline.style.axisFontColor)
+    .attr("font-weight",timeline.style.axisFontWeight)
+    .attr("font-family","Oswald")
+    .attr("dx", ".8em")
+    .attr("dy", "-.15em")
+    .attr("transform", "rotate(-45)");
+
+
+  return group;
+}
+
+Timeline.prototype.addCompanies = function() {
+  const timeline = this;
+  const companies = [];
+
+  timeline.data.forEach((company) => {
+    companies.push(
+      new TimelineCompany({
+        "where":timeline.layers.companies,
+        "parent":timeline,
+        "company":company
+      })
+    );
+  });
+
+  return companies;
+}
+
+Timeline.prototype.addLayers = function() {
+  const timeline = this;
+  const layers = {};
+  layers.axis = timeline.svg.append("g");
+  layers.companies = timeline.svg.append("g");
+  return layers;
+}
+
+Timeline.prototype.addSvg = function() {
+  const timeline = this;
+
+  const svg = d3.select(timeline.where)
+    .append("svg")
+    .attr("width",timeline.layout.size.width)
+    .attr("height",timeline.layout.size.height)
+    .style("background-color",timeline.style.backgroundColor);
+
+  return svg;
+}
+
+Timeline.prototype.applyLayout = function() {
+  const timeline = this;
+
+  let runningYPosition = 0;
+
+  timeline.companies.forEach((company) => {
+    const translateY = 50 + timeline.layout.margins.top + runningYPosition;
+    const translateX = timeline.layout.margins.left + timeline.scale(company.data.endDate);
+    const translateString = "translate(0,"+translateY+")";
+
+    company.group
+      .attr("transform",translateString);
+
+    runningYPosition += company.group.node().getBBox().height + 25;
+  });
+
+
+  const lastNode = timeline.companies[timeline.companies.length-1].group.node().getBBox();
+  timeline.svg.attr("height",runningYPosition + lastNode.height);
+
+  return timeline;
+}
+
 Timeline.prototype.defineData = function() {
   const timeline = this;
   const data = [];
@@ -2008,107 +2109,6 @@ Timeline.prototype.defineTimeScale = function() {
       .range([timeline.layout.transitionTime,0]);
 
     return scale;
-}
-
-Timeline.prototype.addAxis = function() {
-  const timeline = this;
-
-  const axis = d3.axisTop(timeline.scale);
-
-
-  return axis;
-}
-
-Timeline.prototype.addAxisGroup = function() {
-  const timeline = this;
-
-  const group = timeline.layers.axis
-    .append("g")
-    .call(timeline.axis)
-    .attr("transform",timeline.layout.translateAxisGroup);
-
-  group.selectAll("path")
-    .attr("stroke",timeline.style.axisLineColor);
-
-  group.selectAll("line")
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","3,3")
-    .attr("y1",window.innerHeight)
-    .attr("stroke",timeline.style.axisDashColor);
-
-  group.selectAll("text")
-    .attr("text-anchor", "start")
-    .attr("alignment-baseline","central")
-    .attr("font-size",timeline.style.axisFontSize)
-    .attr("fill",timeline.style.axisFontColor)
-    .attr("font-weight",timeline.style.axisFontWeight)
-    .attr("font-family","Oswald")
-    .attr("dx", ".8em")
-    .attr("dy", "-.15em")
-    .attr("transform", "rotate(-45)");
-
-
-  return group;
-}
-
-Timeline.prototype.addCompanies = function() {
-  const timeline = this;
-  const companies = [];
-
-  timeline.data.forEach((company) => {
-    companies.push(
-      new TimelineCompany({
-        "where":timeline.layers.companies,
-        "parent":timeline,
-        "company":company
-      })
-    );
-  });
-
-  return companies;
-}
-
-Timeline.prototype.addLayers = function() {
-  const timeline = this;
-  const layers = {};
-  layers.axis = timeline.svg.append("g");
-  layers.companies = timeline.svg.append("g");
-  return layers;
-}
-
-Timeline.prototype.addSvg = function() {
-  const timeline = this;
-
-  const svg = d3.select(timeline.where)
-    .append("svg")
-    .attr("width",timeline.layout.size.width)
-    .attr("height",timeline.layout.size.height)
-    .style("background-color",timeline.style.backgroundColor);
-
-  return svg;
-}
-
-Timeline.prototype.applyLayout = function() {
-  const timeline = this;
-
-  let runningYPosition = 0;
-
-  timeline.companies.forEach((company) => {
-    const translateY = 50 + timeline.layout.margins.top + runningYPosition;
-    const translateX = timeline.layout.margins.left + timeline.scale(company.data.endDate);
-    const translateString = "translate(0,"+translateY+")";
-
-    company.group
-      .attr("transform",translateString);
-
-    runningYPosition += company.group.node().getBBox().height + 25;
-  });
-
-
-  const lastNode = timeline.companies[timeline.companies.length-1].group.node().getBBox();
-  timeline.svg.attr("height",runningYPosition + lastNode.height);
-
-  return timeline;
 }
 
 WorkExample.prototype.addDefs = function() {

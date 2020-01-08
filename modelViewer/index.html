@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tim Marco - 3D Models</title>
+    <link rel="stylesheet" href="app/dist/style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,900&display=swap" rel="stylesheet">
+    <script src="node_modules/three/build/three.min.js"></script>
+    <script src="node_modules/three/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="node_modules/three/examples/js/controls/OrbitControls.js"></script>
+    <script src="node_modules/d3/dist/d3.min.js"></script>
+    <script src="app/dist/all.js"></script>
+
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="header">
+        <a href="https://www.timmarco.com"><h2>TIM MARCO</h2></a>
+      </div>
+
+      <div id="body">
+
+        <div id="leftPane">
+          <h4>MODELS</h4>
+        </div>
+
+        <div id="rightPane">
+          <div id="splash">
+            <div id="splashContent">
+              <h1 style="font-size:4em">3D MODEL SKETCHES</h1>
+              <p style="font-size:2em">This is a collection of 3D models that I've created for various projects over time. Click on one of the models to the left to view it.</p>
+              <p style="font-size:2em">Unless otherwise noted, I created the models using Blender. This viewer was created using THREE.js and d3.js</p>
+            </div>
+          </div>
+          <div id="threeContainer"></div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+    <script>
+      const modelViewer = new ModelViewer({
+
+      });
+    </script>
+  </body>
+
+</html>

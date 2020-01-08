@@ -1,0 +1,10 @@
+h1, h2, h3, h4, h5, h6 {
+  display:inline-block;
+  background-color:black;
+  color:white;
+  font-family:Oswald;
+  font-weight:500;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  margin:0;
+}

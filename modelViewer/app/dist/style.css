@@ -1,0 +1,69 @@
+body {
+  font-family:Merriweather;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+}
+
+canvas:focus {
+  outline:none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  display:inline-block;
+  background-color:black;
+  color:white;
+  font-family:Oswald;
+  font-weight:500;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  margin:0;
+}
+
+#body {
+  width:100vw;
+  height:92.25vh;
+}
+
+#container {
+  margin:0;
+  width:100vw;
+  height:100vh;
+}
+
+#header {
+  width:100vw;
+  height:6.75vh;
+  padding-top:2vh;
+}
+
+#leftPane {
+  width:12.5vw;
+  height:100%;
+  float:left;
+}
+
+#rightPane {
+  float:left;
+  width:87vw;
+  height:100%;
+  position:relative;
+}
+
+#splash {
+  width:100%;
+  height:100%;
+  z-index:1;
+}
+
+#splashContent {
+  padding:2em;
+}
+
+#threeContainer {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background-color:#eeeeee;
+}
