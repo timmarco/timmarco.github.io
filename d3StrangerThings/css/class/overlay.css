@@ -1,0 +1,21 @@
+.overlay {
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+  height:100vh;
+  width:100vw;
+  background-color:#e9f6f5;
+  padding-left:4em;
+  padding-right:4em;
+}
+
+.overlay h1 {
+  font-size:7em;
+  font-family:Oswald;
+}
+
+.overlay p {
+  margin-top:2em;
+  font-size:3em;
+}

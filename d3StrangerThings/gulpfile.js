@@ -1,34 +1,19 @@
-var gulp   = require('gulp'),
-  concat = require('gulp-concat'),
-  uglify = require('gulp-uglify'),
-  sourcemaps = require('gulp-sourcemaps'),
-  jshint = require('gulp-jshint');
+const gulp = require('gulp');
+const concat = require('gulp-concat');
 
-
-// define the default task and add the watch task to it
-gulp.task('default', ['watch']);
-
-// configure the jshint task
-
-gulp.task('build-js', function() {
-  return gulp.src('js/**/*.js')
-    .pipe(sourcemaps.init())
-      .pipe(concat('bundle.js'))
-      .pipe(uglify())
-    .pipe(sourcemaps.write())
+gulp.task('js',() => {
+  return gulp.src(['bower_components/d3/d3.min.js','js/**/*.js'])
+    .pipe(concat('all.js'))
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('jshint', function() {
-  return gulp.src('js/**/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+gulp.task('css',() => {
+  return gulp.src(['css/**/*.css'])
+    .pipe(concat('style.css'))
+    .pipe(gulp.dest('dist'));
 });
 
-
-// configure which files to watch and what tasks to use on file changes
-gulp.task('watch', function() {
-  console.log("I AM THE ONE WHO WATCHES");
-  gulp.watch('js/**/*.js', ['build-js']);
-  gulp.watch('js/**/*.js', ['jshint']);
+gulp.task('watch',() => {
+  gulp.watch('js/**/*.js',gulp.series('js'));
+  gulp.watch('css/**/*.css',gulp.series('css'));
 });
