@@ -5525,19 +5525,6 @@ function ModelControls(options) {
   }
 }
 
-function ModelDescription(options) {
-  const description = this;
-  init(options);
-  return description;
-
-  function init(options) {
-    description.layout = description.defineLayout();
-
-    description.svg = description.addSvg();
-
-  }
-}
-
 function ModelDescriptionBody(options) {
   const body = this;
   init(options);
@@ -5554,20 +5541,16 @@ function ModelDescriptionBody(options) {
   }
 }
 
-function ModelDescriptionHeadline(options) {
-  const headline = this;
+function ModelDescription(options) {
+  const description = this;
   init(options);
-  return headline;
+  return description;
 
   function init(options) {
-    headline.parent = options.parent;
-    headline.textString = options.model.name.join(" ");
-    headline.coordinates = {"x":0,"y":0,"yStart":headline.parent.layout.size.height};
+    description.layout = description.defineLayout();
 
-    headline.group = headline.addGroup();
-    headline.rect = headline.addRect();
-    headline.text = headline.addText();
-    headline.resizeRect();
+    description.svg = description.addSvg();
+
   }
 }
 
@@ -5601,6 +5584,23 @@ function ModelThumbnail(options) {
 
 
 
+  }
+}
+
+function ModelDescriptionHeadline(options) {
+  const headline = this;
+  init(options);
+  return headline;
+
+  function init(options) {
+    headline.parent = options.parent;
+    headline.textString = options.model.name.join(" ");
+    headline.coordinates = {"x":0,"y":0,"yStart":headline.parent.layout.size.height};
+
+    headline.group = headline.addGroup();
+    headline.rect = headline.addRect();
+    headline.text = headline.addText();
+    headline.resizeRect();
   }
 }
 
@@ -5657,105 +5657,6 @@ ModelControls.prototype.defineLayout = function() {
   return layout;
 }
 
-ModelControls.prototype.addSvg = function() {
-  const controls = this;
-
-  const svg = d3.select("#rightPane")
-    .append("svg")
-    .attr("width",controls.layout.size.width)
-    .attr("height",controls.layout.size.height)
-    .style("position","absolute")
-    .style("left",0)
-    .style("bottom",0)
-    .style("background-color","red")
-    .style("z-index",2);
-
-  return svg;
-}
-
-ModelControls.prototype.addZoom = function() {
-  const controls = this;
-
-  const zoom = new ModelControlSlider({
-    "parent":controls,
-    "size":{
-      "width":500,
-      "height":50
-    },
-    "callback":function(value) {
-      controls.parent.threeContainer
-        .zoom(value);
-    }
-  });
-
-  return zoom;
-}
-
-ModelDescription.prototype.addSvg = function() {
-  const description = this;
-
-  const svg = d3.select("#rightPane")
-    .append("svg")
-    .attr("width",description.layout.size.width)
-    .attr("height",description.layout.size.height)
-    .style("position","absolute")
-    .style("left",0)
-    .style("top",0)
-    .style("z-index",2);
-
-  return svg;
-}
-
-ModelDescription.prototype.defineLayout = function() {
-  const description = this;
-  const layout = {};
-
-  layout.size = {};
-  layout.size.width = d3.select("#rightPane").node().getBoundingClientRect().width;
-  layout.size.height = layout.size.width * 0.13125;
-
-  layout.safeAreas = {};
-
-  layout.safeAreas.title = {};
-  layout.safeAreas.title.x = 0;
-  layout.safeAreas.title.y = layout.size.height / 6;
-  layout.safeAreas.title.width = layout.size.width / 3;
-  layout.safeAreas.title.height = layout.size.height * 2 / 3;
-
-  layout.safeAreas.text = {};
-  layout.safeAreas.text.x = layout.size.width / 3;
-  layout.safeAreas.text.y = 0;
-  layout.safeAreas.text.width = layout.size.width * 2 / 3;
-  layout.safeAreas.text.height = layout.size.height;
-
-
-  return layout;
-}
-
-ModelDescription.prototype.updateModel = function(model) {
-  const description = this;
-
-  description.svg
-    .selectAll("*")
-    .remove();
-
-  const body = new ModelDescriptionBody({
-    "parent":description,
-    "model":model
-  });
-
-  const headline = new ModelDescriptionHeadline({
-    "parent":description,
-    "model":model
-  });
-
-  body
-    .transitionIn();
-
-  headline
-    .transitionIn();
-}
-
 ModelDescriptionBody.prototype.addDiv = function() {
   const body = this;
   const div = body.htmlBody
@@ -5797,6 +5698,40 @@ ModelDescriptionBody.prototype.addHtmlBody = function() {
   return htmlBody;
 }
 
+ModelControls.prototype.addSvg = function() {
+  const controls = this;
+
+  const svg = d3.select("#rightPane")
+    .append("svg")
+    .attr("width",controls.layout.size.width)
+    .attr("height",controls.layout.size.height)
+    .style("position","absolute")
+    .style("left",0)
+    .style("bottom",0)
+    .style("background-color","red")
+    .style("z-index",2);
+
+  return svg;
+}
+
+ModelControls.prototype.addZoom = function() {
+  const controls = this;
+
+  const zoom = new ModelControlSlider({
+    "parent":controls,
+    "size":{
+      "width":500,
+      "height":50
+    },
+    "callback":function(value) {
+      controls.parent.threeContainer
+        .zoom(value);
+    }
+  });
+
+  return zoom;
+}
+
 ModelDescriptionBody.prototype.transitionIn = function(duration = 300, delay = 200, ease = d3.easeLinear) {
   const description = this;
 
@@ -5809,62 +5744,69 @@ ModelDescriptionBody.prototype.transitionIn = function(duration = 300, delay = 2
     .attr("opacity",1);
 }
 
-ModelDescriptionHeadline.prototype.addGroup = function() {
-  const headline = this;
+ModelDescription.prototype.defineLayout = function() {
+  const description = this;
+  const layout = {};
 
-  const group = headline.parent.svg
-    .append("g")
-    .attr("opacity",0)
-    .attr("transform","translate(0,"+headline.parent.layout.size.height+")");
+  layout.size = {};
+  layout.size.width = d3.select("#rightPane").node().getBoundingClientRect().width;
+  layout.size.height = layout.size.width * 0.13125;
 
-  return group;
+  layout.safeAreas = {};
+
+  layout.safeAreas.title = {};
+  layout.safeAreas.title.x = 0;
+  layout.safeAreas.title.y = layout.size.height / 6;
+  layout.safeAreas.title.width = layout.size.width / 3;
+  layout.safeAreas.title.height = layout.size.height * 2 / 3;
+
+  layout.safeAreas.text = {};
+  layout.safeAreas.text.x = layout.size.width / 3;
+  layout.safeAreas.text.y = 0;
+  layout.safeAreas.text.width = layout.size.width * 2 / 3;
+  layout.safeAreas.text.height = layout.size.height;
+
+
+  return layout;
 }
 
-ModelDescriptionHeadline.prototype.addRect = function() {
-  const headline = this;
+ModelDescription.prototype.addSvg = function() {
+  const description = this;
 
-  const rect = headline.group
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("fill","black");
+  const svg = d3.select("#rightPane")
+    .append("svg")
+    .attr("width",description.layout.size.width)
+    .attr("height",description.layout.size.height)
+    .style("position","absolute")
+    .style("left",0)
+    .style("top",0)
+    .style("z-index",2);
 
-  return rect;
+  return svg;
 }
 
-ModelDescriptionHeadline.prototype.addText = function() {
-  const headline = this;
+ModelDescription.prototype.updateModel = function(model) {
+  const description = this;
 
-  const text = headline.group
-    .append("text")
-    .attr("font-size","2em")
-    .attr("font-family","Oswald")
-    .attr("font-weight",500)
-    .attr("fill","white")
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","hanging")
-    .text(headline.textString);
+  description.svg
+    .selectAll("*")
+    .remove();
 
-  return text;
-}
+  const body = new ModelDescriptionBody({
+    "parent":description,
+    "model":model
+  });
 
-ModelDescriptionHeadline.prototype.resizeRect = function() {
-  const headline = this;
+  const headline = new ModelDescriptionHeadline({
+    "parent":description,
+    "model":model
+  });
 
-  const textSize = headline.text.node().getBBox();
+  body
+    .transitionIn();
 
-  headline.rect
-    .attr("width",textSize.width + 20)
-    .attr("height",textSize.height + 5);
-
-  headline.text
-    .attr("x",10)
-    .attr("y",8);
-
-  headline.coordinates.x = headline.parent.layout.safeAreas.title.width - textSize.width - 25;
-  headline.group
-    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.yStart+")");
-
+  headline
+    .transitionIn();
 }
 
 ModelThumbnail.prototype.activate = function() {
@@ -5942,19 +5884,6 @@ ModelThumbnail.prototype.unhighlight = function() {
     .attr("fill",thumbnail.style.baseColor);
 
   return thumbnail;
-}
-
-ModelDescriptionHeadline.prototype.transitionIn = function(duration = 300, delay = 0, ease = d3.easeLinear) {
-  const headline = this;
-
-  headline.group
-    .transition()
-    .duration(duration)
-    .delay(delay)
-    .ease(ease)
-    .attr("opacity",1)
-    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.y+")");
-
 }
 
 ModelThumbnail.prototype.defineLayout = function() {
@@ -6129,6 +6058,77 @@ ModelThumbnail.prototype.scaleImage = function() {
 
 }
 
+ModelDescriptionHeadline.prototype.addGroup = function() {
+  const headline = this;
+
+  const group = headline.parent.svg
+    .append("g")
+    .attr("opacity",0)
+    .attr("transform","translate(0,"+headline.parent.layout.size.height+")");
+
+  return group;
+}
+
+ModelDescriptionHeadline.prototype.addRect = function() {
+  const headline = this;
+
+  const rect = headline.group
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("fill","black");
+
+  return rect;
+}
+
+ModelDescriptionHeadline.prototype.addText = function() {
+  const headline = this;
+
+  const text = headline.group
+    .append("text")
+    .attr("font-size","2em")
+    .attr("font-family","Oswald")
+    .attr("font-weight",500)
+    .attr("fill","white")
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","hanging")
+    .text(headline.textString);
+
+  return text;
+}
+
+ModelDescriptionHeadline.prototype.resizeRect = function() {
+  const headline = this;
+
+  const textSize = headline.text.node().getBBox();
+
+  headline.rect
+    .attr("width",textSize.width + 20)
+    .attr("height",textSize.height + 5);
+
+  headline.text
+    .attr("x",10)
+    .attr("y",8);
+
+  headline.coordinates.x = headline.parent.layout.safeAreas.title.width - textSize.width - 25;
+  headline.group
+    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.yStart+")");
+
+}
+
+ModelDescriptionHeadline.prototype.transitionIn = function(duration = 300, delay = 0, ease = d3.easeLinear) {
+  const headline = this;
+
+  headline.group
+    .transition()
+    .duration(duration)
+    .delay(delay)
+    .ease(ease)
+    .attr("opacity",1)
+    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.y+")");
+
+}
+
 ThreeContainer.prototype.defineConstants = function() {
   const container = this;
   const constants = {};
@@ -6177,61 +6177,6 @@ ThreeContainer.prototype.defineLayout = function() {
 
 
   return layout;
-}
-
-ThreeContainer.prototype.displayModel = function(model) {
-  const container = this;
-
-  container.orbitControls.reset();
-
-  container.camera.position.x = model.cameraPosition.x;
-  container.camera.position.y = model.cameraPosition.y;
-  container.camera.position.z = model.cameraPosition.z;
-
-  container.camera.rotation.x = model.cameraRotation.x;
-  container.camera.rotation.y = model.cameraRotation.y;
-  container.camera.rotation.z = model.cameraRotation.z;
-
-  container.camera.frustumCalled = true;
-
-  container
-    .loadModel(model.gltfPath)
-    .then((model) => {
-      container.empty.children = [];
-      container.currentObject = model.scene;
-      container.empty.add(container.currentObject);
-      container.empty.frustumCalled = true;
-      container.orbitControls.update();
-      container.lights.key.target = container.empty;
-      container.lights.fill.target = container.empty;
-    });
-
-}
-
-ThreeContainer.prototype.loadModel = function(modelPath) {
-  const container = this;
-
-  let promise = new Promise((resolve,reject) => {
-    container.loader.load(
-      modelPath,
-      function(gltf) {
-        resolve(gltf);
-      },
-      function(xhr) {
-
-      },
-      function(error) {
-        scene.logger.error("ERROR LOADING MODEL", error);
-      }
-    )
-  });
-
-  return promise;
-}
-
-ThreeContainer.prototype.zoom = function(level) {
-  const container = this;
-  container.camera.position.z = level;
 }
 
 ThreeContainer.prototype.addCamera = function() {
@@ -6323,6 +6268,61 @@ ThreeContainer.prototype.addScene = function() {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color( 0xffffff );
   return scene;
+}
+
+ThreeContainer.prototype.displayModel = function(model) {
+  const container = this;
+
+  container.orbitControls.reset();
+
+  container.camera.position.x = model.cameraPosition.x;
+  container.camera.position.y = model.cameraPosition.y;
+  container.camera.position.z = model.cameraPosition.z;
+
+  container.camera.rotation.x = model.cameraRotation.x;
+  container.camera.rotation.y = model.cameraRotation.y;
+  container.camera.rotation.z = model.cameraRotation.z;
+
+  container.camera.frustumCalled = true;
+
+  container
+    .loadModel(model.gltfPath)
+    .then((model) => {
+      container.empty.children = [];
+      container.currentObject = model.scene;
+      container.empty.add(container.currentObject);
+      container.empty.frustumCalled = true;
+      container.orbitControls.update();
+      container.lights.key.target = container.empty;
+      container.lights.fill.target = container.empty;
+    });
+
+}
+
+ThreeContainer.prototype.loadModel = function(modelPath) {
+  const container = this;
+
+  let promise = new Promise((resolve,reject) => {
+    container.loader.load(
+      modelPath,
+      function(gltf) {
+        resolve(gltf);
+      },
+      function(xhr) {
+
+      },
+      function(error) {
+        scene.logger.error("ERROR LOADING MODEL", error);
+      }
+    )
+  });
+
+  return promise;
+}
+
+ThreeContainer.prototype.zoom = function(level) {
+  const container = this;
+  container.camera.position.z = level;
 }
 
 ThreeContainer.prototype.update = function() {
