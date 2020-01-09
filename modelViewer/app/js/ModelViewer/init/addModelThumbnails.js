@@ -46,5 +46,29 @@ ModelViewer.prototype.addModelThumbnails = function() {
     "cameraRotation":{"_x":-1.2507823720052051,"_y":0.09144619349122028,"_z":0.2688779657517847,"_order":"XYZ"}
   }));
 
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["ZIG-ZAG","CHAIR"],
+    "imagePath":"assets/thumbnails/zigzag.jpg",
+    "gltfPath":"assets/models/zigzag.glb",
+    "description":"A to-scale model of Gerrit Rietveld's famous <a href='https://en.wikipedia.org/wiki/Zig-Zag_Chair' target='_new'>Zig Zag chair</a> (9KB).",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition":{"x":0.6672821411955197,"y":0.7553913378856686,"z":0.6047222453075173},
+    "cameraRotation":{"_x":-0.5106503645546324,"_y":0.47882310271896944,"_z":0.25259659562541775,"_order":"XYZ"}
+  }));
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["MILITARY","TABLE"],
+    "imagePath":"assets/thumbnails/militarytable.jpg",
+    "gltfPath":"assets/models/militarytable.glb",
+    "description":"A to-scale model of Gerrit Rietveld's Military Table & Military Stools (9KB).",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition":{"x":2.391294042312594,"y":1.5105665599488698,"z":1.658434809233142},
+    "cameraRotation":{"_x":-0.7387711482992004,"_y":0.8173285900122235,"_z":0.5863578599466712,"_order":"XYZ"}
+  }));
+
+
   return thumbnails;
 }

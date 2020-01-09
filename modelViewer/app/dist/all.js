@@ -5538,6 +5538,22 @@ function ModelDescription(options) {
   }
 }
 
+function ModelDescriptionBody(options) {
+  const body = this;
+  init(options);
+  return body;
+
+  function init(options) {
+    body.parent = options.parent;
+    body.text = options.model.description;
+
+    body.foreignObject = body.addForeignObject();
+    body.htmlBody = body.addHtmlBody();
+    body.div = body.addDiv();
+
+  }
+}
+
 function ModelDescriptionHeadline(options) {
   const headline = this;
   init(options);
@@ -5552,22 +5568,6 @@ function ModelDescriptionHeadline(options) {
     headline.rect = headline.addRect();
     headline.text = headline.addText();
     headline.resizeRect();
-  }
-}
-
-function ModelDescriptionBody(options) {
-  const body = this;
-  init(options);
-  return body;
-
-  function init(options) {
-    body.parent = options.parent;
-    body.text = options.model.description;
-
-    body.foreignObject = body.addForeignObject();
-    body.htmlBody = body.addHtmlBody();
-    body.div = body.addDiv();
-
   }
 }
 
@@ -5604,22 +5604,6 @@ function ModelThumbnail(options) {
   }
 }
 
-function ModelViewer(options) {
-  const viewer = this;
-  init(options);
-  return viewer;
-
-  function init(options) {
-    viewer.hasTransitionedIn = false;
-    viewer.hasDragged = false;
-    viewer.modelThumbnails = viewer.addModelThumbnails();
-    viewer.threeContainer = viewer.addThreeContainer();
-    viewer.description = viewer.addDescription();
-    viewer.dragCallout = viewer.addDragCallout();
-    viewer.currentModelPath =  "";
-  }
-}
-
 function ThreeContainer(options) {
   const container = this;
   init(options);
@@ -5643,6 +5627,22 @@ function ThreeContainer(options) {
     container
       .update();
 
+  }
+}
+
+function ModelViewer(options) {
+  const viewer = this;
+  init(options);
+  return viewer;
+
+  function init(options) {
+    viewer.hasTransitionedIn = false;
+    viewer.hasDragged = false;
+    viewer.modelThumbnails = viewer.addModelThumbnails();
+    viewer.threeContainer = viewer.addThreeContainer();
+    viewer.description = viewer.addDescription();
+    viewer.dragCallout = viewer.addDragCallout();
+    viewer.currentModelPath =  "";
   }
 }
 
@@ -5691,6 +5691,21 @@ ModelControls.prototype.addZoom = function() {
   return zoom;
 }
 
+ModelDescription.prototype.addSvg = function() {
+  const description = this;
+
+  const svg = d3.select("#rightPane")
+    .append("svg")
+    .attr("width",description.layout.size.width)
+    .attr("height",description.layout.size.height)
+    .style("position","absolute")
+    .style("left",0)
+    .style("top",0)
+    .style("z-index",2);
+
+  return svg;
+}
+
 ModelDescription.prototype.defineLayout = function() {
   const description = this;
   const layout = {};
@@ -5717,21 +5732,6 @@ ModelDescription.prototype.defineLayout = function() {
   return layout;
 }
 
-ModelDescription.prototype.addSvg = function() {
-  const description = this;
-
-  const svg = d3.select("#rightPane")
-    .append("svg")
-    .attr("width",description.layout.size.width)
-    .attr("height",description.layout.size.height)
-    .style("position","absolute")
-    .style("left",0)
-    .style("top",0)
-    .style("z-index",2);
-
-  return svg;
-}
-
 ModelDescription.prototype.updateModel = function(model) {
   const description = this;
 
@@ -5754,6 +5754,59 @@ ModelDescription.prototype.updateModel = function(model) {
 
   headline
     .transitionIn();
+}
+
+ModelDescriptionBody.prototype.addDiv = function() {
+  const body = this;
+  const div = body.htmlBody
+    .append("div")
+    .style("padding-left","0.5em")
+    .style("padding-right","0.5em")
+    .style("padding-top","0.25em")
+    .style("padding-bottom","0.25em")
+    .style("border-left","1px solid orange")
+    .html(body.text);
+
+  return div;
+}
+
+ModelDescriptionBody.prototype.addForeignObject = function() {
+  const body = this;
+
+  const foreignObject = body.parent.svg
+    .append("foreignObject")
+    .attr("x",body.parent.layout.safeAreas.text.x)
+    .attr("y",body.parent.layout.safeAreas.text.y + body.parent.layout.size.height)
+    .attr("width",body.parent.layout.safeAreas.text.width)
+    .attr("height",body.parent.layout.safeAreas.text.height)
+    .attr("opacity",0);
+
+  return foreignObject;
+}
+
+ModelDescriptionBody.prototype.addHtmlBody = function() {
+  const body = this;
+  const htmlBody = body.foreignObject
+    .append("xhtml:body")
+    .append("xhtml:body")
+    .style("width","100%")
+    .style("height","100%")
+    .style("margin",0)
+    .style("padding",0);
+
+  return htmlBody;
+}
+
+ModelDescriptionBody.prototype.transitionIn = function(duration = 300, delay = 200, ease = d3.easeLinear) {
+  const description = this;
+
+  description.foreignObject
+    .transition()
+    .duration(duration)
+    .delay(delay)
+    .ease(ease)
+    .attr("y",description.parent.layout.safeAreas.text.y)
+    .attr("opacity",1);
 }
 
 ModelDescriptionHeadline.prototype.addGroup = function() {
@@ -5812,72 +5865,6 @@ ModelDescriptionHeadline.prototype.resizeRect = function() {
   headline.group
     .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.yStart+")");
 
-}
-
-ModelDescriptionHeadline.prototype.transitionIn = function(duration = 300, delay = 0, ease = d3.easeLinear) {
-  const headline = this;
-
-  headline.group
-    .transition()
-    .duration(duration)
-    .delay(delay)
-    .ease(ease)
-    .attr("opacity",1)
-    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.y+")");
-
-}
-
-ModelDescriptionBody.prototype.addDiv = function() {
-  const body = this;
-  const div = body.htmlBody
-    .append("div")
-    .style("padding-left","0.5em")
-    .style("padding-right","0.5em")
-    .style("padding-top","0.25em")
-    .style("padding-bottom","0.25em")
-    .style("border-left","1px solid orange")
-    .html(body.text);
-
-  return div;
-}
-
-ModelDescriptionBody.prototype.addForeignObject = function() {
-  const body = this;
-
-  const foreignObject = body.parent.svg
-    .append("foreignObject")
-    .attr("x",body.parent.layout.safeAreas.text.x)
-    .attr("y",body.parent.layout.safeAreas.text.y + body.parent.layout.size.height)
-    .attr("width",body.parent.layout.safeAreas.text.width)
-    .attr("height",body.parent.layout.safeAreas.text.height)
-    .attr("opacity",0);
-
-  return foreignObject;
-}
-
-ModelDescriptionBody.prototype.addHtmlBody = function() {
-  const body = this;
-  const htmlBody = body.foreignObject
-    .append("xhtml:body")
-    .append("xhtml:body")
-    .style("width","100%")
-    .style("height","100%")
-    .style("margin",0)
-    .style("padding",0);
-
-  return htmlBody;
-}
-
-ModelDescriptionBody.prototype.transitionIn = function(duration = 300, delay = 200, ease = d3.easeLinear) {
-  const description = this;
-
-  description.foreignObject
-    .transition()
-    .duration(duration)
-    .delay(delay)
-    .ease(ease)
-    .attr("y",description.parent.layout.safeAreas.text.y)
-    .attr("opacity",1);
 }
 
 ModelThumbnail.prototype.activate = function() {
@@ -5955,6 +5942,19 @@ ModelThumbnail.prototype.unhighlight = function() {
     .attr("fill",thumbnail.style.baseColor);
 
   return thumbnail;
+}
+
+ModelDescriptionHeadline.prototype.transitionIn = function(duration = 300, delay = 0, ease = d3.easeLinear) {
+  const headline = this;
+
+  headline.group
+    .transition()
+    .duration(duration)
+    .delay(delay)
+    .ease(ease)
+    .attr("opacity",1)
+    .attr("transform","translate("+headline.coordinates.x+","+headline.coordinates.y+")");
+
 }
 
 ModelThumbnail.prototype.defineLayout = function() {
@@ -6129,166 +6129,6 @@ ModelThumbnail.prototype.scaleImage = function() {
 
 }
 
-ModelViewer.prototype.addDescription = function() {
-  const viewer = this;
-  const description = new ModelDescription({});
-  return description;
-}
-
-ModelViewer.prototype.addDragCallout = function() {
-  const viewer = this;
-
-  const callout = d3.select("#rightPane")
-    .append("div")
-    .style("width","100%")
-    .style("height","5vh")
-    .style("z-index",10)
-    .style("position","absolute")
-    .style("text-align","center")
-    .style("bottom","-5vh");
-
-  callout
-    .append("div")
-    .style("font-size","2em")
-    .style("font-weight",500)
-    .style("font-family","Oswald")
-    .style("padding-left","1em")
-    .style("padding-right","1em")
-    .style("padding-top","0.25em")
-    .style("padding-bottom","0.25em")
-    .style("display","inline-block")
-    .style("color","white")
-    .style("background-color","#E31A1C")
-    .html("CLICK AND DRAG TO ROTATE MODEL");
-
-  return callout;
-}
-
-ModelViewer.prototype.addModelThumbnails = function() {
-  const viewer = this;
-  const thumbnails = [];
-
-  thumbnails.push(new ModelThumbnail({
-    "name":["ARDUINO","UNO"],
-    "imagePath":"assets/thumbnails/arduino.jpg",
-    "gltfPath":"assets/models/arduino.glb",
-    "description":"A model of an Arduino Uno I created as part of a concept educational / training video. (1.87 MB)",
-    "zoomRange":[0.129,0.439],
-    "parent":viewer,
-    "cameraPosition": {"x":0.01639015604046701,"y":0.06397744724113906,"z":0.03156335389506952},
-    "cameraRotation":{"_x":-1.1124818467243944,"_y":0.22582893667430384,"_z":0.4260625036015186,"_order":"XYZ"}
-  }));
-
-  thumbnails.push(new ModelThumbnail({
-    "name":["LAPTOP"],
-    "imagePath":"assets/thumbnails/macbook.jpg",
-    "gltfPath":"assets/models/macbook.glb",
-    "description":"Model of my laptop created as part of the Arduino concept video (5.1 MB)",
-    "zoomRange":[0.163,0.615],
-    "parent":viewer,
-    "cameraPosition": {"x":0.21586677917771854,"y":0.2405939950613473,"z":0.3997024560195606},
-    "cameraRotation":{"_x":-0.541839421895039,"_y":0.43337320332920504,"_z":0.24758623209789848,"_order":"XYZ"}
-  }));
-
-  thumbnails.push(new ModelThumbnail({
-    "name":["BREADBOARD"],
-    "imagePath":"assets/thumbnails/breadboard.jpg",
-    "gltfPath":"assets/models/breadboard.glb",
-    "description":"A model of a breadboard created as part of the Arduino concept video (670 KB)",
-    "zoomRange":[0.425,0.743],
-    "parent":viewer,
-    "cameraPosition": {"x":0.055705185806565374,"y":0.06482411441691625,"z":0.04054131795213848},
-    "cameraRotation":{"_x":-1.0119059097312968,"_y":0.6296482969356019,"_z":0.7553113939983719,"_order":"XYZ"}
-  }));
-
-  thumbnails.push(new ModelThumbnail({
-    "name":["CUTTING","MAT"],
-    "imagePath":"assets/thumbnails/cuttingMat.jpg",
-    "gltfPath":"assets/models/cuttingMat.glb",
-    "description":"A craft cutting mat created as part of the Arduino concept video (1.5MB).",
-    "zoomRange":[0.425,0.743],
-    "parent":viewer,
-    "cameraPosition":{"x":0.5758353069773661,"y":0.6837329475655082,"z":-0.007575375650116761},
-    "cameraRotation":{"_x":-1.2507823720052051,"_y":0.09144619349122028,"_z":0.2688779657517847,"_order":"XYZ"}
-  }));
-
-  return thumbnails;
-}
-
-ModelViewer.prototype.addThreeContainer = function() {
-  const viewer = this;
-  const container = new ThreeContainer({"parent":viewer});
-  return container;
-}
-
-ModelViewer.prototype.hideDragCallout = function() {
-  const viewer = this;
-  viewer.hasDragged = true;
-
-  console.log("HIDE DRAG CALLOUT?");
-  
-  viewer.dragCallout
-    .transition()
-    .duration(250)
-    .style("bottom","-5vh");
-
-  return viewer;
-}
-
-ModelViewer.prototype.selectModel = function(model) {
-  const viewer = this;
-
-  if(!viewer.hasTransitionedIn) {
-      d3.select("canvas")
-        .transition()
-        .duration(500)
-        .style("top","0px")
-        .on('end',function(){
-          viewer.currentModelPath = model.gltfPath;
-          viewer.updateModel(model);
-          d3.select("#splashContent").html("");
-        });
-      viewer.hasTransitionedIn = true;
-
-      viewer.dragCallout
-        .transition()
-        .delay(750)
-        .duration(550)
-        .ease(d3.easeBack)
-        .style("bottom","2.5vh");
-
-  } else {
-    if(viewer.currentModelPath != model.gltfPath)  {
-      viewer.currentModelPath = model.gltfPath;
-      viewer.updateModel(model);
-    }
-  }
-
-  return viewer;
-}
-
-ModelViewer.prototype.updateModel = function(model) {
-  const viewer = this;
-
-  viewer.description
-    .updateModel(model);
-
-  viewer.threeContainer
-    .displayModel(model);
-
-  viewer.modelThumbnails.forEach((thumbnail) => {
-    if(thumbnail.gltfPath == viewer.currentModelPath) {
-      thumbnail
-        .activate();
-    } else {
-      thumbnail
-        .deactivate();
-    }
-  })
-
-  return viewer;
-}
-
 ThreeContainer.prototype.defineConstants = function() {
   const container = this;
   const constants = {};
@@ -6443,10 +6283,10 @@ ThreeContainer.prototype.addOrbitControls = function() {
   const controls = new THREE.OrbitControls(container.camera,container.renderer.domElement);
 
   controls.addEventListener("change",function() {
-    const rotation = {};
-    rotation.x = container.camera.rotation.x;
-    rotation.y = container.camera.rotation.y;
-    rotation.z = container.camera.rotation.z;
+    // const rotation = {};
+    // rotation.x = container.camera.rotation.x;
+    // rotation.y = container.camera.rotation.y;
+    // rotation.z = container.camera.rotation.z;
     // console.log(JSON.stringify(container.camera.position));
     // console.log(JSON.stringify(container.camera.rotation));
 
@@ -6496,4 +6336,188 @@ ThreeContainer.prototype.update = function() {
   }
 
   requestAnimationFrame(() => { container.update() });
+}
+
+ModelViewer.prototype.addDescription = function() {
+  const viewer = this;
+  const description = new ModelDescription({});
+  return description;
+}
+
+ModelViewer.prototype.addDragCallout = function() {
+  const viewer = this;
+
+  const callout = d3.select("#rightPane")
+    .append("div")
+    .style("width","100%")
+    .style("height","5vh")
+    .style("z-index",10)
+    .style("position","absolute")
+    .style("text-align","center")
+    .style("bottom","-5vh");
+
+  callout
+    .append("div")
+    .style("font-size","2em")
+    .style("font-weight",500)
+    .style("font-family","Oswald")
+    .style("padding-left","1em")
+    .style("padding-right","1em")
+    .style("padding-top","0.25em")
+    .style("padding-bottom","0.25em")
+    .style("display","inline-block")
+    .style("color","white")
+    .style("background-color","#E31A1C")
+    .html("CLICK AND DRAG TO ROTATE MODEL");
+
+  return callout;
+}
+
+ModelViewer.prototype.addModelThumbnails = function() {
+  const viewer = this;
+  const thumbnails = [];
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["ARDUINO","UNO"],
+    "imagePath":"assets/thumbnails/arduino.jpg",
+    "gltfPath":"assets/models/arduino.glb",
+    "description":"A model of an Arduino Uno I created as part of a concept educational / training video. (1.87 MB)",
+    "zoomRange":[0.129,0.439],
+    "parent":viewer,
+    "cameraPosition": {"x":0.01639015604046701,"y":0.06397744724113906,"z":0.03156335389506952},
+    "cameraRotation":{"_x":-1.1124818467243944,"_y":0.22582893667430384,"_z":0.4260625036015186,"_order":"XYZ"}
+  }));
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["LAPTOP"],
+    "imagePath":"assets/thumbnails/macbook.jpg",
+    "gltfPath":"assets/models/macbook.glb",
+    "description":"Model of my laptop created as part of the Arduino concept video (5.1 MB)",
+    "zoomRange":[0.163,0.615],
+    "parent":viewer,
+    "cameraPosition": {"x":0.21586677917771854,"y":0.2405939950613473,"z":0.3997024560195606},
+    "cameraRotation":{"_x":-0.541839421895039,"_y":0.43337320332920504,"_z":0.24758623209789848,"_order":"XYZ"}
+  }));
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["BREADBOARD"],
+    "imagePath":"assets/thumbnails/breadboard.jpg",
+    "gltfPath":"assets/models/breadboard.glb",
+    "description":"A model of a breadboard created as part of the Arduino concept video (670 KB)",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition": {"x":0.055705185806565374,"y":0.06482411441691625,"z":0.04054131795213848},
+    "cameraRotation":{"_x":-1.0119059097312968,"_y":0.6296482969356019,"_z":0.7553113939983719,"_order":"XYZ"}
+  }));
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["CUTTING","MAT"],
+    "imagePath":"assets/thumbnails/cuttingMat.jpg",
+    "gltfPath":"assets/models/cuttingMat.glb",
+    "description":"A craft cutting mat created as part of the Arduino concept video (1.5MB).",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition":{"x":0.5758353069773661,"y":0.6837329475655082,"z":-0.007575375650116761},
+    "cameraRotation":{"_x":-1.2507823720052051,"_y":0.09144619349122028,"_z":0.2688779657517847,"_order":"XYZ"}
+  }));
+
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["ZIG-ZAG","CHAIR"],
+    "imagePath":"assets/thumbnails/zigzag.jpg",
+    "gltfPath":"assets/models/zigzag.glb",
+    "description":"A to-scale model of Gerrit Rietveld's famous <a href='https://en.wikipedia.org/wiki/Zig-Zag_Chair' target='_new'>Zig Zag chair</a> (9KB).",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition":{"x":0.6672821411955197,"y":0.7553913378856686,"z":0.6047222453075173},
+    "cameraRotation":{"_x":-0.5106503645546324,"_y":0.47882310271896944,"_z":0.25259659562541775,"_order":"XYZ"}
+  }));
+
+  thumbnails.push(new ModelThumbnail({
+    "name":["MILITARY","TABLE"],
+    "imagePath":"assets/thumbnails/militarytable.jpg",
+    "gltfPath":"assets/models/militarytable.glb",
+    "description":"A to-scale model of Gerrit Rietveld's Military Table & Military Stools (9KB).",
+    "zoomRange":[0.425,0.743],
+    "parent":viewer,
+    "cameraPosition":{"x":2.391294042312594,"y":1.5105665599488698,"z":1.658434809233142},
+    "cameraRotation":{"_x":-0.7387711482992004,"_y":0.8173285900122235,"_z":0.5863578599466712,"_order":"XYZ"}
+  }));
+
+
+  return thumbnails;
+}
+
+ModelViewer.prototype.addThreeContainer = function() {
+  const viewer = this;
+  const container = new ThreeContainer({"parent":viewer});
+  return container;
+}
+
+ModelViewer.prototype.hideDragCallout = function() {
+  const viewer = this;
+  viewer.hasDragged = true;
+
+  console.log("HIDE DRAG CALLOUT?");
+  
+  viewer.dragCallout
+    .transition()
+    .duration(250)
+    .style("bottom","-5vh");
+
+  return viewer;
+}
+
+ModelViewer.prototype.selectModel = function(model) {
+  const viewer = this;
+
+  if(!viewer.hasTransitionedIn) {
+      d3.select("canvas")
+        .transition()
+        .duration(500)
+        .style("top","0px")
+        .on('end',function(){
+          viewer.currentModelPath = model.gltfPath;
+          viewer.updateModel(model);
+          d3.select("#splashContent").html("");
+        });
+      viewer.hasTransitionedIn = true;
+
+      viewer.dragCallout
+        .transition()
+        .delay(750)
+        .duration(550)
+        .ease(d3.easeBack)
+        .style("bottom","2.5vh");
+
+  } else {
+    if(viewer.currentModelPath != model.gltfPath)  {
+      viewer.currentModelPath = model.gltfPath;
+      viewer.updateModel(model);
+    }
+  }
+
+  return viewer;
+}
+
+ModelViewer.prototype.updateModel = function(model) {
+  const viewer = this;
+
+  viewer.description
+    .updateModel(model);
+
+  viewer.threeContainer
+    .displayModel(model);
+
+  viewer.modelThumbnails.forEach((thumbnail) => {
+    if(thumbnail.gltfPath == viewer.currentModelPath) {
+      thumbnail
+        .activate();
+    } else {
+      thumbnail
+        .deactivate();
+    }
+  })
+
+  return viewer;
 }
