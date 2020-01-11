@@ -11,83 +11,19 @@ function TimApp(options) {
       "where":"#timeline"
     });
 
+    console.log("UPDATED?");
+
     app.examples = app.addExamples([
-      {
-        "text":["DIVING DEEP INTO","FITTS' LAW"],
-        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
-        "identifier":"fitts",
-        "href":"fitts/",
-        "imageSize":{
-          "width":1300,
-          "height":826
-        },
-        "description":"An explorable explanation about a fundamental principle of interface design."
-      },
-      {
-        "text":["STRANGER THINGS TITLES","RECREATED IN D3"],
-        "imagePaths":["assets/strangerThings.png","assets/strangerThings-1.png","assets/strangerThings-2.png"],
-        "identifier":"strangerThings",
-        "href":"d3StrangerThings/",
-        "imageSize":{
-          "width":1898,
-          "height":1064
-        },
-        "description":"An experiment in pushing d3 and SVG animations beyond their intended use."
-      },
-      {
-        "text":["FREE AGENT ANALYZER"],
-        "imagePaths":["assets/freeAgents.png","assets/freeAgents-1.png","assets/freeAgents-2.png","assets/freeAgents-3.png"],
-        "identifier":"freeAgent",
-        "href":"FreeAgents/",
-        "imageSize":{
-          "width":1200,
-          "height":1006
-        },
-        "description":"A prototype tool for comparing the potential value of MLB Free Agents."
-      },
-      {
-        "text":["VIDEO DATA","VISUALIZATION"],
-        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
-        "identifier":"video",
-        "href":"blenderCharts",
-        "imageSize":{
-          "width":1920,
-          "height":1080
-        },
-        "description":"Using Blender to create animated charts and graphics."
-      },
-      {
-        "text":["3D MODEL SKETCHES"],
-        "imagePaths":["assets/arduino.png"],
-        "identifier":"three",
-        "href":"modelViewer",
-        "imageSize":{
-          "width":1920,
-          "height":1080
-        },
-        "description":"An assortment of 3D models I've created."
-      }
       // {
-      //   "text":["K-MEANS EXPLAINED"],
-      //   "imagePaths":["assets/kMeans.png","assets/kMeans-1.png","assets/kMeans-2.png","assets/kMeans-3.png","assets/kMeans-4.png"],
-      //   "identifier":"kMeans",
-      //   "href":"kMeans/",
+      //   "text":["AUGMENTED ARCHITECTURE","MODELS"],
+      //   "identifier":"arArchitecture",
+      //   "imagePaths":[],
+      //   "href":"augmented-architecure",
       //   "imageSize":{
-      //     "width":1224,
-      //     "height":872
+      //     "width":1920,
+      //     "height":1080
       //   },
-      //   "description":"An explorable explanation about the foundational machine learning algorithm."
-      // },
-      // {
-      //   "text":["LEARNABLE SVG"],
-      //   "imagePaths":["assets/svg.png","assets/svg-2.png","assets/svg-3.png","assets/svg-4.png"],
-      //   "identifier":"svg",
-      //   "href":"learnable-svg/",
-      //   "imageSize":{
-      //     "width":2296,
-      //     "height":1284
-      //   },
-      //   "description":"The missing interactive documentation for SVGs."
+      //   "description":"An ARKit demo app interacting with architectural models."
       // },
       // {
       //   "text":["THE PROMISE OF ","SPATIAL COMPUTING"],
@@ -111,7 +47,95 @@ function TimApp(options) {
       //   },
       //   "description":"An essay on the limitations and challenges of spatial computing."
       // },
+      {
+        "text":["3D MODEL SKETCHES"],
+        "imagePaths":["assets/arduino.png"],
+        "identifier":"three",
+        "href":"modelViewer",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"An assortment of 3D models I've created."
+      },
+      {
+        "text":["STRANGER THINGS TITLES","RECREATED IN D3"],
+        "imagePaths":["assets/strangerThings.png","assets/strangerThings-1.png","assets/strangerThings-2.png"],
+        "identifier":"strangerThings",
+        "href":"d3StrangerThings/",
+        "imageSize":{
+          "width":1898,
+          "height":1064
+        },
+        "description":"An experiment in pushing d3 and SVG animations beyond their intended use."
+      },
+      {
+        "text":["DIVING DEEP INTO","FITTS' LAW"],
+        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
+        "identifier":"fitts",
+        "href":"fitts/",
+        "imageSize":{
+          "width":1300,
+          "height":826
+        },
+        "description":"An explorable explanation about a fundamental principle of interface design."
+      },
+      {
+        "text":["VIDEO DATA","VISUALIZATION"],
+        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
+        "identifier":"video",
+        "href":"blenderCharts",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"Using Blender to create animated charts and graphics."
+      },
+      {
+        "text":["FREE AGENT ANALYZER"],
+        "imagePaths":["assets/freeAgents.png","assets/freeAgents-1.png","assets/freeAgents-2.png","assets/freeAgents-3.png"],
+        "identifier":"freeAgent",
+        "href":"FreeAgents/",
+        "imageSize":{
+          "width":1200,
+          "height":1006
+        },
+        "description":"A prototype tool for comparing the potential value of MLB Free Agents."
+      },
 
+      // {
+      //   "text":["K-MEANS EXPLAINED"],
+      //   "imagePaths":["assets/kMeans.png","assets/kMeans-1.png","assets/kMeans-2.png","assets/kMeans-3.png","assets/kMeans-4.png"],
+      //   "identifier":"kMeans",
+      //   "href":"kMeans/",
+      //   "imageSize":{
+      //     "width":1224,
+      //     "height":872
+      //   },
+      //   "description":"An explorable explanation about the foundational machine learning algorithm."
+      // },
+      // {
+      //   "text":["LEARNABLE SVG"],
+      //   "imagePaths":["assets/svg.png","assets/svg-2.png","assets/svg-3.png","assets/svg-4.png"],
+      //   "identifier":"svg",
+      //   "href":"learnable-svg/",
+      //   "imageSize":{
+      //     "width":2296,
+      //     "height":1284
+      //   },
+      //   "description":"The missing interactive documentation for SVGs."
+      // },
+      // {
+      //   "text":["TBD PHYSICAL","PROTOTYPES"],
+      //   "identifier":"arArchitecture",
+      //   "imagePaths":[],
+      //   "href":"augmented-architecure",
+      //   "imageSize":{
+      //     "width":1920,
+      //     "height":1080
+      //   },
+      //   "description":"Build out something with 3D Printing / Glowforge / other fabrication techniques."
+      // },
     ]);
 
     app.skillBox = new SkillBox(app);
@@ -199,6 +223,22 @@ TimApp.prototype.getBrowserInfo = function() {
   return browserInfo;
 }
 
+function LineChart(options) {
+  const chart = this;
+  init(options);
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.container = chart.addContainer();
+    chart.svg = chart.addSvg();
+    chart.axes = chart.addAxes();
+    chart.labels = chart.addLabels();
+    chart.grid = chart.addGrid();
+    chart.line = chart.addLine();
+  }
+}
+
 function Headline(options) {
   const headline = this;
   init(options);
@@ -223,22 +263,6 @@ function Headline(options) {
 
     headline.resize();
 
-  }
-}
-
-function LineChart(options) {
-  const chart = this;
-  init(options);
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.container = chart.addContainer();
-    chart.svg = chart.addSvg();
-    chart.axes = chart.addAxes();
-    chart.labels = chart.addLabels();
-    chart.grid = chart.addGrid();
-    chart.line = chart.addLine();
   }
 }
 
@@ -291,28 +315,6 @@ function ScrollManager(options) {
   }
 }
 
-function SkillBoxButton(options) {
-  const button = this;
-  init(options);
-  return button;
-
-  function init(options) {
-    button.parent = options.parent;
-    button.key = options.key;
-    button.group = button.addGroup();
-    button.rect = button.addRect();
-    button.curtain = button.addCurtain();
-    button.text = button.addText(options.text);
-    button.highlightLine = button.addHighlight();
-
-    button.skillGroup = button.addSkillGroup(options.skills);
-
-    button.resizeRect();
-
-  }
-
-}
-
 function SkillBox(parent) {
     const box = this;
 
@@ -338,18 +340,26 @@ function SkillBox(parent) {
     }
 }
 
-function SkillBoxGroup(options) {
-  const skillGroup = this;
+function SkillBoxButton(options) {
+  const button = this;
   init(options);
-  return skillGroup;
+  return button;
 
   function init(options) {
-    skillGroup.parent = options.parent;
-    skillGroup.skills = options.skills;
-    skillGroup.layout = skillGroup.defineLayout();
-    skillGroup.group = skillGroup.addGroup();
-    skillGroup.skillCards = skillGroup.addSkillCards();
+    button.parent = options.parent;
+    button.key = options.key;
+    button.group = button.addGroup();
+    button.rect = button.addRect();
+    button.curtain = button.addCurtain();
+    button.text = button.addText(options.text);
+    button.highlightLine = button.addHighlight();
+
+    button.skillGroup = button.addSkillGroup(options.skills);
+
+    button.resizeRect();
+
   }
+
 }
 
 function SkillBoxCard(options) {
@@ -381,6 +391,20 @@ function SkillBoxCard(options) {
 
 
 
+  }
+}
+
+function SkillBoxGroup(options) {
+  const skillGroup = this;
+  init(options);
+  return skillGroup;
+
+  function init(options) {
+    skillGroup.parent = options.parent;
+    skillGroup.skills = options.skills;
+    skillGroup.layout = skillGroup.defineLayout();
+    skillGroup.group = skillGroup.addGroup();
+    skillGroup.skillCards = skillGroup.addSkillCards();
   }
 }
 
@@ -881,6 +905,40 @@ MobileWorkExample.prototype.defineLayout = function() {
   return layout;
 }
 
+ScrollManager.prototype.scrollMethod = function() {
+  return () => {
+    const manager = this;
+
+    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
+    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
+
+    let current;
+    let next;
+
+    triggerPositions.forEach((position) => {
+      if(scrollPosition >= position) {
+        current = position;
+      }
+    });
+
+    if(current) {
+      manager.triggerEvent(manager.triggerPoints[current]);
+    }
+
+  }
+
+}
+
+ScrollManager.prototype.triggerEvent = function(eventName) {
+  const manager = this;
+
+  if(eventName in manager.scrollEvents) {
+    manager.scrollEvents[eventName]();
+  } else {
+  }
+
+}
+
 ScrollManager.prototype.attachResizeListener = function() {
   const manager = this;
 
@@ -945,215 +1003,6 @@ ScrollManager.prototype.defineTriggerPoints = function() {
   return triggerPoints;
 }
 
-ScrollManager.prototype.scrollMethod = function() {
-  return () => {
-    const manager = this;
-
-    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
-    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
-
-    let current;
-    let next;
-
-    triggerPositions.forEach((position) => {
-      if(scrollPosition >= position) {
-        current = position;
-      }
-    });
-
-    if(current) {
-      manager.triggerEvent(manager.triggerPoints[current]);
-    }
-
-  }
-
-}
-
-ScrollManager.prototype.triggerEvent = function(eventName) {
-  const manager = this;
-
-  if(eventName in manager.scrollEvents) {
-    manager.scrollEvents[eventName]();
-  } else {
-  }
-
-}
-
-SkillBoxButton.prototype.activate = function() {
-  const button = this;
-
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",0)
-    .attr("height",button.getSize().height);
-
-  button.skillGroup
-    .activate();
-
-  return button;
-}
-
-SkillBoxButton.prototype.deactivate = function() {
-  const button = this;
-
-  button.curtain
-    .transition()
-    .duration(250)
-    .attr("y",button.getSize().height)
-    .attr("height",0);
-
-  button.skillGroup
-    .deactivate();
-
-  return button;
-
-}
-
-SkillBoxButton.prototype.highlight = function() {
-  const button = this;
-
-  button.highlightLine
-    .transition()
-    .duration(250)
-    .attr("x1",0)
-    .attr("x2",button.getSize().width);
-
-  return button;
-}
-
-SkillBoxButton.prototype.unhighlight = function() {
-  const button = this;
-
-  const width = button.getSize().width / 2;
-
-  button.highlightLine
-    .transition()
-    .duration(125)
-    .attr("x1",button.getSize().width / 2)
-    .attr("x2",button.getSize().width / 2);
-
-  return button;
-}
-
-SkillBoxButton.prototype.addCurtain = function() {
-  const button = this;
-
-  const rect = button.group
-    .append("rect")
-    .attr("fill","#984BA3");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addGroup = function() {
-  const button = this;
-
-  const group = button.parent.layers.nav
-    .append("g")
-    .attr("cursor","pointer")
-    .attr("transform","translate(0,0)")
-    .on('mouseover',function() { button.highlight(); })
-    .on('mouseout',function() { button.unhighlight(); })
-    .on('click',function() { button.parent.showSkill(button.key); });
-
-  return group;
-}
-
-SkillBoxButton.prototype.addHighlight = function() {
-  const button = this;
-
-  const highlight = button.group
-    .append("line")
-    .attr("stroke-width",5)
-    .attr("stroke","#984BA3");
-
-  return highlight;
-}
-
-SkillBoxButton.prototype.addRect = function() {
-  const button = this;
-
-  const rect = button.group
-    .append("rect")
-    .attr("fill","black");
-
-  return rect;
-}
-
-SkillBoxButton.prototype.addSkillGroup = function(skills) {
-  const button = this;
-  const skillGroup = new SkillBoxGroup({
-    "parent":button.parent,
-    "skills":skills
-  });
-  return skillGroup;
-}
-
-SkillBoxButton.prototype.addText = function(textString) {
-  const button = this;
-
-  const text = button.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-family","Oswald")
-    .attr("font-weight",400)
-    .attr("font-size","1.25em")
-    .attr("fill","white")
-    .text(textString);
-
-  return text;
-}
-
-SkillBoxButton.prototype.resizeRect = function() {
-  const button = this;
-
-  const textSize = button.text.node().getBBox();
-  const horizontalPadding = 30;
-
-  button.rect
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",textSize.height);
-
-  button.curtain
-    .attr("x",0)
-    .attr("y",textSize.height)
-    .attr("width",textSize.width + horizontalPadding)
-    .attr("height",0);
-
-  button.text
-    .attr("x",textSize.width / 2 + horizontalPadding / 2)
-    .attr("y",textSize.height / 2 + 2);
-
-  button.highlightLine
-    .attr("x1",textSize.width / 2)
-    .attr("x2",textSize.width / 2)
-    .attr("y1",textSize.height)
-    .attr("y2",textSize.height);
-
-
-}
-
-SkillBoxButton.prototype.getSize = function() {
-  const box = this;
-
-  return box.rect
-    .node()
-    .getBBox();
-}
-
-SkillBoxButton.prototype.move = function(coordinates) {
-  const button = this;
-
-  button.group
-    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
-
-  return button;
-}
-
 SkillBox.prototype.showSkill = function(skill) {
   const box = this;
 
@@ -1176,23 +1025,6 @@ SkillBox.prototype.defineLayout = function() {
   layout.size.height = window.innerHeight / 12;
 
   return layout;
-}
-
-SkillBox.prototype.layoutButtons = function() {
-  const box = this;
-
-  let runningX = 0;
-
-  Object.keys(box.buttons).forEach((key) => {
-    const button = box.buttons[key];
-    button.move({
-      "x":runningX,
-      "y":0
-    });
-
-    runningX += button.getSize().width + 20;
-  });
-
 }
 
 SkillBox.prototype.addButtons = function() {
@@ -1445,78 +1277,196 @@ SkillBox.prototype.applyLayout = function() {
   return box;
 }
 
-SkillBoxGroup.prototype.activate = function() {
-  const skillGroup = this;
+SkillBox.prototype.layoutButtons = function() {
+  const box = this;
 
-  skillGroup.skillCards.forEach((card,index) =>{
-    card.activate(index * 200);
+  let runningX = 0;
+
+  Object.keys(box.buttons).forEach((key) => {
+    const button = box.buttons[key];
+    button.move({
+      "x":runningX,
+      "y":0
+    });
+
+    runningX += button.getSize().width + 20;
   });
 
-  return skillGroup;
 }
 
-SkillBoxGroup.prototype.deactivate = function() {
-  const skillGroup = this;
+SkillBoxButton.prototype.activate = function() {
+  const button = this;
 
-  skillGroup.skillCards.forEach((card) => {
-    card.deactivate();
-  });
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",0)
+    .attr("height",button.getSize().height);
 
-  return skillGroup;
+  button.skillGroup
+    .activate();
+
+  return button;
 }
 
-SkillBoxGroup.prototype.defineLayout = function() {
-  const skillGroup = this;
+SkillBoxButton.prototype.deactivate = function() {
+  const button = this;
 
-  const layout = {};
+  button.curtain
+    .transition()
+    .duration(250)
+    .attr("y",button.getSize().height)
+    .attr("height",0);
 
-  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
+  button.skillGroup
+    .deactivate();
 
-  layout.size = {};
-  layout.size.width = skillGroup.parent.layout.size.width;
-  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
+  return button;
 
-  layout.verticalOffset = navHeight * 1.5;
-
-  layout.gridWidth = layout.size.width / 2;
-  layout.gridHeight = layout.size.height / 2;
-
-  return layout;
 }
 
-SkillBoxGroup.prototype.addGroup = function() {
-  const skillGroup = this;
+SkillBoxButton.prototype.highlight = function() {
+  const button = this;
 
-  const group = skillGroup.parent.layers.skillGroups
+  button.highlightLine
+    .transition()
+    .duration(250)
+    .attr("x1",0)
+    .attr("x2",button.getSize().width);
+
+  return button;
+}
+
+SkillBoxButton.prototype.unhighlight = function() {
+  const button = this;
+
+  const width = button.getSize().width / 2;
+
+  button.highlightLine
+    .transition()
+    .duration(125)
+    .attr("x1",button.getSize().width / 2)
+    .attr("x2",button.getSize().width / 2);
+
+  return button;
+}
+
+SkillBoxButton.prototype.addCurtain = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","#984BA3");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addGroup = function() {
+  const button = this;
+
+  const group = button.parent.layers.nav
     .append("g")
-    .attr("transform","translate(0,"+skillGroup.layout.verticalOffset+")");
+    .attr("cursor","pointer")
+    .attr("transform","translate(0,0)")
+    .on('mouseover',function() { button.highlight(); })
+    .on('mouseout',function() { button.unhighlight(); })
+    .on('click',function() { button.parent.showSkill(button.key); });
 
   return group;
 }
 
-SkillBoxGroup.prototype.addSkillCards = function() {
-  const skillGroup = this;
+SkillBoxButton.prototype.addHighlight = function() {
+  const button = this;
 
-  const skillCards = [];
-  skillGroup.skills.forEach((skill,index) => {
-    const coords = {};
-    coords.x = (index % 2) * skillGroup.layout.gridWidth;
-    coords.y = Math.floor(index / 2) * skillGroup.layout.gridHeight;
-    const bounds = {};
-    bounds.width = skillGroup.layout.gridWidth;
-    bounds.height = skillGroup.layout.gridHeight;
+  const highlight = button.group
+    .append("line")
+    .attr("stroke-width",5)
+    .attr("stroke","#984BA3");
 
-    skillCards.push(new SkillBoxCard({
-      "parent":skillGroup.parent,
-      "skillGroup":skillGroup,
-      "coords":coords,
-      "bounds":bounds,
-      "skill":skill,
-      "index":index
-    }));
-  })
+  return highlight;
+}
 
-  return skillCards;
+SkillBoxButton.prototype.addRect = function() {
+  const button = this;
+
+  const rect = button.group
+    .append("rect")
+    .attr("fill","black");
+
+  return rect;
+}
+
+SkillBoxButton.prototype.addSkillGroup = function(skills) {
+  const button = this;
+  const skillGroup = new SkillBoxGroup({
+    "parent":button.parent,
+    "skills":skills
+  });
+  return skillGroup;
+}
+
+SkillBoxButton.prototype.addText = function(textString) {
+  const button = this;
+
+  const text = button.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-family","Oswald")
+    .attr("font-weight",400)
+    .attr("font-size","1.25em")
+    .attr("fill","white")
+    .text(textString);
+
+  return text;
+}
+
+SkillBoxButton.prototype.resizeRect = function() {
+  const button = this;
+
+  const textSize = button.text.node().getBBox();
+  const horizontalPadding = 30;
+
+  button.rect
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",textSize.height);
+
+  button.curtain
+    .attr("x",0)
+    .attr("y",textSize.height)
+    .attr("width",textSize.width + horizontalPadding)
+    .attr("height",0);
+
+  button.text
+    .attr("x",textSize.width / 2 + horizontalPadding / 2)
+    .attr("y",textSize.height / 2 + 2);
+
+  button.highlightLine
+    .attr("x1",textSize.width / 2)
+    .attr("x2",textSize.width / 2)
+    .attr("y1",textSize.height)
+    .attr("y2",textSize.height);
+
+
+}
+
+SkillBoxButton.prototype.getSize = function() {
+  const box = this;
+
+  return box.rect
+    .node()
+    .getBBox();
+}
+
+SkillBoxButton.prototype.move = function(coordinates) {
+  const button = this;
+
+  button.group
+    .attr("transform","translate("+coordinates.x+","+coordinates.y+")");
+
+  return button;
 }
 
 SkillBoxCard.prototype.activate = function(delayStart) {
@@ -1729,6 +1679,80 @@ SkillBoxCard.prototype.resizeRect = function() {
     .attr("x",10)
     .attr("y",textSize.height / 2 + 3);
 
+}
+
+SkillBoxGroup.prototype.activate = function() {
+  const skillGroup = this;
+
+  skillGroup.skillCards.forEach((card,index) =>{
+    card.activate(index * 200);
+  });
+
+  return skillGroup;
+}
+
+SkillBoxGroup.prototype.deactivate = function() {
+  const skillGroup = this;
+
+  skillGroup.skillCards.forEach((card) => {
+    card.deactivate();
+  });
+
+  return skillGroup;
+}
+
+SkillBoxGroup.prototype.defineLayout = function() {
+  const skillGroup = this;
+
+  const layout = {};
+
+  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
+
+  layout.size = {};
+  layout.size.width = skillGroup.parent.layout.size.width;
+  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
+
+  layout.verticalOffset = navHeight * 1.5;
+
+  layout.gridWidth = layout.size.width / 2;
+  layout.gridHeight = layout.size.height / 2;
+
+  return layout;
+}
+
+SkillBoxGroup.prototype.addGroup = function() {
+  const skillGroup = this;
+
+  const group = skillGroup.parent.layers.skillGroups
+    .append("g")
+    .attr("transform","translate(0,"+skillGroup.layout.verticalOffset+")");
+
+  return group;
+}
+
+SkillBoxGroup.prototype.addSkillCards = function() {
+  const skillGroup = this;
+
+  const skillCards = [];
+  skillGroup.skills.forEach((skill,index) => {
+    const coords = {};
+    coords.x = (index % 2) * skillGroup.layout.gridWidth;
+    coords.y = Math.floor(index / 2) * skillGroup.layout.gridHeight;
+    const bounds = {};
+    bounds.width = skillGroup.layout.gridWidth;
+    bounds.height = skillGroup.layout.gridHeight;
+
+    skillCards.push(new SkillBoxCard({
+      "parent":skillGroup.parent,
+      "skillGroup":skillGroup,
+      "coords":coords,
+      "bounds":bounds,
+      "skill":skill,
+      "index":index
+    }));
+  })
+
+  return skillCards;
 }
 
 SwipeIndicator.prototype.addCircles = function() {

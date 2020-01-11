@@ -1,0 +1,12 @@
+h1 {
+  display:inline-block;
+  background-color:black;
+  font-family:Oswald;
+  font-weight:500;
+  font-size:3em;
+  color:white;
+  padding-left:1em;
+  padding-right:1em;
+  user-select:none;
+  margin-block-end:0;
+}

@@ -1,0 +1,51 @@
+.bodySection {
+  width:75vw;
+  margin:auto;
+}
+
+a {
+  color:white;
+  text-decoration:none;
+}
+
+body {
+  background-color:#ffffff;
+  font-family:Merriweather;
+  font-size:1.5em;
+  margin:0;
+  padding:0;
+}
+
+h1 {
+  display:inline-block;
+  background-color:black;
+  font-family:Oswald;
+  font-weight:500;
+  font-size:3em;
+  color:white;
+  padding-left:1em;
+  padding-right:1em;
+  user-select:none;
+  margin-block-end:0;
+}
+
+h2 {
+  font-family:Oswald;
+  font-weight:500;
+  font-size:2em;
+  display:inline-block;
+  padding-left:1em;
+  padding-right:1em;
+  background-color:black;
+  color:white;
+  user-select:none;
+  margin-block-start:0;
+}
+
+.hero {
+  width:75vw;
+  height:39.375vw;
+  background-color:#333;
+  margin:auto;
+  padding:0;
+}

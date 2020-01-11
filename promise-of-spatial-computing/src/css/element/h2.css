@@ -1,0 +1,12 @@
+h2 {
+  font-family:Oswald;
+  font-weight:500;
+  font-size:2em;
+  display:inline-block;
+  padding-left:1em;
+  padding-right:1em;
+  background-color:black;
+  color:white;
+  user-select:none;
+  margin-block-start:0;
+}
