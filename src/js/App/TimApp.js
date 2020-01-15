@@ -7,9 +7,11 @@ function TimApp(options) {
 
     app.browserInfo = app.getBrowserInfo();
 
-    app.timeline = new Timeline({
-      "where":"#timeline"
-    });
+    if(!app.browserInfo.isTouchDevice) {
+      app.timeline = new Timeline({
+        "where":"#timeline"
+      });
+    }
 
     const examples = [
       // {

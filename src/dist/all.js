@@ -7,9 +7,11 @@ function TimApp(options) {
 
     app.browserInfo = app.getBrowserInfo();
 
-    app.timeline = new Timeline({
-      "where":"#timeline"
-    });
+    if(!app.browserInfo.isTouchDevice) {
+      app.timeline = new Timeline({
+        "where":"#timeline"
+      });
+    }
 
     const examples = [
       // {
@@ -204,22 +206,6 @@ TimApp.prototype.getBrowserInfo = function() {
   return browserInfo;
 }
 
-function LineChart(options) {
-  const chart = this;
-  init(options);
-  return chart;
-
-  function init(options) {
-    chart.where = options.where;
-    chart.container = chart.addContainer();
-    chart.svg = chart.addSvg();
-    chart.axes = chart.addAxes();
-    chart.labels = chart.addLabels();
-    chart.grid = chart.addGrid();
-    chart.line = chart.addLine();
-  }
-}
-
 function Headline(options) {
   const headline = this;
   init(options);
@@ -244,6 +230,22 @@ function Headline(options) {
 
     headline.resize();
 
+  }
+}
+
+function LineChart(options) {
+  const chart = this;
+  init(options);
+  return chart;
+
+  function init(options) {
+    chart.where = options.where;
+    chart.container = chart.addContainer();
+    chart.svg = chart.addSvg();
+    chart.axes = chart.addAxes();
+    chart.labels = chart.addLabels();
+    chart.grid = chart.addGrid();
+    chart.line = chart.addLine();
   }
 }
 
@@ -417,7 +419,7 @@ function Timeline(options) {
     timeline.scale = timeline.defineScale();
     timeline.timeScale = timeline.defineTimeScale();
 
-
+    timeline.heading = timeline.addHeading();
     timeline.svg = timeline.addSvg();
     timeline.layers = timeline.addLayers();
     timeline.axis = timeline.addAxis();
@@ -917,23 +919,6 @@ SkillBox.prototype.defineLayout = function() {
   return layout;
 }
 
-SkillBox.prototype.layoutButtons = function() {
-  const box = this;
-
-  let runningX = 0;
-
-  Object.keys(box.buttons).forEach((key) => {
-    const button = box.buttons[key];
-    button.move({
-      "x":runningX,
-      "y":0
-    });
-
-    runningX += button.getSize().width + 20;
-  });
-
-}
-
 SkillBox.prototype.addButtons = function() {
   const box = this;
   const buttons = {};
@@ -1182,6 +1167,23 @@ SkillBox.prototype.applyLayout = function() {
     .attr("transform","translate(0,"+verticalOffset+")");
 
   return box;
+}
+
+SkillBox.prototype.layoutButtons = function() {
+  const box = this;
+
+  let runningX = 0;
+
+  Object.keys(box.buttons).forEach((key) => {
+    const button = box.buttons[key];
+    button.move({
+      "x":runningX,
+      "y":0
+    });
+
+    runningX += button.getSize().width + 20;
+  });
+
 }
 
 SkillBoxButton.prototype.activate = function() {
@@ -1571,25 +1573,6 @@ SkillBoxCard.prototype.resizeRect = function() {
 
 }
 
-SkillBoxGroup.prototype.defineLayout = function() {
-  const skillGroup = this;
-
-  const layout = {};
-
-  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
-
-  layout.size = {};
-  layout.size.width = skillGroup.parent.layout.size.width;
-  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
-
-  layout.verticalOffset = navHeight * 1.5;
-
-  layout.gridWidth = layout.size.width / 2;
-  layout.gridHeight = layout.size.height / 2;
-
-  return layout;
-}
-
 SkillBoxGroup.prototype.activate = function() {
   const skillGroup = this;
 
@@ -1608,6 +1591,25 @@ SkillBoxGroup.prototype.deactivate = function() {
   });
 
   return skillGroup;
+}
+
+SkillBoxGroup.prototype.defineLayout = function() {
+  const skillGroup = this;
+
+  const layout = {};
+
+  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
+
+  layout.size = {};
+  layout.size.width = skillGroup.parent.layout.size.width;
+  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
+
+  layout.verticalOffset = navHeight * 1.5;
+
+  layout.gridWidth = layout.size.width / 2;
+  layout.gridHeight = layout.size.height / 2;
+
+  return layout;
 }
 
 SkillBoxGroup.prototype.addGroup = function() {
@@ -1847,6 +1849,25 @@ Timeline.prototype.addCompanies = function() {
   });
 
   return companies;
+}
+
+Timeline.prototype.addHeading = function() {
+  const timeline = this;
+
+  const svg = d3.select(timeline.where)
+    .append("div")
+    .style("background-color","black")
+    .style("padding-left","1em")
+    .style("padding-right","1em")
+    .style("font-size:2","5em")
+    .style("border-left","0.25em solid #984BA3")
+    .style("font-weight","500")
+    .style("color","white")
+    .style("font-family","Oswald")
+    .style("display","inline-block")
+    .html("WORK HISTORY");
+
+  return svg;
 }
 
 Timeline.prototype.addLayers = function() {
@@ -2507,57 +2528,6 @@ TimelineCompany.prototype.mouseover = function() {
 
 }
 
-TimelineRole.prototype.animateIn = function(delay) {
-  const role = this;
-
-  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
-  const startTime = delay;
-
-  role.name
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);
-
-  role.dates
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);;
-
-  role.backgroundRect
-    .attr("width",0)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("width",timelineWidth);
-
-}
-
-TimelineRole.prototype.mouseout = function() {
-  const role = this;
-
-  return () => {
-    role.backgroundRect.attr("fill","#984BA3");
-  }
-
-}
-
-TimelineRole.prototype.mouseover = function() {
-  const role = this;
-
-  return () => {
-    // role.backgroundRect.attr("fill","orange");
-  }
-
-}
-
 TimelineCompany.prototype.addBackgroundRect = function() {
   const company = this;
 
@@ -2786,6 +2756,86 @@ TimelineRole.prototype.addName = function() {
   return name;
 }
 
+TimelineRole.prototype.animateIn = function(delay) {
+  const role = this;
+
+  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
+  const startTime = delay;
+
+  role.name
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);
+
+  role.dates
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);;
+
+  role.backgroundRect
+    .attr("width",0)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("width",timelineWidth);
+
+}
+
+TimelineRole.prototype.mouseout = function() {
+  const role = this;
+
+  return () => {
+    role.backgroundRect.attr("fill","#984BA3");
+  }
+
+}
+
+TimelineRole.prototype.mouseover = function() {
+  const role = this;
+
+  return () => {
+    // role.backgroundRect.attr("fill","orange");
+  }
+
+}
+
+SvgTutorialCodeBlock.prototype.addLine = function(options) {
+  const block = this;
+
+  const indentSize = 2 * options.indent + "em"
+
+  const addedLine = block.div.append("div")
+    .style("padding-left",indentSize)
+    .html(options.html)
+    .on("mouseover",function() {
+      d3.select(this)
+        .style("background-color","#9FDE9C")
+        .style("font-weight","bold")
+        .style("color","black");
+
+      if(options.mouseover) { options.mouseover(); }
+      
+    })
+    .on("mouseout",function() {
+      d3.select(this)
+        .style("background-color",block.parent.style.codeBlock.background)
+        .style("font-weight",block.parent.style.codeBlock.fontWeight)
+        .style("color","white");
+
+        if(options.mouseover) { options.mouseout(); }
+    })
+
+  return block;
+}
+
 SvgTutorialCodeBlock.prototype.addBackground = function() {
   const container = this;
 
@@ -2843,74 +2893,6 @@ SvgTutorialCodeBlock.prototype.addForeignObject = function() {
   return foreignObject;
 }
 
-SvgTutorialCodeBlock.prototype.addLine = function(options) {
-  const block = this;
-
-  const indentSize = 2 * options.indent + "em"
-
-  const addedLine = block.div.append("div")
-    .style("padding-left",indentSize)
-    .html(options.html)
-    .on("mouseover",function() {
-      d3.select(this)
-        .style("background-color","#9FDE9C")
-        .style("font-weight","bold")
-        .style("color","black");
-
-      if(options.mouseover) { options.mouseover(); }
-      
-    })
-    .on("mouseout",function() {
-      d3.select(this)
-        .style("background-color",block.parent.style.codeBlock.background)
-        .style("font-weight",block.parent.style.codeBlock.fontWeight)
-        .style("color","white");
-
-        if(options.mouseover) { options.mouseout(); }
-    })
-
-  return block;
-}
-
-SvgTutorialContainer.prototype.defineLayout = function(options) {
-  const container = this;
-
-  const layout = options.layout ? options.layout : {};
-
-  layout.size = layout.size ? layout.size : {};
-  layout.size.width = layout.size.width ? layout.size.width : 960;
-  layout.size.height = layout.size.height ? layout.size.height : 540;
-
-  layout.size.midlines = {};
-  layout.size.midlines.x = layout.size.width  / 2;
-  layout.size.midlines.y = layout.size.height / 2;
-
-  layout.gridHorizontal = d3.scaleLinear().domain([0,12]).range([0,layout.size.width]);
-  layout.gridVertical = d3.scaleLinear().domain([0,12]).range([0,layout.size.height]);
-
-  return layout;
-}
-
-SvgTutorialContainer.prototype.defineStyle = function(options) {
-  const container = this;
-  const style = options.style ? options.style : {};
-
-  style.stageFill = style.stageFill ? style.stageFill : "rgba(0,0,0,0)";
-
-  style.codeBlock = style.codeBlock ? style.codeBlock : {};
-  style.codeBlock.background = style.codeBlock.background ? style.codeBlock.background : "#022E00";
-  style.codeBlock.fontColor = style.codeBlock.fontColor ? style.codeBlock.fontColor : "white";
-  style.codeBlock.fontFamily = style.codeBlock.fontFamily ? style.codeBlock.fontFamily : "Source Code Pro";
-  style.codeBlock.fontWeight = style.codeBlock.fontWeight ? style.codeBlock.fontWeight : "300";
-  style.codeBlock.fontSize = style.codeBlock.fontSize ? style.codeBlock.fontSize : "10pt";
-
-  style.svgElement = style.svgElement ? style.svgElement : {};
-  style.svgElement.background = style.svgElement.background ? style.svgElement.background : "#9FDE9C";
-
-
-  return style;
-}
-
 SvgTutorialContainer.prototype.addCodeBlock = function() {
   const container = this;
 
@@ -2957,6 +2939,45 @@ SvgTutorialContainer.prototype.addSvgElement = function() {
   });
 
   return block;
+}
+
+SvgTutorialContainer.prototype.defineLayout = function(options) {
+  const container = this;
+
+  const layout = options.layout ? options.layout : {};
+
+  layout.size = layout.size ? layout.size : {};
+  layout.size.width = layout.size.width ? layout.size.width : 960;
+  layout.size.height = layout.size.height ? layout.size.height : 540;
+
+  layout.size.midlines = {};
+  layout.size.midlines.x = layout.size.width  / 2;
+  layout.size.midlines.y = layout.size.height / 2;
+
+  layout.gridHorizontal = d3.scaleLinear().domain([0,12]).range([0,layout.size.width]);
+  layout.gridVertical = d3.scaleLinear().domain([0,12]).range([0,layout.size.height]);
+
+  return layout;
+}
+
+SvgTutorialContainer.prototype.defineStyle = function(options) {
+  const container = this;
+  const style = options.style ? options.style : {};
+
+  style.stageFill = style.stageFill ? style.stageFill : "rgba(0,0,0,0)";
+
+  style.codeBlock = style.codeBlock ? style.codeBlock : {};
+  style.codeBlock.background = style.codeBlock.background ? style.codeBlock.background : "#022E00";
+  style.codeBlock.fontColor = style.codeBlock.fontColor ? style.codeBlock.fontColor : "white";
+  style.codeBlock.fontFamily = style.codeBlock.fontFamily ? style.codeBlock.fontFamily : "Source Code Pro";
+  style.codeBlock.fontWeight = style.codeBlock.fontWeight ? style.codeBlock.fontWeight : "300";
+  style.codeBlock.fontSize = style.codeBlock.fontSize ? style.codeBlock.fontSize : "10pt";
+
+  style.svgElement = style.svgElement ? style.svgElement : {};
+  style.svgElement.background = style.svgElement.background ? style.svgElement.background : "#9FDE9C";
+
+
+  return style;
 }
 
 SvgTutorialContainer.prototype.addLineOfCode = function(options) {

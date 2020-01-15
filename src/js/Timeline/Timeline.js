@@ -13,7 +13,7 @@ function Timeline(options) {
     timeline.scale = timeline.defineScale();
     timeline.timeScale = timeline.defineTimeScale();
 
-
+    timeline.heading = timeline.addHeading();
     timeline.svg = timeline.addSvg();
     timeline.layers = timeline.addLayers();
     timeline.axis = timeline.addAxis();
