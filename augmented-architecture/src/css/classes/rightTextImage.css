@@ -1,0 +1,10 @@
+.rightTextImage {
+  float:left;
+  width:25%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  background-color:#eee;
+  text-align:center;
+}

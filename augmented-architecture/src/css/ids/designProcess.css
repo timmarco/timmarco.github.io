@@ -1,0 +1,17 @@
+#designProcess {
+  margin-top:5em;
+  border-top:0.5em solid #E31A1C;
+}
+
+#designProcess h1 {
+  border-left:0.125em solid #E31A1C;
+}
+
+#designProcess h2 {
+  border-left:0.25em solid #E31A1C;
+}
+
+#designProcess h3 {
+  display:inline-block;
+  border-bottom:0.125em solid #E31A1C;
+}

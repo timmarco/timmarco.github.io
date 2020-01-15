@@ -1,0 +1,172 @@
+.bodyCopy {
+  margin:auto;
+  margin-top:0;
+  margin-bottom:0;
+  max-width:1000px;
+}
+
+.fourPackImage {
+  margin:0;
+  padding:0;
+  height:100%;
+  width:25%;
+  float:left;
+}
+
+.leftTextBody {
+  width:66%;
+  float:left;
+}
+
+.leftTextContainer {
+  max-width:1000px;
+  margin:auto;
+  margin-top:0;
+  margin-bottom:0;
+}
+
+.leftTextImage {
+  float:right;
+  width:30%;
+}
+
+.overviewText {
+  font-size:2em;
+}
+
+.rightTextBody {
+  width:75%;
+  float:right;
+}
+
+.rightTextContainer {
+  margin:auto;
+  max-width:1000px;
+  overflow:hidden;
+  position:relative;
+  width:80%;
+  margin-top:2em;
+  margin-bottom:2em;
+}
+
+.rightTextImage {
+  float:left;
+  width:25%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  background-color:#eee;
+  text-align:center;
+}
+
+a {
+  color:#3A7CB8;
+  font-weight:900;
+  text-decoration:none;
+}
+
+a:hover {
+  color:#FE8000;
+  text-decoration:underline;
+}
+
+body {
+  margin:0;
+  font-family:Merriweather;
+  font-size:1.5em;
+  font-weight:lighter;
+}
+
+h1 {
+  display:inline-block;
+  background-color:black;
+  font-family:Oswald;
+  font-weight:500;
+  font-size:4em;
+  padding-left:1em;
+  padding-right:1em;
+  color:white;
+  margin:0;
+}
+
+h2 {
+  margin-left:10vw;
+  margin-right:10vw;
+  display:inline-block;
+  background-color:black;
+  color:white;
+  font-family:Oswald;
+  font-weight:500;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.125em;
+  padding-bottom:0.125em;
+  margin-bottom:0.25em;
+  margin-top:2em;
+}
+
+h3 {
+  font-family:Oswald;
+  font-weight:400;
+  padding-bottom:0;
+  margin-bottom:0.25em;
+  margin-top:0;
+}
+
+p {
+}
+
+#appOverview {
+}
+
+#designProcess {
+  margin-top:5em;
+  border-top:0.5em solid #E31A1C;
+}
+
+#designProcess h1 {
+  border-left:0.125em solid #E31A1C;
+}
+
+#designProcess h2 {
+  border-left:0.25em solid #E31A1C;
+}
+
+#designProcess h3 {
+  display:inline-block;
+  border-bottom:0.125em solid #E31A1C;
+}
+
+#developmentProcess {
+  margin-top:5em;
+  border-top:0.5em solid #4DB04A;
+}
+
+#developmentProcess h1 {
+  border-left:0.125em solid #4DB04A;
+}
+
+#developmentProcess h2 {
+  border-left:0.25em solid #4DB04A;
+}
+
+#heroVideo {
+  width:100vw;
+  height:56.25vw;
+  background-color:#eee;
+}
+
+#processFourPackContainer {
+  width:100vw;
+  height:14.0625vw;
+  background-color:#eee;
+}
+
+#targetObjectVideo {
+  margin-left:10vw;
+  margin-right:10vw;
+  width:80vw;
+  height:45vw;
+  background-color:#eee;
+}

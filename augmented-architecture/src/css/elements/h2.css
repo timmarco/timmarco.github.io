@@ -1,0 +1,15 @@
+h2 {
+  margin-left:10vw;
+  margin-right:10vw;
+  display:inline-block;
+  background-color:black;
+  color:white;
+  font-family:Oswald;
+  font-weight:500;
+  padding-left:1em;
+  padding-right:1em;
+  padding-top:0.125em;
+  padding-bottom:0.125em;
+  margin-bottom:0.25em;
+  margin-top:2em;
+}

@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Augmented ARchitecture - Tim Marco</title>
+    <link rel="stylesheet" href="dist/style.css" />
+    <meta charset="UTF-8" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:300,400,900" rel="stylesheet" />
+
+  </head>
+
+  <body>
+    <div id="appOverview">
+      <div id="heroVideo">
+        <img src="assets/videoPlaceholder.jpeg" style="width:100%; height:100%; margin:0; padding:0" />
+      </div>
+
+      <div class="bodyCopy">
+        <p>Augmented ARchitecture is a demo app that showcases how Apple’s ARKit can be used to create natural, contextual augmented reality experiences. The app helps people learn about notable buildings from around the world by interacting with physical models.</p>
+
+        <p>After launching the app on an iOS device, students simply point their device’s camera at any of the models. They can then interact with virtual content to learn about each building.</p>
+
+        <p>The app is designed to teach students about the history, purpose and design of each structure. Because the experience is rooted in augmented reality, information and interactions are presented in-situ: details about the structures are highlighted at the corresponding place in each model.</p>
+      </div>
+
+    </div>
+
+    <div id="designProcess">
+
+      <h1>DESIGNING THE EXPERIENCE</h1>
+
+      <div id="processFourPackContainer">
+        <img src="assets/scanningThumbnail.jpg" class="fourPackImage" />
+        <img src="assets/tapHereZoom.jpg" class="fourPackImage" />
+        <img src="assets/videoPlaceholder.jpeg" class="fourPackImage" />
+        <img src="assets/videoPlaceholder.jpeg" class="fourPackImage" />
+      </div>
+
+      <div class="bodyCopy">
+        <p>
+          I created Augmented ARchitecture to both explore and demonstrate how augmented reality can be used to help students learn about real, physical objects. To that end, my design process centered around a few key priorities:
+        </p>
+      </div>
+
+      <div id="designProcessPriorityContainer">
+        <h2>EXPLORING HOW PRESENCE CAN ADD TO THE LEARNING EXPERIENCE</h2>
+        <div class="leftTextContainer">
+          <div class="leftTextBody">
+            <p>
+              Too often, augmented reality is used as a mere gimmick. I’ve seen many examples of experiences where virtual objects feel tacked on to an environment in a misguided attempting at feeling cool, novel, or ‘immersive’.</p>
+
+            <p>
+              I believe that placing virtual objects in physical space is only valuable insofar as that process serves some user purpose. While creating Augmented Architecture, I set out to examine how the interaction between atoms and pixels could actually improve user learning.
+            </p>
+
+            <p>
+              In the experience, content is placed <em>in-situ</em>: there are direct and meaningful connections between the physical models in the world and the information and interactions on the screen.</p>
+
+            <p>
+              Users launch each experience by looking at specific models. Content is triggered by tapping on specific locations in the models.  Users can view photographs of the real buildings from accurate positions in an around the buildings.
+            </p>
+          </div>
+          <div class="leftTextImage">
+            [image]
+          </div>
+        </div>
+        <div style="clear:both"></div>
+
+        <h2>MINIMIZE FRICTION</h2>
+        <div class="leftTextContainer">
+          <div class="leftTextBody">
+            <p>
+              I believe that the most effective user interface is whatever requires the least interaction to achieve a goal. In the context of augmented reality, this means removing contrivances like scanning QR code’s or manual alignment of content.
+            </p>
+
+            <p>
+              In Augmented ARChitecture, interface friction is minimized by allowing objects themselves to function as content triggers. From the perspective of users of the app, selecting content is as simple as pointing a camera.
+            </p>
+
+          </div>
+          <div class="leftTextImage">
+            [image]
+          </div>
+        </div>
+        <div style="clear:both"></div>
+
+
+        <h2>TESTING MODES OF INTERACTION</h2>
+        <div class="leftTextContainer">
+          <div class="leftTextBody">
+            <p>
+              One of the primary benefits of augmented reality is its ability to make a more natural user interface. But experience still have <em>some</em> interface. One of the goals for this project was to explore the nature of those interactions, and how to best communicate how to use the app.
+            </p>
+
+            <p>
+              For many users, augmented reality is an entirely novel paradigm for interaction. There are very few well-established conventions that users can intuit about an experience. So designers must communicate <em>that</em> users can access content using physical objects, <em>how</em> to access that content, and <em>which</em> objects can trigger content.
+            </p>
+
+          </div>
+          <div class="leftTextImage">
+            [image]
+          </div>
+        </div>
+        <div style="clear:both"></div>
+
+
+        <div style="margin-left:5vw; margin-right:5vw">
+          <div class="rightTextContainer">
+            <div class="rightTextImage">
+              [image]
+            </div>
+            <div class="rightTextBody">
+              <div><h3><em>THAT</em>&nbsp; PHYSICAL OBJECTS CAN LINK TO CONTENT</h3></div>
+              <p>
+                For new users, the connection between objects in the physical environment and virtual content may be non-obvious.
+              </p>
+
+              <p>
+                The default view of the application looks like something familiar: a phone’s default camera app. Yet it functions differently: instead of capturing and storing images of the world, it acts as an interface to the physical world.
+              </p>
+
+              <p>
+                This may seem like a simple concept, but it requires a drastic change in the mental model that people have about phones, cameras, and computing in general. To address this, I created a simple set of graphics that are displayed to the user.
+              </p>
+
+              <p>
+                In user testing and observation, I’ve found that this is a lesson that only needs to be learned once. In general, once a person understands <em>that</em> looking at objects works as a link to content, they can use AR applications without further difficulties.
+              </p>
+
+            </div>
+          </div>
+          <div style="clear:both"></div>
+
+          <div class="rightTextContainer">
+            <div class="rightTextImage">
+              [image]
+            </div>
+            <div class="rightTextBody">
+              <div><h3><em>HOW</em>&nbsp; TO TRIGGER CONTENT</h3></div>
+              <p>
+                While designing Augmented Architecture, I had intended to allow users to access additional information by tapping on appropriate positions on the device’s screen. But I did not anticipate that I was relying on some non-obvious assumptions in my design.
+              </p>
+
+              <p>
+                During (informal) user testing and observation, I noticed that several people interpreted messages like “Tap on an object” to refer to the physical objects <em>themselves</em>, rather than the <em>images</em> of the objects on the screen. They would tap on the model of a building, and be confused or frustrated as to why nothing was happening in the application.
+              </p>
+
+              <p>
+                In retrospect, it’s a pretty obvious point of confusion. The entire point of augmented reality is to blur distinctions between the digital and the physical. Yet <em>some</em> interactions must necessarily occur in the context of a device, rather than in the world itself.
+              </p>
+
+              <p>
+                I attempted to address this issue by adding more salient visual cues like high-contrast, animated ‘hotspots’ within the experience, and by adding additional copy to the app’s instruction process.
+              </p>
+            </div>
+          </div>
+          <div style="clear:both"></div>
+
+          <div class="rightTextContainer">
+            <div class="rightTextImage">
+              [image]
+            </div>
+            <div class="rightTextBody">
+              <div><h3><em>WHICH</em>&nbsp; OBJECTS TRIGGER CONTENT</h3></div>
+              <p>
+                During user observation, I discovered that the most powerful tool for communicating which objects trigger content is the design of physical environment itself. Rather than attempting to explain this idea digitally, potential triggers should be physically, spatially, and conceptually distinct from other objects in the immediate vicinity.
+              </p>
+
+              <p>
+                In Augmented ARchitecture, the objects that trigger content are all plastic models, of buildings, that are near one another. Every object in the space that fits any of those criteria can trigger content, and no other object fits <em>any</em> of those criteria.
+              </p>
+            </div>
+          </div>
+          <div style="clear:both"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div id="developmentProcess">
+      <h1>CREATING THE EXPERIENCE</h1>
+      <div id="processFourPackContainer">
+        <img src="assets/xcode.jpg" class="fourPackImage" />
+        <img src="assets/blender.jpg" class="fourPackImage" />
+        <img src="assets/scanningThumbnail.jpg" class="fourPackImage" />
+        <img src="assets/videoPlaceholder.jpeg" class="fourPackImage" />
+      </div>
+      <div class="bodyCopy">
+        <p>
+          The code for Augmented Architecture was written in Swift using Xcode. The git repo for the project is available <span style="Color:red">here</span>.
+        </p>
+
+        <p>
+          The demo uses standard iOS libraries including ARKit, SceneKit, SpriteKit, and AVFoundation.
+        </p>
+
+        <p>
+          3D Assets were created in Blender, then exported as COLLADA (.dae) files. These were converted to SceneKit scene descriptions (.scn) in Xcode.
+        </p>
+
+        <p>
+          Simple videos for the project were created using iMovie, then imported to the scene as SpriteKit video nodes.
+        </p>
+      </div>
+
+      <h2>TARGET OBJECTS</h2>
+      <div id="targetObjectVideo">[video]</div>
+      <div class="bodyCopy">
+        <p>
+          Because minimal UI friction was a priority for this project, I needed to create AR target definition files (.arobject) for each building model. These were created using a slightly-modified version of Apple’s <a href="https://developer.apple.com/documentation/arkit/scanning_and_detecting_3d_objects" target="_new">AR Scanner</a> example app.
+        </p>
+
+      </div>
+
+      <h2>MODEL OCCLUSION</h2>
+      <div class="bodyCopy">
+        <p>
+          Maintaining a realistic sense of physicality in virtual objects is one of the most important design considerations for augmented reality experiences. And one of the most important aspects of realism is <em>occlusion</em>: objects in the physical world need to realistically block virtual objects behind them.
+        </p>
+
+        <p>
+          Unfortunately, this can be a difficult task; ARKit isn’t yet capable of automatically handling occlusion of objects. So I had to add it to my experience itself.
+        </p>
+
+        <p>
+          This required creating 3D models of each of the buildings used in the experience. These models are aligned to their physical counterparts in the ARKit scene, and given special ‘holdout’ materials in SceneKit. This special holdout material prevents the ARViewController’s renderer delegate from showing any content that overlaps with the occlusion models.
+        </p>
+      </div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+h1 {
+  display:inline-block;
+  background-color:black;
+  font-family:Oswald;
+  font-weight:500;
+  font-size:4em;
+  padding-left:1em;
+  padding-right:1em;
+  color:white;
+  margin:0;
+}

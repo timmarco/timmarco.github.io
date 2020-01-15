@@ -11,19 +11,18 @@ function TimApp(options) {
       "where":"#timeline"
     });
 
-    console.log("UPDATED?");
-
-    app.examples = app.addExamples([
+    const examples = [
       // {
-      //   "text":["AUGMENTED ARCHITECTURE","MODELS"],
+      //   "text":["AUGMENTED ARCHITECTURE"],
       //   "identifier":"arArchitecture",
       //   "imagePaths":[],
-      //   "href":"augmented-architecure",
+      //   "href":"augmented-architecture",
       //   "imageSize":{
       //     "width":1920,
       //     "height":1080
       //   },
-      //   "description":"An ARKit demo app interacting with architectural models."
+      //   "description":"An ARKit demo app interacting with architectural models.",
+      //   "mobileImage":"augmented-architecture.png"
       // },
       // {
       //   "text":["THE PROMISE OF ","SPATIAL COMPUTING"],
@@ -34,7 +33,8 @@ function TimApp(options) {
       //     "width":1224,
       //     "height":872
       //   },
-      //   "description":"An essay on the promise and potential of spatial computing."
+      //   "description":"An essay on the promise and potential of spatial computing.",
+      //   "mobileImage":"promise-spatial-computing.png"
       // },
       // {
       //   "text":["THE CHALLENGES OF ","SPATIAL COMPUTING"],
@@ -45,7 +45,8 @@ function TimApp(options) {
       //     "width":1213,
       //     "height":757
       //   },
-      //   "description":"An essay on the limitations and challenges of spatial computing."
+      //   "description":"An essay on the limitations and challenges of spatial computing.",
+      //   "mobileImage":"challenges-spatial-computing.png"
       // },
       {
         "text":["3D MODEL SKETCHES"],
@@ -56,7 +57,21 @@ function TimApp(options) {
           "width":1920,
           "height":1080
         },
-        "description":"An assortment of 3D models I've created."
+        "description":"An assortment of 3D models I've created.",
+        "mobileImage":"three-d-model-sketches.png"
+      },
+
+      {
+        "text":["DIVING DEEP INTO","FITTS' LAW"],
+        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
+        "identifier":"fitts",
+        "href":"fitts/",
+        "imageSize":{
+          "width":1300,
+          "height":826
+        },
+        "description":"An explorable explanation about a fundamental principle of interface design.",
+        "mobileImage":"fitts-law.png"
       },
       {
         "text":["STRANGER THINGS TITLES","RECREATED IN D3"],
@@ -67,29 +82,8 @@ function TimApp(options) {
           "width":1898,
           "height":1064
         },
-        "description":"An experiment in pushing d3 and SVG animations beyond their intended use."
-      },
-      {
-        "text":["DIVING DEEP INTO","FITTS' LAW"],
-        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
-        "identifier":"fitts",
-        "href":"fitts/",
-        "imageSize":{
-          "width":1300,
-          "height":826
-        },
-        "description":"An explorable explanation about a fundamental principle of interface design."
-      },
-      {
-        "text":["VIDEO DATA","VISUALIZATION"],
-        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
-        "identifier":"video",
-        "href":"blenderCharts",
-        "imageSize":{
-          "width":1920,
-          "height":1080
-        },
-        "description":"Using Blender to create animated charts and graphics."
+        "description":"An experiment in pushing d3 and SVG animations beyond their intended use.",
+        "mobileImage":"stranger-things.png"
       },
       {
         "text":["FREE AGENT ANALYZER"],
@@ -100,31 +94,21 @@ function TimApp(options) {
           "width":1200,
           "height":1006
         },
-        "description":"A prototype tool for comparing the potential value of MLB Free Agents."
+        "description":"A prototype tool for comparing the potential value of MLB Free Agents.",
+        "mobileImage":"free-agents.png"
       },
-
-      // {
-      //   "text":["K-MEANS EXPLAINED"],
-      //   "imagePaths":["assets/kMeans.png","assets/kMeans-1.png","assets/kMeans-2.png","assets/kMeans-3.png","assets/kMeans-4.png"],
-      //   "identifier":"kMeans",
-      //   "href":"kMeans/",
-      //   "imageSize":{
-      //     "width":1224,
-      //     "height":872
-      //   },
-      //   "description":"An explorable explanation about the foundational machine learning algorithm."
-      // },
-      // {
-      //   "text":["LEARNABLE SVG"],
-      //   "imagePaths":["assets/svg.png","assets/svg-2.png","assets/svg-3.png","assets/svg-4.png"],
-      //   "identifier":"svg",
-      //   "href":"learnable-svg/",
-      //   "imageSize":{
-      //     "width":2296,
-      //     "height":1284
-      //   },
-      //   "description":"The missing interactive documentation for SVGs."
-      // },
+      {
+        "text":["VIDEO DATA","VISUALIZATION"],
+        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
+        "identifier":"video",
+        "href":"blenderCharts",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"Using Blender to create animated charts and graphics.",
+        "mobileImage":"video-data-visualization.png"
+      },
       // {
       //   "text":["TBD PHYSICAL","PROTOTYPES"],
       //   "identifier":"arArchitecture",
@@ -134,9 +118,13 @@ function TimApp(options) {
       //     "width":1920,
       //     "height":1080
       //   },
-      //   "description":"Build out something with 3D Printing / Glowforge / other fabrication techniques."
+      //   "description":"Build out something with 3D Printing / Glowforge / other fabrication techniques.",
+      //   "mobileImage":"physical-prototypes.png"
       // },
-    ]);
+    ];
+
+    app.examples = app.addExamples(examples);
+
 
     app.skillBox = new SkillBox(app);
 
@@ -163,16 +151,9 @@ TimApp.prototype.addExampleSwipes = function() {
     .style("overflow","hidden")
     .style("position","relative");
 
-  swipeWrap
-    .append("div")
-    .style("float","left")
-    .style("width","100%")
-    .style("position","relative")
-    .style("overflow","hidden");
-
   app.swipe = new Swipe(container.node(),{
     "callback":(index) => {
-      app.swipeIndicator.update(index);
+      // app.swipeIndicator.update(index);
     }
   });
 
@@ -185,8 +166,8 @@ TimApp.prototype.addExamples = function(list) {
   const examples = [];
 
   if(app.browserInfo.isTouchDevice) {
-    app.swipeIndicator = new SwipeIndicator(app,list.length + 1);
-    app.swipeContainer = app.addExampleSwipes();
+    // app.swipeIndicator = new SwipeIndicator(app,list.length + 1);
+    // app.swipeContainer = app.addExampleSwipes();
     list.forEach((item,index) => {
       examples.push(new MobileWorkExample(item,index,app));
     });
@@ -278,23 +259,15 @@ function MobileWorkExample(options,index,app) {
     example.text = options.text;
     example.description = options.description;
     example.identifier = options.identifier;
-    example.imagePaths = options.imagePaths;
+    example.imagePath = options.mobileImage;
     example.imageSize = options.imageSize;
     example.href = options.href;
     example.index = index;
 
     example.layout = example.defineLayout();
-    example.swipeContainer = example.addSwipeDiv();
-    example.svg = example.addSvg();
-    example.defs = example.addDefs();
-    // example.filters = example.addFilters();
-    example.layers = example.addLayers();
-    // example.scales = example.addScales();
-    example.images = example.addImages();
-    example.headline = example.addHeadline();
-    example.tapButton = example.addTapButton();
-    // example.body = example.addTextBody();
-    // example.hotspot = example.addHotSpot();
+    // example.swipeContainer = example.addSwipeDiv();
+    example.swipeImage = example.addSwipeImage();
+
   }
 }
 
@@ -538,6 +511,90 @@ Headline.prototype.defineStyle = function(options) {
   return style;
 }
 
+Headline.prototype.addAccent = function() {
+  const headline = this;
+
+  const curtain = headline.curtainGroup
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",headline.layout.size.width)
+    .attr("height",headline.layout.size.height)
+    .attr("fill","white");
+
+  const accent = headline.curtainGroup
+    .append("rect")
+    .attr("x",0)
+    .attr("y",headline.layout.size.height / 2)
+    .attr("width",headline.layout.accent.size.width)
+    .attr("height",0)
+    .attr("fill",headline.style.accent.fill);
+
+
+  return accent;
+}
+
+Headline.prototype.addBackground = function() {
+  const headline = this;
+
+  const background = headline.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("width",headline.layout.background.size.width)
+    .attr("height",headline.layout.background.size.height)
+    .attr("fill",headline.style.background.fill);
+
+  return background;
+}
+
+Headline.prototype.addCurtainGroup = function() {
+  const headline = this;
+  const group = headline.svg
+    .append("g")
+    .attr("transform","translate(0,0)");
+
+  return group;    
+}
+
+Headline.prototype.addDefs = function() {
+  const headline = this;
+
+  const defs = headline.svg
+    .append("defs");
+
+  return defs;
+}
+
+Headline.prototype.addSvg = function() {
+  const headline = this;
+
+  const svg = d3.select(headline.where)
+    .append("svg")
+    .attr("width",headline.layout.size.width)
+    .attr("height",headline.layout.size.height);
+
+  return svg;
+}
+
+Headline.prototype.addText = function() {
+  const headline = this;
+
+  const text = headline.svg
+    .append("text")
+    .attr("x",headline.layout.text.x)
+    .attr("y",headline.layout.text.y)
+    .attr("text-anchor","start")
+    .attr("dominant-baseline","central")
+    .attr("fill",headline.style.text.fontFill)
+    .attr("font-family",headline.style.text.fontFamily)
+    .attr("font-weight",headline.style.text.fontWeight)
+    .attr("font-size","1em")
+    .text(headline.string);
+
+  return text;
+}
+
 Headline.prototype.animateIn = function() {
   const headline = this;
 
@@ -640,212 +697,45 @@ Headline.prototype.resize = function() {
   return headline;
 }
 
-Headline.prototype.addAccent = function() {
-  const headline = this;
-
-  const curtain = headline.curtainGroup
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",headline.layout.size.width)
-    .attr("height",headline.layout.size.height)
-    .attr("fill","white");
-
-  const accent = headline.curtainGroup
-    .append("rect")
-    .attr("x",0)
-    .attr("y",headline.layout.size.height / 2)
-    .attr("width",headline.layout.accent.size.width)
-    .attr("height",0)
-    .attr("fill",headline.style.accent.fill);
-
-
-  return accent;
-}
-
-Headline.prototype.addBackground = function() {
-  const headline = this;
-
-  const background = headline.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("width",headline.layout.background.size.width)
-    .attr("height",headline.layout.background.size.height)
-    .attr("fill",headline.style.background.fill);
-
-  return background;
-}
-
-Headline.prototype.addCurtainGroup = function() {
-  const headline = this;
-  const group = headline.svg
-    .append("g")
-    .attr("transform","translate(0,0)");
-
-  return group;    
-}
-
-Headline.prototype.addDefs = function() {
-  const headline = this;
-
-  const defs = headline.svg
-    .append("defs");
-
-  return defs;
-}
-
-Headline.prototype.addSvg = function() {
-  const headline = this;
-
-  const svg = d3.select(headline.where)
-    .append("svg")
-    .attr("width",headline.layout.size.width)
-    .attr("height",headline.layout.size.height);
-
-  return svg;
-}
-
-Headline.prototype.addText = function() {
-  const headline = this;
-
-  const text = headline.svg
-    .append("text")
-    .attr("x",headline.layout.text.x)
-    .attr("y",headline.layout.text.y)
-    .attr("text-anchor","start")
-    .attr("dominant-baseline","central")
-    .attr("fill",headline.style.text.fontFill)
-    .attr("font-family",headline.style.text.fontFamily)
-    .attr("font-weight",headline.style.text.fontWeight)
-    .attr("font-size","1em")
-    .text(headline.string);
-
-  return text;
-}
-
-MobileWorkExample.prototype.addDefs = function() {
-  const example = this;
-  const defs = example.svg
-    .append("defs");
-  return example;
-}
-
-MobileWorkExample.prototype.addHeadline = function() {
-  const example = this;
-
-  const group = example.layers.headline
-    .append("g");
-
-
-  const textLines = [];
-
-  example.text.forEach((lineOfText) => {
-
-    const lineGroup = group.append("g");
-
-    const background = lineGroup
-      .append("rect")
-      .attr("fill","black")
-      .attr("x",0)
-      .attr("y",0);
-
-    const text = lineGroup
-      .append("text")
-      .attr("font-family","Oswald")
-      .attr("font-weight",500)
-      .attr("fill","white")
-      .attr("dx",10)
-      .attr("font-size","4em")
-      .attr("dominant-baseline","text-before-edge")
-      .text(lineOfText);
-
-    const textSize = text
-      .node()
-      .getBBox();
-
-    background
-      .attr("width",textSize.width + 20)
-      .attr("height",textSize.height);
-
-    textLines
-      .push(lineGroup);
-
-  });
-
-  let runningHeight = 0;
-
-  textLines.forEach((group) => {
-    const height = group.node().getBBox().height;
-
-    group
-      .attr("transform","translate(0,"+runningHeight+")");
-
-    runningHeight += height;
-  });
-
-  const leftAlign = example.layout.size.width * 0.125;
-  const topAlign = example.layout.size.height * 0.25;
-
-  group
-    .attr("transform","translate("+leftAlign+","+topAlign+")");
-
-
-  return group;
-}
-
-MobileWorkExample.prototype.addImages = function() {
-  const example = this;
-
-  const imageFullScale = Math.max.apply(null,[example.layout.size.width / example.imageSize.width,example.layout.size.height / example.imageSize.height]);
-
-  const image = example.layers.image
-    .append("image")
-    .attr("xlink:href",example.imagePaths[0])
-    .attr("width",example.layout.size.width)
-    .attr("height",example.layout.size.height)
-    .attr("viewbox","0 0 " + example.layout.size.width + " " + example.layout.size.height);
-
-  return image;
-}
-
-MobileWorkExample.prototype.addLayers = function() {
-  const example = this;
-
-  const layers = {};
-  layers.background = example.svg.append("g");
-  layers.image = example.svg.append("g");
-  layers.headline = example.svg.append("g");
-  layers.tap = example.svg.append("g");
-  layers.body = example.svg.append("g");
-
-  return layers;
-}
-
-MobileWorkExample.prototype.addSvg = function() {
-  const example = this;
-
-  const svg = example.swipeContainer
-    .append("svg")
-    .style("padding-left","5vw")
-    .attr("width",example.layout.size.width)
-    .attr("height",example.layout.size.height)
-    .style("background-color","#aaa");
-
-  return svg;
-}
-
 MobileWorkExample.prototype.addSwipeDiv = function() {
   const example = this;
 
   const swipeDiv = example.parent.swipeContainer
       .append("div")
-      .style("float","left")
-      .style("width","85%")
-      .style("position","relative")
-      .style("overflow","hidden");
+      .style("background-color","red")
+      .classed("swipe-wrap",true);
+
+  const fullPath = "assets/mobileImages/" + example.imagePath;
+
+  const swipeImage = swipeDiv
+      .append("img")
+      .attr("src",fullPath);
+
 
   return swipeDiv;
+}
+
+MobileWorkExample.prototype.addSwipeImage = function() {
+  const example = this;
+
+  // const swipeDiv = example.swipeContainer
+  //     .append("div");
+
+  const fullPath = "assets/mobileImages/" + example.imagePath;
+
+  const link = d3.select("#exampleContainer")
+    .append("a")
+    .attr("target","_new")
+    .attr("href",example.href);
+
+  const swipeImage = link
+      .append("img")
+      .style("width","100%")
+      .attr("src",fullPath);
+
+
+
+  return swipeImage;
 }
 
 MobileWorkExample.prototype.addTapButton = function() {
@@ -903,40 +793,6 @@ MobileWorkExample.prototype.defineLayout = function() {
   layout.size.height = window.innerHeight * 0.75;
 
   return layout;
-}
-
-ScrollManager.prototype.scrollMethod = function() {
-  return () => {
-    const manager = this;
-
-    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
-    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
-
-    let current;
-    let next;
-
-    triggerPositions.forEach((position) => {
-      if(scrollPosition >= position) {
-        current = position;
-      }
-    });
-
-    if(current) {
-      manager.triggerEvent(manager.triggerPoints[current]);
-    }
-
-  }
-
-}
-
-ScrollManager.prototype.triggerEvent = function(eventName) {
-  const manager = this;
-
-  if(eventName in manager.scrollEvents) {
-    manager.scrollEvents[eventName]();
-  } else {
-  }
-
 }
 
 ScrollManager.prototype.attachResizeListener = function() {
@@ -1003,6 +859,40 @@ ScrollManager.prototype.defineTriggerPoints = function() {
   return triggerPoints;
 }
 
+ScrollManager.prototype.scrollMethod = function() {
+  return () => {
+    const manager = this;
+
+    const scrollPosition = window.scrollY + window.innerHeight - manager.scrollOffset;
+    const triggerPositions = Object.keys(manager.triggerPoints).map((point) => { return +point; });
+
+    let current;
+    let next;
+
+    triggerPositions.forEach((position) => {
+      if(scrollPosition >= position) {
+        current = position;
+      }
+    });
+
+    if(current) {
+      manager.triggerEvent(manager.triggerPoints[current]);
+    }
+
+  }
+
+}
+
+ScrollManager.prototype.triggerEvent = function(eventName) {
+  const manager = this;
+
+  if(eventName in manager.scrollEvents) {
+    manager.scrollEvents[eventName]();
+  } else {
+  }
+
+}
+
 SkillBox.prototype.showSkill = function(skill) {
   const box = this;
 
@@ -1025,6 +915,23 @@ SkillBox.prototype.defineLayout = function() {
   layout.size.height = window.innerHeight / 12;
 
   return layout;
+}
+
+SkillBox.prototype.layoutButtons = function() {
+  const box = this;
+
+  let runningX = 0;
+
+  Object.keys(box.buttons).forEach((key) => {
+    const button = box.buttons[key];
+    button.move({
+      "x":runningX,
+      "y":0
+    });
+
+    runningX += button.getSize().width + 20;
+  });
+
 }
 
 SkillBox.prototype.addButtons = function() {
@@ -1275,23 +1182,6 @@ SkillBox.prototype.applyLayout = function() {
     .attr("transform","translate(0,"+verticalOffset+")");
 
   return box;
-}
-
-SkillBox.prototype.layoutButtons = function() {
-  const box = this;
-
-  let runningX = 0;
-
-  Object.keys(box.buttons).forEach((key) => {
-    const button = box.buttons[key];
-    button.move({
-      "x":runningX,
-      "y":0
-    });
-
-    runningX += button.getSize().width + 20;
-  });
-
 }
 
 SkillBoxButton.prototype.activate = function() {
@@ -1681,6 +1571,25 @@ SkillBoxCard.prototype.resizeRect = function() {
 
 }
 
+SkillBoxGroup.prototype.defineLayout = function() {
+  const skillGroup = this;
+
+  const layout = {};
+
+  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
+
+  layout.size = {};
+  layout.size.width = skillGroup.parent.layout.size.width;
+  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
+
+  layout.verticalOffset = navHeight * 1.5;
+
+  layout.gridWidth = layout.size.width / 2;
+  layout.gridHeight = layout.size.height / 2;
+
+  return layout;
+}
+
 SkillBoxGroup.prototype.activate = function() {
   const skillGroup = this;
 
@@ -1699,25 +1608,6 @@ SkillBoxGroup.prototype.deactivate = function() {
   });
 
   return skillGroup;
-}
-
-SkillBoxGroup.prototype.defineLayout = function() {
-  const skillGroup = this;
-
-  const layout = {};
-
-  const navHeight = skillGroup.parent.layers.nav.node().getBBox().height;
-
-  layout.size = {};
-  layout.size.width = skillGroup.parent.layout.size.width;
-  layout.size.height = skillGroup.parent.layout.size.height - (navHeight * 4);
-
-  layout.verticalOffset = navHeight * 1.5;
-
-  layout.gridWidth = layout.size.width / 2;
-  layout.gridHeight = layout.size.height / 2;
-
-  return layout;
 }
 
 SkillBoxGroup.prototype.addGroup = function() {
@@ -2617,6 +2507,57 @@ TimelineCompany.prototype.mouseover = function() {
 
 }
 
+TimelineRole.prototype.animateIn = function(delay) {
+  const role = this;
+
+  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
+  const startTime = delay;
+
+  role.name
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);
+
+  role.dates
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);;
+
+  role.backgroundRect
+    .attr("width",0)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("width",timelineWidth);
+
+}
+
+TimelineRole.prototype.mouseout = function() {
+  const role = this;
+
+  return () => {
+    role.backgroundRect.attr("fill","#984BA3");
+  }
+
+}
+
+TimelineRole.prototype.mouseover = function() {
+  const role = this;
+
+  return () => {
+    // role.backgroundRect.attr("fill","orange");
+  }
+
+}
+
 TimelineCompany.prototype.addBackgroundRect = function() {
   const company = this;
 
@@ -2769,57 +2710,6 @@ TimelineCompany.prototype.addToplineGroup = function() {
 
 
   return group;
-}
-
-TimelineRole.prototype.animateIn = function(delay) {
-  const role = this;
-
-  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
-  const startTime = delay;
-
-  role.name
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);
-
-  role.dates
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);;
-
-  role.backgroundRect
-    .attr("width",0)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("width",timelineWidth);
-
-}
-
-TimelineRole.prototype.mouseout = function() {
-  const role = this;
-
-  return () => {
-    role.backgroundRect.attr("fill","#984BA3");
-  }
-
-}
-
-TimelineRole.prototype.mouseover = function() {
-  const role = this;
-
-  return () => {
-    // role.backgroundRect.attr("fill","orange");
-  }
-
 }
 
 TimelineRole.prototype.addBackgroundRect = function() {

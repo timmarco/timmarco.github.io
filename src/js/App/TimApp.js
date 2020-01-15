@@ -11,19 +11,18 @@ function TimApp(options) {
       "where":"#timeline"
     });
 
-    console.log("UPDATED?");
-
-    app.examples = app.addExamples([
+    const examples = [
       // {
-      //   "text":["AUGMENTED ARCHITECTURE","MODELS"],
+      //   "text":["AUGMENTED ARCHITECTURE"],
       //   "identifier":"arArchitecture",
       //   "imagePaths":[],
-      //   "href":"augmented-architecure",
+      //   "href":"augmented-architecture",
       //   "imageSize":{
       //     "width":1920,
       //     "height":1080
       //   },
-      //   "description":"An ARKit demo app interacting with architectural models."
+      //   "description":"An ARKit demo app interacting with architectural models.",
+      //   "mobileImage":"augmented-architecture.png"
       // },
       // {
       //   "text":["THE PROMISE OF ","SPATIAL COMPUTING"],
@@ -34,7 +33,8 @@ function TimApp(options) {
       //     "width":1224,
       //     "height":872
       //   },
-      //   "description":"An essay on the promise and potential of spatial computing."
+      //   "description":"An essay on the promise and potential of spatial computing.",
+      //   "mobileImage":"promise-spatial-computing.png"
       // },
       // {
       //   "text":["THE CHALLENGES OF ","SPATIAL COMPUTING"],
@@ -45,7 +45,8 @@ function TimApp(options) {
       //     "width":1213,
       //     "height":757
       //   },
-      //   "description":"An essay on the limitations and challenges of spatial computing."
+      //   "description":"An essay on the limitations and challenges of spatial computing.",
+      //   "mobileImage":"challenges-spatial-computing.png"
       // },
       {
         "text":["3D MODEL SKETCHES"],
@@ -56,7 +57,21 @@ function TimApp(options) {
           "width":1920,
           "height":1080
         },
-        "description":"An assortment of 3D models I've created."
+        "description":"An assortment of 3D models I've created.",
+        "mobileImage":"three-d-model-sketches.png"
+      },
+
+      {
+        "text":["DIVING DEEP INTO","FITTS' LAW"],
+        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
+        "identifier":"fitts",
+        "href":"fitts/",
+        "imageSize":{
+          "width":1300,
+          "height":826
+        },
+        "description":"An explorable explanation about a fundamental principle of interface design.",
+        "mobileImage":"fitts-law.png"
       },
       {
         "text":["STRANGER THINGS TITLES","RECREATED IN D3"],
@@ -67,29 +82,8 @@ function TimApp(options) {
           "width":1898,
           "height":1064
         },
-        "description":"An experiment in pushing d3 and SVG animations beyond their intended use."
-      },
-      {
-        "text":["DIVING DEEP INTO","FITTS' LAW"],
-        "imagePaths":["assets/fitts.png","assets/fitts-1.png","assets/fitts-2.png","assets/fitts-3.png"],
-        "identifier":"fitts",
-        "href":"fitts/",
-        "imageSize":{
-          "width":1300,
-          "height":826
-        },
-        "description":"An explorable explanation about a fundamental principle of interface design."
-      },
-      {
-        "text":["VIDEO DATA","VISUALIZATION"],
-        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
-        "identifier":"video",
-        "href":"blenderCharts",
-        "imageSize":{
-          "width":1920,
-          "height":1080
-        },
-        "description":"Using Blender to create animated charts and graphics."
+        "description":"An experiment in pushing d3 and SVG animations beyond their intended use.",
+        "mobileImage":"stranger-things.png"
       },
       {
         "text":["FREE AGENT ANALYZER"],
@@ -100,31 +94,21 @@ function TimApp(options) {
           "width":1200,
           "height":1006
         },
-        "description":"A prototype tool for comparing the potential value of MLB Free Agents."
+        "description":"A prototype tool for comparing the potential value of MLB Free Agents.",
+        "mobileImage":"free-agents.png"
       },
-
-      // {
-      //   "text":["K-MEANS EXPLAINED"],
-      //   "imagePaths":["assets/kMeans.png","assets/kMeans-1.png","assets/kMeans-2.png","assets/kMeans-3.png","assets/kMeans-4.png"],
-      //   "identifier":"kMeans",
-      //   "href":"kMeans/",
-      //   "imageSize":{
-      //     "width":1224,
-      //     "height":872
-      //   },
-      //   "description":"An explorable explanation about the foundational machine learning algorithm."
-      // },
-      // {
-      //   "text":["LEARNABLE SVG"],
-      //   "imagePaths":["assets/svg.png","assets/svg-2.png","assets/svg-3.png","assets/svg-4.png"],
-      //   "identifier":"svg",
-      //   "href":"learnable-svg/",
-      //   "imageSize":{
-      //     "width":2296,
-      //     "height":1284
-      //   },
-      //   "description":"The missing interactive documentation for SVGs."
-      // },
+      {
+        "text":["VIDEO DATA","VISUALIZATION"],
+        "imagePaths":["assets/video.png","assets/video-1.png","assets/video-2.png","assets/video-3.png"],
+        "identifier":"video",
+        "href":"blenderCharts",
+        "imageSize":{
+          "width":1920,
+          "height":1080
+        },
+        "description":"Using Blender to create animated charts and graphics.",
+        "mobileImage":"video-data-visualization.png"
+      },
       // {
       //   "text":["TBD PHYSICAL","PROTOTYPES"],
       //   "identifier":"arArchitecture",
@@ -134,9 +118,13 @@ function TimApp(options) {
       //     "width":1920,
       //     "height":1080
       //   },
-      //   "description":"Build out something with 3D Printing / Glowforge / other fabrication techniques."
+      //   "description":"Build out something with 3D Printing / Glowforge / other fabrication techniques.",
+      //   "mobileImage":"physical-prototypes.png"
       // },
-    ]);
+    ];
+
+    app.examples = app.addExamples(examples);
+
 
     app.skillBox = new SkillBox(app);
 

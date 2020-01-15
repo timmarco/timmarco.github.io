@@ -3,10 +3,15 @@ MobileWorkExample.prototype.addSwipeDiv = function() {
 
   const swipeDiv = example.parent.swipeContainer
       .append("div")
-      .style("float","left")
-      .style("width","85%")
-      .style("position","relative")
-      .style("overflow","hidden");
+      .style("background-color","red")
+      .classed("swipe-wrap",true);
+
+  const fullPath = "assets/mobileImages/" + example.imagePath;
+
+  const swipeImage = swipeDiv
+      .append("img")
+      .attr("src",fullPath);
+
 
   return swipeDiv;
 }
