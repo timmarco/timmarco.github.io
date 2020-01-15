@@ -11,6 +11,9 @@ function TimApp(options) {
       app.timeline = new Timeline({
         "where":"#timeline"
       });
+    } else {
+      d3.select("#onlyDesktop")
+        .style("display","none");
     }
 
     const examples = [
@@ -249,6 +252,23 @@ function LineChart(options) {
   }
 }
 
+function ScrollManager(options) {
+  const manager = this;
+  init(options);
+  return manager;
+
+  function init(options) {
+    manager.parent = options.parent;
+
+    manager.attachResizeListener();
+    manager.scrollOffset = manager.defineOffset();
+    manager.triggerPoints = manager.defineTriggerPoints();
+    manager.scrollEvents = manager.defineEvents();
+    manager.attachScrollListener();
+
+  }
+}
+
 function MobileWorkExample(options,index,app) {
   const example = this;
   init(options,index,app);
@@ -269,23 +289,6 @@ function MobileWorkExample(options,index,app) {
     example.layout = example.defineLayout();
     // example.swipeContainer = example.addSwipeDiv();
     example.swipeImage = example.addSwipeImage();
-
-  }
-}
-
-function ScrollManager(options) {
-  const manager = this;
-  init(options);
-  return manager;
-
-  function init(options) {
-    manager.parent = options.parent;
-
-    manager.attachResizeListener();
-    manager.scrollOffset = manager.defineOffset();
-    manager.triggerPoints = manager.defineTriggerPoints();
-    manager.scrollEvents = manager.defineEvents();
-    manager.attachScrollListener();
 
   }
 }
@@ -699,104 +702,6 @@ Headline.prototype.resize = function() {
   return headline;
 }
 
-MobileWorkExample.prototype.addSwipeDiv = function() {
-  const example = this;
-
-  const swipeDiv = example.parent.swipeContainer
-      .append("div")
-      .style("background-color","red")
-      .classed("swipe-wrap",true);
-
-  const fullPath = "assets/mobileImages/" + example.imagePath;
-
-  const swipeImage = swipeDiv
-      .append("img")
-      .attr("src",fullPath);
-
-
-  return swipeDiv;
-}
-
-MobileWorkExample.prototype.addSwipeImage = function() {
-  const example = this;
-
-  // const swipeDiv = example.swipeContainer
-  //     .append("div");
-
-  const fullPath = "assets/mobileImages/" + example.imagePath;
-
-  const link = d3.select("#exampleContainer")
-    .append("a")
-    .attr("target","_new")
-    .attr("href",example.href);
-
-  const swipeImage = link
-      .append("img")
-      .style("width","100%")
-      .attr("src",fullPath);
-
-
-
-  return swipeImage;
-}
-
-MobileWorkExample.prototype.addTapButton = function() {
-  const example = this;
-
-  const tapLink = example.layers.tap
-    .append("a")
-    .attr("href",example.href)
-    .attr("target","_new");
-
-  const tapGroup = tapLink
-    .append("g");
-
-  const background = tapGroup
-    .append("rect")
-    .attr("x",0)
-    .attr("y",0)
-    .attr("fill","green");
-
-  const tapText = tapGroup
-    .append("text")
-    .attr("dx",10)
-    .attr("text-anchor","start")
-    .attr("font-family","Oswald")
-    .attr("font-size","4em")
-    .attr("fill","white")
-    .attr("dominant-baseline","text-before-edge")
-    .attr("font-weight",500)
-    .text("TAP HERE TO READ");
-
-  const textSize = tapText
-    .node()
-    .getBBox();
-
-  background
-    .attr("width",textSize.width + 20)
-    .attr("height",textSize.height);
-
-  const leftAlign = example.layout.size.width / 2 - textSize.width / 2 - 10;
-  const topAlign = example.layout.size.height * 0.67;
-
-  tapGroup
-    .attr("transform","translate("+leftAlign+","+topAlign+")");
-
-  return tapGroup;
-}
-
-MobileWorkExample.prototype.defineLayout = function() {
-  const example = this;
-
-  const layout = {};
-
-  layout.size = {};
-  layout.size.width = window.innerWidth * 0.9;
-  layout.size.height = window.innerHeight * 0.75;
-
-  return layout;
-}
-
 ScrollManager.prototype.attachResizeListener = function() {
   const manager = this;
 
@@ -895,6 +800,104 @@ ScrollManager.prototype.triggerEvent = function(eventName) {
 
 }
 
+MobileWorkExample.prototype.addSwipeDiv = function() {
+  const example = this;
+
+  const swipeDiv = example.parent.swipeContainer
+      .append("div")
+      .style("background-color","red")
+      .classed("swipe-wrap",true);
+
+  const fullPath = "assets/mobileImages/" + example.imagePath;
+
+  const swipeImage = swipeDiv
+      .append("img")
+      .attr("src",fullPath);
+
+
+  return swipeDiv;
+}
+
+MobileWorkExample.prototype.addSwipeImage = function() {
+  const example = this;
+
+  // const swipeDiv = example.swipeContainer
+  //     .append("div");
+
+  const fullPath = "assets/mobileImages/" + example.imagePath;
+
+  const link = d3.select("#exampleContainer")
+    .append("a")
+    .attr("target","_new")
+    .attr("href",example.href);
+
+  const swipeImage = link
+      .append("img")
+      .style("width","100%")
+      .attr("src",fullPath);
+
+
+
+  return swipeImage;
+}
+
+MobileWorkExample.prototype.addTapButton = function() {
+  const example = this;
+
+  const tapLink = example.layers.tap
+    .append("a")
+    .attr("href",example.href)
+    .attr("target","_new");
+
+  const tapGroup = tapLink
+    .append("g");
+
+  const background = tapGroup
+    .append("rect")
+    .attr("x",0)
+    .attr("y",0)
+    .attr("fill","green");
+
+  const tapText = tapGroup
+    .append("text")
+    .attr("dx",10)
+    .attr("text-anchor","start")
+    .attr("font-family","Oswald")
+    .attr("font-size","4em")
+    .attr("fill","white")
+    .attr("dominant-baseline","text-before-edge")
+    .attr("font-weight",500)
+    .text("TAP HERE TO READ");
+
+  const textSize = tapText
+    .node()
+    .getBBox();
+
+  background
+    .attr("width",textSize.width + 20)
+    .attr("height",textSize.height);
+
+  const leftAlign = example.layout.size.width / 2 - textSize.width / 2 - 10;
+  const topAlign = example.layout.size.height * 0.67;
+
+  tapGroup
+    .attr("transform","translate("+leftAlign+","+topAlign+")");
+
+  return tapGroup;
+}
+
+MobileWorkExample.prototype.defineLayout = function() {
+  const example = this;
+
+  const layout = {};
+
+  layout.size = {};
+  layout.size.width = window.innerWidth * 0.9;
+  layout.size.height = window.innerHeight * 0.75;
+
+  return layout;
+}
+
 SkillBox.prototype.showSkill = function(skill) {
   const box = this;
 
@@ -969,7 +972,7 @@ SkillBox.prototype.addButtons = function() {
 
   buttons.creative = new SkillBoxButton({
     "parent":box,
-    "text":"CREATIVE & PRODUCTION",
+    "text":"DESIGN & PRODUCTION",
     "key":"creative",
     "skills":[
       {
@@ -1859,7 +1862,7 @@ Timeline.prototype.addHeading = function() {
     .style("background-color","black")
     .style("padding-left","1em")
     .style("padding-right","1em")
-    .style("font-size:2","5em")
+    .style("font-size","2.5em")
     .style("border-left","0.25em solid #984BA3")
     .style("font-weight","500")
     .style("color","white")
@@ -2682,6 +2685,57 @@ TimelineCompany.prototype.addToplineGroup = function() {
   return group;
 }
 
+TimelineRole.prototype.animateIn = function(delay) {
+  const role = this;
+
+  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
+  const startTime = delay;
+
+  role.name
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);
+
+  role.dates
+    .attr("opacity",0)
+    .attr("dx",-timelineWidth)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("opacity",1)
+    .attr("dx",0);;
+
+  role.backgroundRect
+    .attr("width",0)
+    .transition()
+    .delay(startTime)
+    .duration(1000)
+    .attr("width",timelineWidth);
+
+}
+
+TimelineRole.prototype.mouseout = function() {
+  const role = this;
+
+  return () => {
+    role.backgroundRect.attr("fill","#984BA3");
+  }
+
+}
+
+TimelineRole.prototype.mouseover = function() {
+  const role = this;
+
+  return () => {
+    // role.backgroundRect.attr("fill","orange");
+  }
+
+}
+
 TimelineRole.prototype.addBackgroundRect = function() {
   const role = this;
 
@@ -2754,57 +2808,6 @@ TimelineRole.prototype.addName = function() {
     .text(role.data.title);
 
   return name;
-}
-
-TimelineRole.prototype.animateIn = function(delay) {
-  const role = this;
-
-  const timelineWidth = role.parent.scale(role.data.startDate) - role.parent.scale(role.data.endDate);
-  const startTime = delay;
-
-  role.name
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);
-
-  role.dates
-    .attr("opacity",0)
-    .attr("dx",-timelineWidth)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("opacity",1)
-    .attr("dx",0);;
-
-  role.backgroundRect
-    .attr("width",0)
-    .transition()
-    .delay(startTime)
-    .duration(1000)
-    .attr("width",timelineWidth);
-
-}
-
-TimelineRole.prototype.mouseout = function() {
-  const role = this;
-
-  return () => {
-    role.backgroundRect.attr("fill","#984BA3");
-  }
-
-}
-
-TimelineRole.prototype.mouseover = function() {
-  const role = this;
-
-  return () => {
-    // role.backgroundRect.attr("fill","orange");
-  }
-
 }
 
 SvgTutorialCodeBlock.prototype.addLine = function(options) {
@@ -2893,6 +2896,45 @@ SvgTutorialCodeBlock.prototype.addForeignObject = function() {
   return foreignObject;
 }
 
+SvgTutorialContainer.prototype.defineLayout = function(options) {
+  const container = this;
+
+  const layout = options.layout ? options.layout : {};
+
+  layout.size = layout.size ? layout.size : {};
+  layout.size.width = layout.size.width ? layout.size.width : 960;
+  layout.size.height = layout.size.height ? layout.size.height : 540;
+
+  layout.size.midlines = {};
+  layout.size.midlines.x = layout.size.width  / 2;
+  layout.size.midlines.y = layout.size.height / 2;
+
+  layout.gridHorizontal = d3.scaleLinear().domain([0,12]).range([0,layout.size.width]);
+  layout.gridVertical = d3.scaleLinear().domain([0,12]).range([0,layout.size.height]);
+
+  return layout;
+}
+
+SvgTutorialContainer.prototype.defineStyle = function(options) {
+  const container = this;
+  const style = options.style ? options.style : {};
+
+  style.stageFill = style.stageFill ? style.stageFill : "rgba(0,0,0,0)";
+
+  style.codeBlock = style.codeBlock ? style.codeBlock : {};
+  style.codeBlock.background = style.codeBlock.background ? style.codeBlock.background : "#022E00";
+  style.codeBlock.fontColor = style.codeBlock.fontColor ? style.codeBlock.fontColor : "white";
+  style.codeBlock.fontFamily = style.codeBlock.fontFamily ? style.codeBlock.fontFamily : "Source Code Pro";
+  style.codeBlock.fontWeight = style.codeBlock.fontWeight ? style.codeBlock.fontWeight : "300";
+  style.codeBlock.fontSize = style.codeBlock.fontSize ? style.codeBlock.fontSize : "10pt";
+
+  style.svgElement = style.svgElement ? style.svgElement : {};
+  style.svgElement.background = style.svgElement.background ? style.svgElement.background : "#9FDE9C";
+
+
+  return style;
+}
+
 SvgTutorialContainer.prototype.addCodeBlock = function() {
   const container = this;
 
@@ -2939,45 +2981,6 @@ SvgTutorialContainer.prototype.addSvgElement = function() {
   });
 
   return block;
-}
-
-SvgTutorialContainer.prototype.defineLayout = function(options) {
-  const container = this;
-
-  const layout = options.layout ? options.layout : {};
-
-  layout.size = layout.size ? layout.size : {};
-  layout.size.width = layout.size.width ? layout.size.width : 960;
-  layout.size.height = layout.size.height ? layout.size.height : 540;
-
-  layout.size.midlines = {};
-  layout.size.midlines.x = layout.size.width  / 2;
-  layout.size.midlines.y = layout.size.height / 2;
-
-  layout.gridHorizontal = d3.scaleLinear().domain([0,12]).range([0,layout.size.width]);
-  layout.gridVertical = d3.scaleLinear().domain([0,12]).range([0,layout.size.height]);
-
-  return layout;
-}
-
-SvgTutorialContainer.prototype.defineStyle = function(options) {
-  const container = this;
-  const style = options.style ? options.style : {};
-
-  style.stageFill = style.stageFill ? style.stageFill : "rgba(0,0,0,0)";
-
-  style.codeBlock = style.codeBlock ? style.codeBlock : {};
-  style.codeBlock.background = style.codeBlock.background ? style.codeBlock.background : "#022E00";
-  style.codeBlock.fontColor = style.codeBlock.fontColor ? style.codeBlock.fontColor : "white";
-  style.codeBlock.fontFamily = style.codeBlock.fontFamily ? style.codeBlock.fontFamily : "Source Code Pro";
-  style.codeBlock.fontWeight = style.codeBlock.fontWeight ? style.codeBlock.fontWeight : "300";
-  style.codeBlock.fontSize = style.codeBlock.fontSize ? style.codeBlock.fontSize : "10pt";
-
-  style.svgElement = style.svgElement ? style.svgElement : {};
-  style.svgElement.background = style.svgElement.background ? style.svgElement.background : "#9FDE9C";
-
-
-  return style;
 }
 
 SvgTutorialContainer.prototype.addLineOfCode = function(options) {

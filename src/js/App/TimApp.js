@@ -11,6 +11,9 @@ function TimApp(options) {
       app.timeline = new Timeline({
         "where":"#timeline"
       });
+    } else {
+      d3.select("#onlyDesktop")
+        .style("display","none");
     }
 
     const examples = [

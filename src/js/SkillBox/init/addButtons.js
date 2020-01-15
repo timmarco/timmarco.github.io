@@ -48,7 +48,7 @@ SkillBox.prototype.addButtons = function() {
 
   buttons.creative = new SkillBoxButton({
     "parent":box,
-    "text":"CREATIVE & PRODUCTION",
+    "text":"DESIGN & PRODUCTION",
     "key":"creative",
     "skills":[
       {
