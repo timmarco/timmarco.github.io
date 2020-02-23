@@ -1,0 +1,7 @@
+.columnTableImage {
+  width:40%;
+  height:100%;
+  display:table-cell;
+  vertical-align:middle;
+  text-align:center;
+}

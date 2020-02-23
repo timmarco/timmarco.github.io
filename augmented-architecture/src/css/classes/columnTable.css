@@ -1,0 +1,7 @@
+.columnTable {
+  margin:auto;
+  overflow:hidden;
+  margin-left:10vw;
+  margin-right:10vw;
+  display:table;
+}

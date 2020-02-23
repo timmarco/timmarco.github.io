@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+    <head>
+      <script src="node_modules/d3/dist/d3.min.js"></script>
+    </head>
+
+    <body>
+      <select id="pitchers">
+        <option data-pitcher_id="null">Select Pitcher</option>
+      </select>
+
+      <div id="visualizer"></div>
+
+      <div id="tooltip" style="width:200px; z-index:5; position:absolute; background-color:white; padding:0.25em; border:1px solid black">
+        <div id="pitcherName">[NAME]</div>
+        <div id="pitchType">[PITCH TYPE]</div>
+        <div>The pitch was <span style="font-weight:bold" id="pitchError">[#]</span> feet from the mitt.</div>
+      </div>
+
+
+      <script>
+        d3.csv("pitches.csv").then((data) => {
+
+          var nested = d3.nest()
+            .key((d) => { return d.pitcher_id})
+            .entries(data);
+
+          d3.select("#pitchers")
+            .selectAll("option")
+            .data(nested)
+            .enter()
+            .append("option")
+            .attr("value",(d) => { return d.values[0].pitcher_id})
+            .html((d) => { return d.values[0].first + " " + d.values[0].last; })
+
+            var svg = d3.select("#visualizer")
+              .append("svg")
+              .attr("width",800)
+              .attr("height",800)
+              .style("border","1px solid black");
+
+            var errorLayer = svg.append("g");
+            var pitchLayer = svg.append("g");
+
+          var xRange = d3.extent(data.map((d) => {return +d.px;} ));
+          var zRange = d3.extent(data.map((d) => { return +d.pz;}));
+          var mittDistanceRange = d3.extent((data.map((d) => { return +d.dist_from_mitt; })));
+          var pitchTypes = data.map((d) =>  {return d.pitch_type;}).filter((value,index,self) => { return self.indexOf(value) === index});
+          var pitchColors = d3.schemeCategory10;
+
+          var xScale = d3.scaleLinear()
+            .domain([-5,5])
+            .range([100,900]);
+
+          var yScale = d3.scaleLinear()
+            .domain([-2,7])
+            .range([900,100]);
+
+
+
+        d3.select("#pitchers")
+          .on('change',function() {
+            errorLayer.selectAll("circle").remove();
+            pitchLayer.selectAll("circle").remove();
+
+            var dropdown = d3.select(this);
+            var value = dropdown.node().value;
+            var pitches = nested[value];
+
+            var pitches = nested.filter((p) => { console.log(p.key,value,(p.key === value)); return p.key == value})[0].values;
+
+
+            pitchLayer
+              .selectAll("g")
+              .data(pitches)
+              .enter()
+              .append("circle")
+              .attr("r",4)
+              .attr("fill",(d) => {
+                return pitchColors[pitchTypes.indexOf(d.pitch_type)];
+              })
+              .attr("cx",(d) => { return xScale(+d.px); })
+              .attr("cy",(d) => { return yScale(+d.pz); })
+              .on('mouseover',function(d) {
+                errorLayer.selectAll("circle").remove();
+
+
+                d3.select(this)
+                  .attr("stroke","black")
+                  .attr("r",5);
+
+                d3.select("#pitcherName")
+                  .html(d.first + " " + d.last);
+
+                d3.select("#pitchType")
+                  .html(d.pitch_type);
+
+                d3.select("#pitchError")
+                  .html(d.dist_from_mitt);
+
+                var xPos = d3.event.x + 20;
+                d3.select("#tooltip")
+                  .style("display","block")
+                  .style("left",xPos + "px")
+                  .style("top",d3.event.y + "px");
+
+                errorLayer
+                  .append("circle")
+                  .attr("cx",xScale(+d.px))
+                  .attr("cy",yScale(+d.pz))
+                  .attr("fill","red")
+                  .attr("fill-opacity",0.5)
+                  .attr("stroke","red")
+                  .attr("stroke-width",2)
+                  .attr("r",80 * (d.dist_from_mitt));
+
+              })
+              .on('mouseout',function() {
+                errorLayer.selectAll("circle").remove();                
+                d3.select("#tooltip").style("display","none");
+                d3.select(this).attr("stroke","none");
+              });
+
+
+          })
+
+
+        });
+
+
+
+      </script>
+    </body>
+</html>
