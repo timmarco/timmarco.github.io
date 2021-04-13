@@ -1,0 +1,19 @@
+#back-button {
+  font-weight:600;
+  font-size:2em;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  cursor:pointer;
+  background-color:black;
+  color:white;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:-2;
+  margin-top:0.5em;
+  margin-bottom:0.5em;
+}
+
+#back-button:hover {
+  background-color:rgb(44,160,44);
+}

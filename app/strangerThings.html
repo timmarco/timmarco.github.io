@@ -1,0 +1,46 @@
+
+<!doctype html>
+<html>
+  <head>
+
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,400,600,700" rel="stylesheet">
+
+    <script src="strangerThings/d3.js"></script>
+    <!-- <script src="dist/bundle.js"></script> -->
+    <script src="strangerThings/all.js"></script>
+    <link rel="stylesheet" href="strangerThings/style.css" />
+
+  </head>
+
+  <body>
+    <div id="container" style="margin:0;padding:0"></div>
+
+
+    <script>
+
+      function initialize() {
+        var soundTrack,
+          svg;
+
+        soundTrack = new Audio("strangerThings/audiotrack.mp3");
+        soundTrack.onended = clear;
+        svg = addSvg();
+        addPlayCard(svg,soundTrack);
+      }
+
+      initialize();
+
+      function clear() {
+        d3.select("#container").selectAll("*")
+          .remove();
+
+        initialize();
+      }
+
+
+    </script>
+
+  </body>
+</html>

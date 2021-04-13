@@ -1,0 +1,14 @@
+.content-video-container {
+  margin:auto;
+  width:100vw;
+  max-width:1000px;
+  position:relative;
+  display:block;
+  overflow:hidden;
+}
+
+.content-video-container::before {
+  display: block;
+  content: "";
+  padding-top: 56.25%;
+}

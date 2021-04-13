@@ -1,26 +1,15 @@
 {
-  "name": "timmarco.github.io",
+  "name": "portfolio",
   "version": "1.0.0",
-  "description": "Github Pages Repo",
-  "main": "gulpfile.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/timmarco/timmarco.github.io.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/timmarco/timmarco.github.io/issues"
-  },
-  "homepage": "https://github.com/timmarco/timmarco.github.io#readme",
   "dependencies": {
-    "d3": "^5.12.0",
-    "gulp": "^4.0.2",
-    "gulp-concat": "^2.6.1",
-    "gulp-eslint": "^6.0.0",
-    "swipejs": "^2.2.14"
+    "@vimeo/player": "^2.15.0",
+    "d3": "^6.5.0"
   }
 }

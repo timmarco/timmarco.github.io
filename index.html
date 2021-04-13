@@ -1,83 +1,38 @@
 <!doctype html>
 <html>
   <head>
-    <title>Tim Marco | Creative Technologist - Chicago, IL</title>
-
-    <meta charset="UTF-8" />
-    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,500" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet" />
-
-    <link rel="stylesheet" href="src/dist/style.css" />
-    <script src="src/dist/all.js"></script>
+    <title>Tim Marco - Creative Technologist</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Oswald:300,400,500,600,700|Merriweather:400,600" />
+    <script src="app.js"></script>
   </head>
-
   <body>
-
-    <div style="min-height:100vh; background-color:black;">
-      <div id="hero">
-        <div id="header">
-          <a href="mailto:tim@timmarco.com" id="nameLink">tim@timmarco.com</a> <a href="https://www.linkedin.com/in/timothymarco" id="linkedInLink">LinkedIn</a>
-        </div>
-        <div style="position:relative">
-          <div style="position:absolute; width:100vw; height:100vh; z-index:0; background-color:black">
-            <div style="position:relative; top:50%; translateY:-50%; font-size:3em; text-align:center; font-family:Oswald; font-weight:500">TimMarco.com - Video Loading</div>
-          </div>
-          <div style="position:absolute; width:100vw; height:100vh; z-index:1">
-            <!-- <iframe src="https://player.vimeo.com/video/382974707" width="640" height="360" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
-
-            <iframe src="https://player.vimeo.com/video/382981631?autoplay=1&loop=1&background=1&muted=1?controls=0" width="100%" height="100%" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-            <!-- <iframe src="https://player.vimeo.com/video/376576405" width="640" height="480" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe> -->
-
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <div style="min-width:100vw; min-height:100vh; border-top:15px solid #4DB04A;">
-      <div style="width:100vw;" id="exampleContainer"></div>
-      <div id="exampleIndicator"></div>
-    </div>
-
-    <div style="min-width:100vw; padding-bottom:10vh; border-top:15px solid #984BA3;">
-      <div style="width:100vw;">
-
-        <div style="float:left; padding-left:5vw; padding-right:5vw; padding-top:5vh">
-          <p style="font-size:1.5em; padding-bottom:1em">I'm a jack of all trades&mdash;and master of some&mdash;who uses technology to explore and understand the world.</p>
-          <p style="font-size:1.5em; padding-bottom:1em">Recently, my focus has been on Spatial Computing: using Virtual, Augmented, and Mixed Reality to help users bridge the gap between the physical and digital realms.</p>
-          <p style="font-size:1.5em; padding-bottom:1em">In my career, I've worked as a data analyst, full-stack developer, and innovation &amp; design consultant.</p>
-          <p style="font-size:1.5em; padding-bottom:1em">Want to get in touch? I can be reached at <a href="mailto:tim@timmarco.com">tim@timmarco.com</a> or on <a href="https://www.linkedin.com/in/timothymarco" target="_new">LinkedIn</a>.</p>
-        </div>
-
-
+    <div id="navbar">
+      <div>
+        <span id="title">
+          TIM MARCO
+        </span>
       </div>
 
-      <div style="clear:both"></div>
-      <div id="skillCard"></div>
+      <div id="back-button">
+        &larr; Go Back
+      </div>
+
+
+      <div id="header-links">
+        <div id="header-links-center">
+          <!-- <div class="header-link">linkedin</div> -->
+        </div>
+      </div>
 
     </div>
 
-    <div id="onlyDesktop">
-      <div style="width:100vw; min-height:100vh">
-        <div style="background-color:black; padding-left:1em; padding-right:1em; font-size:2.5em; border-left:0.25em solid #984BA3; font-weight:500; color:white; font-family:Oswald; display:inline-block">TOOLS OF THE TRADE</div>
-        <div style="margin-left:5vw; font-size:1.25em; margin-top:0.5em; margin-bottom:0.5em">I've had the opportunity to use many different technologies and develop skills. Here are some of them.</div>
-        <div id="skillBoxContainer"></div>
-        <div id="skillBoxSkillSvgs"></div>
-      </div>
-
-      <div style="width:100vw;min-height:100vh">
-        <div class="triggerPoint" data-trigger-point="resume"></div>
-        <div id="timeline"></div>
-        <div style="padding-left:5vw"><em>* Any views and opinions expressed on this site are my own and not those of my current or former employers.</em></div>
-      </div>
+    <div id="body-content">
     </div>
 
 
     <script>
-      const app = new TimApp({
-
-      });
+      const portfolio = new Portfolio();
     </script>
   </body>
-
 </html>

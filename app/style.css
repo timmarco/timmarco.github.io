@@ -1,0 +1,283 @@
+#back-button {
+  font-weight:600;
+  font-size:2em;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  cursor:pointer;
+  background-color:black;
+  color:white;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:-2;
+  margin-top:0.5em;
+  margin-bottom:0.5em;
+}
+
+#back-button:hover {
+  background-color:rgb(44,160,44);
+}
+
+#body-content {
+  padding-top:5em;
+}
+
+body {
+  margin:0;
+  padding:0;
+  font-family:Oswald;
+}
+
+.callDown {
+  display:inline-block;
+  color:white;
+  background-color:black;
+  font-weight:400;
+  font-size:2em;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:0.5em;
+  padding-right:0.5em;
+}
+
+.callUp {
+  display:inline-block;
+  color:white;
+  background-color:black;
+  font-weight:400;
+  font-size:2em;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:0.5em;
+  padding-right:0.5em;
+}
+
+.content-description-container {
+
+}
+
+.content-main-container {
+  margin:auto;
+  width:100vw;
+  max-width:1000px;
+}
+
+.content-video-container {
+  margin:auto;
+  width:100vw;
+  max-width:1000px;
+  position:relative;
+  display:block;
+  overflow:hidden;
+}
+
+.content-video-container::before {
+  display: block;
+  content: "";
+  padding-top: 56.25%;
+}
+
+.details_box {
+  display:none;
+  position:fixed;
+  z-index:2;
+  background-color:white;
+  color:black;
+  width:50vw;
+}
+
+.details_content_div {
+  background-color:white;
+  width:100%;
+  height:100%;
+  padding-left:2em;
+  padding-right:2em;
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+}
+
+.details_date {
+  font-family:Meriweather;
+  font-style:italic;
+  font-size:1.5em;
+}
+
+.details_subtitle {
+  font-size:2em;
+  font-weight:300;
+}
+
+h1 {
+  font-weight:500;
+  font-size:4em;
+  margin-bottom:0;
+  margin-top:0;
+}
+
+h2 {
+  font-weight:500;
+  display:inline-block;
+  color:white;
+  background-color:black;
+  padding-left:0.25em;
+  padding-right:0.25em;
+  font-size:1.5em;
+}
+
+.header-link {
+  display:inline-block;
+  font-size:1.5em;
+  background-color:black;
+  color:white;
+  padding-left:0.25em;
+  padding-right:0.5em;
+  padding-bottom:0.0625em;
+  padding-top:0.0625em;
+}
+
+#header-links-center {
+}
+
+#header-links {
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+}
+
+.item-overlay {
+  position:fixed;
+  width:100vw;
+  height:100vh;
+  border-top:1px solid black;
+  z-index:5;
+  top:100vh;
+  overflow-y: scroll;
+  background-color:white;
+}
+
+.link-screenshot-image {
+  width:85%;
+  border:1px solid black;
+  box-shadow:5px 10px 10px rgba(0,0,0,0.15);
+}
+
+.medium_details {
+  font-weight:300;
+  font-size:1.5em;
+}
+
+#navbar {
+  width:100vw;
+  box-shadow:0px 5px 10px rgba(0,0,0,0.25);
+  display:flex;
+  justify-content:space-between;
+  position:fixed;
+  left:0;
+  top:0;
+  background-color:white;
+  z-index:3;
+}
+
+p {
+  font-family:Merriweather;
+  font-size:2em;
+  margin-top:0.25em;
+  margin-bottom:0.25em;
+}
+
+.portfolio-item-line {
+  display:block;
+  margin-left:2em;
+}
+
+.portfolio-item-title-subsequent-line {
+  background-color:black;
+  color:white;
+  font-weight:500;
+  display:inline-block;
+  font-size:2.5em;
+  padding-left:0.375em;
+  padding-right:0.375em;
+  padding-bottom:0.125em;
+  padding-top:-0.425em;
+  margin-left:0.125em;
+}
+
+.portfolio-item-substrate {
+  width:100%;
+  /* height:10%; */
+}
+
+.portfolio-item-text-layer {
+  width:100%;
+  height:100%;
+  padding:0;
+  margin:0;
+  margin-left:4em;
+  display:flex;
+  flex-direction:column;
+  justify-content: center;
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+.portfolio-item-text {
+  padding:0;
+  margin:0;
+  display:block;
+  width:65%;
+}
+
+.portfolio-item-title {
+  background-color:black;
+  color:white;
+  font-weight:500;
+  display:inline-block;
+  font-size:2.5em;
+  padding-left:0.375em;
+  padding-right:0.375em;
+  padding-bottom:0.125em;
+}
+
+.portfolio-item {
+  max-height:25vw;
+  overflow:hidden;
+  position:relative;
+  cursor:pointer;
+}
+
+#portfolio-items {
+  /* width:100%; */
+}
+
+.sketchbook-item-text {
+  font-family:Merriweather;
+  margin-left:0.25em;
+  margin-right:0.5em;
+  font-size:1.25em;
+  color:#666;
+}
+
+.sketchbook-item {
+  width:100%;
+  height:360px;
+  display:flex;
+  margin-top:50px;
+  margin-bottom:50px;
+  box-shadow:5px 5px 10px rgba(0,0,0,0.125);
+}
+
+#title {
+  background-color:black;
+  color:white;
+  font-weight:600;
+  font-size:3em;
+  display:inline-block;
+  padding-left:0.25em;
+  padding-right:0.5em;
+  padding-bottom:0.0625em;
+  padding-top:0.0625em;
+  z-index:1;
+}
