@@ -1,14 +1,3 @@
-function ContentPane(portfolio) {
-  const pane = this;
-  init(portfolio);
-  return pane;
-
-  function init(portfolio) {
-    pane.parent = portfolio;
-    pane.containerDiv = pane.addContainerDiv();
-  }
-}
-
 function DetailsBox(portfolio) {
   const box = this;
   init(portfolio);
@@ -20,6 +9,17 @@ function DetailsBox(portfolio) {
     box.contentDiv = box.addContentDiv();
     box.subtitleDiv = box.addSubtitleDiv();
     box.dateDiv = box.addDateDiv();
+  }
+}
+
+function ContentPane(portfolio) {
+  const pane = this;
+  init(portfolio);
+  return pane;
+
+  function init(portfolio) {
+    pane.parent = portfolio;
+    pane.containerDiv = pane.addContainerDiv();
   }
 }
 
@@ -48,19 +48,6 @@ function Portfolio() {
   }
 }
 
-function PortfolioItemContent(where) {
-  const content = this;
-  init(where);
-  return content;
-
-  function init(where) {
-    content.where = where;
-    content.containerDiv = content.addContainerDiv();
-    content.videoDiv = content.addVideoDiv();
-    content.descriptionDiv = content.addDescriptionDiv();
-  }
-}
-
 function PortfolioItem(parent,manifest) {
   const item = this;
   init(parent,manifest);
@@ -83,70 +70,17 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
-ContentPane.prototype.transitionIn = function(item) {
-  const pane = this;
+function PortfolioItemContent(where) {
+  const content = this;
+  init(where);
+  return content;
 
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px")
-    .transition()
-    .duration(500)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    item.manifest
-      .callback(pane.containerDiv);
+  function init(where) {
+    content.where = where;
+    content.containerDiv = content.addContainerDiv();
+    content.videoDiv = content.addVideoDiv();
+    content.descriptionDiv = content.addDescriptionDiv();
   }
-
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true)
-
-}
-
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    // .vimeo("523023575")
-    // .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
-
-}
-
-function loadedFreeAgents() {
-  console.log("LOADED FREE AGENTS");
 }
 
 function activateFittsLaw(where) {
@@ -180,7 +114,7 @@ function loadedFittsLaw(parent) {
   const player = new Vimeo.Player(iframe.node());
 
   player.on("play", () =>{
-    parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
+    parent.contentPane.containerDiv.select(".video-overlay")
       .style("background-color","rgba(1,0,0,0.25)")
       .transition()
       .duration(250)
@@ -204,11 +138,13 @@ function loadedFittsLaw(parent) {
     });
 
 
-  parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-    .style("pointer-events","none");
+  // parent.contentPane.containerDiv.select(".video-overlay")
+  //   .style("pointer-events","none")
+    // .style("touch-events","none");
 
-  parent.contentPane.containerDiv.select("img")
-    .style("pointer-events","none");
+  // parent.contentPane.containerDiv.select("img")
+  //   .style("pointer-events","none")
+    // .style("touch-events","none");
 
 
 
@@ -227,7 +163,20 @@ function activateStrangerThings(where) {
 }
 
 function loadedStrangerThings() {
-  console.log("LOADED STRANGER THINGS!");
+  
+}
+
+function activateFreeAgents(where) {
+
+  return new PortfolioItemContent(where)
+    // .vimeo("523023575")
+    // .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
+
+}
+
+function loadedFreeAgents() {
+
 }
 
 function activateSketchbook(where) {
@@ -404,7 +353,35 @@ function activateSketchbook(where) {
 }
 
 function loadedSketchbook() {
-  console.log("LOADED THE SKETCHBOOK");
+  
+}
+
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
+    .append("div")
+    .classed("details_box",true)
+}
+
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
+}
+
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
+
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
 }
 
 DetailsBox.prototype.transitionIn = function(item) {
@@ -462,32 +439,84 @@ DetailsBox.prototype.updateContent = function(item) {
   return box;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
   return d3.select("body")
     .append("div")
-    .classed("details_box",true)
+    .classed("item-overlay",true)
+
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
+ContentPane.prototype.transitionIn = function(item) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px")
+    .transition()
+    .duration(500)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
 }
 
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
 }
 
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
+
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
     .append("div")
-    .classed("details_subtitle",true);
+    .attr("id","portfolio-items");
 }
 
 Portfolio.prototype.manifest = [
@@ -560,31 +589,104 @@ Portfolio.prototype.manifest = [
   // }
 ];
 
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
     .append("div")
-    .attr("id","portfolio-items");
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
+}
+
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.substrate
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","cover")
+      .style("margin",0)
+      .style("padding",0);
+  }
+  
+  return item.substrate
+    .append("video")
+    .attr("width","100%")
+    .attr("height",'100%')
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("object-fit","cover")
+    .style("margin",0)
+    .style("padding",0)
+    .attr("loop",true);
+}
+
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
 }
 
 Portfolio.prototype.activate = function(selectedItem) {
@@ -872,148 +974,17 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
 
   const videoLoad = videoDiv
     .append("img")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("background-color","black")
-    .style("position","absolute")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
     .attr("src",previewSource);
 
   const playerOverlay = videoDiv
     .append("div")
-    .attr("data-role","videoOverlay")
-    .style("background-color","rgba(0,0,0,0.125)")
-    .style("position","absolute")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("cursor","pointer")
+    .classed("video-overlay",true)
+    .style("pointer-events","none")
     .html("<div style='color:white; text-align:center; background-color:rgb(60,144,60); font-size:2.5em'>DOUBLE-TAP TO PLAY VIDEO</h1>");
 
   return content;
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
-}
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
-    .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.substrate
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","cover")
-      .style("margin",0)
-      .style("padding",0);
-  }
-  
-  return item.substrate
-    .append("video")
-    .attr("width","100%")
-    .attr("height",'100%')
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("object-fit","cover")
-    .style("margin",0)
-    .style("padding",0)
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
-      }
-    })
-    .html((datum) => { return datum});
 }
 
 PortfolioItem.prototype.activate = function() {
@@ -1133,6 +1104,26 @@ PortfolioItem.prototype.show = function() {
 
 }
 
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
 function ArcCountdown(where) {
   const countdown = this;
   init(where);
@@ -1191,6 +1182,40 @@ function BlurAttentionSketch(where) {
     blur.grid = blur.addGrid();
     blur.buttonGroup = blur.addButtonGroup();
     blur.buttons = blur.addButtons();
+
+  }
+}
+
+function DragSnap(where) {
+  const snap = this;
+  init(where);
+  return snap;
+
+  function init(where) {
+    snap.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(() => {
+        if(snap.isDragging == true ) { return }
+        if(snap.isDone == true) { return }
+        snap.dragMe.transition().duration(250).attr("opacity",1);
+      });
+
+    snap.isDragging = false;
+    snap.canDrop = false;
+
+    snap.activeColor = d3.schemeCategory10[0];
+    snap.antColor= d3.schemeCategory10[1];
+    snap.connectingColor = "#fafafa";
+    snap.backgroundColor = "#eee";
+    snap.falseTargetColor = "#999";
+
+    snap.background = snap.addBackground();
+    snap.connectingLine = snap.addConnectingLine();
+    snap.antsMarching = snap.addAntsMarching();
+    snap.source = snap.addSource();
+    snap.destination = snap.addDestination();
+    snap.falseTargets = snap.addFalseTargets();
+    snap.dragMe = snap.addDragMe();
 
   }
 }
@@ -1261,6 +1286,38 @@ function RadarSketch(where) {
 
 }
 
+function RandomWalk(where) {
+  const randomWalk = this;
+  init(where);
+  return randomWalk;
+
+  function init(where) {
+    randomWalk.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(randomWalk.highlight())
+      .UnhighlightEventIs(randomWalk.unhighlight());
+
+    randomWalk.hasStarted = false;
+    randomWalk.isActive = false;
+    randomWalk.history = [0];
+    randomWalk.steps = 0;
+    randomWalk.minValue = -10;
+    randomWalk.maxValue = 10;
+    randomWalk.binnedValues = randomWalk.defineBinnedValues();
+    randomWalk.isWalking = false;
+    randomWalk.background = randomWalk.addBackground();
+    randomWalk.walkScales = randomWalk.defineWalkScales();
+    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
+    randomWalk.xAxis = randomWalk.addXAxis();
+    randomWalk.lineGroup = randomWalk.addLineGroup();
+    randomWalk.line = randomWalk.addLine();
+    randomWalk.xAxisGroup.selectAll("text").remove();
+    randomWalk.histogram = randomWalk.addHistogram();
+
+
+  }
+}
+
 function Sketch(where) {
   const sketch = this;
   init(where);
@@ -1275,40 +1332,6 @@ function Sketch(where) {
 
     sketch.div = sketch.addDiv();
     sketch.image = sketch.addImage();
-  }
-}
-
-function DragSnap(where) {
-  const snap = this;
-  init(where);
-  return snap;
-
-  function init(where) {
-    snap.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(() => {
-        if(snap.isDragging == true ) { return }
-        if(snap.isDone == true) { return }
-        snap.dragMe.transition().duration(250).attr("opacity",1);
-      });
-
-    snap.isDragging = false;
-    snap.canDrop = false;
-
-    snap.activeColor = d3.schemeCategory10[0];
-    snap.antColor= d3.schemeCategory10[1];
-    snap.connectingColor = "#fafafa";
-    snap.backgroundColor = "#eee";
-    snap.falseTargetColor = "#999";
-
-    snap.background = snap.addBackground();
-    snap.connectingLine = snap.addConnectingLine();
-    snap.antsMarching = snap.addAntsMarching();
-    snap.source = snap.addSource();
-    snap.destination = snap.addDestination();
-    snap.falseTargets = snap.addFalseTargets();
-    snap.dragMe = snap.addDragMe();
-
   }
 }
 
@@ -1342,38 +1365,6 @@ function SnellsLaw(where) {
 
     snells
       .updateForMouseCoordinates({"x":50,"y":40});
-
-
-  }
-}
-
-function RandomWalk(where) {
-  const randomWalk = this;
-  init(where);
-  return randomWalk;
-
-  function init(where) {
-    randomWalk.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(randomWalk.highlight())
-      .UnhighlightEventIs(randomWalk.unhighlight());
-
-    randomWalk.hasStarted = false;
-    randomWalk.isActive = false;
-    randomWalk.history = [0];
-    randomWalk.steps = 0;
-    randomWalk.minValue = -10;
-    randomWalk.maxValue = 10;
-    randomWalk.binnedValues = randomWalk.defineBinnedValues();
-    randomWalk.isWalking = false;
-    randomWalk.background = randomWalk.addBackground();
-    randomWalk.walkScales = randomWalk.defineWalkScales();
-    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
-    randomWalk.xAxis = randomWalk.addXAxis();
-    randomWalk.lineGroup = randomWalk.addLineGroup();
-    randomWalk.line = randomWalk.addLine();
-    randomWalk.xAxisGroup.selectAll("text").remove();
-    randomWalk.histogram = randomWalk.addHistogram();
 
 
   }
@@ -1886,453 +1877,6 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   }
 }
 
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
-
-
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
-      });
-
-
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
-
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-  }
-}
-
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
-
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
-  }
-}
-
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
-
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
-}
-
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
-    .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
-    });
-}
-
-RadarSketch.prototype.addBackground = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","black");
-}
-
-RadarSketch.prototype.addBogeyGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addBogeys = function() {
-  const radar = this;
-  const bogeyCount = 10;
-
-  const bogeyPolarCoordinates = [];
-  d3.range(0,bogeyCount)
-    .forEach((index) => {
-      bogeyPolarCoordinates
-        .push({
-          "theta":d3.randomUniform(0,2*Math.PI)(),
-          "distance":d3.randomUniform(35,150)()
-        });
-    });
-
-  return radar.bogeyGroup
-    .selectAll("circle")
-    .data(bogeyPolarCoordinates)
-    .enter()
-    .append("circle")
-    .attr("r",5)
-    .attr("fill",radar.green)
-    .attr("stroke","none")
-    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
-    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
-    .attr("fill-opacity",0);
-}
-
-RadarSketch.prototype.addDefs = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("defs");
-}
-
-RadarSketch.prototype.addGroup = function() {
-  const radar = this;
-  return radar.rotateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addHotspot = function() {
-  const radar = this;
-  radar.sketch.svg
-    .append("rect")
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-RadarSketch.prototype.addPolarLines = function() {
-  const radar = this;
-  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
-  return radar.bogeyGroup
-    .selectAll(".polarLine")
-    .data(lineData)
-    .enter()
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",(theta) => { return Math.cos(theta) * 150})
-    .attr("y1",0)
-    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","5,5")
-}
-
-RadarSketch.prototype.addRangeCircles = function() {
-  const radar = this;
-  const circleDistances = [50,100,150];
-  return radar.group
-    .selectAll(".rangeCircle")
-    .data(circleDistances)
-    .enter()
-    .append("circle")
-    .attr("fill","none")
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("r",(datum) =>{ return datum});
-
-}
-
-RadarSketch.prototype.addReticle = function() {
-  const radar = this;
-  return radar.group
-    .append("circle")
-    .attr("fill",radar.green)
-    .attr("r",5);
-}
-
-RadarSketch.prototype.addRotateGroup = function() {
-  const radar = this;
-  return radar.translateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addScanWedge = function() {
-  const radar = this;
-
-  const arcGenerator = d3.arc()
-    .innerRadius(0)
-    .outerRadius(150)
-    .startAngle(0)
-    .endAngle(radar.wedgeSize * Math.PI / 180);
-
-  return radar.group
-    .append("path")
-    .attr("fill","url(#wedgeGradient)")
-    .attr("stroke","none")
-    .attr("d",arcGenerator);
-}
-
-RadarSketch.prototype.addScanLine = function() {
-  const radar = this;
-  return radar.group
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",-150)
-    .attr("stroke-width",3)
-    .attr("stroke",radar.scanLineColor);
-}
-
-RadarSketch.prototype.addTranslateGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addWedgeGradient = function() {
-  const radar = this;
-  const gradient = radar.defs
-    .append("linearGradient")
-    .attr("id","wedgeGradient")
-    .attr("x1","0%")
-    .attr("x2","100%")
-    .attr("y1","0%")
-    .attr("y2","0%")
-    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
-
-  gradient
-    .append("stop")
-    .attr("offset","0%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",0)
-
-  gradient
-    .append("stop")
-    .attr("offset","100%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",1);
-
-}
-
-RadarSketch.prototype.click = function() {
-  const radar = this;
-  return () => {
-  }
-}
-
-RadarSketch.prototype.highlight = function() {
-  const radar = this;
-  return () => {
-    radar
-      .singleSweep();
-  }
-}
-
-RadarSketch.prototype.singleSweep = function() {
-  const radar = this;
-
-  radar.rotateGroup
-    .attr("transform","rotate(0)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(180)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(359.999)")
-    .ease(d3.easeLinear)
-    .on("end",() => { radar.singleSweep(); });
-
-  radar.bogeyGroup
-    .selectAll("circle")
-    .each(function(coordinates) {
-      const bogey = d3.select(this);
-      const xCoordinate = bogey.attr("cx");
-      const yCoordinate = bogey.attr("cy");
-      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
-      if(delay > 4000) {
-        delay -= 4000;
-      }
-
-      bogey
-        .transition()
-        .delay(delay)
-        .duration(0)
-        .attr("r",7)
-        .attr("fill-opacity",1)
-        .transition()
-        .ease(d3.easeQuadIn)
-        .duration(2000)
-        .attr("fill-opacity",0)
-        .attr("r",2)
-    });
-
-}
-
-RadarSketch.prototype.unhighlight = function() {
-  const radar = this;
-  return () => {
-    radar.rotateGroup
-      .interrupt();
-
-    radar.bogeyGroup
-      .selectAll("circle")
-      .remove();
-
-    radar.rotateGroup
-      .attr("transform","rotate(0)");
-
-    radar.bogeys = radar.addBogeys();
-  }
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
-}
-
 DragSnap.prototype.addAntsMarching = function() {
   const snap = this;
   return snap.sketch.svg
@@ -2514,6 +2058,722 @@ DragSnap.prototype.addSource = function() {
     );
 }
 
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","url(#background)");
+
+}
+
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
+    .append("circle")
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
+}
+
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("defs");
+}
+
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
+}
+
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,180)");
+}
+
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
+}
+
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
+
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
+    });
+}
+
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
+
+
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
+
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
+
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
+}
+
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
+RadarSketch.prototype.click = function() {
+  const radar = this;
+  return () => {
+  }
+}
+
+RadarSketch.prototype.highlight = function() {
+  const radar = this;
+  return () => {
+    radar
+      .singleSweep();
+  }
+}
+
+RadarSketch.prototype.singleSweep = function() {
+  const radar = this;
+
+  radar.rotateGroup
+    .attr("transform","rotate(0)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(180)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(359.999)")
+    .ease(d3.easeLinear)
+    .on("end",() => { radar.singleSweep(); });
+
+  radar.bogeyGroup
+    .selectAll("circle")
+    .each(function(coordinates) {
+      const bogey = d3.select(this);
+      const xCoordinate = bogey.attr("cx");
+      const yCoordinate = bogey.attr("cy");
+      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
+      if(delay > 4000) {
+        delay -= 4000;
+      }
+
+      bogey
+        .transition()
+        .delay(delay)
+        .duration(0)
+        .attr("r",7)
+        .attr("fill-opacity",1)
+        .transition()
+        .ease(d3.easeQuadIn)
+        .duration(2000)
+        .attr("fill-opacity",0)
+        .attr("r",2)
+    });
+
+}
+
+RadarSketch.prototype.unhighlight = function() {
+  const radar = this;
+  return () => {
+    radar.rotateGroup
+      .interrupt();
+
+    radar.bogeyGroup
+      .selectAll("circle")
+      .remove();
+
+    radar.rotateGroup
+      .attr("transform","rotate(0)");
+
+    radar.bogeys = radar.addBogeys();
+  }
+}
+
+RadarSketch.prototype.addBackground = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","black");
+}
+
+RadarSketch.prototype.addBogeyGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addBogeys = function() {
+  const radar = this;
+  const bogeyCount = 10;
+
+  const bogeyPolarCoordinates = [];
+  d3.range(0,bogeyCount)
+    .forEach((index) => {
+      bogeyPolarCoordinates
+        .push({
+          "theta":d3.randomUniform(0,2*Math.PI)(),
+          "distance":d3.randomUniform(35,150)()
+        });
+    });
+
+  return radar.bogeyGroup
+    .selectAll("circle")
+    .data(bogeyPolarCoordinates)
+    .enter()
+    .append("circle")
+    .attr("r",5)
+    .attr("fill",radar.green)
+    .attr("stroke","none")
+    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
+    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
+    .attr("fill-opacity",0);
+}
+
+RadarSketch.prototype.addDefs = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("defs");
+}
+
+RadarSketch.prototype.addGroup = function() {
+  const radar = this;
+  return radar.rotateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addHotspot = function() {
+  const radar = this;
+  radar.sketch.svg
+    .append("rect")
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+RadarSketch.prototype.addPolarLines = function() {
+  const radar = this;
+  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
+  return radar.bogeyGroup
+    .selectAll(".polarLine")
+    .data(lineData)
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",(theta) => { return Math.cos(theta) * 150})
+    .attr("y1",0)
+    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","5,5")
+}
+
+RadarSketch.prototype.addRangeCircles = function() {
+  const radar = this;
+  const circleDistances = [50,100,150];
+  return radar.group
+    .selectAll(".rangeCircle")
+    .data(circleDistances)
+    .enter()
+    .append("circle")
+    .attr("fill","none")
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("r",(datum) =>{ return datum});
+
+}
+
+RadarSketch.prototype.addReticle = function() {
+  const radar = this;
+  return radar.group
+    .append("circle")
+    .attr("fill",radar.green)
+    .attr("r",5);
+}
+
+RadarSketch.prototype.addRotateGroup = function() {
+  const radar = this;
+  return radar.translateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addScanWedge = function() {
+  const radar = this;
+
+  const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(150)
+    .startAngle(0)
+    .endAngle(radar.wedgeSize * Math.PI / 180);
+
+  return radar.group
+    .append("path")
+    .attr("fill","url(#wedgeGradient)")
+    .attr("stroke","none")
+    .attr("d",arcGenerator);
+}
+
+RadarSketch.prototype.addScanLine = function() {
+  const radar = this;
+  return radar.group
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",-150)
+    .attr("stroke-width",3)
+    .attr("stroke",radar.scanLineColor);
+}
+
+RadarSketch.prototype.addTranslateGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addWedgeGradient = function() {
+  const radar = this;
+  const gradient = radar.defs
+    .append("linearGradient")
+    .attr("id","wedgeGradient")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%")
+    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
+
+  gradient
+    .append("stop")
+    .attr("offset","0%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",0)
+
+  gradient
+    .append("stop")
+    .attr("offset","100%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",1);
+
+}
+
+RandomWalk.prototype.addHistogram = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("path")
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("stroke","black")
+    .attr("stroke-width",2);
+}
+
+RandomWalk.prototype.defineBinnedValues = function() {
+  const randomWalk = this;
+  const binnedValues = {};
+  d3.range(-10,11)
+    .forEach((value) => {
+      binnedValues[value] = 0;
+    });
+  return binnedValues;
+}
+
+RandomWalk.prototype.defineWalkScales = function() {
+  const randomwWalk = this;
+  const scales = {};
+
+  scales.x = d3.scaleLinear()
+    .domain([0,100])
+    .range([25,500]);
+
+  scales.histogram = d3.scaleLinear()
+    .domain([0,1])
+    .range([515,550]);
+
+  scales.y = d3.scaleLinear()
+    .domain([-10,10])
+    .range([335,25]);
+
+  return scales;
+}
+
+RandomWalk.prototype.addBackground = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
+
+RandomWalk.prototype.addLine = function() {
+  const randomWalk = this;
+  return randomWalk.lineGroup
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("fill","none")
+    .attr("stroke-width",3);
+}
+
+RandomWalk.prototype.addLineGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g");
+}
+
+RandomWalk.prototype.addXAxis = function() {
+  const randomWalk = this;
+  const axis = d3.axisBottom(randomWalk.walkScales.x);
+  randomWalk.xAxisGroup
+    .call(axis);
+  return axis;
+}
+
+RandomWalk.prototype.addXAxisGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g")
+    .attr("transform","translate(0,180)");
+}
+
+RandomWalk.prototype.highlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = true;
+    randomWalk
+      .seedWalk();
+    return randomWalk;
+  }
+}
+
+RandomWalk.prototype.seedWalk = function() {
+  const randomWalk = this;
+
+  if(!randomWalk.isActive) { return }
+  const value = Math.random();
+  const stepChange = value < 0.5 ? 1 : - 1;
+  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
+
+  randomWalk.steps += 1;
+
+  if(newValue < randomWalk.minValue) {
+    randomWalk.minValue = newValue
+  }
+
+  if(newValue > randomWalk.maxValue) {
+    randomWalk.maxValue = newValue;
+  }
+
+  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
+
+  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
+    randomWalk.binnedValues[bound] = 0;
+    randomWalk.binnedValues[-bound] = 0;
+  }
+
+  randomWalk.binnedValues[newValue] += 1;
+
+  randomWalk.walkScales.histogram
+    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
+
+  const histogramGenerator = d3.area()
+    .x0((datum) => {
+      return randomWalk.walkScales.histogram(0)
+    })
+    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
+    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
+
+  randomWalk.histogram
+    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
+
+  randomWalk.walkScales.y
+    .domain([-bound,bound]);
+
+
+  if(randomWalk.history.length == 100) {
+    randomWalk.history
+      .shift();
+  }
+
+  randomWalk.history
+    .push(newValue);
+
+  const lineGenerator = d3.line()
+    .x((datum,index) => { return randomWalk.walkScales.x(index)})
+    .y((datum) => { return randomWalk.walkScales.y(datum)});
+
+
+  randomWalk.line
+    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
+    .transition()
+    .duration(10)
+    .attr("d",lineGenerator(randomWalk.history))
+    .on("end",() => {
+      randomWalk.seedWalk();
+    });
+
+
+}
+
+RandomWalk.prototype.unhighlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = false;
+    return randomWalk;
+  }
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
+}
+
+SnellsLaw.prototype.highlight = function() {
+  const snells = this;
+
+  return () => {
+    snells.source
+      .transition()
+      .duration(1000)
+      .ease(d3.easeBackOut.overshoot(6))
+      .attr("r",8);
+
+    const incidentLength = snells.incidentRay
+      .node()
+      .getTotalLength();
+
+    snells.incidentRay
+      .attr("stroke-dashoffset",incidentLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+    const refractedLength = snells.refractedRay
+      .node()
+      .getTotalLength();
+
+    snells.refractedRay
+      .attr("stroke-dashoffset",refractedLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+  }
+}
+
+SnellsLaw.prototype.mouseMove = function() {
+  const snells = this;
+
+  return () => {
+    const coordinates = {
+      "x":event.offsetX,
+      "y":event.offsetY
+    };
+
+    snells
+      .updateForMouseCoordinates(coordinates);
+
+  }
+}
+
+SnellsLaw.prototype.unhighlight = function() {
+  const snells = this;
+  return () => {
+    snells.source
+      .transition()
+      .duration(250)
+      .attr("r",0);
+
+    snells.incidentRay
+      .interrupt();
+
+    snells.refractedRay
+      .interrupt();
+  }
+}
+
+SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
+  const snells = this;
+
+  if(coordinates.y >= 250) { return }
+
+  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
+
+  let incidentStart,
+    incidentEnd;
+
+  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
+  incidentStart = 0;
+
+
+  snells.source
+    .attr("cx",coordinates.x)
+    .attr("cy",coordinates.y);
+
+  snells.incidentRay
+    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
+    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
+
+  snells.incidentArc
+    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
+
+  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
+  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
+  const refractionTheta = Math.asin(sinOfSecond);
+
+  snells.refractedArc
+    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
+
+  snells.refractedRay
+    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
+    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
+
+  return snells;
+}
+
 SnellsLaw.prototype.addBackground = function() {
   const snells = this;
   return snells.sketch.svg
@@ -2645,275 +2905,6 @@ SnellsLaw.prototype.defineArcGenerator = function() {
   return d3.arc()
     .innerRadius(72.5)
     .outerRadius(75);
-}
-
-SnellsLaw.prototype.highlight = function() {
-  const snells = this;
-
-  return () => {
-    snells.source
-      .transition()
-      .duration(1000)
-      .ease(d3.easeBackOut.overshoot(6))
-      .attr("r",8);
-
-    const incidentLength = snells.incidentRay
-      .node()
-      .getTotalLength();
-
-    snells.incidentRay
-      .attr("stroke-dashoffset",incidentLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-    const refractedLength = snells.refractedRay
-      .node()
-      .getTotalLength();
-
-    snells.refractedRay
-      .attr("stroke-dashoffset",refractedLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-  }
-}
-
-SnellsLaw.prototype.mouseMove = function() {
-  const snells = this;
-
-  return () => {
-    const coordinates = {
-      "x":event.offsetX,
-      "y":event.offsetY
-    };
-
-    snells
-      .updateForMouseCoordinates(coordinates);
-
-  }
-}
-
-SnellsLaw.prototype.unhighlight = function() {
-  const snells = this;
-  return () => {
-    snells.source
-      .transition()
-      .duration(250)
-      .attr("r",0);
-
-    snells.incidentRay
-      .interrupt();
-
-    snells.refractedRay
-      .interrupt();
-  }
-}
-
-SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
-  const snells = this;
-
-  if(coordinates.y >= 250) { return }
-
-  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
-
-  let incidentStart,
-    incidentEnd;
-
-  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
-  incidentStart = 0;
-
-
-  snells.source
-    .attr("cx",coordinates.x)
-    .attr("cy",coordinates.y);
-
-  snells.incidentRay
-    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
-    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
-
-  snells.incidentArc
-    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
-
-  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
-  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
-  const refractionTheta = Math.asin(sinOfSecond);
-
-  snells.refractedArc
-    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
-
-  snells.refractedRay
-    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
-    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
-
-  return snells;
-}
-
-RandomWalk.prototype.addHistogram = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("path")
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("stroke","black")
-    .attr("stroke-width",2);
-}
-
-RandomWalk.prototype.defineBinnedValues = function() {
-  const randomWalk = this;
-  const binnedValues = {};
-  d3.range(-10,11)
-    .forEach((value) => {
-      binnedValues[value] = 0;
-    });
-  return binnedValues;
-}
-
-RandomWalk.prototype.defineWalkScales = function() {
-  const randomwWalk = this;
-  const scales = {};
-
-  scales.x = d3.scaleLinear()
-    .domain([0,100])
-    .range([25,500]);
-
-  scales.histogram = d3.scaleLinear()
-    .domain([0,1])
-    .range([515,550]);
-
-  scales.y = d3.scaleLinear()
-    .domain([-10,10])
-    .range([335,25]);
-
-  return scales;
-}
-
-RandomWalk.prototype.highlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = true;
-    randomWalk
-      .seedWalk();
-    return randomWalk;
-  }
-}
-
-RandomWalk.prototype.seedWalk = function() {
-  const randomWalk = this;
-
-  if(!randomWalk.isActive) { return }
-  const value = Math.random();
-  const stepChange = value < 0.5 ? 1 : - 1;
-  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
-
-  randomWalk.steps += 1;
-
-  if(newValue < randomWalk.minValue) {
-    randomWalk.minValue = newValue
-  }
-
-  if(newValue > randomWalk.maxValue) {
-    randomWalk.maxValue = newValue;
-  }
-
-  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
-
-  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
-    randomWalk.binnedValues[bound] = 0;
-    randomWalk.binnedValues[-bound] = 0;
-  }
-
-  randomWalk.binnedValues[newValue] += 1;
-
-  randomWalk.walkScales.histogram
-    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
-
-  const histogramGenerator = d3.area()
-    .x0((datum) => {
-      return randomWalk.walkScales.histogram(0)
-    })
-    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
-    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
-
-  randomWalk.histogram
-    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
-
-  randomWalk.walkScales.y
-    .domain([-bound,bound]);
-
-
-  if(randomWalk.history.length == 100) {
-    randomWalk.history
-      .shift();
-  }
-
-  randomWalk.history
-    .push(newValue);
-
-  const lineGenerator = d3.line()
-    .x((datum,index) => { return randomWalk.walkScales.x(index)})
-    .y((datum) => { return randomWalk.walkScales.y(datum)});
-
-
-  randomWalk.line
-    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
-    .transition()
-    .duration(10)
-    .attr("d",lineGenerator(randomWalk.history))
-    .on("end",() => {
-      randomWalk.seedWalk();
-    });
-
-
-}
-
-RandomWalk.prototype.unhighlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = false;
-    return randomWalk;
-  }
-}
-
-RandomWalk.prototype.addBackground = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-RandomWalk.prototype.addLine = function() {
-  const randomWalk = this;
-  return randomWalk.lineGroup
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("fill","none")
-    .attr("stroke-width",3);
-}
-
-RandomWalk.prototype.addLineGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g");
-}
-
-RandomWalk.prototype.addXAxis = function() {
-  const randomWalk = this;
-  const axis = d3.axisBottom(randomWalk.walkScales.x);
-  randomWalk.xAxisGroup
-    .call(axis);
-  return axis;
-}
-
-RandomWalk.prototype.addXAxisGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g")
-    .attr("transform","translate(0,180)");
 }
 
 IosAudioSlider.prototype.addBackground = function() {
@@ -3278,36 +3269,6 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
   return slider;
 }
 
-Sketch.prototype.ClickEventIs = function(callback) {
-  const sketch = this;
-  sketch.clickCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.HighlightEventIs = function(callback) {
-  const sketch = this;
-  sketch.mouseoverCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.UnhighlightEventIs = function(callback) {
-  const sketch = this;
-  sketch.mouseoutCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
-  return sketch;
-}
-
 DragSnap.prototype.dragEnd = function() {
   const snap = this;
   return () => {
@@ -3428,6 +3389,36 @@ DragSnap.prototype.dragging = function() {
 
 
   }
+}
+
+Sketch.prototype.ClickEventIs = function(callback) {
+  const sketch = this;
+  sketch.clickCallback = callback;
+  return sketch;
+}
+
+Sketch.prototype.HighlightEventIs = function(callback) {
+  const sketch = this;
+  sketch.mouseoverCallback = callback;
+  return sketch;
+}
+
+Sketch.prototype.UnhighlightEventIs = function(callback) {
+  const sketch = this;
+  sketch.mouseoutCallback = callback;
+  return sketch;
+}
+
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
 }
 
 Sketch.prototype.click = function() {

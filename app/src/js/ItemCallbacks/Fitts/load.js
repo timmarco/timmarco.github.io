@@ -20,7 +20,7 @@ function loadedFittsLaw(parent) {
   const player = new Vimeo.Player(iframe.node());
 
   player.on("play", () =>{
-    parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
+    parent.contentPane.containerDiv.select(".video-overlay")
       .style("background-color","rgba(1,0,0,0.25)")
       .transition()
       .duration(250)
@@ -44,11 +44,13 @@ function loadedFittsLaw(parent) {
     });
 
 
-  parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-    .style("pointer-events","none");
+  // parent.contentPane.containerDiv.select(".video-overlay")
+  //   .style("pointer-events","none")
+    // .style("touch-events","none");
 
-  parent.contentPane.containerDiv.select("img")
-    .style("pointer-events","none");
+  // parent.contentPane.containerDiv.select("img")
+  //   .style("pointer-events","none")
+    // .style("touch-events","none");
 
 
 
