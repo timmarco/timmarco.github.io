@@ -30,28 +30,5 @@ function loadedFittsLaw(parent) {
       .style("display","none");
   });
 
-  iframe
-    .on("focus",() => {
-      console.log("IFRAME FOCUS?");
-    })
-    .on("load",() => {
-      // console.log("PLAYER LOADED!");
-      // parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-      //   .style("display","none");
-      //
-      // parent.contentPane.containerDiv.select("img")
-      //   .style("display","none");
-    });
-
-
-  // parent.contentPane.containerDiv.select(".video-overlay")
-  //   .style("pointer-events","none")
-    // .style("touch-events","none");
-
-  // parent.contentPane.containerDiv.select("img")
-  //   .style("pointer-events","none")
-    // .style("touch-events","none");
-
-
 
 }

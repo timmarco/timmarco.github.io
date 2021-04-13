@@ -1,17 +1,3 @@
-function DetailsBox(portfolio) {
-  const box = this;
-  init(portfolio);
-  return box;
-
-  function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
-  }
-}
-
 function ContentPane(portfolio) {
   const pane = this;
   init(portfolio);
@@ -48,6 +34,33 @@ function Portfolio() {
   }
 }
 
+function DetailsBox(portfolio) {
+  const box = this;
+  init(portfolio);
+  return box;
+
+  function init(portfolio) {
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
+  }
+}
+
+function PortfolioItemContent(where) {
+  const content = this;
+  init(where);
+  return content;
+
+  function init(where) {
+    content.where = where;
+    content.containerDiv = content.addContainerDiv();
+    content.videoDiv = content.addVideoDiv();
+    content.descriptionDiv = content.addDescriptionDiv();
+  }
+}
+
 function PortfolioItem(parent,manifest) {
   const item = this;
   init(parent,manifest);
@@ -70,33 +83,408 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
-function PortfolioItemContent(where) {
-  const content = this;
-  init(where);
-  return content;
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true)
 
-  function init(where) {
-    content.where = where;
-    content.containerDiv = content.addContainerDiv();
-    content.videoDiv = content.addVideoDiv();
-    content.descriptionDiv = content.addDescriptionDiv();
-  }
 }
 
-function activateFittsLaw(where) {
+ContentPane.prototype.transitionIn = function(item) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px")
+    .transition()
+    .duration(500)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
+}
+
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
+}
+
+Portfolio.prototype.manifest = [
+  // {
+  //   "title":["FOREST FIRE","MODELS"],
+  //   "video":"assets/clips/forestFire.mp4",
+  //   "subtitle":"A video about agent-based models",
+  //   "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["ABOUT ME",],
+  //   "subtitle":"bio",
+  //   // "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  // {
+  //   "title":["MLB FREE AGENT","EXPLORER"],
+  //   "video":"assets/clips/freeAgents.mp4",
+  //   "screenshot":"assets/clips/freeAgents.png",
+  //   "subtitle":"A tool for assessing future performance",
+  //   "circa":"Early 2018",
+  //   "route":"free-agent-explorer",
+  //   "callback":activateFreeAgents,
+  //   "loadCallback":loadedFreeAgents
+  // },
+  {
+    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.png",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.png",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  },
+  // {
+  //   "title":["SIR/D EXPLORABLE"],
+  //   "circa":"Spring 2021",
+  //   "subtitle":"An exploration of suddenly-vital topic",
+  // }
+];
+
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
+
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
+
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
+    .append("div")
+    .classed("details_box",true)
+}
+
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
+}
+
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
+
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
+
+Portfolio.prototype.activate = function(selectedItem) {
+  const portfolio = this;
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,"+yPosition+"px)");
+    
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left",titleSize + "px");
+
+  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item);
+
+        portfolio.contentPane
+          .transitionIn(item);
+
+        item
+          .activate();
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","0px")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio.activate(matchingRoute[0]);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
+}
+
+DetailsBox.prototype.transitionIn = function(item) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(250)
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
+}
+
+function activateFreeAgents(where) {
 
   return new PortfolioItemContent(where)
-    .vimeo("523023575","app/assets/previews/fittsPreview.png")
-    .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='app/assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>");
+    // .vimeo("523023575")
+    // .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
 
 }
 
-function loadedFittsLaw(parent) {
+function loadedFreeAgents() {
+
+}
+
+function activateStrangerThings(where) {
+
+
+  return new PortfolioItemContent(where)
+    .vimeo("522909563","app/assets/previews/strangerThingsPreview.png")
+    .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
+    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
+
+
+}
+
+function loadedStrangerThings(parent) {
 
   const videoDiv = parent.contentPane.containerDiv.select("[data-role='vimeoIframe']");
 
-  const url = "https://player.vimeo.com/video/523023575?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+  const url = "https://player.vimeo.com/video/522909563?color=000000&title=0&byline=0&portrait=0&playsinline=0"
 
   const iframe = videoDiv
     .append("iframe")
@@ -124,58 +512,6 @@ function loadedFittsLaw(parent) {
       .style("display","none");
   });
 
-  iframe
-    .on("focus",() => {
-      console.log("IFRAME FOCUS?");
-    })
-    .on("load",() => {
-      // console.log("PLAYER LOADED!");
-      // parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-      //   .style("display","none");
-      //
-      // parent.contentPane.containerDiv.select("img")
-      //   .style("display","none");
-    });
-
-
-  // parent.contentPane.containerDiv.select(".video-overlay")
-  //   .style("pointer-events","none")
-    // .style("touch-events","none");
-
-  // parent.contentPane.containerDiv.select("img")
-  //   .style("pointer-events","none")
-    // .style("touch-events","none");
-
-
-
-}
-
-function activateStrangerThings(where) {
-
-
-  return new PortfolioItemContent(where)
-    .vimeo("522909563","app/assets/previews/strangerThingsPreview.png")
-    .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
-
-
-}
-
-function loadedStrangerThings() {
-  
-}
-
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    // .vimeo("523023575")
-    // .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
-
-}
-
-function loadedFreeAgents() {
 
 }
 
@@ -352,480 +688,100 @@ function activateSketchbook(where) {
 
 }
 
-function loadedSketchbook() {
-  
+function loadedSketchbook(parent) {
+  const videoDiv = parent.contentPane.containerDiv.select("[data-role='vimeoIframe']");
+
+  const url = "https://player.vimeo.com/video/524922093?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = videoDiv
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const player = new Vimeo.Player(iframe.node());
+
+  player.on("play", () =>{
+    parent.contentPane.containerDiv.select(".video-overlay")
+      .style("background-color","rgba(1,0,0,0.25)")
+      .transition()
+      .duration(250)
+      .style("top","100%")
+
+    parent.contentPane.containerDiv.select("img")
+      .style("display","none");
+  });
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
-    .append("div")
-    .classed("details_box",true)
-}
+function activateFittsLaw(where) {
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
-}
-
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
-}
-
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-DetailsBox.prototype.transitionIn = function(item) {
-  const box = this;
-
-  box
-    .updateContent(item);
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
-    .transition()
-    .duration(250)
-    .style("left",(window.innerWidth / 2) + "px");
-
-
-  return box;
-}
-
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
-
-  box.containerDiv
-    .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
-    .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
-    });
-
-  return box;
-}
-
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
-
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
-
-  box.dateDiv
-    .html(item.manifest.circa);
-
-  return box;
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true)
+  return new PortfolioItemContent(where)
+    .vimeo("523023575","app/assets/previews/fittsPreview.png")
+    .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='app/assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>");
 
 }
 
-ContentPane.prototype.transitionIn = function(item) {
-  const pane = this;
+function loadedFittsLaw(parent) {
 
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
+  const videoDiv = parent.contentPane.containerDiv.select("[data-role='vimeoIframe']");
 
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px")
-    .transition()
-    .duration(500)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+  const url = "https://player.vimeo.com/video/523023575?color=000000&title=0&byline=0&portrait=0&playsinline=0"
 
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+  const iframe = videoDiv
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
 
+  const player = new Vimeo.Player(iframe.node());
 
-  if(item.manifest.callback) {
-    item.manifest
-      .callback(pane.containerDiv);
-  }
+  player.on("play", () =>{
+    parent.contentPane.containerDiv.select(".video-overlay")
+      .style("background-color","rgba(1,0,0,0.25)")
+      .transition()
+      .duration(250)
+      .style("top","100%")
 
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT ME",],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"assets/clips/freeAgents.mp4",
-  //   "screenshot":"assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing future performance",
-  //   "circa":"Early 2018",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
-  {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.png",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.png",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  },
-  // {
-  //   "title":["SIR/D EXPLORABLE"],
-  //   "circa":"Spring 2021",
-  //   "subtitle":"An exploration of suddenly-vital topic",
-  // }
-];
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
-    .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.substrate
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","cover")
-      .style("margin",0)
-      .style("padding",0);
-  }
-  
-  return item.substrate
-    .append("video")
-    .attr("width","100%")
-    .attr("height",'100%')
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("object-fit","cover")
-    .style("margin",0)
-    .style("padding",0)
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
-      }
-    })
-    .html((datum) => { return datum});
-}
-
-Portfolio.prototype.activate = function(selectedItem) {
-  const portfolio = this;
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,"+yPosition+"px)");
-    
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left",titleSize + "px");
-
-  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item);
-
-        portfolio.contentPane
-          .transitionIn(item);
-
-        item
-          .activate();
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","0px")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
+    parent.contentPane.containerDiv.select("img")
+      .style("display","none");
   });
 
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
-    });
 
-
-  return portfolio;
 }
 
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
 }
 
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
 }
 
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio.activate(matchingRoute[0]);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
 }
 
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
@@ -1104,24 +1060,104 @@ PortfolioItem.prototype.show = function() {
 
 }
 
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
     .append("div")
-    .classed("content-main-container",true)
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
 }
 
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.substrate
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","cover")
+      .style("margin",0)
+      .style("padding",0);
+  }
+  
+  return item.substrate
+    .append("video")
+    .attr("width","100%")
+    .attr("height",'100%')
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("object-fit","cover")
+    .style("margin",0)
+    .style("padding",0)
+    .attr("loop",true);
 }
 
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
 }
 
 function ArcCountdown(where) {
@@ -1186,68 +1222,6 @@ function BlurAttentionSketch(where) {
   }
 }
 
-function DragSnap(where) {
-  const snap = this;
-  init(where);
-  return snap;
-
-  function init(where) {
-    snap.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(() => {
-        if(snap.isDragging == true ) { return }
-        if(snap.isDone == true) { return }
-        snap.dragMe.transition().duration(250).attr("opacity",1);
-      });
-
-    snap.isDragging = false;
-    snap.canDrop = false;
-
-    snap.activeColor = d3.schemeCategory10[0];
-    snap.antColor= d3.schemeCategory10[1];
-    snap.connectingColor = "#fafafa";
-    snap.backgroundColor = "#eee";
-    snap.falseTargetColor = "#999";
-
-    snap.background = snap.addBackground();
-    snap.connectingLine = snap.addConnectingLine();
-    snap.antsMarching = snap.addAntsMarching();
-    snap.source = snap.addSource();
-    snap.destination = snap.addDestination();
-    snap.falseTargets = snap.addFalseTargets();
-    snap.dragMe = snap.addDragMe();
-
-  }
-}
-
-function RadialGroup(where) {
-  const radial = this;
-  init(where);
-  return radial;
-
-  function init(where) {
-
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
-
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
-
-  }
-}
-
 function RadarSketch(where) {
   const radar = this;
   init(where);
@@ -1286,6 +1260,57 @@ function RadarSketch(where) {
 
 }
 
+function DragSnap(where) {
+  const snap = this;
+  init(where);
+  return snap;
+
+  function init(where) {
+    snap.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(() => {
+        if(snap.isDragging == true ) { return }
+        if(snap.isDone == true) { return }
+        snap.dragMe.transition().duration(250).attr("opacity",1);
+      });
+
+    snap.isDragging = false;
+    snap.canDrop = false;
+
+    snap.activeColor = d3.schemeCategory10[0];
+    snap.antColor= d3.schemeCategory10[1];
+    snap.connectingColor = "#fafafa";
+    snap.backgroundColor = "#eee";
+    snap.falseTargetColor = "#999";
+
+    snap.background = snap.addBackground();
+    snap.connectingLine = snap.addConnectingLine();
+    snap.antsMarching = snap.addAntsMarching();
+    snap.source = snap.addSource();
+    snap.destination = snap.addDestination();
+    snap.falseTargets = snap.addFalseTargets();
+    snap.dragMe = snap.addDragMe();
+
+  }
+}
+
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
+  }
+}
+
 function RandomWalk(where) {
   const randomWalk = this;
   init(where);
@@ -1318,20 +1343,31 @@ function RandomWalk(where) {
   }
 }
 
-function Sketch(where) {
-  const sketch = this;
+function RadialGroup(where) {
+  const radial = this;
   init(where);
-  return sketch;
+  return radial;
 
   function init(where) {
-    sketch.where = where;
 
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
 
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
+    radial.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
+
+
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
+
   }
 }
 
@@ -1877,374 +1913,6 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   }
 }
 
-DragSnap.prototype.addAntsMarching = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.antColor)
-    .attr("stroke-dasharray","10,10");
-}
-
-DragSnap.prototype.addBackground = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",snap.backgroundColor);
-}
-
-DragSnap.prototype.addConnectingLine = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.connectingColor);
-}
-
-DragSnap.prototype.addDestination = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",300)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20")
-    .attr("stroke",snap.activeColor)
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = true;
-      snap.destination
-        .attr("stroke-dasharray","0")
-        .transition()
-        .duration(250)
-        .attr("fill",snap.activeColor);
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = false;
-      snap.destination
-        .attr("stroke-dasharray","20,20")
-        .attr("fill",snap.backgroundColor)
-    })
-}
-
-DragSnap.prototype.addDragMe = function() {
-  const snap = this;
-
-  const group = snap.sketch.svg
-    .append("g")
-    .attr("transform","translate(200,125)")
-    .attr("opacity",0);
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight",600)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",4)
-    .html("&larr; Drag!");
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("fill",snap.activeColor)
-    .attr("font-weight",600)
-    .attr("stroke","none")
-    .html("&larr; Drag!");
-
-  return group;
-}
-
-DragSnap.prototype.addFalseTargets = function() {
-  const snap = this;
-
-  const first = snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",125)
-    .attr("data-x",400)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  const second = snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",300)
-    .attr("data-x",100)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  first
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return };
-      const startX = 400;
-      const endX = startX + 20;
-      const backX = startX - 40;
-      first
-        .transition()
-        .duration(150)
-        .attr("cx",endX)
-        .transition()
-        .duration(225)
-        .attr("cx",backX)
-        .transition()
-        .duration(100)
-        .attr("cx",startX)
-    });
-
-
-    second
-      .on("mouseover",() => {
-        if(snap.isDragging == false) { return };
-        const startX = 400;
-        const endX = startX + 20;
-        const backX = startX - 40;
-        second
-          .transition()
-          .duration(150)
-          .attr("cy",endX)
-          .transition()
-          .duration(225)
-          .attr("cy",backX)
-          .transition()
-          .duration(100)
-          .attr("cy",startX)
-      });
-
-}
-
-DragSnap.prototype.addSource = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",125)
-    .attr("r",50)
-    .attr("fill",snap.activeColor)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",5)
-    .on("mouseover",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .transition()
-        .duration(350)
-        .ease(d3.easeBackOut.overshoot(100))
-        .attr("r",50.1)
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .attr("r",50);
-    })
-    .call(
-      d3.drag()
-        .on("start",snap.dragStart())
-        .on("drag",snap.dragging())
-        .on("end",snap.dragEnd())
-    );
-}
-
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
-    .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
-    });
-}
-
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
-
-
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
-      });
-
-
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
-
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-  }
-}
-
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
-
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
-  }
-}
-
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
-
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
-}
-
 RadarSketch.prototype.click = function() {
   const radar = this;
   return () => {
@@ -2488,6 +2156,187 @@ RadarSketch.prototype.addWedgeGradient = function() {
 
 }
 
+DragSnap.prototype.addAntsMarching = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.antColor)
+    .attr("stroke-dasharray","10,10");
+}
+
+DragSnap.prototype.addBackground = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",snap.backgroundColor);
+}
+
+DragSnap.prototype.addConnectingLine = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.connectingColor);
+}
+
+DragSnap.prototype.addDestination = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",300)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20")
+    .attr("stroke",snap.activeColor)
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = true;
+      snap.destination
+        .attr("stroke-dasharray","0")
+        .transition()
+        .duration(250)
+        .attr("fill",snap.activeColor);
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = false;
+      snap.destination
+        .attr("stroke-dasharray","20,20")
+        .attr("fill",snap.backgroundColor)
+    })
+}
+
+DragSnap.prototype.addDragMe = function() {
+  const snap = this;
+
+  const group = snap.sketch.svg
+    .append("g")
+    .attr("transform","translate(200,125)")
+    .attr("opacity",0);
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight",600)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",4)
+    .html("&larr; Drag!");
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("fill",snap.activeColor)
+    .attr("font-weight",600)
+    .attr("stroke","none")
+    .html("&larr; Drag!");
+
+  return group;
+}
+
+DragSnap.prototype.addFalseTargets = function() {
+  const snap = this;
+
+  const first = snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",125)
+    .attr("data-x",400)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  const second = snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",300)
+    .attr("data-x",100)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  first
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return };
+      const startX = 400;
+      const endX = startX + 20;
+      const backX = startX - 40;
+      first
+        .transition()
+        .duration(150)
+        .attr("cx",endX)
+        .transition()
+        .duration(225)
+        .attr("cx",backX)
+        .transition()
+        .duration(100)
+        .attr("cx",startX)
+    });
+
+
+    second
+      .on("mouseover",() => {
+        if(snap.isDragging == false) { return };
+        const startX = 400;
+        const endX = startX + 20;
+        const backX = startX - 40;
+        second
+          .transition()
+          .duration(150)
+          .attr("cy",endX)
+          .transition()
+          .duration(225)
+          .attr("cy",backX)
+          .transition()
+          .duration(100)
+          .attr("cy",startX)
+      });
+
+}
+
+DragSnap.prototype.addSource = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",125)
+    .attr("r",50)
+    .attr("fill",snap.activeColor)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",5)
+    .on("mouseover",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .transition()
+        .duration(350)
+        .ease(d3.easeBackOut.overshoot(100))
+        .attr("r",50.1)
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .attr("r",50);
+    })
+    .call(
+      d3.drag()
+        .on("start",snap.dragStart())
+        .on("drag",snap.dragging())
+        .on("end",snap.dragEnd())
+    );
+}
+
 RandomWalk.prototype.addHistogram = function() {
   const randomWalk = this;
   return randomWalk.sketch.svg
@@ -2524,6 +2373,23 @@ RandomWalk.prototype.defineWalkScales = function() {
     .range([335,25]);
 
   return scales;
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
 }
 
 RandomWalk.prototype.addBackground = function() {
@@ -2652,21 +2518,191 @@ RandomWalk.prototype.unhighlight = function() {
   }
 }
 
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
+
+
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
+
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
+
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
 }
 
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","url(#background)");
+
+}
+
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
+    .append("circle")
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
+}
+
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("defs");
+}
+
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
+}
+
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,180)");
+}
+
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
+}
+
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
+
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
+    });
 }
 
 SnellsLaw.prototype.highlight = function() {
@@ -2907,143 +2943,6 @@ SnellsLaw.prototype.defineArcGenerator = function() {
     .outerRadius(75);
 }
 
-IosAudioSlider.prototype.addBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",d3.schemeCategory10[6]);
-}
-
-IosAudioSlider.prototype.addPhone = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("y",-50)
-    .attr("width",500)
-    .attr("height",600)
-    .attr("stroke-width",25)
-    .attr("fill","none")
-    .attr("stroke","black");
-}
-
-IosAudioSlider.prototype.addScreenBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","#ccc")
-}
-
-IosAudioSlider.prototype.addScreenClip = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("width",50)
-    .attr("height",500)
-    .attr("fill","white");
-}
-
-IosAudioSlider.prototype.addSliderGroup = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("g")
-    .attr("transform","translate(-10,0)")
-    .attr("clip-path","url(#screenClip)");
-}
-
-IosAudioSlider.prototype.addSliderHorizontalScale = function() {
-  const slider = this;
-  return slider.verticalScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addSliderScale = function() {
-  const slider = this;
-  return slider.verticalOffset
-    .append("g")
-    .attr("transform","scale(1)");
-}
-
-IosAudioSlider.prototype.addSliderVerticalScale = function() {
-  const slider = this;
-  return slider.sliderScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addTrack = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.trackColor);
-}
-
-IosAudioSlider.prototype.addValue = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.valueColor);
-
-}
-
-IosAudioSlider.prototype.addVerticalOffset = function() {
-  const slider = this;
-  return slider.sliderGroup
-    .append("g")
-    .attr("transform","translate(0,200)");
-}
-
-IosAudioSlider.prototype.addVolumeDownButton = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",210)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
-IosAudioSlider.prototype.addVolumeUpButton = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",100)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
 IosAudioSlider.prototype.lowerVolume = function(startTime) {
   const slider = this;
 
@@ -3269,6 +3168,143 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
   return slider;
 }
 
+IosAudioSlider.prototype.addBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",d3.schemeCategory10[6]);
+}
+
+IosAudioSlider.prototype.addPhone = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("y",-50)
+    .attr("width",500)
+    .attr("height",600)
+    .attr("stroke-width",25)
+    .attr("fill","none")
+    .attr("stroke","black");
+}
+
+IosAudioSlider.prototype.addScreenBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","#ccc")
+}
+
+IosAudioSlider.prototype.addScreenClip = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("width",50)
+    .attr("height",500)
+    .attr("fill","white");
+}
+
+IosAudioSlider.prototype.addSliderGroup = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("g")
+    .attr("transform","translate(-10,0)")
+    .attr("clip-path","url(#screenClip)");
+}
+
+IosAudioSlider.prototype.addSliderHorizontalScale = function() {
+  const slider = this;
+  return slider.verticalScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addSliderScale = function() {
+  const slider = this;
+  return slider.verticalOffset
+    .append("g")
+    .attr("transform","scale(1)");
+}
+
+IosAudioSlider.prototype.addSliderVerticalScale = function() {
+  const slider = this;
+  return slider.sliderScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addTrack = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.trackColor);
+}
+
+IosAudioSlider.prototype.addValue = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.valueColor);
+
+}
+
+IosAudioSlider.prototype.addVerticalOffset = function() {
+  const slider = this;
+  return slider.sliderGroup
+    .append("g")
+    .attr("transform","translate(0,200)");
+}
+
+IosAudioSlider.prototype.addVolumeDownButton = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",210)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
+}
+
+IosAudioSlider.prototype.addVolumeUpButton = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",100)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
+}
+
 DragSnap.prototype.dragEnd = function() {
   const snap = this;
   return () => {
@@ -3409,18 +3445,6 @@ Sketch.prototype.UnhighlightEventIs = function(callback) {
   return sketch;
 }
 
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
-  return sketch;
-}
-
 Sketch.prototype.click = function() {
   const sketch = this;
   return () => {
@@ -3443,6 +3467,18 @@ Sketch.prototype.unhighlight = function() {
     sketch
       .mouseoutCallback();
   }
+}
+
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
 }
 
 // https://d3js.org v6.5.0 Copyright 2021 Mike Bostock
