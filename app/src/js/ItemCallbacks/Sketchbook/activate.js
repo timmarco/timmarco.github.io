@@ -149,7 +149,7 @@ function activateSketchbook(where) {
 
 
   const item = new PortfolioItemContent(where)
-    .vimeo("524922093","assets/previews/sketchbookPreview.png")
+    .vimeo("524922093","app/assets/previews/sketchbookPreview.png")
     .callUp("WATCH THE VIDEO");
 
 

@@ -1,17 +1,3 @@
-function DetailsBox(portfolio) {
-  const box = this;
-  init(portfolio);
-  return box;
-
-  function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
-  }
-}
-
 function ContentPane(portfolio) {
   const pane = this;
   init(portfolio);
@@ -23,28 +9,17 @@ function ContentPane(portfolio) {
   }
 }
 
-function Portfolio() {
-  const portfolio = this;
-  init();
-  return portfolio;
+function DetailsBox(portfolio) {
+  const box = this;
+  init(portfolio);
+  return box;
 
-
-  function init() {
-    portfolio.isMobile = ("ontouchstart" in window)
-    portfolio.itemsDiv = portfolio.addItemsDiv();
-    portfolio.items = portfolio.addItems();
-    portfolio.detailsBox = portfolio.addDetailsBox();
-    portfolio.contentPane = portfolio.addContentPane();
-
-    portfolio
-      .registerRouter()
-      .registerHashChange();
-
-    d3.select("#back-button")
-      .on("click",() => {
-        portfolio.deactivate();
-      });
-
+  function init(portfolio) {
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
   }
 }
 
@@ -81,6 +56,84 @@ function PortfolioItemContent(where) {
     content.videoDiv = content.addVideoDiv();
     content.descriptionDiv = content.addDescriptionDiv();
   }
+}
+
+function Portfolio() {
+  const portfolio = this;
+  init();
+  return portfolio;
+
+
+  function init() {
+    portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.itemsDiv = portfolio.addItemsDiv();
+    portfolio.items = portfolio.addItems();
+    portfolio.detailsBox = portfolio.addDetailsBox();
+    portfolio.contentPane = portfolio.addContentPane();
+
+    portfolio
+      .registerRouter()
+      .registerHashChange();
+
+    d3.select("#back-button")
+      .on("click",() => {
+        portfolio.deactivate();
+      });
+
+  }
+}
+
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true)
+
+}
+
+ContentPane.prototype.transitionIn = function(item) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px")
+    .transition()
+    .duration(500)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
+}
+
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
 }
 
 DetailsBox.prototype.addContainerDiv = function() {
@@ -164,566 +217,6 @@ DetailsBox.prototype.updateContent = function(item) {
     .html(item.manifest.circa);
 
   return box;
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true)
-
-}
-
-ContentPane.prototype.transitionIn = function(item) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px")
-    .transition()
-    .duration(500)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    item.manifest
-      .callback(pane.containerDiv);
-  }
-
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-function activateFittsLaw(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("523023575","assets/previews/fittsPreview.png")
-    .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>");
-
-}
-
-function loadedFittsLaw(parent) {
-
-  const videoDiv = parent.contentPane.containerDiv.select("[data-role='vimeoIframe']");
-
-  const url = "https://player.vimeo.com/video/523023575?color=000000&title=0&byline=0&portrait=0&playsinline=0"
-
-  const iframe = videoDiv
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-
-  const player = new Vimeo.Player(iframe.node());
-
-  player.on("play", () =>{
-    parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-      .style("background-color","rgba(1,0,0,0.25)")
-      .transition()
-      .duration(250)
-      .style("top","100%")
-
-    parent.contentPane.containerDiv.select("img")
-      .style("display","none");
-  });
-
-  iframe
-    .on("focus",() => {
-      console.log("IFRAME FOCUS?");
-    })
-    .on("load",() => {
-      // console.log("PLAYER LOADED!");
-      // parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-      //   .style("display","none");
-      //
-      // parent.contentPane.containerDiv.select("img")
-      //   .style("display","none");
-    });
-
-
-  parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
-    .style("pointer-events","none");
-
-  parent.contentPane.containerDiv.select("img")
-    .style("pointer-events","none");
-
-
-
-}
-
-function activateSketchbook(where) {
-
-  const allSketches = d3.shuffle([
-    {
-      "title":"Arc Countdown",
-      "type":"interactive",
-      "notes":"An interactive countdown timer.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
-      "callback":ArcCountdown
-    },
-    {
-      "title":"Blur Attention",
-      "type":"interactive",
-      "notes":"A test of using SVG filters to simulate camera depth and bokeh effects.<br/><br/><strong>Mouseover the letters to see the effect.</strong>",
-      "callback":BlurAttentionSketch
-    },
-    {
-      "title":"Drag Snap",
-      "type":"interactive",
-      "notes":"A quick interaction sketch for connecting nodes in a diagram with a snapping effect and physics.",
-      "callback":DragSnap
-    },
-    {
-      "title":"iOS Audio Slider",
-      "type":"interactive",
-      "notes":"A study of the fluidlike animations that iOS uses for volume control<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
-      "callback":IosAudioSlider
-    },
-    {
-      "title":"Radar Sweep",
-      "type":"interactive",
-      "notes":"A code-generated animation to simulate a radar scope.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
-      "callback":RadarSketch
-    },
-    {
-      "title":"Radial Group",
-      "type":"interactive",
-      "notes":"A small test animation for a radial animation and transitions.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
-      "callback":RadialGroup
-    },
-    {
-      "title":"Random Walk",
-      "type":"interactive",
-      "notes":"A random walk is a model that helps explain how entirely random processes can create illusory patterns. Here, I randomly move the value in a single dimension and plot the density of values at each possible point. <br/><br/><strong>Mouseover the scope to play the animation.</strong>",
-      "callback":RandomWalk
-    },
-    {
-      "title":"Snell's Law",
-      "type":"interactive",
-      "notes":"A simple simulation of Snell's Law, which describes how rays of light are refracted at an interface between two media.<br/><br/><strong>Use your mouse to see how the rays refract through different media.</strong>",
-      "callback":SnellsLaw
-    },
-    {
-      "title":"Indices of Refraction",
-      "id":"514442847",
-      "type":"video",
-      "notes":"This was a simple test of Radeon's ProRender software in Blender. I wanted to see how the varying the index of refraction of glass and glass-like materials would impact a render."
-    },
-    {
-      "title":"Willow Tree Test",
-      "id":"514390367",
-      "type":"video",
-      "notes":"A simple model of a willow tree that I created while playing around with creating organic shapes using Blender."
-    },
-    {
-      "title":"Quaking Aspen",
-      "id":"514319482",
-      "type":"video",
-      "notes":"A more impressionistic / cartoonish model of a colony of quaking aspen created in Blender."
-    },
-    {
-      "title":"Fastball",
-      "id":"523536514",
-      "type":"video",
-      "notes":"An animation of a pitcher throwing a fastball in a cage. This was part of a larger project around the physics of pitching."
-    },
-    {
-      "title":"HMD FoV",
-      "id":"523524481",
-      "type":"video",
-      "notes":"An illustration of the effective field-of-view available to developers using head-mounted mixed reality devices. Due to constraints of both physics and physiology, these devices can only realistically display content in a specific region of space, relative to the user. As the user moves their head, this region moves accordingly. The largest consequence of this is that from the user's point of view, virtual objects will necessarily appear and disappear."
-    },
-    {
-      "title":"Pitching View",
-      "id":"523538770",
-      "type":"video",
-      "notes":"Major League Baseball tracks the precise trajectory of every pitch thrown in-game, and makes the data available through an unofficial API. Here, I'm synchronizing the broadcast video of a pitch with a visualization of the pitch's trajectory, as seen from multiple viewpoints."
-    },
-    {
-      "title":"AR Kit Scan",
-      "id":"385540505",
-      "type":"video",
-      "notes":"ARKit provides developers with the ability to scan physical objects for object recognition. Here, I'm using a (slightly modified) app from Apple to scan Lego architecture models for later recognition."
-    },
-    {
-      "title":"FOREST FIRE TEST",
-      "id":"523537584",
-      "type":"video",
-      "notes":"In computer science and computational social science, Forest Fire models describe the diffusion of information and behavior in connected systems. This is an illustration of how these models work, using the literal example of a burning forest."
-    },
-    {
-      "title":"AR Kit Blendshapes",
-      "id":"523515517",
-      "type":"video",
-      "notes":"A test of using ARKit's <span style='font-family:monospace'>ARFaceTracking</span> to perform basic performance capture and retargeting on a simple face model."
-    },
-    {
-      "title":"Eye Optics",
-      "id":"523516624",
-      "type":"video",
-      "notes":"A physically-accurate (albeit with exaggerated time) illustration of how the human eye bends and focuses rays of light on the retina. Optical power is attained via the cornea, lens, and vitreous humor, and rays of light focus on the retina."
-    },
-    {
-      "title":"Mixed Reality Light Control",
-      "id":"523518595",
-      "type":"video",
-      "notes":"Using a demo phone-based mixed reality application to control physical objects. The lamp was controlled using a relay and ESP-8266 microcontroller connected via WiFi. Users can tap on the lamp in the camera view to turn it on or off. Given display limitations of existing technology, these applications are of limited usefulness. But they <em>feel</em> unbelievable cool &mdash; like having a superpower."
-    },
-    {
-      "title":"Mixed Reality Occlusion",
-      "id":"523520895",
-      "type":"video",
-      "notes":"One of the trickiest things to do in Mixed Reality is creating the illusion of <em>real-time occlusion</em>: the sense that a physical object is actually <em>blocking</em> virtual content. This was an initial test of a concept for achieving just that effect in the context of a museum-like experience. Since this video was created, Apple and others have improved the native ability for object occlusion."
-    },
-    {
-      "title":"My Workspace",
-      "id":"523523617",
-      "type":"video",
-      "notes":"Animation of my workspace. I was working on building out a project using WS2812b RGB LEDs and got inspired to re-create the scene as an animation"
-    },
-    {
-      "title":"Arduino",
-      "id":"523771881",
-      "type":"video",
-      "notes":"Test render of an Arduino Uno model I created. Rendering with Radeon ProRender."
-    },
-    {
-      "title":"Fluid Test",
-      "id":"525596070",
-      "type":"video",
-      "notes":"An early test of running liquid simulations in Blender."
-    },
-    {
-      "title":"Advanced Fluid Test",
-      "id":"528371381",
-      "type":"video",
-      "notes":"A fully-rendered fluid simulation using Radeon Pro Render"
-    }
-  ]);
-
-
-  const item = new PortfolioItemContent(where)
-    .vimeo("524922093","assets/previews/sketchbookPreview.png")
-    .callUp("WATCH THE VIDEO");
-
-
-  allSketches
-    .forEach((sketch,index) => {
-      if(index < 5) {
-        item
-          .SketchbookItem(sketch);
-      }
-    });
-  // d3.range(0,10)
-  //   .forEach((index) => {
-  //     item
-  //       .SketchbookItem(allSketches[index]);
-  //   })
-
-
-  return item;
-
-}
-
-function loadedSketchbook() {
-  console.log("LOADED THE SKETCHBOOK");
-}
-
-Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT ME",],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"assets/clips/freeAgents.mp4",
-  //   "screenshot":"assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing future performance",
-  //   "circa":"Early 2018",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
-  {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.png",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.png",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  },
-  // {
-  //   "title":["SIR/D EXPLORABLE"],
-  //   "circa":"Spring 2021",
-  //   "subtitle":"An exploration of suddenly-vital topic",
-  // }
-];
-
-function activateStrangerThings(where) {
-
-
-  return new PortfolioItemContent(where)
-    .vimeo("522909563","assets/previews/strangerThingsPreview.png")
-    .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    .div("<div style='text-align:right'><iframe src='strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
-
-
-}
-
-function loadedStrangerThings() {
-  console.log("LOADED STRANGER THINGS!");
-}
-
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    // .vimeo("523023575")
-    // .callUp("WATCH THE VIDEO")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
-
-}
-
-function loadedFreeAgents() {
-  console.log("LOADED FREE AGENTS");
-}
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-Portfolio.prototype.activate = function(selectedItem) {
-  const portfolio = this;
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,"+yPosition+"px)");
-    
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left",titleSize + "px");
-
-  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item);
-
-        portfolio.contentPane
-          .transitionIn(item);
-
-        item
-          .activate();
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","0px")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
-    });
-
-
-  return portfolio;
-}
-
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
-}
-
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio.activate(matchingRoute[0]);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
 }
 
 PortfolioItem.prototype.addContainerDiv = function() {
@@ -943,6 +436,277 @@ PortfolioItem.prototype.show = function() {
 
 }
 
+function activateSketchbook(where) {
+
+  const allSketches = d3.shuffle([
+    {
+      "title":"Arc Countdown",
+      "type":"interactive",
+      "notes":"An interactive countdown timer.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
+      "callback":ArcCountdown
+    },
+    {
+      "title":"Blur Attention",
+      "type":"interactive",
+      "notes":"A test of using SVG filters to simulate camera depth and bokeh effects.<br/><br/><strong>Mouseover the letters to see the effect.</strong>",
+      "callback":BlurAttentionSketch
+    },
+    {
+      "title":"Drag Snap",
+      "type":"interactive",
+      "notes":"A quick interaction sketch for connecting nodes in a diagram with a snapping effect and physics.",
+      "callback":DragSnap
+    },
+    {
+      "title":"iOS Audio Slider",
+      "type":"interactive",
+      "notes":"A study of the fluidlike animations that iOS uses for volume control<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
+      "callback":IosAudioSlider
+    },
+    {
+      "title":"Radar Sweep",
+      "type":"interactive",
+      "notes":"A code-generated animation to simulate a radar scope.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
+      "callback":RadarSketch
+    },
+    {
+      "title":"Radial Group",
+      "type":"interactive",
+      "notes":"A small test animation for a radial animation and transitions.<br/><br/><strong>Mouseover the scope to play the animation.</strong>",
+      "callback":RadialGroup
+    },
+    {
+      "title":"Random Walk",
+      "type":"interactive",
+      "notes":"A random walk is a model that helps explain how entirely random processes can create illusory patterns. Here, I randomly move the value in a single dimension and plot the density of values at each possible point. <br/><br/><strong>Mouseover the scope to play the animation.</strong>",
+      "callback":RandomWalk
+    },
+    {
+      "title":"Snell's Law",
+      "type":"interactive",
+      "notes":"A simple simulation of Snell's Law, which describes how rays of light are refracted at an interface between two media.<br/><br/><strong>Use your mouse to see how the rays refract through different media.</strong>",
+      "callback":SnellsLaw
+    },
+    {
+      "title":"Indices of Refraction",
+      "id":"514442847",
+      "type":"video",
+      "notes":"This was a simple test of Radeon's ProRender software in Blender. I wanted to see how the varying the index of refraction of glass and glass-like materials would impact a render."
+    },
+    {
+      "title":"Willow Tree Test",
+      "id":"514390367",
+      "type":"video",
+      "notes":"A simple model of a willow tree that I created while playing around with creating organic shapes using Blender."
+    },
+    {
+      "title":"Quaking Aspen",
+      "id":"514319482",
+      "type":"video",
+      "notes":"A more impressionistic / cartoonish model of a colony of quaking aspen created in Blender."
+    },
+    {
+      "title":"Fastball",
+      "id":"523536514",
+      "type":"video",
+      "notes":"An animation of a pitcher throwing a fastball in a cage. This was part of a larger project around the physics of pitching."
+    },
+    {
+      "title":"HMD FoV",
+      "id":"523524481",
+      "type":"video",
+      "notes":"An illustration of the effective field-of-view available to developers using head-mounted mixed reality devices. Due to constraints of both physics and physiology, these devices can only realistically display content in a specific region of space, relative to the user. As the user moves their head, this region moves accordingly. The largest consequence of this is that from the user's point of view, virtual objects will necessarily appear and disappear."
+    },
+    {
+      "title":"Pitching View",
+      "id":"523538770",
+      "type":"video",
+      "notes":"Major League Baseball tracks the precise trajectory of every pitch thrown in-game, and makes the data available through an unofficial API. Here, I'm synchronizing the broadcast video of a pitch with a visualization of the pitch's trajectory, as seen from multiple viewpoints."
+    },
+    {
+      "title":"AR Kit Scan",
+      "id":"385540505",
+      "type":"video",
+      "notes":"ARKit provides developers with the ability to scan physical objects for object recognition. Here, I'm using a (slightly modified) app from Apple to scan Lego architecture models for later recognition."
+    },
+    {
+      "title":"FOREST FIRE TEST",
+      "id":"523537584",
+      "type":"video",
+      "notes":"In computer science and computational social science, Forest Fire models describe the diffusion of information and behavior in connected systems. This is an illustration of how these models work, using the literal example of a burning forest."
+    },
+    {
+      "title":"AR Kit Blendshapes",
+      "id":"523515517",
+      "type":"video",
+      "notes":"A test of using ARKit's <span style='font-family:monospace'>ARFaceTracking</span> to perform basic performance capture and retargeting on a simple face model."
+    },
+    {
+      "title":"Eye Optics",
+      "id":"523516624",
+      "type":"video",
+      "notes":"A physically-accurate (albeit with exaggerated time) illustration of how the human eye bends and focuses rays of light on the retina. Optical power is attained via the cornea, lens, and vitreous humor, and rays of light focus on the retina."
+    },
+    {
+      "title":"Mixed Reality Light Control",
+      "id":"523518595",
+      "type":"video",
+      "notes":"Using a demo phone-based mixed reality application to control physical objects. The lamp was controlled using a relay and ESP-8266 microcontroller connected via WiFi. Users can tap on the lamp in the camera view to turn it on or off. Given display limitations of existing technology, these applications are of limited usefulness. But they <em>feel</em> unbelievable cool &mdash; like having a superpower."
+    },
+    {
+      "title":"Mixed Reality Occlusion",
+      "id":"523520895",
+      "type":"video",
+      "notes":"One of the trickiest things to do in Mixed Reality is creating the illusion of <em>real-time occlusion</em>: the sense that a physical object is actually <em>blocking</em> virtual content. This was an initial test of a concept for achieving just that effect in the context of a museum-like experience. Since this video was created, Apple and others have improved the native ability for object occlusion."
+    },
+    {
+      "title":"My Workspace",
+      "id":"523523617",
+      "type":"video",
+      "notes":"Animation of my workspace. I was working on building out a project using WS2812b RGB LEDs and got inspired to re-create the scene as an animation"
+    },
+    {
+      "title":"Arduino",
+      "id":"523771881",
+      "type":"video",
+      "notes":"Test render of an Arduino Uno model I created. Rendering with Radeon ProRender."
+    },
+    {
+      "title":"Fluid Test",
+      "id":"525596070",
+      "type":"video",
+      "notes":"An early test of running liquid simulations in Blender."
+    },
+    {
+      "title":"Advanced Fluid Test",
+      "id":"528371381",
+      "type":"video",
+      "notes":"A fully-rendered fluid simulation using Radeon Pro Render"
+    }
+  ]);
+
+
+  const item = new PortfolioItemContent(where)
+    .vimeo("524922093","app/assets/previews/sketchbookPreview.png")
+    .callUp("WATCH THE VIDEO");
+
+
+  allSketches
+    .forEach((sketch,index) => {
+      if(index < 5) {
+        item
+          .SketchbookItem(sketch);
+      }
+    });
+  // d3.range(0,10)
+  //   .forEach((index) => {
+  //     item
+  //       .SketchbookItem(allSketches[index]);
+  //   })
+
+
+  return item;
+
+}
+
+function loadedSketchbook() {
+  console.log("LOADED THE SKETCHBOOK");
+}
+
+function activateFittsLaw(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("523023575","app/assets/previews/fittsPreview.png")
+    .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>");
+
+}
+
+function loadedFittsLaw(parent) {
+
+  const videoDiv = parent.contentPane.containerDiv.select("[data-role='vimeoIframe']");
+
+  const url = "https://player.vimeo.com/video/523023575?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = videoDiv
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const player = new Vimeo.Player(iframe.node());
+
+  player.on("play", () =>{
+    parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
+      .style("background-color","rgba(1,0,0,0.25)")
+      .transition()
+      .duration(250)
+      .style("top","100%")
+
+    parent.contentPane.containerDiv.select("img")
+      .style("display","none");
+  });
+
+  iframe
+    .on("focus",() => {
+      console.log("IFRAME FOCUS?");
+    })
+    .on("load",() => {
+      // console.log("PLAYER LOADED!");
+      // parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
+      //   .style("display","none");
+      //
+      // parent.contentPane.containerDiv.select("img")
+      //   .style("display","none");
+    });
+
+
+  parent.contentPane.containerDiv.select("[data-role='videoOverlay']")
+    .style("pointer-events","none");
+
+  parent.contentPane.containerDiv.select("img")
+    .style("pointer-events","none");
+
+
+
+}
+
+function activateFreeAgents(where) {
+
+  return new PortfolioItemContent(where)
+    // .vimeo("523023575")
+    // .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
+
+}
+
+function loadedFreeAgents() {
+  console.log("LOADED FREE AGENTS");
+}
+
+function activateStrangerThings(where) {
+
+
+  return new PortfolioItemContent(where)
+    .vimeo("522909563","app/assets/previews/strangerThingsPreview.png")
+    .callUp("WATCH THE VIDEO")
+    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
+    .div("<div style='text-align:right'><iframe src='strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
+
+
+}
+
+function loadedStrangerThings() {
+  console.log("LOADED STRANGER THINGS!");
+}
+
 PortfolioItemContent.prototype.addContainerDiv = function() {
   const content = this;
   return content.where
@@ -1133,66 +897,240 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   return content;
 }
 
-function ArcCountdown(where) {
-  const countdown = this;
-  init(where);
-  return countdown;
-
-  function init(where) {
-    countdown.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(countdown.runCountdown())
-      .UnhighlightEventIs(countdown.pauseCountdown());
-
-
-    countdown.maxValue = 100;
-    countdown.fullDuration = 2000;
-    countdown.easeType = d3.easeQuadOut;
-    countdown.arcCentralRadius = 115;
-    countdown.arcRadiusWidth = 30;
-    countdown.backgroundColor = d3.schemeCategory10[0];
-    countdown.foregroundColor = d3.schemeCategory10[1];
-    countdown.frameColor = "#444";
-    countdown.textOutlineWidth = 5;
-
-    countdown.arcGenerator = countdown.defineArcGenerator();
-    countdown.arcScales = countdown.defineArcScales();
-    countdown.background = countdown.addBackground();
-    countdown.group = countdown.addGroup();
-    countdown.arcGroup = countdown.addArcGroup();
-    countdown.textOutline = countdown.addTextOutline();
-    countdown.text = countdown.addText();
-    countdown.arcOutline = countdown.addArcOutline();
-    countdown.arc = countdown.addArc();
-
-    countdown.hotspot = countdown.addHotspot();
-
-    countdown.initialize();
-  }
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
 }
 
-function BlurAttentionSketch(where) {
-  const blur = this;
-  init(where);
-  return blur;
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
 
-  function init(where) {
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
 
-    blur.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(blur.highlight())
-      .UnhighlightEventIs(blur.unhighlight())
-      .ClickEventIs(blur.click());
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
 
-    blur.backgroundRect = blur.addBackgroundRect();
-    blur.defs = blur.addDefs();
-    blur.filter = blur.addFilter();
-    blur.gaussian = blur.addGaussian();
-    blur.grid = blur.addGrid();
-    blur.buttonGroup = blur.addButtonGroup();
-    blur.buttons = blur.addButtons();
+Portfolio.prototype.manifest = [
+  // {
+  //   "title":["FOREST FIRE","MODELS"],
+  //   "video":"assets/clips/forestFire.mp4",
+  //   "subtitle":"A video about agent-based models",
+  //   "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["ABOUT ME",],
+  //   "subtitle":"bio",
+  //   // "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  // {
+  //   "title":["MLB FREE AGENT","EXPLORER"],
+  //   "video":"assets/clips/freeAgents.mp4",
+  //   "screenshot":"assets/clips/freeAgents.png",
+  //   "subtitle":"A tool for assessing future performance",
+  //   "circa":"Early 2018",
+  //   "route":"free-agent-explorer",
+  //   "callback":activateFreeAgents,
+  //   "loadCallback":loadedFreeAgents
+  // },
+  {
+    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.png",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.png",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  },
+  // {
+  //   "title":["SIR/D EXPLORABLE"],
+  //   "circa":"Spring 2021",
+  //   "subtitle":"An exploration of suddenly-vital topic",
+  // }
+];
 
+Portfolio.prototype.activate = function(selectedItem) {
+  const portfolio = this;
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,"+yPosition+"px)");
+    
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left",titleSize + "px");
+
+  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item);
+
+        portfolio.contentPane
+          .transitionIn(item);
+
+        item
+          .activate();
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","0px")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
   }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio.activate(matchingRoute[0]);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
 }
 
 function RadarSketch(where) {
@@ -1233,6 +1171,44 @@ function RadarSketch(where) {
 
 }
 
+function ArcCountdown(where) {
+  const countdown = this;
+  init(where);
+  return countdown;
+
+  function init(where) {
+    countdown.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(countdown.runCountdown())
+      .UnhighlightEventIs(countdown.pauseCountdown());
+
+
+    countdown.maxValue = 100;
+    countdown.fullDuration = 2000;
+    countdown.easeType = d3.easeQuadOut;
+    countdown.arcCentralRadius = 115;
+    countdown.arcRadiusWidth = 30;
+    countdown.backgroundColor = d3.schemeCategory10[0];
+    countdown.foregroundColor = d3.schemeCategory10[1];
+    countdown.frameColor = "#444";
+    countdown.textOutlineWidth = 5;
+
+    countdown.arcGenerator = countdown.defineArcGenerator();
+    countdown.arcScales = countdown.defineArcScales();
+    countdown.background = countdown.addBackground();
+    countdown.group = countdown.addGroup();
+    countdown.arcGroup = countdown.addArcGroup();
+    countdown.textOutline = countdown.addTextOutline();
+    countdown.text = countdown.addText();
+    countdown.arcOutline = countdown.addArcOutline();
+    countdown.arc = countdown.addArc();
+
+    countdown.hotspot = countdown.addHotspot();
+
+    countdown.initialize();
+  }
+}
+
 function DragSnap(where) {
   const snap = this;
   init(where);
@@ -1267,34 +1243,26 @@ function DragSnap(where) {
   }
 }
 
-function RandomWalk(where) {
-  const randomWalk = this;
+function BlurAttentionSketch(where) {
+  const blur = this;
   init(where);
-  return randomWalk;
+  return blur;
 
   function init(where) {
-    randomWalk.sketch = new Sketch(where)
+
+    blur.sketch = new Sketch(where)
       .AddSvg()
-      .HighlightEventIs(randomWalk.highlight())
-      .UnhighlightEventIs(randomWalk.unhighlight());
+      .HighlightEventIs(blur.highlight())
+      .UnhighlightEventIs(blur.unhighlight())
+      .ClickEventIs(blur.click());
 
-    randomWalk.hasStarted = false;
-    randomWalk.isActive = false;
-    randomWalk.history = [0];
-    randomWalk.steps = 0;
-    randomWalk.minValue = -10;
-    randomWalk.maxValue = 10;
-    randomWalk.binnedValues = randomWalk.defineBinnedValues();
-    randomWalk.isWalking = false;
-    randomWalk.background = randomWalk.addBackground();
-    randomWalk.walkScales = randomWalk.defineWalkScales();
-    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
-    randomWalk.xAxis = randomWalk.addXAxis();
-    randomWalk.lineGroup = randomWalk.addLineGroup();
-    randomWalk.line = randomWalk.addLine();
-    randomWalk.xAxisGroup.selectAll("text").remove();
-    randomWalk.histogram = randomWalk.addHistogram();
-
+    blur.backgroundRect = blur.addBackgroundRect();
+    blur.defs = blur.addDefs();
+    blur.filter = blur.addFilter();
+    blur.gaussian = blur.addGaussian();
+    blur.grid = blur.addGrid();
+    blur.buttonGroup = blur.addButtonGroup();
+    blur.buttons = blur.addButtons();
 
   }
 }
@@ -1323,58 +1291,6 @@ function RadialGroup(where) {
     radial.wedges = radial.addWedges();
     radial.circle = radial.addCircle();
     radial.hotspot = radial.addHotspot();
-
-  }
-}
-
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
-  }
-}
-
-function IosAudioSlider(where) {
-  const slider = this;
-  init(where);
-  return slider;
-
-  function init() {
-    slider.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(slider.runAnimation());
-
-    slider.buttonPressColor = d3.schemeCategory10[3];
-    slider.trackColor = "rgb(96,76,76)";
-    slider.valueColor = "#eee";
-
-    slider.background = slider.addBackground();
-    
-    slider.screenBackground = slider.addScreenBackground();
-
-    slider.sliderGroup = slider.addSliderGroup();
-    slider.verticalOffset = slider.addVerticalOffset();
-    slider.sliderScale = slider.addSliderScale();
-    slider.verticalScale = slider.addSliderVerticalScale();
-    slider.horizontalScale = slider.addSliderHorizontalScale();
-    slider.track = slider.addTrack();
-    slider.value = slider.addValue();
-    slider.screenClip = slider.addScreenClip();
-
-    slider.volumeUpButton = slider.addVolumeUpButton();
-    slider.volumeDownButton = slider.addVolumeDownButton();
-    slider.phone = slider.addPhone();
-
 
   }
 }
@@ -1414,6 +1330,333 @@ function SnellsLaw(where) {
   }
 }
 
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
+  }
+}
+
+function RandomWalk(where) {
+  const randomWalk = this;
+  init(where);
+  return randomWalk;
+
+  function init(where) {
+    randomWalk.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(randomWalk.highlight())
+      .UnhighlightEventIs(randomWalk.unhighlight());
+
+    randomWalk.hasStarted = false;
+    randomWalk.isActive = false;
+    randomWalk.history = [0];
+    randomWalk.steps = 0;
+    randomWalk.minValue = -10;
+    randomWalk.maxValue = 10;
+    randomWalk.binnedValues = randomWalk.defineBinnedValues();
+    randomWalk.isWalking = false;
+    randomWalk.background = randomWalk.addBackground();
+    randomWalk.walkScales = randomWalk.defineWalkScales();
+    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
+    randomWalk.xAxis = randomWalk.addXAxis();
+    randomWalk.lineGroup = randomWalk.addLineGroup();
+    randomWalk.line = randomWalk.addLine();
+    randomWalk.xAxisGroup.selectAll("text").remove();
+    randomWalk.histogram = randomWalk.addHistogram();
+
+
+  }
+}
+
+function IosAudioSlider(where) {
+  const slider = this;
+  init(where);
+  return slider;
+
+  function init() {
+    slider.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(slider.runAnimation());
+
+    slider.buttonPressColor = d3.schemeCategory10[3];
+    slider.trackColor = "rgb(96,76,76)";
+    slider.valueColor = "#eee";
+
+    slider.background = slider.addBackground();
+    
+    slider.screenBackground = slider.addScreenBackground();
+
+    slider.sliderGroup = slider.addSliderGroup();
+    slider.verticalOffset = slider.addVerticalOffset();
+    slider.sliderScale = slider.addSliderScale();
+    slider.verticalScale = slider.addSliderVerticalScale();
+    slider.horizontalScale = slider.addSliderHorizontalScale();
+    slider.track = slider.addTrack();
+    slider.value = slider.addValue();
+    slider.screenClip = slider.addScreenClip();
+
+    slider.volumeUpButton = slider.addVolumeUpButton();
+    slider.volumeDownButton = slider.addVolumeDownButton();
+    slider.phone = slider.addPhone();
+
+
+  }
+}
+
+RadarSketch.prototype.addBackground = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","black");
+}
+
+RadarSketch.prototype.addBogeyGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addBogeys = function() {
+  const radar = this;
+  const bogeyCount = 10;
+
+  const bogeyPolarCoordinates = [];
+  d3.range(0,bogeyCount)
+    .forEach((index) => {
+      bogeyPolarCoordinates
+        .push({
+          "theta":d3.randomUniform(0,2*Math.PI)(),
+          "distance":d3.randomUniform(35,150)()
+        });
+    });
+
+  return radar.bogeyGroup
+    .selectAll("circle")
+    .data(bogeyPolarCoordinates)
+    .enter()
+    .append("circle")
+    .attr("r",5)
+    .attr("fill",radar.green)
+    .attr("stroke","none")
+    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
+    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
+    .attr("fill-opacity",0);
+}
+
+RadarSketch.prototype.addDefs = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("defs");
+}
+
+RadarSketch.prototype.addGroup = function() {
+  const radar = this;
+  return radar.rotateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addHotspot = function() {
+  const radar = this;
+  radar.sketch.svg
+    .append("rect")
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+RadarSketch.prototype.addPolarLines = function() {
+  const radar = this;
+  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
+  return radar.bogeyGroup
+    .selectAll(".polarLine")
+    .data(lineData)
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",(theta) => { return Math.cos(theta) * 150})
+    .attr("y1",0)
+    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","5,5")
+}
+
+RadarSketch.prototype.addRangeCircles = function() {
+  const radar = this;
+  const circleDistances = [50,100,150];
+  return radar.group
+    .selectAll(".rangeCircle")
+    .data(circleDistances)
+    .enter()
+    .append("circle")
+    .attr("fill","none")
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("r",(datum) =>{ return datum});
+
+}
+
+RadarSketch.prototype.addReticle = function() {
+  const radar = this;
+  return radar.group
+    .append("circle")
+    .attr("fill",radar.green)
+    .attr("r",5);
+}
+
+RadarSketch.prototype.addRotateGroup = function() {
+  const radar = this;
+  return radar.translateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addScanWedge = function() {
+  const radar = this;
+
+  const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(150)
+    .startAngle(0)
+    .endAngle(radar.wedgeSize * Math.PI / 180);
+
+  return radar.group
+    .append("path")
+    .attr("fill","url(#wedgeGradient)")
+    .attr("stroke","none")
+    .attr("d",arcGenerator);
+}
+
+RadarSketch.prototype.addScanLine = function() {
+  const radar = this;
+  return radar.group
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",-150)
+    .attr("stroke-width",3)
+    .attr("stroke",radar.scanLineColor);
+}
+
+RadarSketch.prototype.addTranslateGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addWedgeGradient = function() {
+  const radar = this;
+  const gradient = radar.defs
+    .append("linearGradient")
+    .attr("id","wedgeGradient")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%")
+    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
+
+  gradient
+    .append("stop")
+    .attr("offset","0%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",0)
+
+  gradient
+    .append("stop")
+    .attr("offset","100%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",1);
+
+}
+
+RadarSketch.prototype.click = function() {
+  const radar = this;
+  return () => {
+  }
+}
+
+RadarSketch.prototype.highlight = function() {
+  const radar = this;
+  return () => {
+    radar
+      .singleSweep();
+  }
+}
+
+RadarSketch.prototype.singleSweep = function() {
+  const radar = this;
+
+  radar.rotateGroup
+    .attr("transform","rotate(0)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(180)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(359.999)")
+    .ease(d3.easeLinear)
+    .on("end",() => { radar.singleSweep(); });
+
+  radar.bogeyGroup
+    .selectAll("circle")
+    .each(function(coordinates) {
+      const bogey = d3.select(this);
+      const xCoordinate = bogey.attr("cx");
+      const yCoordinate = bogey.attr("cy");
+      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
+      if(delay > 4000) {
+        delay -= 4000;
+      }
+
+      bogey
+        .transition()
+        .delay(delay)
+        .duration(0)
+        .attr("r",7)
+        .attr("fill-opacity",1)
+        .transition()
+        .ease(d3.easeQuadIn)
+        .duration(2000)
+        .attr("fill-opacity",0)
+        .attr("r",2)
+    });
+
+}
+
+RadarSketch.prototype.unhighlight = function() {
+  const radar = this;
+  return () => {
+    radar.rotateGroup
+      .interrupt();
+
+    radar.bogeyGroup
+      .selectAll("circle")
+      .remove();
+
+    radar.rotateGroup
+      .attr("transform","rotate(0)");
+
+    radar.bogeys = radar.addBogeys();
+  }
+}
+
 ArcCountdown.prototype.defineArcGenerator = function() {
   const countdown = this;
   
@@ -1433,87 +1676,6 @@ ArcCountdown.prototype.defineArcScales = function() {
       .domain([0,1])
       .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
     }
-
-}
-
-ArcCountdown.prototype.addArc = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill",countdown.foregroundColor)
-    .attr("stroke","none");
-}
-
-ArcCountdown.prototype.addArcGroup = function() {
-  const countdown = this;
-  return countdown.group
-    .append("g")
-    .attr("transform","rotate(-90)");
-}
-
-ArcCountdown.prototype.addArcOutline = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill","none")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",2);
-
-}
-
-ArcCountdown.prototype.addBackground = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",countdown.backgroundColor);
-}
-
-ArcCountdown.prototype.addGroup = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,225)");
-}
-
-ArcCountdown.prototype.addHotspot = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-ArcCountdown.prototype.addText = function() {
-  const countdown = this;
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("fill",countdown.foregroundColor)
-    .attr("y",25)
-    .html("0");
-}
-
-ArcCountdown.prototype.addTextOutline = function() {
-  const countdown = this;
-
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",countdown.textOutlineWidth)
-    .attr("y",25)
-    .html("0");
 
 }
 
@@ -1602,6 +1764,268 @@ ArcCountdown.prototype.runCountdown = function() {
     }
 
   }
+}
+
+ArcCountdown.prototype.addArc = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill",countdown.foregroundColor)
+    .attr("stroke","none");
+}
+
+ArcCountdown.prototype.addArcGroup = function() {
+  const countdown = this;
+  return countdown.group
+    .append("g")
+    .attr("transform","rotate(-90)");
+}
+
+ArcCountdown.prototype.addArcOutline = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill","none")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",2);
+
+}
+
+ArcCountdown.prototype.addBackground = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",countdown.backgroundColor);
+}
+
+ArcCountdown.prototype.addGroup = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,225)");
+}
+
+ArcCountdown.prototype.addHotspot = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+ArcCountdown.prototype.addText = function() {
+  const countdown = this;
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("fill",countdown.foregroundColor)
+    .attr("y",25)
+    .html("0");
+}
+
+ArcCountdown.prototype.addTextOutline = function() {
+  const countdown = this;
+
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",countdown.textOutlineWidth)
+    .attr("y",25)
+    .html("0");
+
+}
+
+DragSnap.prototype.addAntsMarching = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.antColor)
+    .attr("stroke-dasharray","10,10");
+}
+
+DragSnap.prototype.addBackground = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",snap.backgroundColor);
+}
+
+DragSnap.prototype.addConnectingLine = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.connectingColor);
+}
+
+DragSnap.prototype.addDestination = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",300)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20")
+    .attr("stroke",snap.activeColor)
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = true;
+      snap.destination
+        .attr("stroke-dasharray","0")
+        .transition()
+        .duration(250)
+        .attr("fill",snap.activeColor);
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = false;
+      snap.destination
+        .attr("stroke-dasharray","20,20")
+        .attr("fill",snap.backgroundColor)
+    })
+}
+
+DragSnap.prototype.addDragMe = function() {
+  const snap = this;
+
+  const group = snap.sketch.svg
+    .append("g")
+    .attr("transform","translate(200,125)")
+    .attr("opacity",0);
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight",600)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",4)
+    .html("&larr; Drag!");
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("fill",snap.activeColor)
+    .attr("font-weight",600)
+    .attr("stroke","none")
+    .html("&larr; Drag!");
+
+  return group;
+}
+
+DragSnap.prototype.addFalseTargets = function() {
+  const snap = this;
+
+  const first = snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",125)
+    .attr("data-x",400)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  const second = snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",300)
+    .attr("data-x",100)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  first
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return };
+      const startX = 400;
+      const endX = startX + 20;
+      const backX = startX - 40;
+      first
+        .transition()
+        .duration(150)
+        .attr("cx",endX)
+        .transition()
+        .duration(225)
+        .attr("cx",backX)
+        .transition()
+        .duration(100)
+        .attr("cx",startX)
+    });
+
+
+    second
+      .on("mouseover",() => {
+        if(snap.isDragging == false) { return };
+        const startX = 400;
+        const endX = startX + 20;
+        const backX = startX - 40;
+        second
+          .transition()
+          .duration(150)
+          .attr("cy",endX)
+          .transition()
+          .duration(225)
+          .attr("cy",backX)
+          .transition()
+          .duration(100)
+          .attr("cy",startX)
+      });
+
+}
+
+DragSnap.prototype.addSource = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",125)
+    .attr("r",50)
+    .attr("fill",snap.activeColor)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",5)
+    .on("mouseover",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .transition()
+        .duration(350)
+        .ease(d3.easeBackOut.overshoot(100))
+        .attr("r",50.1)
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .attr("r",50);
+    })
+    .call(
+      d3.drag()
+        .on("start",snap.dragStart())
+        .on("drag",snap.dragging())
+        .on("end",snap.dragEnd())
+    );
 }
 
 BlurAttentionSketch.prototype.addBackgroundRect = function() {
@@ -1886,428 +2310,446 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   }
 }
 
-RadarSketch.prototype.addBackground = function() {
-  const radar = this;
-  return radar.sketch.svg
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
+
+
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
+
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
+
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
+}
+
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill","black");
+    .attr("fill","url(#background)");
+
 }
 
-RadarSketch.prototype.addBogeyGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addBogeys = function() {
-  const radar = this;
-  const bogeyCount = 10;
-
-  const bogeyPolarCoordinates = [];
-  d3.range(0,bogeyCount)
-    .forEach((index) => {
-      bogeyPolarCoordinates
-        .push({
-          "theta":d3.randomUniform(0,2*Math.PI)(),
-          "distance":d3.randomUniform(35,150)()
-        });
-    });
-
-  return radar.bogeyGroup
-    .selectAll("circle")
-    .data(bogeyPolarCoordinates)
-    .enter()
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
     .append("circle")
-    .attr("r",5)
-    .attr("fill",radar.green)
-    .attr("stroke","none")
-    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
-    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
-    .attr("fill-opacity",0);
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
 }
 
-RadarSketch.prototype.addDefs = function() {
-  const radar = this;
-  return radar.sketch.svg
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("defs");
 }
 
-RadarSketch.prototype.addGroup = function() {
-  const radar = this;
-  return radar.rotateGroup
-    .append("g");
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
 }
 
-RadarSketch.prototype.addHotspot = function() {
-  const radar = this;
-  radar.sketch.svg
-    .append("rect")
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-RadarSketch.prototype.addPolarLines = function() {
-  const radar = this;
-  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
-  return radar.bogeyGroup
-    .selectAll(".polarLine")
-    .data(lineData)
-    .enter()
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",(theta) => { return Math.cos(theta) * 150})
-    .attr("y1",0)
-    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","5,5")
-}
-
-RadarSketch.prototype.addRangeCircles = function() {
-  const radar = this;
-  const circleDistances = [50,100,150];
-  return radar.group
-    .selectAll(".rangeCircle")
-    .data(circleDistances)
-    .enter()
-    .append("circle")
-    .attr("fill","none")
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("r",(datum) =>{ return datum});
-
-}
-
-RadarSketch.prototype.addReticle = function() {
-  const radar = this;
-  return radar.group
-    .append("circle")
-    .attr("fill",radar.green)
-    .attr("r",5);
-}
-
-RadarSketch.prototype.addRotateGroup = function() {
-  const radar = this;
-  return radar.translateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addScanWedge = function() {
-  const radar = this;
-
-  const arcGenerator = d3.arc()
-    .innerRadius(0)
-    .outerRadius(150)
-    .startAngle(0)
-    .endAngle(radar.wedgeSize * Math.PI / 180);
-
-  return radar.group
-    .append("path")
-    .attr("fill","url(#wedgeGradient)")
-    .attr("stroke","none")
-    .attr("d",arcGenerator);
-}
-
-RadarSketch.prototype.addScanLine = function() {
-  const radar = this;
-  return radar.group
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",-150)
-    .attr("stroke-width",3)
-    .attr("stroke",radar.scanLineColor);
-}
-
-RadarSketch.prototype.addTranslateGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("g")
-    .attr("transform","translate(300,180)");
+    .attr("transform","translate(320,180)");
 }
 
-RadarSketch.prototype.addWedgeGradient = function() {
-  const radar = this;
-  const gradient = radar.defs
-    .append("linearGradient")
-    .attr("id","wedgeGradient")
-    .attr("x1","0%")
-    .attr("x2","100%")
-    .attr("y1","0%")
-    .attr("y2","0%")
-    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
-
-  gradient
-    .append("stop")
-    .attr("offset","0%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",0)
-
-  gradient
-    .append("stop")
-    .attr("offset","100%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",1);
-
-}
-
-RadarSketch.prototype.click = function() {
-  const radar = this;
-  return () => {
-  }
-}
-
-RadarSketch.prototype.highlight = function() {
-  const radar = this;
-  return () => {
-    radar
-      .singleSweep();
-  }
-}
-
-RadarSketch.prototype.singleSweep = function() {
-  const radar = this;
-
-  radar.rotateGroup
-    .attr("transform","rotate(0)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(180)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(359.999)")
-    .ease(d3.easeLinear)
-    .on("end",() => { radar.singleSweep(); });
-
-  radar.bogeyGroup
-    .selectAll("circle")
-    .each(function(coordinates) {
-      const bogey = d3.select(this);
-      const xCoordinate = bogey.attr("cx");
-      const yCoordinate = bogey.attr("cy");
-      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
-      if(delay > 4000) {
-        delay -= 4000;
-      }
-
-      bogey
-        .transition()
-        .delay(delay)
-        .duration(0)
-        .attr("r",7)
-        .attr("fill-opacity",1)
-        .transition()
-        .ease(d3.easeQuadIn)
-        .duration(2000)
-        .attr("fill-opacity",0)
-        .attr("r",2)
-    });
-
-}
-
-RadarSketch.prototype.unhighlight = function() {
-  const radar = this;
-  return () => {
-    radar.rotateGroup
-      .interrupt();
-
-    radar.bogeyGroup
-      .selectAll("circle")
-      .remove();
-
-    radar.rotateGroup
-      .attr("transform","rotate(0)");
-
-    radar.bogeys = radar.addBogeys();
-  }
-}
-
-DragSnap.prototype.addAntsMarching = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.antColor)
-    .attr("stroke-dasharray","10,10");
-}
-
-DragSnap.prototype.addBackground = function() {
-  const snap = this;
-  return snap.sketch.svg
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill",snap.backgroundColor);
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
 }
 
-DragSnap.prototype.addConnectingLine = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.connectingColor);
-}
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
 
-DragSnap.prototype.addDestination = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",300)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20")
-    .attr("stroke",snap.activeColor)
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = true;
-      snap.destination
-        .attr("stroke-dasharray","0")
-        .transition()
-        .duration(250)
-        .attr("fill",snap.activeColor);
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = false;
-      snap.destination
-        .attr("stroke-dasharray","20,20")
-        .attr("fill",snap.backgroundColor)
-    })
-}
-
-DragSnap.prototype.addDragMe = function() {
-  const snap = this;
-
-  const group = snap.sketch.svg
-    .append("g")
-    .attr("transform","translate(200,125)")
-    .attr("opacity",0);
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight",600)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",4)
-    .html("&larr; Drag!");
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("fill",snap.activeColor)
-    .attr("font-weight",600)
-    .attr("stroke","none")
-    .html("&larr; Drag!");
-
-  return group;
-}
-
-DragSnap.prototype.addFalseTargets = function() {
-  const snap = this;
-
-  const first = snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",125)
-    .attr("data-x",400)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  const second = snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",300)
-    .attr("data-x",100)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  first
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return };
-      const startX = 400;
-      const endX = startX + 20;
-      const backX = startX - 40;
-      first
-        .transition()
-        .duration(150)
-        .attr("cx",endX)
-        .transition()
-        .duration(225)
-        .attr("cx",backX)
-        .transition()
-        .duration(100)
-        .attr("cx",startX)
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
     });
+}
+
+SnellsLaw.prototype.highlight = function() {
+  const snells = this;
+
+  return () => {
+    snells.source
+      .transition()
+      .duration(1000)
+      .ease(d3.easeBackOut.overshoot(6))
+      .attr("r",8);
+
+    const incidentLength = snells.incidentRay
+      .node()
+      .getTotalLength();
+
+    snells.incidentRay
+      .attr("stroke-dashoffset",incidentLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+    const refractedLength = snells.refractedRay
+      .node()
+      .getTotalLength();
+
+    snells.refractedRay
+      .attr("stroke-dashoffset",refractedLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+  }
+}
+
+SnellsLaw.prototype.mouseMove = function() {
+  const snells = this;
+
+  return () => {
+    const coordinates = {
+      "x":event.offsetX,
+      "y":event.offsetY
+    };
+
+    snells
+      .updateForMouseCoordinates(coordinates);
+
+  }
+}
+
+SnellsLaw.prototype.unhighlight = function() {
+  const snells = this;
+  return () => {
+    snells.source
+      .transition()
+      .duration(250)
+      .attr("r",0);
+
+    snells.incidentRay
+      .interrupt();
+
+    snells.refractedRay
+      .interrupt();
+  }
+}
+
+SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
+  const snells = this;
+
+  if(coordinates.y >= 250) { return }
+
+  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
+
+  let incidentStart,
+    incidentEnd;
+
+  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
+  incidentStart = 0;
 
 
-    second
-      .on("mouseover",() => {
-        if(snap.isDragging == false) { return };
-        const startX = 400;
-        const endX = startX + 20;
-        const backX = startX - 40;
-        second
-          .transition()
-          .duration(150)
-          .attr("cy",endX)
-          .transition()
-          .duration(225)
-          .attr("cy",backX)
-          .transition()
-          .duration(100)
-          .attr("cy",startX)
-      });
+  snells.source
+    .attr("cx",coordinates.x)
+    .attr("cy",coordinates.y);
+
+  snells.incidentRay
+    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
+    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
+
+  snells.incidentArc
+    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
+
+  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
+  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
+  const refractionTheta = Math.asin(sinOfSecond);
+
+  snells.refractedArc
+    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
+
+  snells.refractedRay
+    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
+    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
+
+  return snells;
+}
+
+SnellsLaw.prototype.addBackground = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
+
+SnellsLaw.prototype.addHotspot = function() {
+  const snells = this;
+
+  return snells.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",snells.mouseMove());
+}
+
+SnellsLaw.prototype.addIncidentArc = function() {
+  const snells = this;
+
+  const group = snells.sketch.svg
+    .append("g")
+    .attr("transform","translate(250,250)");
+
+  return group
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[3])
+    .attr("fill","none")
+    .attr("stroke-width",5)
+    .attr("d",snells.arcGenerator.startAngle(-Math.PI / 2).endAngle(0));
+}
+
+SnellsLaw.prototype.addIncidentRay = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",40)
+    .attr("y1",50)
+    .attr("x2",250)
+    .attr("y2",250)
+    .attr("stroke",d3.schemeCategory10[3])
+    .attr("stroke-width",5)
+    .attr("stroke-dasharray","15,15");
+}
+
+SnellsLaw.prototype.addNormal = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",250)
+    .attr("x2",250)
+    .attr("y1",0)
+    .attr("y2",500)
+    .attr("stroke","#999")
+    .attr("stroke-width",2)
+    .attr("stroke-dasharray","10,10");
+}
+
+SnellsLaw.prototype.addRefractedArc = function() {
+  const snells = this;
+
+  const group = snells.sketch.svg
+    .append("g")
+    .attr("transform","translate(250,250) rotate(90)");
+
+  return group
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[1])
+    .attr("fill","none")
+    .attr("stroke-width",5)
+    .attr("d",snells.arcGenerator.startAngle(Math.PI / 4).endAngle(Math.PI / 2));
 
 }
 
-DragSnap.prototype.addSource = function() {
-  const snap = this;
-  return snap.sketch.svg
+SnellsLaw.prototype.addRefractedImage = function() {
+  const snells = this;
+  return snells.sketch.svg
     .append("circle")
-    .attr("cx",100)
-    .attr("cy",125)
-    .attr("r",50)
-    .attr("fill",snap.activeColor)
-    .attr("stroke",snap.connectingColor)
+    .attr("r",10)
+    .attr("fill",d3.schemeCategory10[5])
+    .attr("cx",40)
+    .attr("cy",50)
+    .attr("r",0);
+}
+
+SnellsLaw.prototype.addRefractedRay = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",250)
+    .attr("x2",460)
+    .attr("y1",250)
+    .attr("y2",450)
+    .attr("stroke",d3.schemeCategory10[1])
     .attr("stroke-width",5)
-    .on("mouseover",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .transition()
-        .duration(350)
-        .ease(d3.easeBackOut.overshoot(100))
-        .attr("r",50.1)
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .attr("r",50);
-    })
-    .call(
-      d3.drag()
-        .on("start",snap.dragStart())
-        .on("drag",snap.dragging())
-        .on("end",snap.dragEnd())
-    );
+    .attr("stroke-dasharray","15,15");
+}
+
+SnellsLaw.prototype.addSource = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("circle")
+    .attr("r",10)
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("cx",40)
+    .attr("cy",50)
+    .attr("r",0);
+}
+
+SnellsLaw.prototype.addWater = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("x",-5)
+    .attr("y",250)
+    .attr("fill",d3.schemeCategory10[0])
+    .attr("stroke",d3.schemeCategory10[5])
+    .attr("stroke-width",3)
+    .attr("stroke-dasharray","5,20");
+}
+
+SnellsLaw.prototype.defineArcGenerator = function() {
+  const snells = this;
+  return d3.arc()
+    .innerRadius(72.5)
+    .outerRadius(75);
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
 }
 
 RandomWalk.prototype.addHistogram = function() {
@@ -2472,210 +2914,6 @@ RandomWalk.prototype.unhighlight = function() {
     randomWalk.isActive = false;
     return randomWalk;
   }
-}
-
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
-    .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
-    });
-}
-
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
-
-
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
-      });
-
-
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
-
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-  }
-}
-
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
-
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
-  }
-}
-
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
-
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
 }
 
 IosAudioSlider.prototype.addBackground = function() {
@@ -3040,244 +3278,6 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
   return slider;
 }
 
-SnellsLaw.prototype.addBackground = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-SnellsLaw.prototype.addHotspot = function() {
-  const snells = this;
-
-  return snells.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",snells.mouseMove());
-}
-
-SnellsLaw.prototype.addIncidentArc = function() {
-  const snells = this;
-
-  const group = snells.sketch.svg
-    .append("g")
-    .attr("transform","translate(250,250)");
-
-  return group
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[3])
-    .attr("fill","none")
-    .attr("stroke-width",5)
-    .attr("d",snells.arcGenerator.startAngle(-Math.PI / 2).endAngle(0));
-}
-
-SnellsLaw.prototype.addIncidentRay = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",40)
-    .attr("y1",50)
-    .attr("x2",250)
-    .attr("y2",250)
-    .attr("stroke",d3.schemeCategory10[3])
-    .attr("stroke-width",5)
-    .attr("stroke-dasharray","15,15");
-}
-
-SnellsLaw.prototype.addNormal = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",250)
-    .attr("x2",250)
-    .attr("y1",0)
-    .attr("y2",500)
-    .attr("stroke","#999")
-    .attr("stroke-width",2)
-    .attr("stroke-dasharray","10,10");
-}
-
-SnellsLaw.prototype.addRefractedArc = function() {
-  const snells = this;
-
-  const group = snells.sketch.svg
-    .append("g")
-    .attr("transform","translate(250,250) rotate(90)");
-
-  return group
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[1])
-    .attr("fill","none")
-    .attr("stroke-width",5)
-    .attr("d",snells.arcGenerator.startAngle(Math.PI / 4).endAngle(Math.PI / 2));
-
-}
-
-SnellsLaw.prototype.addRefractedImage = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("circle")
-    .attr("r",10)
-    .attr("fill",d3.schemeCategory10[5])
-    .attr("cx",40)
-    .attr("cy",50)
-    .attr("r",0);
-}
-
-SnellsLaw.prototype.addRefractedRay = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",250)
-    .attr("x2",460)
-    .attr("y1",250)
-    .attr("y2",450)
-    .attr("stroke",d3.schemeCategory10[1])
-    .attr("stroke-width",5)
-    .attr("stroke-dasharray","15,15");
-}
-
-SnellsLaw.prototype.addSource = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("circle")
-    .attr("r",10)
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("cx",40)
-    .attr("cy",50)
-    .attr("r",0);
-}
-
-SnellsLaw.prototype.addWater = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("x",-5)
-    .attr("y",250)
-    .attr("fill",d3.schemeCategory10[0])
-    .attr("stroke",d3.schemeCategory10[5])
-    .attr("stroke-width",3)
-    .attr("stroke-dasharray","5,20");
-}
-
-SnellsLaw.prototype.defineArcGenerator = function() {
-  const snells = this;
-  return d3.arc()
-    .innerRadius(72.5)
-    .outerRadius(75);
-}
-
-SnellsLaw.prototype.highlight = function() {
-  const snells = this;
-
-  return () => {
-    snells.source
-      .transition()
-      .duration(1000)
-      .ease(d3.easeBackOut.overshoot(6))
-      .attr("r",8);
-
-    const incidentLength = snells.incidentRay
-      .node()
-      .getTotalLength();
-
-    snells.incidentRay
-      .attr("stroke-dashoffset",incidentLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-    const refractedLength = snells.refractedRay
-      .node()
-      .getTotalLength();
-
-    snells.refractedRay
-      .attr("stroke-dashoffset",refractedLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-  }
-}
-
-SnellsLaw.prototype.mouseMove = function() {
-  const snells = this;
-
-  return () => {
-    const coordinates = {
-      "x":event.offsetX,
-      "y":event.offsetY
-    };
-
-    snells
-      .updateForMouseCoordinates(coordinates);
-
-  }
-}
-
-SnellsLaw.prototype.unhighlight = function() {
-  const snells = this;
-  return () => {
-    snells.source
-      .transition()
-      .duration(250)
-      .attr("r",0);
-
-    snells.incidentRay
-      .interrupt();
-
-    snells.refractedRay
-      .interrupt();
-  }
-}
-
-SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
-  const snells = this;
-
-  if(coordinates.y >= 250) { return }
-
-  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
-
-  let incidentStart,
-    incidentEnd;
-
-  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
-  incidentStart = 0;
-
-
-  snells.source
-    .attr("cx",coordinates.x)
-    .attr("cy",coordinates.y);
-
-  snells.incidentRay
-    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
-    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
-
-  snells.incidentArc
-    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
-
-  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
-  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
-  const refractionTheta = Math.asin(sinOfSecond);
-
-  snells.refractedArc
-    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
-
-  snells.refractedRay
-    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
-    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
-
-  return snells;
-}
-
 DragSnap.prototype.dragEnd = function() {
   const snap = this;
   return () => {
@@ -3400,6 +3400,24 @@ DragSnap.prototype.dragging = function() {
   }
 }
 
+Sketch.prototype.ClickEventIs = function(callback) {
+  const sketch = this;
+  sketch.clickCallback = callback;
+  return sketch;
+}
+
+Sketch.prototype.HighlightEventIs = function(callback) {
+  const sketch = this;
+  sketch.mouseoverCallback = callback;
+  return sketch;
+}
+
+Sketch.prototype.UnhighlightEventIs = function(callback) {
+  const sketch = this;
+  sketch.mouseoutCallback = callback;
+  return sketch;
+}
+
 Sketch.prototype.AddSvg = function() {
   const sketch = this;
   sketch.svg = sketch.div
@@ -3434,24 +3452,6 @@ Sketch.prototype.unhighlight = function() {
     sketch
       .mouseoutCallback();
   }
-}
-
-Sketch.prototype.ClickEventIs = function(callback) {
-  const sketch = this;
-  sketch.clickCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.HighlightEventIs = function(callback) {
-  const sketch = this;
-  sketch.mouseoverCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.UnhighlightEventIs = function(callback) {
-  const sketch = this;
-  sketch.mouseoutCallback = callback;
-  return sketch;
 }
 
 // https://d3js.org v6.5.0 Copyright 2021 Mike Bostock
