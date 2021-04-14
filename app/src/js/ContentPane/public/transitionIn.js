@@ -19,7 +19,7 @@ ContentPane.prototype.transitionIn = function(item) {
 
 
   if(item.manifest.callback) {
-    item.manifest
+    pane.activeItem = item.manifest
       .callback(pane.containerDiv);
   }
 

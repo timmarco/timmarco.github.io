@@ -149,8 +149,7 @@ function activateSketchbook(where) {
 
 
   const item = new PortfolioItemContent(where)
-    .vimeo("524922093","app/assets/previews/sketchbookPreview.png")
-    .callUp("WATCH THE VIDEO");
+    .vimeo("524922093","app/assets/previews/sketchbookPreview.jpeg");
 
 
   allSketches
@@ -160,12 +159,6 @@ function activateSketchbook(where) {
           .SketchbookItem(sketch);
       }
     });
-  // d3.range(0,10)
-  //   .forEach((index) => {
-  //     item
-  //       .SketchbookItem(allSketches[index]);
-  //   })
-
 
   return item;
 
