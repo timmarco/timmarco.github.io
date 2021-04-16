@@ -5,7 +5,8 @@ Portfolio.prototype.registerRouter = function() {
   if(route) {
     const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
     if(matchingRoute.length == 1) {
-      portfolio.activate(matchingRoute[0]);
+      portfolio
+        .activate(matchingRoute[0],true);
     }
   }
 

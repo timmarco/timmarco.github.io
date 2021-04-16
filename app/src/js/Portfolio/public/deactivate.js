@@ -1,11 +1,12 @@
 Portfolio.prototype.deactivate = function() {
   const portfolio = this;
 
+  portfolio.isActive = false;
 
   d3.select("#back-button")
     .transition()
     .duration(250)
-    .style("left","0px")
+    .style("left","-100vw")
 
 
   const baseUrl =  window.location.href;

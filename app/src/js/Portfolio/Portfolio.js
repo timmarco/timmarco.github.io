@@ -6,6 +6,7 @@ function Portfolio() {
 
   function init() {
     portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.isActive = false;
     portfolio.itemsDiv = portfolio.addItemsDiv();
     portfolio.items = portfolio.addItems();
     portfolio.detailsBox = portfolio.addDetailsBox();
@@ -13,12 +14,8 @@ function Portfolio() {
 
     portfolio
       .registerRouter()
-      .registerHashChange();
-
-    d3.select("#back-button")
-      .on("click",() => {
-        portfolio.deactivate();
-      });
+      .registerHashChange()
+      .registerNavigation();
 
   }
 }

@@ -1,4 +1,4 @@
-DetailsBox.prototype.transitionIn = function(item) {
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
   const box = this;
 
   box
@@ -13,7 +13,7 @@ DetailsBox.prototype.transitionIn = function(item) {
     .style("left",window.innerWidth + "px")
     .style("height",itemHeight + "px")
     .transition()
-    .duration(250)
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
     .style("left",(window.innerWidth / 2) + "px");
 
 

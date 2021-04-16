@@ -1,3 +1,54 @@
+function ContentPane(portfolio) {
+  const pane = this;
+  init(portfolio);
+  return pane;
+
+  function init(portfolio) {
+    pane.parent = portfolio;
+    pane.containerDiv = pane.addContainerDiv();
+  }
+}
+
+function HeroPlayer(where,vimeoId,previewSource) {
+  const hero = this;
+  init(where,vimeoId,previewSource);
+  return hero;
+
+  function init(where,vimeoId,previewSource) {
+
+    hero.vimeoId = vimeoId;
+
+    hero.videoDiv = hero.addVideoDiv(where);
+    hero.iframeHolder = hero.addIframeHolder();
+    hero.videoLoad = hero.addVideoLoad(previewSource);
+    hero.playerOverlay = hero.addPlayerOverlay();
+    hero.messageDiv = hero.addMessageDiv();
+
+  }
+}
+
+function Portfolio() {
+  const portfolio = this;
+  init();
+  return portfolio;
+
+
+  function init() {
+    portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.isActive = false;
+    portfolio.itemsDiv = portfolio.addItemsDiv();
+    portfolio.items = portfolio.addItems();
+    portfolio.detailsBox = portfolio.addDetailsBox();
+    portfolio.contentPane = portfolio.addContentPane();
+
+    portfolio
+      .registerRouter()
+      .registerHashChange()
+      .registerNavigation();
+
+  }
+}
+
 function DetailsBox(portfolio) {
   const box = this;
   init(portfolio);
@@ -9,35 +60,6 @@ function DetailsBox(portfolio) {
     box.contentDiv = box.addContentDiv();
     box.subtitleDiv = box.addSubtitleDiv();
     box.dateDiv = box.addDateDiv();
-  }
-}
-
-function HeroPlayer(where,vimeoId,previewSource) {
-  const player = this;
-  init(where,vimeoId,previewSource);
-  return player;
-
-  function init(where,vimeoId,previewSource) {
-
-    player.vimeoId = vimeoId;
-
-    player.videoDiv = player.addVideoDiv(where);
-    player.iframeHolder = player.addIframeHolder();
-    player.videoLoad = player.addVideoLoad(previewSource);
-    player.playerOverlay = player.addPlayerOverlay();
-    player.messageDiv = player.addMessageDiv();
-
-  }
-}
-
-function ContentPane(portfolio) {
-  const pane = this;
-  init(portfolio);
-  return pane;
-
-  function init(portfolio) {
-    pane.parent = portfolio;
-    pane.containerDiv = pane.addContainerDiv();
   }
 }
 
@@ -63,31 +85,6 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
-function Portfolio() {
-  const portfolio = this;
-  init();
-  return portfolio;
-
-
-  function init() {
-    portfolio.isMobile = ("ontouchstart" in window)
-    portfolio.itemsDiv = portfolio.addItemsDiv();
-    portfolio.items = portfolio.addItems();
-    portfolio.detailsBox = portfolio.addDetailsBox();
-    portfolio.contentPane = portfolio.addContentPane();
-
-    portfolio
-      .registerRouter()
-      .registerHashChange();
-
-    d3.select("#back-button")
-      .on("click",() => {
-        portfolio.deactivate();
-      });
-
-  }
-}
-
 function PortfolioItemContent(where) {
   const content = this;
   init(where);
@@ -101,87 +98,148 @@ function PortfolioItemContent(where) {
   }
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
   return d3.select("body")
     .append("div")
-    .classed("details_box",true)
+    .classed("item-overlay",true)
+
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
-}
-
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
-}
-
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-DetailsBox.prototype.transitionIn = function(item) {
-  const box = this;
-
-  box
-    .updateContent(item);
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
+  const pane = this;
 
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
   const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
 
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px")
     .transition()
-    .duration(250)
-    .style("left",(window.innerWidth / 2) + "px");
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
 
 
-  return box;
+  if(item.manifest.callback) {
+    pane.activeItem = item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
 }
 
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
 
-  box.containerDiv
+  pane.containerDiv
     .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
+    .duration(500)
+    .style("top",window.innerHeight + "px")
     .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
+      pane.containerDiv
+        .style("display","none")
+        .html("");
     });
 
-  return box;
+  return pane;
 }
 
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
+HeroPlayer.prototype.beep = function() {
+  const hero = this;
 
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
+  cycle();
 
-  box.dateDiv
-    .html(item.manifest.circa);
+  function cycle() {
+    // hero.playerOverlay
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(750)
+    //   .on("end",cycle);
+  }
+  return hero;
+}
 
-  return box;
+HeroPlayer.prototype.load = function(loadedCallback) {
+  const hero = this;
+
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = hero.iframeHolder
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const playerInstance = new Vimeo.Player(iframe.node());
+
+  playerInstance.on("play", () => {
+
+    hero.playerOverlay
+      .transition()
+      .duration(250)
+      .style("top","100%");
+
+    hero.videoLoad
+      .style("display","none");
+
+    player
+      .setCurrentTime(0);
+
+    hero.videoLoad
+      .style("display","none");
+
+  });
+
+  iframe.on("load",() => {
+    if(loadedCallback) {
+      loadedCallback();
+    }
+  });
+
+  hero.beep();
+
+  return hero;
+}
+
+HeroPlayer.prototype.play = function() {
+  const hero = this;
+
+  
+
+  return hero;
+}
+
+HeroPlayer.prototype.pop = function() {
+  const hero = this;
+
+  return hero;
 }
 
 HeroPlayer.prototype.addIframeHolder = function() {
@@ -235,115 +293,730 @@ HeroPlayer.prototype.addVideoLoad = function(previewSource) {
 
 }
 
-HeroPlayer.prototype.beep = function() {
-  const hero = this;
+Portfolio.prototype.manifest = [
+  // {
+  //   "title":["FOREST FIRE","MODELS"],
+  //   "video":"assets/clips/forestFire.mp4",
+  //   "subtitle":"A video about agent-based models",
+  //   "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["ABOUT ME",],
+  //   "subtitle":"bio",
+  //   // "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  // {
+  //   "title":["MLB FREE AGENT","EXPLORER"],
+  //   "video":"assets/clips/freeAgents.mp4",
+  //   "screenshot":"assets/clips/freeAgents.png",
+  //   "subtitle":"A tool for assessing future performance",
+  //   "circa":"Early 2018",
+  //   "route":"free-agent-explorer",
+  //   "callback":activateFreeAgents,
+  //   "loadCallback":loadedFreeAgents
+  // },
+  {
+    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.png",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.png",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  },
+  // {
+  //   "title":["SIR/D EXPLORABLE"],
+  //   "circa":"Spring 2021",
+  //   "subtitle":"An exploration of suddenly-vital topic",
+  // }
+];
 
-  cycle();
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
 
-  function cycle() {
-    // hero.playerOverlay
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(750)
-    //   .on("end",cycle);
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
+
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
+  const portfolio = this;
+
+  portfolio.isActive = true;
+
+  console.log(instantaneous)
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
+    .style("transform","translate(0,"+yPosition+"px)");
+
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
+
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px")
+
+  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item,instantaneous);
+
+        portfolio.contentPane
+          .transitionIn(item,instantaneous);
+
+        item
+          .activate(instantaneous);
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+  portfolio.isActive = false;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","-100vw")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
   }
-  return hero;
+
+  return portfolio;
 }
 
-HeroPlayer.prototype.load = function() {
-  const hero = this;
+Portfolio.prototype.registerNavigation = function() {
+  const portfolio = this;
 
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+  d3.select("#back-button")
+    .on("click",() => {
+      portfolio
+        .deactivate();
+    });
 
-  const iframe = hero.iframeHolder
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
+  d3.select("#title")
+    .on("click",() => {
+      if(portfolio.isActive === true) {
+        portfolio
+          .deactivate();
+      }
+    });
 
-  console.log(hero.messageDiv.node());
-
-  const playerInstance = new Vimeo.Player(iframe.node());
-
-  playerInstance.on("play", () => {
-
-    hero.playerOverlay
-      .transition()
-      .duration(250)
-      .style("top","100%");
-
-    hero.videoLoad
-      .style("display","none");
-
-    player
-      .setCurrentTime(0);
-
-    hero.videoLoad
-      .style("display","none");
-
-  });
-
-  iframe.on("load",() => {
-      // hero.messageDiv
-      //   .transition()
-      //   .duration(250)
-      //   .style("opacity",1);
-  });
-
-  hero.beep();
-
-  return hero;
+  return portfolio;
 }
 
-HeroPlayer.prototype.play = function() {
-  const hero = this;
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
 
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio
+        .activate(matchingRoute[0],true);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
+}
+
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
+}
+
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
+    .append("div")
+    .classed("details_box",true)
+}
+
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
+}
+
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
+
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
+
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
+    .append("div")
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
+}
+
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.substrate
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","cover")
+      .style("margin",0)
+      .style("padding",0);
+  }
   
-
-  return hero;
+  return item.substrate
+    .append("video")
+    .attr("width","100%")
+    .attr("height",'100%')
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("object-fit","cover")
+    .style("margin",0)
+    .style("padding",0)
+    .attr("loop",true);
 }
 
-function activateFreeAgents(where) {
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
+}
+
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
+PortfolioItem.prototype.activate = function() {
+  const item = this;
+
+  item.state = "active";
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .pause();
+  }
 
 
-  return new PortfolioItemContent(where)
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
+  return item;
+}
+
+PortfolioItem.prototype.drawAttention = function() {
+  const item = this;
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .muted = true;
+
+    item.hero
+      .node()
+      .play();
+  }
+
+  item.title
+    .style("background-color",d3.schemeCategory10[2]);
+
+  item.textLayer
+    .style("transform","scale(1)")
+    .transition()
+    .ease(d3.easeQuadOut)
+    .duration(250)
+    .style("transform","scale(1.05)");
+
+  return item;
+}
+
+PortfolioItem.prototype.getActiveHeight = function() {
+  const item = this;
+  return item.textDiv.node().getBoundingClientRect().height * 1.2;
+}
+
+PortfolioItem.prototype.hide = function() {
+  const item = this;
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",0)
+
+  return item;
+}
+
+PortfolioItem.prototype.reduceFocus = function() {
+  const item = this;
+  item.containerDiv
+    // .style("filter",0.75);
+
+  item.title
+    .style("background-color","black");
+
+
 
 }
 
-function loadedFreeAgents() {
+PortfolioItem.prototype.reset = function() {
+  const item = this;
 
+  item.hero.node().pause();
+
+  item.title
+    .style("background-color","black");
+
+
+  item.textLayer
+    .transition()
+    .ease(d3.easeQuadIn)
+    .duration(125)
+    .style("transform","scale(1)");
+
+  return item;
+}
+
+PortfolioItem.prototype.show = function() {
+  const item = this;
+
+  item.state = "inactive";
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",1);
+
+  return item;
+
+}
+
+PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
+  const content = this;
+
+  const itemContainer = content.descriptionDiv
+    .append("div")
+    .classed("sketchbook-item",true);
+
+  if(manifest.type === "video") {
+
+    const url = "https://player.vimeo.com/video/"+manifest.id+"?color=000000&title=0&byline=0&portrait=0"
+
+    const videoContainer = itemContainer
+      .append("div")
+      .style("width","640px")
+      .style("height","360px");
+
+    const iframe = videoContainer
+      .append("iframe")
+      .attr("src",url)
+      .attr("allow","autoplay; fullscreen; picture-in-picture")
+      .attr("allowfullscreen","true")
+      .attr("autoplay",true)
+      .style("width","640px")
+      .style("height","360px");
+
+    const itemText = itemContainer
+      .append("div")
+      .style("margin-left","2em")
+      .style("margin-right","2em")
+      .style("height","360px")
+      .style("overflow-y","scroll");
+
+    itemText
+      .append("h2")
+      .html(manifest.title)
+
+    itemText
+      .append("div")
+      .classed("sketchbook-item-text",true)
+      .html(manifest.notes);
+  }
+
+  if(manifest.type === "interactive") {
+
+    const svgDiv = itemContainer
+      .append("div")
+      .style("width","640px")
+      .style("height","360px");
+
+    new manifest
+      .callback(svgDiv);
+
+    const itemText = itemContainer
+      .append("div")
+      .style("margin-left","2em")
+      .style("margin-right","2em")
+      .style("height","360px")
+      .style("overflow-y","scroll");
+
+    itemText
+      .append("h2")
+      .html(manifest.title)
+
+    itemText
+      .append("div")
+      .classed("sketchbook-item-text",true)
+      .html(manifest.notes);
+
+  }
+
+  return content;
+}
+
+PortfolioItemContent.prototype.callDown = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .append("div")
+    .classed("callDown",true)
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.callUp = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .append("div")
+    .classed("callUp",true)
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.div = function(html) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .html(html);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.h1 = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("h1")
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.p = function(string) {
+  const content = this;
+  content.descriptionDiv
+    .append("p")
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
+  const content = this;
+
+  content.hero = new HeroPlayer(content.videoDiv,vimeoId,previewSource);
+
+  return content;
 }
 
 function activateFittsLaw(where) {
 
-  return new PortfolioItemContent(where)
+  const content = new PortfolioItemContent(where)
     .vimeo("523023575","app/assets/previews/fittsPreview.jpeg")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='app/assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>");
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/fitts' target='_blank'><div class='callDown'>VIEW THE EXPLORABLE (OPENS A NEW TAB)</div><img src='app/assets/media/fittsScreenshot.png'/ class='link-screenshot-image''></a></div>")
+    .div("<div class='explanation-div'><h1>AN EXPLORABLE EXPLANATION</h1><p>I've long been inspired by Bret Victor's concept of <a href=\"http://worrydream.com/ExplorableExplanations/\" target=\"_blank\">Explorable Explanations</a>, which are interactive documents to encourage active reading. I wanted to try my hand at creating one of these documents in part as an exercise in anticipating and responding to how readers think about complex topics.</p></div>")
+    .div("<img src='app/assets/media/fittsNotes.jpeg' style='width:100%'  />")
+    .div("<p style='width:90%; margin:auto'>Creating an Explorable Explanation has as much in common with typical user interface design as it does with essay or textbook writing. While planning this project, I spent as much time designing and coding interactions as I did researching and writing about Fitts' Law.</p> ")
+    .div("<p style='width:90%; margin:auto; padding-top:1em; margin-bottom:3em'>Yet by the end of the project, I was struck by how similar those seemingly disparate activities actually are.</p> ")
+
+
+  return content;
 
 }
 
 function loadedFittsLaw(parent) {
+
   parent.contentPane.activeItem.hero
+    .pop()
     .load();
 }
 
@@ -353,6 +1026,7 @@ function activateStrangerThings(where) {
     .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
     .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
     .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
+    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
 
 
 }
@@ -364,7 +1038,25 @@ function loadedStrangerThings(parent) {
 
 function activateSketchbook(where) {
 
-  const allSketches = d3.shuffle([
+  const item = new PortfolioItemContent(where)
+    .vimeo("524922093","app/assets/previews/sketchbookPreview.jpeg");
+
+
+
+  return item;
+
+}
+
+function loadedSketchbook(parent) {
+  parent.contentPane.activeItem.hero
+    .load(() => {
+      loadFiveSketches();
+      moreButton
+        .style("display","block");
+    });
+
+
+  let allSketches = d3.shuffle([
     {
       "title":"Arc Countdown",
       "type":"interactive",
@@ -511,670 +1203,45 @@ function activateSketchbook(where) {
     }
   ]);
 
+  const loadFiveSketches = () => {
 
-  const item = new PortfolioItemContent(where)
-    .vimeo("524922093","app/assets/previews/sketchbookPreview.jpeg");
+    allSketches
+      .forEach((sketch,index) => {
+        if(index < 5) {
+          parent.contentPane.activeItem
+            .SketchbookItem(sketch);
 
-
-  allSketches
-    .forEach((sketch,index) => {
-      if(index < 5) {
-        item
-          .SketchbookItem(sketch);
-      }
-    });
-
-  return item;
-
-}
-
-function loadedSketchbook(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
-}
-
-ContentPane.prototype.transitionIn = function(item) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px")
-    .transition()
-    .duration(500)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    pane.activeItem = item.manifest
-      .callback(pane.containerDiv);
+          allSketches.shift();
+        }
+      });
   }
 
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
+  const moreButton = parent.contentPane.containerDiv
     .append("div")
-    .classed("item-overlay",true)
-
-}
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
+    .classed("more-sketches-button",true)
+    .style("display","none")
+    .html("+ LOAD MORE SKETCHES")
     .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.substrate
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","cover")
-      .style("margin",0)
-      .style("padding",0);
-  }
-  
-  return item.substrate
-    .append("video")
-    .attr("width","100%")
-    .attr("height",'100%')
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("object-fit","cover")
-    .style("margin",0)
-    .style("padding",0)
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
+      loadFiveSketches();
+      if(allSketches.length < 1) {
+        moreButton
+          .style("display","none");
       }
-    })
-    .html((datum) => { return datum});
-}
-
-PortfolioItem.prototype.activate = function() {
-  const item = this;
-
-  item.state = "active";
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .pause();
-  }
-
-
-  return item;
-}
-
-PortfolioItem.prototype.drawAttention = function() {
-  const item = this;
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .muted = true;
-
-    item.hero
-      .node()
-      .play();
-  }
-
-  item.title
-    .style("background-color",d3.schemeCategory10[2]);
-
-  item.textLayer
-    .style("transform","scale(1)")
-    .transition()
-    .ease(d3.easeQuadOut)
-    .duration(250)
-    .style("transform","scale(1.05)");
-
-  return item;
-}
-
-PortfolioItem.prototype.getActiveHeight = function() {
-  const item = this;
-  return item.textDiv.node().getBoundingClientRect().height * 1.2;
-}
-
-PortfolioItem.prototype.hide = function() {
-  const item = this;
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",0)
-
-  return item;
-}
-
-PortfolioItem.prototype.reduceFocus = function() {
-  const item = this;
-  item.containerDiv
-    // .style("filter",0.75);
-
-  item.title
-    .style("background-color","black");
-
-
-
-}
-
-PortfolioItem.prototype.reset = function() {
-  const item = this;
-
-  item.hero.node().pause();
-
-  item.title
-    .style("background-color","black");
-
-
-  item.textLayer
-    .transition()
-    .ease(d3.easeQuadIn)
-    .duration(125)
-    .style("transform","scale(1)");
-
-  return item;
-}
-
-PortfolioItem.prototype.show = function() {
-  const item = this;
-
-  item.state = "inactive";
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",1);
-
-  return item;
-
-}
-
-Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT ME",],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"assets/clips/freeAgents.mp4",
-  //   "screenshot":"assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing future performance",
-  //   "circa":"Early 2018",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
-  {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.png",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.png",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  },
-  // {
-  //   "title":["SIR/D EXPLORABLE"],
-  //   "circa":"Spring 2021",
-  //   "subtitle":"An exploration of suddenly-vital topic",
-  // }
-];
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
-  const content = this;
-
-  const itemContainer = content.descriptionDiv
-    .append("div")
-    .classed("sketchbook-item",true);
-
-  if(manifest.type === "video") {
-
-    const url = "https://player.vimeo.com/video/"+manifest.id+"?color=000000&title=0&byline=0&portrait=0"
-
-    const videoContainer = itemContainer
-      .append("div")
-      .style("width","640px")
-      .style("height","360px");
-
-    const iframe = videoContainer
-      .append("iframe")
-      .attr("src",url)
-      .attr("allow","autoplay; fullscreen; picture-in-picture")
-      .attr("allowfullscreen","true")
-      .attr("autoplay",true)
-      .style("width","640px")
-      .style("height","360px");
-
-    const itemText = itemContainer
-      .append("div")
-      .style("margin-left","2em")
-      .style("margin-right","2em")
-      .style("height","360px")
-      .style("overflow-y","scroll");
-
-    itemText
-      .append("h2")
-      .html(manifest.title)
-
-    itemText
-      .append("div")
-      .classed("sketchbook-item-text",true)
-      .html(manifest.notes);
-  }
-
-  if(manifest.type === "interactive") {
-
-    const svgDiv = itemContainer
-      .append("div")
-      .style("width","640px")
-      .style("height","360px");
-
-    new manifest
-      .callback(svgDiv);
-
-    const itemText = itemContainer
-      .append("div")
-      .style("margin-left","2em")
-      .style("margin-right","2em")
-      .style("height","360px")
-      .style("overflow-y","scroll");
-
-    itemText
-      .append("h2")
-      .html(manifest.title)
-
-    itemText
-      .append("div")
-      .classed("sketchbook-item-text",true)
-      .html(manifest.notes);
-
-  }
-
-  return content;
-}
-
-PortfolioItemContent.prototype.callDown = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .append("div")
-    .classed("callDown",true)
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.callUp = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .append("div")
-    .classed("callUp",true)
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.div = function(html) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .html(html);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.h1 = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("h1")
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.p = function(string) {
-  const content = this;
-  content.descriptionDiv
-    .append("p")
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
-  const content = this;
-
-  content.hero = new HeroPlayer(content.videoDiv,vimeoId,previewSource);
-
-  return content;
-}
-
-Portfolio.prototype.activate = function(selectedItem) {
-  const portfolio = this;
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,"+yPosition+"px)");
-    
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left",titleSize + "px");
-
-  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item);
-
-        portfolio.contentPane
-          .transitionIn(item);
-
-        item
-          .activate();
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","0px")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
     });
 
 
-  return portfolio;
 }
 
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
+function activateFreeAgents(where) {
+
+
+  return new PortfolioItemContent(where)
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
+
 }
 
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
+function loadedFreeAgents() {
 
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio.activate(matchingRoute[0]);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
 }
 
 function ArcCountdown(where) {
@@ -1371,23 +1438,6 @@ function RandomWalk(where) {
   }
 }
 
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
-  }
-}
-
 function SnellsLaw(where) {
   const snells = this;
   init(where);
@@ -1455,6 +1505,23 @@ function IosAudioSlider(where) {
     slider.phone = slider.addPhone();
 
 
+  }
+}
+
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
   }
 }
 
@@ -2003,6 +2070,176 @@ RadarSketch.prototype.unhighlight = function() {
   }
 }
 
+RadarSketch.prototype.addBackground = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","black");
+}
+
+RadarSketch.prototype.addBogeyGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addBogeys = function() {
+  const radar = this;
+  const bogeyCount = 10;
+
+  const bogeyPolarCoordinates = [];
+  d3.range(0,bogeyCount)
+    .forEach((index) => {
+      bogeyPolarCoordinates
+        .push({
+          "theta":d3.randomUniform(0,2*Math.PI)(),
+          "distance":d3.randomUniform(35,150)()
+        });
+    });
+
+  return radar.bogeyGroup
+    .selectAll("circle")
+    .data(bogeyPolarCoordinates)
+    .enter()
+    .append("circle")
+    .attr("r",5)
+    .attr("fill",radar.green)
+    .attr("stroke","none")
+    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
+    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
+    .attr("fill-opacity",0);
+}
+
+RadarSketch.prototype.addDefs = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("defs");
+}
+
+RadarSketch.prototype.addGroup = function() {
+  const radar = this;
+  return radar.rotateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addHotspot = function() {
+  const radar = this;
+  radar.sketch.svg
+    .append("rect")
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+RadarSketch.prototype.addPolarLines = function() {
+  const radar = this;
+  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
+  return radar.bogeyGroup
+    .selectAll(".polarLine")
+    .data(lineData)
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",(theta) => { return Math.cos(theta) * 150})
+    .attr("y1",0)
+    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","5,5")
+}
+
+RadarSketch.prototype.addRangeCircles = function() {
+  const radar = this;
+  const circleDistances = [50,100,150];
+  return radar.group
+    .selectAll(".rangeCircle")
+    .data(circleDistances)
+    .enter()
+    .append("circle")
+    .attr("fill","none")
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("r",(datum) =>{ return datum});
+
+}
+
+RadarSketch.prototype.addReticle = function() {
+  const radar = this;
+  return radar.group
+    .append("circle")
+    .attr("fill",radar.green)
+    .attr("r",5);
+}
+
+RadarSketch.prototype.addRotateGroup = function() {
+  const radar = this;
+  return radar.translateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addScanWedge = function() {
+  const radar = this;
+
+  const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(150)
+    .startAngle(0)
+    .endAngle(radar.wedgeSize * Math.PI / 180);
+
+  return radar.group
+    .append("path")
+    .attr("fill","url(#wedgeGradient)")
+    .attr("stroke","none")
+    .attr("d",arcGenerator);
+}
+
+RadarSketch.prototype.addScanLine = function() {
+  const radar = this;
+  return radar.group
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",-150)
+    .attr("stroke-width",3)
+    .attr("stroke",radar.scanLineColor);
+}
+
+RadarSketch.prototype.addTranslateGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addWedgeGradient = function() {
+  const radar = this;
+  const gradient = radar.defs
+    .append("linearGradient")
+    .attr("id","wedgeGradient")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%")
+    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
+
+  gradient
+    .append("stop")
+    .attr("offset","0%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",0)
+
+  gradient
+    .append("stop")
+    .attr("offset","100%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",1);
+
+}
+
 DragSnap.prototype.addAntsMarching = function() {
   const snap = this;
   return snap.sketch.svg
@@ -2182,176 +2419,6 @@ DragSnap.prototype.addSource = function() {
         .on("drag",snap.dragging())
         .on("end",snap.dragEnd())
     );
-}
-
-RadarSketch.prototype.addBackground = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","black");
-}
-
-RadarSketch.prototype.addBogeyGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addBogeys = function() {
-  const radar = this;
-  const bogeyCount = 10;
-
-  const bogeyPolarCoordinates = [];
-  d3.range(0,bogeyCount)
-    .forEach((index) => {
-      bogeyPolarCoordinates
-        .push({
-          "theta":d3.randomUniform(0,2*Math.PI)(),
-          "distance":d3.randomUniform(35,150)()
-        });
-    });
-
-  return radar.bogeyGroup
-    .selectAll("circle")
-    .data(bogeyPolarCoordinates)
-    .enter()
-    .append("circle")
-    .attr("r",5)
-    .attr("fill",radar.green)
-    .attr("stroke","none")
-    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
-    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
-    .attr("fill-opacity",0);
-}
-
-RadarSketch.prototype.addDefs = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("defs");
-}
-
-RadarSketch.prototype.addGroup = function() {
-  const radar = this;
-  return radar.rotateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addHotspot = function() {
-  const radar = this;
-  radar.sketch.svg
-    .append("rect")
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-RadarSketch.prototype.addPolarLines = function() {
-  const radar = this;
-  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
-  return radar.bogeyGroup
-    .selectAll(".polarLine")
-    .data(lineData)
-    .enter()
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",(theta) => { return Math.cos(theta) * 150})
-    .attr("y1",0)
-    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","5,5")
-}
-
-RadarSketch.prototype.addRangeCircles = function() {
-  const radar = this;
-  const circleDistances = [50,100,150];
-  return radar.group
-    .selectAll(".rangeCircle")
-    .data(circleDistances)
-    .enter()
-    .append("circle")
-    .attr("fill","none")
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("r",(datum) =>{ return datum});
-
-}
-
-RadarSketch.prototype.addReticle = function() {
-  const radar = this;
-  return radar.group
-    .append("circle")
-    .attr("fill",radar.green)
-    .attr("r",5);
-}
-
-RadarSketch.prototype.addRotateGroup = function() {
-  const radar = this;
-  return radar.translateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addScanWedge = function() {
-  const radar = this;
-
-  const arcGenerator = d3.arc()
-    .innerRadius(0)
-    .outerRadius(150)
-    .startAngle(0)
-    .endAngle(radar.wedgeSize * Math.PI / 180);
-
-  return radar.group
-    .append("path")
-    .attr("fill","url(#wedgeGradient)")
-    .attr("stroke","none")
-    .attr("d",arcGenerator);
-}
-
-RadarSketch.prototype.addScanLine = function() {
-  const radar = this;
-  return radar.group
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",-150)
-    .attr("stroke-width",3)
-    .attr("stroke",radar.scanLineColor);
-}
-
-RadarSketch.prototype.addTranslateGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addWedgeGradient = function() {
-  const radar = this;
-  const gradient = radar.defs
-    .append("linearGradient")
-    .attr("id","wedgeGradient")
-    .attr("x1","0%")
-    .attr("x2","100%")
-    .attr("y1","0%")
-    .attr("y2","0%")
-    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
-
-  gradient
-    .append("stop")
-    .attr("offset","0%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",0)
-
-  gradient
-    .append("stop")
-    .attr("offset","100%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",1);
-
 }
 
 RadialGroup.prototype.addBackground = function() {
@@ -2703,23 +2770,6 @@ RandomWalk.prototype.unhighlight = function() {
     randomWalk.isActive = false;
     return randomWalk;
   }
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
 }
 
 SnellsLaw.prototype.highlight = function() {
@@ -3320,6 +3370,23 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
 
 
   return slider;
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
 }
 
 DragSnap.prototype.dragEnd = function() {

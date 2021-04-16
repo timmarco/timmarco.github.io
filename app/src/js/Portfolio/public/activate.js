@@ -1,5 +1,9 @@
-Portfolio.prototype.activate = function(selectedItem) {
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
   const portfolio = this;
+
+  portfolio.isActive = true;
+
+  console.log(instantaneous)
 
   const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
@@ -7,9 +11,9 @@ Portfolio.prototype.activate = function(selectedItem) {
   const yPosition = -yTop + navbarHeight + 15;
   portfolio.itemsDiv
     .transition()
-    .duration(200)
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
     .style("transform","translate(0,"+yPosition+"px)");
-    
+
   d3.select("body")
     .style("overflow","hidden");
 
@@ -20,8 +24,13 @@ Portfolio.prototype.activate = function(selectedItem) {
 
   d3.select("#back-button")
     .transition()
-    .duration(250)
-    .style("left",titleSize + "px");
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
+
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px")
 
   // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
   portfolio.items
@@ -29,13 +38,13 @@ Portfolio.prototype.activate = function(selectedItem) {
       if(item === selectedItem) {
 
         portfolio.detailsBox
-          .transitionIn(item);
+          .transitionIn(item,instantaneous);
 
         portfolio.contentPane
-          .transitionIn(item);
+          .transitionIn(item,instantaneous);
 
         item
-          .activate();
+          .activate(instantaneous);
 
 
 

@@ -1,4 +1,4 @@
-ContentPane.prototype.transitionIn = function(item) {
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
   const pane = this;
 
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
@@ -10,7 +10,8 @@ ContentPane.prototype.transitionIn = function(item) {
     .style("display",'block')
     .style("height",paneHeight + "px")
     .transition()
-    .duration(500)
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
     .style("top",paneTop + "px")
     .on("end",() => { item.manifest.loadCallback(pane.parent) })
 

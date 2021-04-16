@@ -1,17 +1,17 @@
 function HeroPlayer(where,vimeoId,previewSource) {
-  const player = this;
+  const hero = this;
   init(where,vimeoId,previewSource);
-  return player;
+  return hero;
 
   function init(where,vimeoId,previewSource) {
 
-    player.vimeoId = vimeoId;
+    hero.vimeoId = vimeoId;
 
-    player.videoDiv = player.addVideoDiv(where);
-    player.iframeHolder = player.addIframeHolder();
-    player.videoLoad = player.addVideoLoad(previewSource);
-    player.playerOverlay = player.addPlayerOverlay();
-    player.messageDiv = player.addMessageDiv();
+    hero.videoDiv = hero.addVideoDiv(where);
+    hero.iframeHolder = hero.addIframeHolder();
+    hero.videoLoad = hero.addVideoLoad(previewSource);
+    hero.playerOverlay = hero.addPlayerOverlay();
+    hero.messageDiv = hero.addMessageDiv();
 
   }
 }
