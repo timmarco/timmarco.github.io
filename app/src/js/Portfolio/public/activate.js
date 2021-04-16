@@ -3,8 +3,6 @@ Portfolio.prototype.activate = function(selectedItem,instantaneous) {
 
   portfolio.isActive = true;
 
-  console.log(instantaneous)
-
   const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
 

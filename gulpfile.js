@@ -1,9 +1,11 @@
 const gulp = require('gulp');
 const concat = require('gulp-concat');
+const minify = require('gulp-minify');
 
 gulp.task('js',() => {
   return gulp.src(['app/src/js/**/*.js',"node_modules/d3/dist/d3.min.js","node_modules/@vimeo/player/dist/player.min.js"])
     .pipe(concat('app.js'))
+    .pipe(minify())
     .pipe(gulp.dest('app'));
 
 });
