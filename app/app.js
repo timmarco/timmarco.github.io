@@ -9,24 +9,6 @@ function ContentPane(portfolio) {
   }
 }
 
-function HeroPlayer(where,vimeoId,previewSource) {
-  const hero = this;
-  init(where,vimeoId,previewSource);
-  return hero;
-
-  function init(where,vimeoId,previewSource) {
-
-    hero.vimeoId = vimeoId;
-
-    hero.videoDiv = hero.addVideoDiv(where);
-    hero.iframeHolder = hero.addIframeHolder();
-    hero.videoLoad = hero.addVideoLoad(previewSource);
-    hero.playerOverlay = hero.addPlayerOverlay();
-    hero.messageDiv = hero.addMessageDiv();
-
-  }
-}
-
 function DetailsBox(portfolio) {
   const box = this;
   init(portfolio);
@@ -41,24 +23,20 @@ function DetailsBox(portfolio) {
   }
 }
 
-function PortfolioItem(parent,manifest) {
-  const item = this;
-  init(parent,manifest);
-  return item;
+function HeroPlayer(where,vimeoId,previewSource) {
+  const hero = this;
+  init(where,vimeoId,previewSource);
+  return hero;
 
-  function init(parent,manifest) {
-    item.state = "inactive";
+  function init(where,vimeoId,previewSource) {
 
-    item.parent = parent;
-    item.manifest = manifest;
+    hero.vimeoId = vimeoId;
 
-    item.containerDiv = item.addContainerDiv();
-    item.substrate = item.addSubstrate();
-    item.textLayer = item.addTextLayer();
-    item.textDiv = item.addTextDiv();
-    item.title = item.addTitle();
-    item.hero = item.addHero();
-    item.heroSource = item.addHeroSource();
+    hero.videoDiv = hero.addVideoDiv(where);
+    hero.iframeHolder = hero.addIframeHolder();
+    hero.videoLoad = hero.addVideoLoad(previewSource);
+    hero.playerOverlay = hero.addPlayerOverlay();
+    hero.messageDiv = hero.addMessageDiv();
 
   }
 }
@@ -85,6 +63,28 @@ function Portfolio() {
   }
 }
 
+function PortfolioItem(parent,manifest) {
+  const item = this;
+  init(parent,manifest);
+  return item;
+
+  function init(parent,manifest) {
+    item.state = "inactive";
+
+    item.parent = parent;
+    item.manifest = manifest;
+
+    item.containerDiv = item.addContainerDiv();
+    item.substrate = item.addSubstrate();
+    item.textLayer = item.addTextLayer();
+    item.textDiv = item.addTextDiv();
+    item.title = item.addTitle();
+    item.hero = item.addHero();
+    item.heroSource = item.addHeroSource();
+
+  }
+}
+
 function PortfolioItemContent(where) {
   const content = this;
   init(where);
@@ -96,14 +96,6 @@ function PortfolioItemContent(where) {
     content.videoDiv = content.addVideoDiv();
     content.descriptionDiv = content.addDescriptionDiv();
   }
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true)
-
 }
 
 ContentPane.prototype.transitionIn = function(item,instantaneous) {
@@ -152,55 +144,95 @@ ContentPane.prototype.transitionOut = function() {
   return pane;
 }
 
-HeroPlayer.prototype.addIframeHolder = function() {
-  const hero = this;
-
-  return hero.videoDiv
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
     .append("div")
-    .attr("data-role","vimeoIframe")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
+    .classed("item-overlay",true)
+
 }
 
-HeroPlayer.prototype.addMessageDiv = function() {
-  const hero = this;
-
-  return hero.playerOverlay
-    .append("img")
-    .style("left",0)
-    .style("top",0)
-    .style("width","100%")
-    .style("height","100%");
-}
-
-HeroPlayer.prototype.addPlayerOverlay = function() {
-  const hero = this;
-
-  return hero.videoDiv
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
     .append("div")
-    .classed("video-overlay",true)
-    .style("pointer-events","none");
+    .classed("details_box",true)
 }
 
-HeroPlayer.prototype.addVideoDiv = function(where) {
-  const hero = this;
-  return where
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
     .append("div")
-    .classed("content-video-container",true);
+    .classed("details_content_div",true);
 }
 
-HeroPlayer.prototype.addVideoLoad = function(previewSource) {
-  const hero = this;
-  return hero.videoDiv
-    .append("img")
-    .classed("video-overlay-image",true)
-    .style("pointer-events","none")
-    .attr("src",previewSource);
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
 
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
+
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
 }
 
 HeroPlayer.prototype.beep = function() {
@@ -293,87 +325,67 @@ HeroPlayer.prototype.pop = function() {
   return hero;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
+HeroPlayer.prototype.addIframeHolder = function() {
+  const hero = this;
+
+  return hero.videoDiv
     .append("div")
-    .classed("details_box",true)
+    .attr("data-role","vimeoIframe")
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
+HeroPlayer.prototype.addMessageDiv = function() {
+  const hero = this;
+
+  return hero.playerOverlay
+    .append("img")
+    .style("left",0)
+    .style("top",0)
+    .style("width","100%")
+    .style("height","100%");
+}
+
+HeroPlayer.prototype.addPlayerOverlay = function() {
+  const hero = this;
+
+  return hero.videoDiv
     .append("div")
-    .classed("details_content_div",true);
+    .classed("video-overlay",true)
+    .style("pointer-events","none");
 }
 
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
+HeroPlayer.prototype.addVideoDiv = function(where) {
+  const hero = this;
+  return where
     .append("div")
-    .classed("details_date",true);
+    .classed("content-video-container",true);
 }
 
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
+HeroPlayer.prototype.addVideoLoad = function(previewSource) {
+  const hero = this;
+  return hero.videoDiv
+    .append("img")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
+    .attr("src",previewSource);
+
 }
 
-DetailsBox.prototype.transitionIn = function(item,instantaneous) {
-  const box = this;
-
-  box
-    .updateContent(item);
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0; } return 250})
-    .style("left",(window.innerWidth / 2) + "px");
+function activateFreeAgents(where) {
 
 
-  return box;
+  return new PortfolioItemContent(where)
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
+
 }
 
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
+function loadedFreeAgents() {
 
-  box.containerDiv
-    .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
-    .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
-    });
-
-  return box;
-}
-
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
-
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
-
-  box.dateDiv
-    .html(item.manifest.circa);
-
-  return box;
 }
 
 function activateFittsLaw(where) {
@@ -395,6 +407,22 @@ function loadedFittsLaw(parent) {
 
   parent.contentPane.activeItem.hero
     .pop()
+    .load();
+}
+
+function activateStrangerThings(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
+    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
+    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
+    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
+
+
+}
+
+function loadedStrangerThings(parent) {
+  parent.contentPane.activeItem.hero
     .load();
 }
 
@@ -594,32 +622,269 @@ function loadedSketchbook(parent) {
 
 }
 
-function activateFreeAgents(where) {
-
-
-  return new PortfolioItemContent(where)
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='assets/media/freeAgents.png'/ class='link-screenshot-image' ></a></div>");
-
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
 }
 
-function loadedFreeAgents() {
-
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
 }
 
-function activateStrangerThings(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
-    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
-    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
-
-
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
 }
 
-function loadedStrangerThings(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
+
+Portfolio.prototype.manifest = [
+  // {
+  //   "title":["FOREST FIRE","MODELS"],
+  //   "video":"assets/clips/forestFire.mp4",
+  //   "subtitle":"A video about agent-based models",
+  //   "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["ABOUT ME",],
+  //   "subtitle":"bio",
+  //   // "circa":"Early 2021"
+  // },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  // {
+  //   "title":["MLB FREE AGENT","EXPLORER"],
+  //   "video":"assets/clips/freeAgents.mp4",
+  //   "screenshot":"assets/clips/freeAgents.png",
+  //   "subtitle":"A tool for assessing future performance",
+  //   "circa":"Early 2018",
+  //   "route":"free-agent-explorer",
+  //   "callback":activateFreeAgents,
+  //   "loadCallback":loadedFreeAgents
+  // },
+  {
+    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.jpg",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  },
+  // {
+  //   "title":["SIR/D EXPLORABLE"],
+  //   "circa":"Spring 2021",
+  //   "subtitle":"An exploration of suddenly-vital topic",
+  // }
+];
+
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
+  const portfolio = this;
+
+  portfolio.isActive = true;
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
+    .style("transform","translate(0,"+yPosition+"px)");
+
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
+
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px")
+
+  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item,instantaneous);
+
+        portfolio.contentPane
+          .transitionIn(item,instantaneous);
+
+        item
+          .activate(instantaneous);
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+  portfolio.isActive = false;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","-100vw")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerNavigation = function() {
+  const portfolio = this;
+
+  d3.select("#back-button")
+    .on("click",() => {
+      portfolio
+        .deactivate();
+    });
+
+  d3.select("#title")
+    .on("click",() => {
+      if(portfolio.isActive === true) {
+        portfolio
+          .deactivate();
+      }
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio
+        .activate(matchingRoute[0],true);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
 }
 
 PortfolioItem.prototype.addContainerDiv = function() {
@@ -823,271 +1088,6 @@ PortfolioItem.prototype.show = function() {
 
 }
 
-Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT ME",],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"assets/clips/freeAgents.mp4",
-  //   "screenshot":"assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing future performance",
-  //   "circa":"Early 2018",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
-  {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.jpg",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  },
-  // {
-  //   "title":["SIR/D EXPLORABLE"],
-  //   "circa":"Spring 2021",
-  //   "subtitle":"An exploration of suddenly-vital topic",
-  // }
-];
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-Portfolio.prototype.activate = function(selectedItem,instantaneous) {
-  const portfolio = this;
-
-  portfolio.isActive = true;
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 200})
-    .style("transform","translate(0,"+yPosition+"px)");
-
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 250})
-    .style("left","0vw");
-
-  d3.select("#back-button-span")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 300})
-    .style("padding-left",titleSize + "px")
-
-  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item,instantaneous);
-
-        portfolio.contentPane
-          .transitionIn(item,instantaneous);
-
-        item
-          .activate(instantaneous);
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-  portfolio.isActive = false;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","-100vw")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
-    });
-
-
-  return portfolio;
-}
-
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
-}
-
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerNavigation = function() {
-  const portfolio = this;
-
-  d3.select("#back-button")
-    .on("click",() => {
-      portfolio
-        .deactivate();
-    });
-
-  d3.select("#title")
-    .on("click",() => {
-      if(portfolio.isActive === true) {
-        portfolio
-          .deactivate();
-      }
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio
-        .activate(matchingRoute[0],true);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
-}
-
 PortfolioItemContent.prototype.addContainerDiv = function() {
   const content = this;
   return content.where
@@ -1280,6 +1280,30 @@ function ArcCountdown(where) {
   }
 }
 
+function BlurAttentionSketch(where) {
+  const blur = this;
+  init(where);
+  return blur;
+
+  function init(where) {
+
+    blur.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(blur.highlight())
+      .UnhighlightEventIs(blur.unhighlight())
+      .ClickEventIs(blur.click());
+
+    blur.backgroundRect = blur.addBackgroundRect();
+    blur.defs = blur.addDefs();
+    blur.filter = blur.addFilter();
+    blur.gaussian = blur.addGaussian();
+    blur.grid = blur.addGrid();
+    blur.buttonGroup = blur.addButtonGroup();
+    blur.buttons = blur.addButtons();
+
+  }
+}
+
 function DragSnap(where) {
   const snap = this;
   init(where);
@@ -1314,54 +1338,34 @@ function DragSnap(where) {
   }
 }
 
-function BlurAttentionSketch(where) {
-  const blur = this;
+function RandomWalk(where) {
+  const randomWalk = this;
   init(where);
-  return blur;
+  return randomWalk;
 
   function init(where) {
-
-    blur.sketch = new Sketch(where)
+    randomWalk.sketch = new Sketch(where)
       .AddSvg()
-      .HighlightEventIs(blur.highlight())
-      .UnhighlightEventIs(blur.unhighlight())
-      .ClickEventIs(blur.click());
+      .HighlightEventIs(randomWalk.highlight())
+      .UnhighlightEventIs(randomWalk.unhighlight());
 
-    blur.backgroundRect = blur.addBackgroundRect();
-    blur.defs = blur.addDefs();
-    blur.filter = blur.addFilter();
-    blur.gaussian = blur.addGaussian();
-    blur.grid = blur.addGrid();
-    blur.buttonGroup = blur.addButtonGroup();
-    blur.buttons = blur.addButtons();
+    randomWalk.hasStarted = false;
+    randomWalk.isActive = false;
+    randomWalk.history = [0];
+    randomWalk.steps = 0;
+    randomWalk.minValue = -10;
+    randomWalk.maxValue = 10;
+    randomWalk.binnedValues = randomWalk.defineBinnedValues();
+    randomWalk.isWalking = false;
+    randomWalk.background = randomWalk.addBackground();
+    randomWalk.walkScales = randomWalk.defineWalkScales();
+    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
+    randomWalk.xAxis = randomWalk.addXAxis();
+    randomWalk.lineGroup = randomWalk.addLineGroup();
+    randomWalk.line = randomWalk.addLine();
+    randomWalk.xAxisGroup.selectAll("text").remove();
+    randomWalk.histogram = randomWalk.addHistogram();
 
-  }
-}
-
-function RadialGroup(where) {
-  const radial = this;
-  init(where);
-  return radial;
-
-  function init(where) {
-
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
-
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
 
   }
 }
@@ -1404,34 +1408,47 @@ function RadarSketch(where) {
 
 }
 
-function RandomWalk(where) {
-  const randomWalk = this;
+function Sketch(where) {
+  const sketch = this;
   init(where);
-  return randomWalk;
+  return sketch;
 
   function init(where) {
-    randomWalk.sketch = new Sketch(where)
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
+  }
+}
+
+function RadialGroup(where) {
+  const radial = this;
+  init(where);
+  return radial;
+
+  function init(where) {
+
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
+
+    radial.sketch = new Sketch(where)
       .AddSvg()
-      .HighlightEventIs(randomWalk.highlight())
-      .UnhighlightEventIs(randomWalk.unhighlight());
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
 
-    randomWalk.hasStarted = false;
-    randomWalk.isActive = false;
-    randomWalk.history = [0];
-    randomWalk.steps = 0;
-    randomWalk.minValue = -10;
-    randomWalk.maxValue = 10;
-    randomWalk.binnedValues = randomWalk.defineBinnedValues();
-    randomWalk.isWalking = false;
-    randomWalk.background = randomWalk.addBackground();
-    randomWalk.walkScales = randomWalk.defineWalkScales();
-    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
-    randomWalk.xAxis = randomWalk.addXAxis();
-    randomWalk.lineGroup = randomWalk.addLineGroup();
-    randomWalk.line = randomWalk.addLine();
-    randomWalk.xAxisGroup.selectAll("text").remove();
-    randomWalk.histogram = randomWalk.addHistogram();
 
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
 
   }
 }
@@ -1468,23 +1485,6 @@ function SnellsLaw(where) {
       .updateForMouseCoordinates({"x":50,"y":40});
 
 
-  }
-}
-
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
   }
 }
 
@@ -1542,87 +1542,6 @@ ArcCountdown.prototype.defineArcScales = function() {
       .domain([0,1])
       .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
     }
-
-}
-
-ArcCountdown.prototype.addArc = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill",countdown.foregroundColor)
-    .attr("stroke","none");
-}
-
-ArcCountdown.prototype.addArcGroup = function() {
-  const countdown = this;
-  return countdown.group
-    .append("g")
-    .attr("transform","rotate(-90)");
-}
-
-ArcCountdown.prototype.addArcOutline = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill","none")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",2);
-
-}
-
-ArcCountdown.prototype.addBackground = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",countdown.backgroundColor);
-}
-
-ArcCountdown.prototype.addGroup = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,225)");
-}
-
-ArcCountdown.prototype.addHotspot = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-ArcCountdown.prototype.addText = function() {
-  const countdown = this;
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("fill",countdown.foregroundColor)
-    .attr("y",25)
-    .html("0");
-}
-
-ArcCountdown.prototype.addTextOutline = function() {
-  const countdown = this;
-
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",countdown.textOutlineWidth)
-    .attr("y",25)
-    .html("0");
 
 }
 
@@ -1713,185 +1632,85 @@ ArcCountdown.prototype.runCountdown = function() {
   }
 }
 
-DragSnap.prototype.addAntsMarching = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.antColor)
-    .attr("stroke-dasharray","10,10");
+ArcCountdown.prototype.addArc = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill",countdown.foregroundColor)
+    .attr("stroke","none");
 }
 
-DragSnap.prototype.addBackground = function() {
-  const snap = this;
-  return snap.sketch.svg
+ArcCountdown.prototype.addArcGroup = function() {
+  const countdown = this;
+  return countdown.group
+    .append("g")
+    .attr("transform","rotate(-90)");
+}
+
+ArcCountdown.prototype.addArcOutline = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill","none")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",2);
+
+}
+
+ArcCountdown.prototype.addBackground = function() {
+  const countdown = this;
+  return countdown.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill",snap.backgroundColor);
+    .attr("fill",countdown.backgroundColor);
 }
 
-DragSnap.prototype.addConnectingLine = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.connectingColor);
-}
-
-DragSnap.prototype.addDestination = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",300)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20")
-    .attr("stroke",snap.activeColor)
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = true;
-      snap.destination
-        .attr("stroke-dasharray","0")
-        .transition()
-        .duration(250)
-        .attr("fill",snap.activeColor);
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = false;
-      snap.destination
-        .attr("stroke-dasharray","20,20")
-        .attr("fill",snap.backgroundColor)
-    })
-}
-
-DragSnap.prototype.addDragMe = function() {
-  const snap = this;
-
-  const group = snap.sketch.svg
+ArcCountdown.prototype.addGroup = function() {
+  const countdown = this;
+  return countdown.sketch.svg
     .append("g")
-    .attr("transform","translate(200,125)")
-    .attr("opacity",0);
+    .attr("transform","translate(320,225)");
+}
 
-  group
+ArcCountdown.prototype.addHotspot = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+ArcCountdown.prototype.addText = function() {
+  const countdown = this;
+  return countdown.group
     .append("text")
     .attr("text-anchor","middle")
     .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
+    .attr("font-size","72pt")
     .attr("font-family","Oswald")
-    .attr("font-weight",600)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",4)
-    .html("&larr; Drag!");
+    .attr("font-weight","bold")
+    .attr("fill",countdown.foregroundColor)
+    .attr("y",25)
+    .html("0");
+}
 
-  group
+ArcCountdown.prototype.addTextOutline = function() {
+  const countdown = this;
+
+  return countdown.group
     .append("text")
     .attr("text-anchor","middle")
     .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
+    .attr("font-size","72pt")
     .attr("font-family","Oswald")
-    .attr("fill",snap.activeColor)
-    .attr("font-weight",600)
-    .attr("stroke","none")
-    .html("&larr; Drag!");
+    .attr("font-weight","bold")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",countdown.textOutlineWidth)
+    .attr("y",25)
+    .html("0");
 
-  return group;
-}
-
-DragSnap.prototype.addFalseTargets = function() {
-  const snap = this;
-
-  const first = snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",125)
-    .attr("data-x",400)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  const second = snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",300)
-    .attr("data-x",100)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  first
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return };
-      const startX = 400;
-      const endX = startX + 20;
-      const backX = startX - 40;
-      first
-        .transition()
-        .duration(150)
-        .attr("cx",endX)
-        .transition()
-        .duration(225)
-        .attr("cx",backX)
-        .transition()
-        .duration(100)
-        .attr("cx",startX)
-    });
-
-
-    second
-      .on("mouseover",() => {
-        if(snap.isDragging == false) { return };
-        const startX = 400;
-        const endX = startX + 20;
-        const backX = startX - 40;
-        second
-          .transition()
-          .duration(150)
-          .attr("cy",endX)
-          .transition()
-          .duration(225)
-          .attr("cy",backX)
-          .transition()
-          .duration(100)
-          .attr("cy",startX)
-      });
-
-}
-
-DragSnap.prototype.addSource = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",125)
-    .attr("r",50)
-    .attr("fill",snap.activeColor)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",5)
-    .on("mouseover",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .transition()
-        .duration(350)
-        .ease(d3.easeBackOut.overshoot(100))
-        .attr("r",50.1)
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .attr("r",50);
-    })
-    .call(
-      d3.drag()
-        .on("start",snap.dragStart())
-        .on("drag",snap.dragging())
-        .on("end",snap.dragEnd())
-    );
 }
 
 BlurAttentionSketch.prototype.addBackgroundRect = function() {
@@ -2176,191 +1995,349 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   }
 }
 
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
+RandomWalk.prototype.addHistogram = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
     .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("stroke","black")
+    .attr("stroke-width",2);
+}
+
+RandomWalk.prototype.defineBinnedValues = function() {
+  const randomWalk = this;
+  const binnedValues = {};
+  d3.range(-10,11)
+    .forEach((value) => {
+      binnedValues[value] = 0;
     });
+  return binnedValues;
 }
 
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
+RandomWalk.prototype.defineWalkScales = function() {
+  const randomwWalk = this;
+  const scales = {};
+
+  scales.x = d3.scaleLinear()
+    .domain([0,100])
+    .range([25,500]);
+
+  scales.histogram = d3.scaleLinear()
+    .domain([0,1])
+    .range([515,550]);
+
+  scales.y = d3.scaleLinear()
+    .domain([-10,10])
+    .range([335,25]);
+
+  return scales;
+}
+
+DragSnap.prototype.addAntsMarching = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.antColor)
+    .attr("stroke-dasharray","10,10");
+}
+
+DragSnap.prototype.addBackground = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",snap.backgroundColor);
+}
+
+DragSnap.prototype.addConnectingLine = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("line")
+    .attr("stroke",snap.connectingColor);
+}
+
+DragSnap.prototype.addDestination = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",300)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20")
+    .attr("stroke",snap.activeColor)
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = true;
+      snap.destination
+        .attr("stroke-dasharray","0")
+        .transition()
+        .duration(250)
+        .attr("fill",snap.activeColor);
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = false;
+      snap.destination
+        .attr("stroke-dasharray","20,20")
+        .attr("fill",snap.backgroundColor)
+    })
+}
+
+DragSnap.prototype.addDragMe = function() {
+  const snap = this;
+
+  const group = snap.sketch.svg
+    .append("g")
+    .attr("transform","translate(200,125)")
+    .attr("opacity",0);
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight",600)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",4)
+    .html("&larr; Drag!");
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("fill",snap.activeColor)
+    .attr("font-weight",600)
+    .attr("stroke","none")
+    .html("&larr; Drag!");
+
+  return group;
+}
+
+DragSnap.prototype.addFalseTargets = function() {
+  const snap = this;
+
+  const first = snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",125)
+    .attr("data-x",400)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  const second = snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",300)
+    .attr("data-x",100)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  first
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return };
+      const startX = 400;
+      const endX = startX + 20;
+      const backX = startX - 40;
+      first
+        .transition()
+        .duration(150)
+        .attr("cx",endX)
+        .transition()
+        .duration(225)
+        .attr("cx",backX)
+        .transition()
+        .duration(100)
+        .attr("cx",startX)
+    });
 
 
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
+    second
+      .on("mouseover",() => {
+        if(snap.isDragging == false) { return };
+        const startX = 400;
+        const endX = startX + 20;
+        const backX = startX - 40;
+        second
+          .transition()
+          .duration(150)
+          .attr("cy",endX)
+          .transition()
+          .duration(225)
+          .attr("cy",backX)
+          .transition()
+          .duration(100)
+          .attr("cy",startX)
       });
 
+}
 
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+DragSnap.prototype.addSource = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",125)
+    .attr("r",50)
+    .attr("fill",snap.activeColor)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",5)
+    .on("mouseover",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .transition()
+        .duration(350)
+        .ease(d3.easeBackOut.overshoot(100))
+        .attr("r",50.1)
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .attr("r",50);
+    })
+    .call(
+      d3.drag()
+        .on("start",snap.dragStart())
+        .on("drag",snap.dragging())
+        .on("end",snap.dragEnd())
+    );
+}
 
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
+RandomWalk.prototype.highlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = true;
+    randomWalk
+      .seedWalk();
+    return randomWalk;
   }
 }
 
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
+RandomWalk.prototype.seedWalk = function() {
+  const randomWalk = this;
 
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
+  if(!randomWalk.isActive) { return }
+  const value = Math.random();
+  const stepChange = value < 0.5 ? 1 : - 1;
+  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
+
+  randomWalk.steps += 1;
+
+  if(newValue < randomWalk.minValue) {
+    randomWalk.minValue = newValue
+  }
+
+  if(newValue > randomWalk.maxValue) {
+    randomWalk.maxValue = newValue;
+  }
+
+  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
+
+  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
+    randomWalk.binnedValues[bound] = 0;
+    randomWalk.binnedValues[-bound] = 0;
+  }
+
+  randomWalk.binnedValues[newValue] += 1;
+
+  randomWalk.walkScales.histogram
+    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
+
+  const histogramGenerator = d3.area()
+    .x0((datum) => {
+      return randomWalk.walkScales.histogram(0)
+    })
+    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
+    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
+
+  randomWalk.histogram
+    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
+
+  randomWalk.walkScales.y
+    .domain([-bound,bound]);
+
+
+  if(randomWalk.history.length == 100) {
+    randomWalk.history
+      .shift();
+  }
+
+  randomWalk.history
+    .push(newValue);
+
+  const lineGenerator = d3.line()
+    .x((datum,index) => { return randomWalk.walkScales.x(index)})
+    .y((datum) => { return randomWalk.walkScales.y(datum)});
+
+
+  randomWalk.line
+    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
+    .transition()
+    .duration(10)
+    .attr("d",lineGenerator(randomWalk.history))
+    .on("end",() => {
+      randomWalk.seedWalk();
+    });
+
+
+}
+
+RandomWalk.prototype.unhighlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = false;
+    return randomWalk;
   }
 }
 
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
+RandomWalk.prototype.addBackground = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
 
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
+RandomWalk.prototype.addLine = function() {
+  const randomWalk = this;
+  return randomWalk.lineGroup
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("fill","none")
+    .attr("stroke-width",3);
+}
+
+RandomWalk.prototype.addLineGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g");
+}
+
+RandomWalk.prototype.addXAxis = function() {
+  const randomWalk = this;
+  const axis = d3.axisBottom(randomWalk.walkScales.x);
+  randomWalk.xAxisGroup
+    .call(axis);
+  return axis;
+}
+
+RandomWalk.prototype.addXAxisGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g")
+    .attr("transform","translate(0,180)");
 }
 
 RadarSketch.prototype.addBackground = function() {
@@ -2606,168 +2583,208 @@ RadarSketch.prototype.unhighlight = function() {
   }
 }
 
-RandomWalk.prototype.addHistogram = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("path")
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("stroke","black")
-    .attr("stroke-width",2);
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
 }
 
-RandomWalk.prototype.defineBinnedValues = function() {
-  const randomWalk = this;
-  const binnedValues = {};
-  d3.range(-10,11)
-    .forEach((value) => {
-      binnedValues[value] = 0;
-    });
-  return binnedValues;
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
 }
 
-RandomWalk.prototype.defineWalkScales = function() {
-  const randomwWalk = this;
-  const scales = {};
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
 
-  scales.x = d3.scaleLinear()
-    .domain([0,100])
-    .range([25,500]);
 
-  scales.histogram = d3.scaleLinear()
-    .domain([0,1])
-    .range([515,550]);
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
 
-  scales.y = d3.scaleLinear()
-    .domain([-10,10])
-    .range([335,25]);
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
 
-  return scales;
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
 }
 
-RandomWalk.prototype.addBackground = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("rect")
-    .attr("fill","#eee")
     .attr("width",640)
-    .attr("height",360);
+    .attr("height",360)
+    .attr("fill","url(#background)");
+
 }
 
-RandomWalk.prototype.addLine = function() {
-  const randomWalk = this;
-  return randomWalk.lineGroup
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("fill","none")
-    .attr("stroke-width",3);
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
+    .append("circle")
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
 }
 
-RandomWalk.prototype.addLineGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g");
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("defs");
 }
 
-RandomWalk.prototype.addXAxis = function() {
-  const randomWalk = this;
-  const axis = d3.axisBottom(randomWalk.walkScales.x);
-  randomWalk.xAxisGroup
-    .call(axis);
-  return axis;
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
 }
 
-RandomWalk.prototype.addXAxisGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
     .append("g")
-    .attr("transform","translate(0,180)");
+    .attr("transform","translate(320,180)");
 }
 
-RandomWalk.prototype.highlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = true;
-    randomWalk
-      .seedWalk();
-    return randomWalk;
-  }
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
 }
 
-RandomWalk.prototype.seedWalk = function() {
-  const randomWalk = this;
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
 
-  if(!randomWalk.isActive) { return }
-  const value = Math.random();
-  const stepChange = value < 0.5 ? 1 : - 1;
-  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
-
-  randomWalk.steps += 1;
-
-  if(newValue < randomWalk.minValue) {
-    randomWalk.minValue = newValue
-  }
-
-  if(newValue > randomWalk.maxValue) {
-    randomWalk.maxValue = newValue;
-  }
-
-  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
-
-  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
-    randomWalk.binnedValues[bound] = 0;
-    randomWalk.binnedValues[-bound] = 0;
-  }
-
-  randomWalk.binnedValues[newValue] += 1;
-
-  randomWalk.walkScales.histogram
-    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
-
-  const histogramGenerator = d3.area()
-    .x0((datum) => {
-      return randomWalk.walkScales.histogram(0)
-    })
-    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
-    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
-
-  randomWalk.histogram
-    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
-
-  randomWalk.walkScales.y
-    .domain([-bound,bound]);
-
-
-  if(randomWalk.history.length == 100) {
-    randomWalk.history
-      .shift();
-  }
-
-  randomWalk.history
-    .push(newValue);
-
-  const lineGenerator = d3.line()
-    .x((datum,index) => { return randomWalk.walkScales.x(index)})
-    .y((datum) => { return randomWalk.walkScales.y(datum)});
-
-
-  randomWalk.line
-    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
-    .transition()
-    .duration(10)
-    .attr("d",lineGenerator(randomWalk.history))
-    .on("end",() => {
-      randomWalk.seedWalk();
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
     });
-
-
-}
-
-RandomWalk.prototype.unhighlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = false;
-    return randomWalk;
-  }
 }
 
 SnellsLaw.prototype.addBackground = function() {
@@ -3006,23 +3023,6 @@ SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
     .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
 
   return snells;
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
 }
 
 IosAudioSlider.prototype.addBackground = function() {
@@ -3527,18 +3527,6 @@ Sketch.prototype.UnhighlightEventIs = function(callback) {
   return sketch;
 }
 
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
-  return sketch;
-}
-
 Sketch.prototype.click = function() {
   const sketch = this;
   return () => {
@@ -3561,6 +3549,18 @@ Sketch.prototype.unhighlight = function() {
     sketch
       .mouseoutCallback();
   }
+}
+
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
 }
 
 // https://d3js.org v6.5.0 Copyright 2021 Mike Bostock
