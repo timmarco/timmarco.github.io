@@ -5,8 +5,8 @@
   position:relative;
   display:block;
   overflow:hidden;
-  margin-top:2em;
-  margin-bottom:2em;
+  margin-top:4em;
+  margin-bottom:4em;
   border:3px solid rgb(60,144,60);
   box-shadow:5px 5px 8px rgba(0,0,0,0.25);
 }
