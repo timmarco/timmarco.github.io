@@ -287,11 +287,22 @@ p {
   padding-bottom:0.125em;
 }
 
-.portfolio-item {
-  max-height:25vw;
-  overflow:hidden;
-  position:relative;
-  cursor:pointer;
+@media (orientation: portrait) {
+  .portfolio-item {
+    max-height:25vw;
+    overflow:hidden;
+    position:relative;
+    cursor:pointer;
+  }
+}
+
+@media (orientation: landscape) {
+  .portfolio-item {
+    max-height:12.5vw;
+    overflow:hidden;
+    position:relative;
+    cursor:pointer;
+  }
 }
 
 #portfolio-items {
