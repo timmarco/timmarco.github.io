@@ -42,7 +42,7 @@ Portfolio.prototype.manifest = [
   {
     "title":["MY","SKETCHBOOK"],
     "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.png",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
     "preview":"app/assets/previews/sketchbookPreview.png",
     "subtitle":"A collection of design and interaction experiments",
     "circa":"2017-Ongoing",
@@ -53,7 +53,7 @@ Portfolio.prototype.manifest = [
   {
     "title":["DIVING DEEP","INTO FITTS' LAW"],
     "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.png",
+    "screenshot":"app/assets/clips/fitts.jpg",
     "preview":"app/assets/previews/fittsPreview.png",
     "subtitle":"An Explorable Explanation about human-computer interaction",
     "circa":"November 2018",
