@@ -7,7 +7,7 @@ function loadedSketchbook(parent) {
     });
 
 
-  let allSketches = d3.shuffle([
+  let allSketches = [
     {
       "title":"Arc Countdown",
       "type":"interactive",
@@ -19,12 +19,6 @@ function loadedSketchbook(parent) {
       "type":"interactive",
       "notes":"A test of using SVG filters to simulate camera depth and bokeh effects.<br/><br/><strong>Mouseover the letters to see the effect.</strong>",
       "callback":BlurAttentionSketch
-    },
-    {
-      "title":"Drag Snap",
-      "type":"interactive",
-      "notes":"A quick interaction sketch for connecting nodes in a diagram with a snapping effect and physics.",
-      "callback":DragSnap
     },
     {
       "title":"iOS Audio Slider",
@@ -49,18 +43,6 @@ function loadedSketchbook(parent) {
       "type":"interactive",
       "notes":"A random walk is a model that helps explain how entirely random processes can create illusory patterns. Here, I randomly move the value in a single dimension and plot the density of values at each possible point. <br/><br/><strong>Mouseover the scope to play the animation.</strong>",
       "callback":RandomWalk
-    },
-    {
-      "title":"Snell's Law",
-      "type":"interactive",
-      "notes":"A simple simulation of Snell's Law, which describes how rays of light are refracted at an interface between two media.<br/><br/><strong>Use your mouse to see how the rays refract through different media.</strong>",
-      "callback":SnellsLaw
-    },
-    {
-      "title":"Indices of Refraction",
-      "id":"514442847",
-      "type":"video",
-      "notes":"This was a simple test of Radeon's ProRender software in Blender. I wanted to see how the varying the index of refraction of glass and glass-like materials would impact a render."
     },
     {
       "title":"Willow Tree Test",
@@ -152,7 +134,37 @@ function loadedSketchbook(parent) {
       "type":"video",
       "notes":"A fully-rendered fluid simulation using Radeon Pro Render"
     }
-  ]);
+  ];
+
+  // HIDE NON-MOBILE FRIENDLY ONES
+  if(parent.isMobile === false) {
+    allSketches.push({
+      "title":"Snell's Law",
+      "type":"interactive",
+      "notes":"A simple simulation of Snell's Law, which describes how rays of light are refracted at an interface between two media.<br/><br/><strong>Use your mouse to see how the rays refract through different media.</strong>",
+      "callback":SnellsLaw
+    });
+
+
+    allSketches.push({
+      "title":"Indices of Refraction",
+      "id":"514442847",
+      "type":"video",
+      "notes":"This was a simple test of Radeon's ProRender software in Blender. I wanted to see how the varying the index of refraction of glass and glass-like materials would impact a render."
+    });
+
+
+    allSketches.push({
+      "title":"Drag Snap",
+      "type":"interactive",
+      "notes":"A quick interaction sketch for connecting nodes in a diagram with a snapping effect and physics.",
+      "callback":DragSnap
+    });
+
+  }
+
+
+  allSketches = d3.shuffle(allSketches);
 
   const loadFiveSketches = () => {
 
@@ -162,10 +174,26 @@ function loadedSketchbook(parent) {
           parent.contentPane.activeItem
             .SketchbookItem(sketch);
 
-          allSketches.shift();
+          allSketches
+            .shift();
         }
       });
   }
+
+  const loadingHeight = d3.select("#sketchbookLoading")
+    .node()
+    .getBoundingClientRect()
+    .height;
+
+  d3.select("#sketchbookLoading")
+    .style("opacity",1)
+    .style("min-height","0")
+    .style("height",loadingHeight + "px")
+    .transition()
+    .delay(500)
+    .duration(1000)
+    .style("height","0px")
+    .style("opacity",0)
 
   const moreButton = parent.contentPane.containerDiv
     .append("div")
