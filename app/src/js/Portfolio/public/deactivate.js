@@ -2,6 +2,8 @@ Portfolio.prototype.deactivate = function() {
   const portfolio = this;
 
   portfolio.isActive = false;
+  portfolio
+    .resetMetadata();
 
   d3.select("#back-button")
     .transition()

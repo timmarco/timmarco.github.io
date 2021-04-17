@@ -6,6 +6,8 @@ function Portfolio() {
 
   function init() {
     portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.titleTag = d3.select("title");
+    portfolio.metaDescription = d3.select("head").append("meta").attr("name","description");
     portfolio.isActive = false;
     portfolio.itemsDiv = portfolio.addItemsDiv();
     portfolio.items = portfolio.addItems();
@@ -15,7 +17,8 @@ function Portfolio() {
     portfolio
       .registerRouter()
       .registerHashChange()
-      .registerNavigation();
+      .registerNavigation()
+      .resetMetadata();
 
   }
 }

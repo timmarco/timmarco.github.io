@@ -30,6 +30,8 @@ Portfolio.prototype.manifest = [
   // },
   {
     "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
+    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
     "video":"app/assets/clips/strangerThings.mp4",
     "screenshot":"app/assets/clips/strangerThings.png",
     "preview":"app/assets/previews/strangerThingsPreview.png",
@@ -41,6 +43,8 @@ Portfolio.prototype.manifest = [
   },
   {
     "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
     "video":"app/assets/clips/sketchbook.mp4",
     "screenshot":"app/assets/clips/sketchbook.jpg",
     "preview":"app/assets/previews/sketchbookPreview.png",
@@ -52,6 +56,8 @@ Portfolio.prototype.manifest = [
   },
   {
     "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
+    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
     "video":"app/assets/clips/fitts.mp4",
     "screenshot":"app/assets/clips/fitts.jpg",
     "preview":"app/assets/previews/fittsPreview.png",
@@ -60,10 +66,5 @@ Portfolio.prototype.manifest = [
     "callback":activateFittsLaw,
     "route":"fitts-law",
     "loadCallback":loadedFittsLaw
-  },
-  // {
-  //   "title":["SIR/D EXPLORABLE"],
-  //   "circa":"Spring 2021",
-  //   "subtitle":"An exploration of suddenly-vital topic",
-  // }
+  }
 ];

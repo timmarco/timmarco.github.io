@@ -2,6 +2,8 @@ Portfolio.prototype.activate = function(selectedItem,instantaneous) {
   const portfolio = this;
 
   portfolio.isActive = true;
+  portfolio
+    .updateMetadata(selectedItem.manifest);
 
   const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
@@ -28,9 +30,8 @@ Portfolio.prototype.activate = function(selectedItem,instantaneous) {
   d3.select("#back-button-span")
     .transition()
     .duration(() => { if(instantaneous === true) { return 0 } return 300})
-    .style("padding-left",titleSize + "px")
+    .style("padding-left",titleSize + "px");
 
-  // TODO: THIS SHOULD BE IN ITEM.ACTIVATE!
   portfolio.items
     .forEach((item) => {
       if(item === selectedItem) {
