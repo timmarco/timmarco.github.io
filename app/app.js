@@ -1,14 +1,3 @@
-function ContentPane(portfolio) {
-  const pane = this;
-  init(portfolio);
-  return pane;
-
-  function init(portfolio) {
-    pane.parent = portfolio;
-    pane.containerDiv = pane.addContainerDiv();
-  }
-}
-
 function DetailsBox(portfolio) {
   const box = this;
   init(portfolio);
@@ -66,6 +55,17 @@ function Portfolio() {
   }
 }
 
+function ContentPane(portfolio) {
+  const pane = this;
+  init(portfolio);
+  return pane;
+
+  function init(portfolio) {
+    pane.parent = portfolio;
+    pane.containerDiv = pane.addContainerDiv();
+  }
+}
+
 function PortfolioItemContent(where) {
   const content = this;
   init(where);
@@ -102,62 +102,32 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
   return d3.select("body")
     .append("div")
-    .classed("item-overlay",true);
-
+    .classed("details_box",true)
 }
 
-ContentPane.prototype.transitionIn = function(item,instantaneous) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px");
-
-  pane.containerDiv.node().scrollTop = "0px";
-
-  pane.containerDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0;} return 250})
-    .ease(d3.easeQuadIn)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    pane.activeItem = item.manifest
-      .callback(pane.containerDiv);
-  }
-
-
-  return pane;
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
 }
 
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
 
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
 }
 
 DetailsBox.prototype.transitionIn = function(item,instantaneous) {
@@ -215,44 +185,156 @@ DetailsBox.prototype.updateContent = function(item) {
   return box;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
+HeroPlayer.prototype.addIframeHolder = function() {
+  const hero = this;
+
+  return hero.videoDiv
     .append("div")
-    .classed("details_box",true)
+    .attr("data-role","vimeoIframe")
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
+HeroPlayer.prototype.addMessageDiv = function() {
+  const hero = this;
+
+  return hero.playerOverlay
+    .append("img")
+    .style("left",0)
+    .style("top",0)
+    .style("width","100%")
+    .style("height","100%");
+}
+
+HeroPlayer.prototype.addPlayerOverlay = function() {
+  const hero = this;
+
+  return hero.videoDiv
     .append("div")
-    .classed("details_content_div",true);
+    .classed("video-overlay",true)
+    .style("pointer-events","none");
 }
 
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
+HeroPlayer.prototype.addVideoDiv = function(where) {
+  const hero = this;
+  return where
     .append("div")
-    .classed("details_date",true);
+    .classed("content-video-container",true);
 }
 
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-function activateFreeAgents(where) {
-
-
-  return new PortfolioItemContent(where)
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>");
+HeroPlayer.prototype.addVideoLoad = function(previewSource) {
+  const hero = this;
+  return hero.videoDiv
+    .append("img")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
+    .attr("src",previewSource);
 
 }
 
-function loadedFreeAgents() {
+HeroPlayer.prototype.beep = function() {
+  const hero = this;
 
+  cycle();
+
+  function cycle() {
+    // hero.playerOverlay
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(750)
+    //   .on("end",cycle);
+  }
+  return hero;
+}
+
+HeroPlayer.prototype.load = function(loadedCallback) {
+  const hero = this;
+
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = hero.iframeHolder
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const playerInstance = new Vimeo.Player(iframe.node());
+
+  playerInstance.on("play", () => {
+
+    hero.playerOverlay
+      .transition()
+      .duration(250)
+      .style("top","100%");
+
+    hero.videoLoad
+      .style("display","none");
+
+    player
+      .setCurrentTime(0);
+
+    hero.videoLoad
+      .style("display","none");
+
+  });
+
+  iframe.on("load",() => {
+    if(loadedCallback) {
+      loadedCallback();
+    }
+  });
+
+  hero.beep();
+
+  return hero;
+}
+
+HeroPlayer.prototype.play = function() {
+  const hero = this;
+
+  
+
+  return hero;
+}
+
+HeroPlayer.prototype.pop = function() {
+  const hero = this;
+
+  return hero;
+}
+
+function activateAboutMe(where) {
+  const content = new PortfolioItemContent(where)
+    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[3]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
+
+
+}
+
+function loadedAboutMe() {
+  console.log("~ Loaded About Me ~");
 }
 
 function activateFittsLaw(where) {
@@ -275,6 +357,18 @@ function loadedFittsLaw(parent) {
   parent.contentPane.activeItem.hero
     .pop()
     .load();
+}
+
+function activateFreeAgents(where) {
+
+
+  return new PortfolioItemContent(where)
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>");
+
+}
+
+function loadedFreeAgents() {
+
 }
 
 function activateSketchbook(where) {
@@ -588,147 +682,6 @@ function loadedStrangerThings(parent) {
     .load();
 }
 
-HeroPlayer.prototype.addIframeHolder = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .attr("data-role","vimeoIframe")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-}
-
-HeroPlayer.prototype.addMessageDiv = function() {
-  const hero = this;
-
-  return hero.playerOverlay
-    .append("img")
-    .style("left",0)
-    .style("top",0)
-    .style("width","100%")
-    .style("height","100%");
-}
-
-HeroPlayer.prototype.addPlayerOverlay = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .classed("video-overlay",true)
-    .style("pointer-events","none");
-}
-
-HeroPlayer.prototype.addVideoDiv = function(where) {
-  const hero = this;
-  return where
-    .append("div")
-    .classed("content-video-container",true);
-}
-
-HeroPlayer.prototype.addVideoLoad = function(previewSource) {
-  const hero = this;
-  return hero.videoDiv
-    .append("img")
-    .classed("video-overlay-image",true)
-    .style("pointer-events","none")
-    .attr("src",previewSource);
-
-}
-
-HeroPlayer.prototype.beep = function() {
-  const hero = this;
-
-  cycle();
-
-  function cycle() {
-    // hero.playerOverlay
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(750)
-    //   .on("end",cycle);
-  }
-  return hero;
-}
-
-HeroPlayer.prototype.load = function(loadedCallback) {
-  const hero = this;
-
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
-
-  const iframe = hero.iframeHolder
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-
-  const playerInstance = new Vimeo.Player(iframe.node());
-
-  playerInstance.on("play", () => {
-
-    hero.playerOverlay
-      .transition()
-      .duration(250)
-      .style("top","100%");
-
-    hero.videoLoad
-      .style("display","none");
-
-    player
-      .setCurrentTime(0);
-
-    hero.videoLoad
-      .style("display","none");
-
-  });
-
-  iframe.on("load",() => {
-    if(loadedCallback) {
-      loadedCallback();
-    }
-  });
-
-  hero.beep();
-
-  return hero;
-}
-
-HeroPlayer.prototype.play = function() {
-  const hero = this;
-
-  
-
-  return hero;
-}
-
-HeroPlayer.prototype.pop = function() {
-  const hero = this;
-
-  return hero;
-}
-
 Portfolio.prototype.manifest = [
   // {
   //   "title":["FOREST FIRE","MODELS"],
@@ -759,6 +712,18 @@ Portfolio.prototype.manifest = [
   //   "callback":activateFreeAgents,
   //   "loadCallback":loadedFreeAgents
   // },
+  {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
   {
     "title":["STRANGER THINGS","TITLE RE-CREATION"],
     "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
@@ -1022,6 +987,84 @@ Portfolio.prototype.updateMetadata = function(manifest) {
   return portfolio;
 }
 
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true);
+
+}
+
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px");
+
+  pane.containerDiv.node().scrollTop = "0px";
+
+  pane.containerDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    pane.activeItem = item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
+}
+
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
+}
+
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
   const content = this;
 
@@ -1154,26 +1197,6 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   content.hero = new HeroPlayer(content.videoDiv,vimeoId,previewSource);
 
   return content;
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
 }
 
 PortfolioItem.prototype.activate = function() {
@@ -1391,6 +1414,30 @@ PortfolioItem.prototype.addTitle = function() {
     .html((datum) => { return datum});
 }
 
+function BlurAttentionSketch(where) {
+  const blur = this;
+  init(where);
+  return blur;
+
+  function init(where) {
+
+    blur.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(blur.highlight())
+      .UnhighlightEventIs(blur.unhighlight())
+      .ClickEventIs(blur.click());
+
+    blur.backgroundRect = blur.addBackgroundRect();
+    blur.defs = blur.addDefs();
+    blur.filter = blur.addFilter();
+    blur.gaussian = blur.addGaussian();
+    blur.grid = blur.addGrid();
+    blur.buttonGroup = blur.addButtonGroup();
+    blur.buttons = blur.addButtons();
+
+  }
+}
+
 function ArcCountdown(where) {
   const countdown = this;
   init(where);
@@ -1463,58 +1510,30 @@ function DragSnap(where) {
   }
 }
 
-function BlurAttentionSketch(where) {
-  const blur = this;
+function RadialGroup(where) {
+  const radial = this;
   init(where);
-  return blur;
+  return radial;
 
   function init(where) {
 
-    blur.sketch = new Sketch(where)
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
+
+    radial.sketch = new Sketch(where)
       .AddSvg()
-      .HighlightEventIs(blur.highlight())
-      .UnhighlightEventIs(blur.unhighlight())
-      .ClickEventIs(blur.click());
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
 
-    blur.backgroundRect = blur.addBackgroundRect();
-    blur.defs = blur.addDefs();
-    blur.filter = blur.addFilter();
-    blur.gaussian = blur.addGaussian();
-    blur.grid = blur.addGrid();
-    blur.buttonGroup = blur.addButtonGroup();
-    blur.buttons = blur.addButtons();
 
-  }
-}
-
-function RandomWalk(where) {
-  const randomWalk = this;
-  init(where);
-  return randomWalk;
-
-  function init(where) {
-    randomWalk.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(randomWalk.highlight())
-      .UnhighlightEventIs(randomWalk.unhighlight());
-
-    randomWalk.hasStarted = false;
-    randomWalk.isActive = false;
-    randomWalk.history = [0];
-    randomWalk.steps = 0;
-    randomWalk.minValue = -10;
-    randomWalk.maxValue = 10;
-    randomWalk.binnedValues = randomWalk.defineBinnedValues();
-    randomWalk.isWalking = false;
-    randomWalk.background = randomWalk.addBackground();
-    randomWalk.walkScales = randomWalk.defineWalkScales();
-    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
-    randomWalk.xAxis = randomWalk.addXAxis();
-    randomWalk.lineGroup = randomWalk.addLineGroup();
-    randomWalk.line = randomWalk.addLine();
-    randomWalk.xAxisGroup.selectAll("text").remove();
-    randomWalk.histogram = randomWalk.addHistogram();
-
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
 
   }
 }
@@ -1557,6 +1576,38 @@ function RadarSketch(where) {
 
 }
 
+function RandomWalk(where) {
+  const randomWalk = this;
+  init(where);
+  return randomWalk;
+
+  function init(where) {
+    randomWalk.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(randomWalk.highlight())
+      .UnhighlightEventIs(randomWalk.unhighlight());
+
+    randomWalk.hasStarted = false;
+    randomWalk.isActive = false;
+    randomWalk.history = [0];
+    randomWalk.steps = 0;
+    randomWalk.minValue = -10;
+    randomWalk.maxValue = 10;
+    randomWalk.binnedValues = randomWalk.defineBinnedValues();
+    randomWalk.isWalking = false;
+    randomWalk.background = randomWalk.addBackground();
+    randomWalk.walkScales = randomWalk.defineWalkScales();
+    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
+    randomWalk.xAxis = randomWalk.addXAxis();
+    randomWalk.lineGroup = randomWalk.addLineGroup();
+    randomWalk.line = randomWalk.addLine();
+    randomWalk.xAxisGroup.selectAll("text").remove();
+    randomWalk.histogram = randomWalk.addHistogram();
+
+
+  }
+}
+
 function Sketch(where) {
   const sketch = this;
   init(where);
@@ -1571,69 +1622,6 @@ function Sketch(where) {
 
     sketch.div = sketch.addDiv();
     sketch.image = sketch.addImage();
-  }
-}
-
-function RadialGroup(where) {
-  const radial = this;
-  init(where);
-  return radial;
-
-  function init(where) {
-
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
-
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
-
-  }
-}
-
-function IosAudioSlider(where) {
-  const slider = this;
-  init(where);
-  return slider;
-
-  function init() {
-    slider.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(slider.runAnimation());
-
-    slider.buttonPressColor = d3.schemeCategory10[3];
-    slider.trackColor = "rgb(96,76,76)";
-    slider.valueColor = "#eee";
-
-    slider.background = slider.addBackground();
-    
-    slider.screenBackground = slider.addScreenBackground();
-
-    slider.sliderGroup = slider.addSliderGroup();
-    slider.verticalOffset = slider.addVerticalOffset();
-    slider.sliderScale = slider.addSliderScale();
-    slider.verticalScale = slider.addSliderVerticalScale();
-    slider.horizontalScale = slider.addSliderHorizontalScale();
-    slider.track = slider.addTrack();
-    slider.value = slider.addValue();
-    slider.screenClip = slider.addScreenClip();
-
-    slider.volumeUpButton = slider.addVolumeUpButton();
-    slider.volumeDownButton = slider.addVolumeDownButton();
-    slider.phone = slider.addPhone();
-
-
   }
 }
 
@@ -1672,430 +1660,38 @@ function SnellsLaw(where) {
   }
 }
 
-ArcCountdown.prototype.addArc = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill",countdown.foregroundColor)
-    .attr("stroke","none");
-}
+function IosAudioSlider(where) {
+  const slider = this;
+  init(where);
+  return slider;
 
-ArcCountdown.prototype.addArcGroup = function() {
-  const countdown = this;
-  return countdown.group
-    .append("g")
-    .attr("transform","rotate(-90)");
-}
+  function init() {
+    slider.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(slider.runAnimation());
 
-ArcCountdown.prototype.addArcOutline = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill","none")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",2);
+    slider.buttonPressColor = d3.schemeCategory10[3];
+    slider.trackColor = "rgb(96,76,76)";
+    slider.valueColor = "#eee";
 
-}
+    slider.background = slider.addBackground();
+    
+    slider.screenBackground = slider.addScreenBackground();
 
-ArcCountdown.prototype.addBackground = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",countdown.backgroundColor);
-}
+    slider.sliderGroup = slider.addSliderGroup();
+    slider.verticalOffset = slider.addVerticalOffset();
+    slider.sliderScale = slider.addSliderScale();
+    slider.verticalScale = slider.addSliderVerticalScale();
+    slider.horizontalScale = slider.addSliderHorizontalScale();
+    slider.track = slider.addTrack();
+    slider.value = slider.addValue();
+    slider.screenClip = slider.addScreenClip();
 
-ArcCountdown.prototype.addGroup = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,225)");
-}
-
-ArcCountdown.prototype.addHotspot = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-ArcCountdown.prototype.addText = function() {
-  const countdown = this;
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("fill",countdown.foregroundColor)
-    .attr("y",25)
-    .html("0");
-}
-
-ArcCountdown.prototype.addTextOutline = function() {
-  const countdown = this;
-
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",countdown.textOutlineWidth)
-    .attr("y",25)
-    .html("0");
-
-}
-
-ArcCountdown.prototype.defineArcGenerator = function() {
-  const countdown = this;
-  
-  return d3.arc()
-    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
-    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
-}
-
-ArcCountdown.prototype.defineArcScales = function() {
-  const countdown = this;
-
-  return {
-    "innerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
-    "outerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
-    }
-
-}
-
-ArcCountdown.prototype.initialize = function() {
-  const countdown = this;
-
-  countdown.arcGenerator
-    .startAngle(0)
-    .endAngle(Math.PI);
+    slider.volumeUpButton = slider.addVolumeUpButton();
+    slider.volumeDownButton = slider.addVolumeDownButton();
+    slider.phone = slider.addPhone();
 
 
-  [countdown.arc,countdown.arcOutline]
-    .forEach((arc) => {
-      arc
-        .attr("d",
-          countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(0))
-            .outerRadius(countdown.arcScales.outerRadius(0))
-        );
-    });
-
-  [countdown.textOutline,countdown.text]
-    .forEach((textElement) => {
-      textElement
-        .html(countdown.maxValue);
-    });
-}
-
-ArcCountdown.prototype.pauseCountdown = function() {
-  const countdown = this;
-
-  return () => {
-    [countdown.arc,countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .interrupt();
-      });
-
-    countdown
-      .initialize();
-  }
-}
-
-ArcCountdown.prototype.runCountdown = function() {
-  const countdown = this;
-
-  return () => {
-
-    const startValue = +countdown.text.html();
-
-    [countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .transition()
-          .duration(countdown.fullDuration)
-          .ease(countdown.easeType)
-          .textTween(numberTween())
-      });
-
-    countdown.arc
-      .transition()
-      .duration(countdown.fullDuration)
-      .ease(countdown.easeType)
-      .attrTween("d",arcTween(0));
-
-    function numberTween() {
-      return function() {
-        const interpolate = d3.interpolate(countdown.maxValue,0)
-        return function(time) {
-          return Math.floor(interpolate(time));
-        }
-      }
-    }
-
-
-    function arcTween(newAngle) {
-      return function() {
-        const interpolateValue = d3.interpolate(Math.PI,newAngle);
-        return function(time) {
-          return countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(time))
-            .outerRadius(countdown.arcScales.outerRadius(time))
-            .endAngle(interpolateValue(time))();
-        }
-      }
-    }
-
-  }
-}
-
-DragSnap.prototype.addAntsMarching = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.antColor)
-    .attr("stroke-dasharray","10,10");
-}
-
-DragSnap.prototype.addBackground = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",snap.backgroundColor);
-}
-
-DragSnap.prototype.addConnectingLine = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("line")
-    .attr("stroke",snap.connectingColor);
-}
-
-DragSnap.prototype.addDestination = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",300)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20")
-    .attr("stroke",snap.activeColor)
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = true;
-      snap.destination
-        .attr("stroke-dasharray","0")
-        .transition()
-        .duration(250)
-        .attr("fill",snap.activeColor);
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging == false) { return }
-      snap.canDrop = false;
-      snap.destination
-        .attr("stroke-dasharray","20,20")
-        .attr("fill",snap.backgroundColor)
-    })
-}
-
-DragSnap.prototype.addDragMe = function() {
-  const snap = this;
-
-  const group = snap.sketch.svg
-    .append("g")
-    .attr("transform","translate(200,125)")
-    .attr("opacity",0);
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight",600)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",4)
-    .html("&larr; Drag!");
-
-  group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","18pt")
-    .attr("font-family","Oswald")
-    .attr("fill",snap.activeColor)
-    .attr("font-weight",600)
-    .attr("stroke","none")
-    .html("&larr; Drag!");
-
-  return group;
-}
-
-DragSnap.prototype.addFalseTargets = function() {
-  const snap = this;
-
-  const first = snap.sketch.svg
-    .append("circle")
-    .attr("cx",500)
-    .attr("cy",125)
-    .attr("data-x",400)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  const second = snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",300)
-    .attr("data-x",100)
-    .attr("r",50)
-    .attr("fill",snap.backgroundColor)
-    .attr("stroke",snap.falseTargetColor)
-    .attr("stroke-width",10)
-    .attr("stroke-dasharray","20,20");
-
-  first
-    .on("mouseover",() => {
-      if(snap.isDragging == false) { return };
-      const startX = 400;
-      const endX = startX + 20;
-      const backX = startX - 40;
-      first
-        .transition()
-        .duration(150)
-        .attr("cx",endX)
-        .transition()
-        .duration(225)
-        .attr("cx",backX)
-        .transition()
-        .duration(100)
-        .attr("cx",startX)
-    });
-
-
-    second
-      .on("mouseover",() => {
-        if(snap.isDragging == false) { return };
-        const startX = 400;
-        const endX = startX + 20;
-        const backX = startX - 40;
-        second
-          .transition()
-          .duration(150)
-          .attr("cy",endX)
-          .transition()
-          .duration(225)
-          .attr("cy",backX)
-          .transition()
-          .duration(100)
-          .attr("cy",startX)
-      });
-
-}
-
-DragSnap.prototype.addSource = function() {
-  const snap = this;
-  return snap.sketch.svg
-    .append("circle")
-    .attr("cx",100)
-    .attr("cy",125)
-    .attr("r",50)
-    .attr("fill",snap.activeColor)
-    .attr("stroke",snap.connectingColor)
-    .attr("stroke-width",5)
-    .on("mouseover",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .transition()
-        .duration(350)
-        .ease(d3.easeBackOut.overshoot(100))
-        .attr("r",50.1)
-    })
-    .on("mouseout",() => {
-      if(snap.isDragging) { return }
-      snap.source
-        .attr("r",50);
-    })
-    .call(
-      d3.drag()
-        .on("start",snap.dragStart())
-        .on("drag",snap.dragging())
-        .on("end",snap.dragEnd())
-    );
-}
-
-BlurAttentionSketch.prototype.click = function() {
-  const blurAttention = this;
-  return () => {
-  }
-}
-
-BlurAttentionSketch.prototype.drawAttention = function(button) {
-  const blur = this;
-
-  blur.buttons
-    .forEach((iteratedButton) => {
-      blur.gaussian
-        .transition()
-        .duration(250)
-        .ease(d3.easeLinear)
-        .attr("stdDeviation",5);
-
-      if(button == iteratedButton) {
-        iteratedButton
-          .bringForward();
-      } else {
-        iteratedButton
-          .sendBack();
-      }
-    });
-
-}
-
-BlurAttentionSketch.prototype.highlight = function() {
-  const blur = this;
-  return () => {
-  }
-}
-
-BlurAttentionSketch.prototype.reset = function() {
-  const blur = this;
-
-  blur.buttons
-    .forEach((button) => {
-      button
-        .reset();
-
-      blur.gaussian
-        .transition()
-        .duration(200)
-        .ease(d3.easeLinear)
-        .attr("stdDeviation",0);
-    });
-}
-
-BlurAttentionSketch.prototype.unhighlight = function() {
-  const blur = this;
-  return () => {
   }
 }
 
@@ -2325,428 +1921,431 @@ BlurAttentionSketch.prototype.addGrid = function() {
   return group;
 }
 
-RandomWalk.prototype.addHistogram = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("path")
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("stroke","black")
-    .attr("stroke-width",2);
-}
-
-RandomWalk.prototype.defineBinnedValues = function() {
-  const randomWalk = this;
-  const binnedValues = {};
-  d3.range(-10,11)
-    .forEach((value) => {
-      binnedValues[value] = 0;
-    });
-  return binnedValues;
-}
-
-RandomWalk.prototype.defineWalkScales = function() {
-  const randomwWalk = this;
-  const scales = {};
-
-  scales.x = d3.scaleLinear()
-    .domain([0,100])
-    .range([25,500]);
-
-  scales.histogram = d3.scaleLinear()
-    .domain([0,1])
-    .range([515,550]);
-
-  scales.y = d3.scaleLinear()
-    .domain([-10,10])
-    .range([335,25]);
-
-  return scales;
-}
-
-RandomWalk.prototype.addBackground = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-RandomWalk.prototype.addLine = function() {
-  const randomWalk = this;
-  return randomWalk.lineGroup
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("fill","none")
-    .attr("stroke-width",3);
-}
-
-RandomWalk.prototype.addLineGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g");
-}
-
-RandomWalk.prototype.addXAxis = function() {
-  const randomWalk = this;
-  const axis = d3.axisBottom(randomWalk.walkScales.x);
-  randomWalk.xAxisGroup
-    .call(axis);
-  return axis;
-}
-
-RandomWalk.prototype.addXAxisGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g")
-    .attr("transform","translate(0,180)");
-}
-
-RandomWalk.prototype.highlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = true;
-    randomWalk
-      .seedWalk();
-    return randomWalk;
-  }
-}
-
-RandomWalk.prototype.seedWalk = function() {
-  const randomWalk = this;
-
-  if(!randomWalk.isActive) { return }
-  const value = Math.random();
-  const stepChange = value < 0.5 ? 1 : - 1;
-  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
-
-  randomWalk.steps += 1;
-
-  if(newValue < randomWalk.minValue) {
-    randomWalk.minValue = newValue
-  }
-
-  if(newValue > randomWalk.maxValue) {
-    randomWalk.maxValue = newValue;
-  }
-
-  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
-
-  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
-    randomWalk.binnedValues[bound] = 0;
-    randomWalk.binnedValues[-bound] = 0;
-  }
-
-  randomWalk.binnedValues[newValue] += 1;
-
-  randomWalk.walkScales.histogram
-    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
-
-  const histogramGenerator = d3.area()
-    .x0((datum) => {
-      return randomWalk.walkScales.histogram(0)
-    })
-    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
-    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
-
-  randomWalk.histogram
-    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
-
-  randomWalk.walkScales.y
-    .domain([-bound,bound]);
-
-
-  if(randomWalk.history.length == 100) {
-    randomWalk.history
-      .shift();
-  }
-
-  randomWalk.history
-    .push(newValue);
-
-  const lineGenerator = d3.line()
-    .x((datum,index) => { return randomWalk.walkScales.x(index)})
-    .y((datum) => { return randomWalk.walkScales.y(datum)});
-
-
-  randomWalk.line
-    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
-    .transition()
-    .duration(10)
-    .attr("d",lineGenerator(randomWalk.history))
-    .on("end",() => {
-      randomWalk.seedWalk();
-    });
-
-
-}
-
-RandomWalk.prototype.unhighlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = false;
-    return randomWalk;
-  }
-}
-
-RadarSketch.prototype.click = function() {
-  const radar = this;
+BlurAttentionSketch.prototype.click = function() {
+  const blurAttention = this;
   return () => {
   }
 }
 
-RadarSketch.prototype.highlight = function() {
-  const radar = this;
-  return () => {
-    radar
-      .singleSweep();
-  }
-}
+BlurAttentionSketch.prototype.drawAttention = function(button) {
+  const blur = this;
 
-RadarSketch.prototype.singleSweep = function() {
-  const radar = this;
+  blur.buttons
+    .forEach((iteratedButton) => {
+      blur.gaussian
+        .transition()
+        .duration(250)
+        .ease(d3.easeLinear)
+        .attr("stdDeviation",5);
 
-  radar.rotateGroup
-    .attr("transform","rotate(0)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(180)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(359.999)")
-    .ease(d3.easeLinear)
-    .on("end",() => { radar.singleSweep(); });
-
-  radar.bogeyGroup
-    .selectAll("circle")
-    .each(function(coordinates) {
-      const bogey = d3.select(this);
-      const xCoordinate = bogey.attr("cx");
-      const yCoordinate = bogey.attr("cy");
-      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
-      if(delay > 4000) {
-        delay -= 4000;
+      if(button == iteratedButton) {
+        iteratedButton
+          .bringForward();
+      } else {
+        iteratedButton
+          .sendBack();
       }
-
-      bogey
-        .transition()
-        .delay(delay)
-        .duration(0)
-        .attr("r",7)
-        .attr("fill-opacity",1)
-        .transition()
-        .ease(d3.easeQuadIn)
-        .duration(2000)
-        .attr("fill-opacity",0)
-        .attr("r",2)
     });
 
 }
 
-RadarSketch.prototype.unhighlight = function() {
-  const radar = this;
+BlurAttentionSketch.prototype.highlight = function() {
+  const blur = this;
   return () => {
-    radar.rotateGroup
-      .interrupt();
-
-    radar.bogeyGroup
-      .selectAll("circle")
-      .remove();
-
-    radar.rotateGroup
-      .attr("transform","rotate(0)");
-
-    radar.bogeys = radar.addBogeys();
   }
 }
 
-RadarSketch.prototype.addBackground = function() {
-  const radar = this;
-  return radar.sketch.svg
+BlurAttentionSketch.prototype.reset = function() {
+  const blur = this;
+
+  blur.buttons
+    .forEach((button) => {
+      button
+        .reset();
+
+      blur.gaussian
+        .transition()
+        .duration(200)
+        .ease(d3.easeLinear)
+        .attr("stdDeviation",0);
+    });
+}
+
+BlurAttentionSketch.prototype.unhighlight = function() {
+  const blur = this;
+  return () => {
+  }
+}
+
+ArcCountdown.prototype.defineArcGenerator = function() {
+  const countdown = this;
+  
+  return d3.arc()
+    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
+    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
+}
+
+ArcCountdown.prototype.defineArcScales = function() {
+  const countdown = this;
+
+  return {
+    "innerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
+    "outerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
+    }
+
+}
+
+ArcCountdown.prototype.initialize = function() {
+  const countdown = this;
+
+  countdown.arcGenerator
+    .startAngle(0)
+    .endAngle(Math.PI);
+
+
+  [countdown.arc,countdown.arcOutline]
+    .forEach((arc) => {
+      arc
+        .attr("d",
+          countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(0))
+            .outerRadius(countdown.arcScales.outerRadius(0))
+        );
+    });
+
+  [countdown.textOutline,countdown.text]
+    .forEach((textElement) => {
+      textElement
+        .html(countdown.maxValue);
+    });
+}
+
+ArcCountdown.prototype.pauseCountdown = function() {
+  const countdown = this;
+
+  return () => {
+    [countdown.arc,countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .interrupt();
+      });
+
+    countdown
+      .initialize();
+  }
+}
+
+ArcCountdown.prototype.runCountdown = function() {
+  const countdown = this;
+
+  return () => {
+
+    const startValue = +countdown.text.html();
+
+    [countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .transition()
+          .duration(countdown.fullDuration)
+          .ease(countdown.easeType)
+          .textTween(numberTween())
+      });
+
+    countdown.arc
+      .transition()
+      .duration(countdown.fullDuration)
+      .ease(countdown.easeType)
+      .attrTween("d",arcTween(0));
+
+    function numberTween() {
+      return function() {
+        const interpolate = d3.interpolate(countdown.maxValue,0)
+        return function(time) {
+          return Math.floor(interpolate(time));
+        }
+      }
+    }
+
+
+    function arcTween(newAngle) {
+      return function() {
+        const interpolateValue = d3.interpolate(Math.PI,newAngle);
+        return function(time) {
+          return countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(time))
+            .outerRadius(countdown.arcScales.outerRadius(time))
+            .endAngle(interpolateValue(time))();
+        }
+      }
+    }
+
+  }
+}
+
+ArcCountdown.prototype.addArc = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill",countdown.foregroundColor)
+    .attr("stroke","none");
+}
+
+ArcCountdown.prototype.addArcGroup = function() {
+  const countdown = this;
+  return countdown.group
+    .append("g")
+    .attr("transform","rotate(-90)");
+}
+
+ArcCountdown.prototype.addArcOutline = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill","none")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",2);
+
+}
+
+ArcCountdown.prototype.addBackground = function() {
+  const countdown = this;
+  return countdown.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill","black");
+    .attr("fill",countdown.backgroundColor);
 }
 
-RadarSketch.prototype.addBogeyGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
+ArcCountdown.prototype.addGroup = function() {
+  const countdown = this;
+  return countdown.sketch.svg
     .append("g")
-    .attr("transform","translate(300,180)");
+    .attr("transform","translate(320,225)");
 }
 
-RadarSketch.prototype.addBogeys = function() {
-  const radar = this;
-  const bogeyCount = 10;
-
-  const bogeyPolarCoordinates = [];
-  d3.range(0,bogeyCount)
-    .forEach((index) => {
-      bogeyPolarCoordinates
-        .push({
-          "theta":d3.randomUniform(0,2*Math.PI)(),
-          "distance":d3.randomUniform(35,150)()
-        });
-    });
-
-  return radar.bogeyGroup
-    .selectAll("circle")
-    .data(bogeyPolarCoordinates)
-    .enter()
-    .append("circle")
-    .attr("r",5)
-    .attr("fill",radar.green)
-    .attr("stroke","none")
-    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
-    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
-    .attr("fill-opacity",0);
-}
-
-RadarSketch.prototype.addDefs = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("defs");
-}
-
-RadarSketch.prototype.addGroup = function() {
-  const radar = this;
-  return radar.rotateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addHotspot = function() {
-  const radar = this;
-  radar.sketch.svg
+ArcCountdown.prototype.addHotspot = function() {
+  const countdown = this;
+  return countdown.sketch.svg
     .append("rect")
-    .attr("width",500)
-    .attr("height",500)
+    .attr("width",640)
+    .attr("height",360)
     .attr("fill","rgba(0,0,0,0)");
 }
 
-RadarSketch.prototype.addPolarLines = function() {
-  const radar = this;
-  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
-  return radar.bogeyGroup
-    .selectAll(".polarLine")
-    .data(lineData)
-    .enter()
+ArcCountdown.prototype.addText = function() {
+  const countdown = this;
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("fill",countdown.foregroundColor)
+    .attr("y",25)
+    .html("0");
+}
+
+ArcCountdown.prototype.addTextOutline = function() {
+  const countdown = this;
+
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",countdown.textOutlineWidth)
+    .attr("y",25)
+    .html("0");
+
+}
+
+DragSnap.prototype.addAntsMarching = function() {
+  const snap = this;
+  return snap.sketch.svg
     .append("line")
-    .attr("x1",0)
-    .attr("x2",(theta) => { return Math.cos(theta) * 150})
-    .attr("y1",0)
-    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","5,5")
+    .attr("stroke",snap.antColor)
+    .attr("stroke-dasharray","10,10");
 }
 
-RadarSketch.prototype.addRangeCircles = function() {
-  const radar = this;
-  const circleDistances = [50,100,150];
-  return radar.group
-    .selectAll(".rangeCircle")
-    .data(circleDistances)
-    .enter()
-    .append("circle")
-    .attr("fill","none")
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("r",(datum) =>{ return datum});
-
+DragSnap.prototype.addBackground = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",snap.backgroundColor);
 }
 
-RadarSketch.prototype.addReticle = function() {
-  const radar = this;
-  return radar.group
-    .append("circle")
-    .attr("fill",radar.green)
-    .attr("r",5);
-}
-
-RadarSketch.prototype.addRotateGroup = function() {
-  const radar = this;
-  return radar.translateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addScanWedge = function() {
-  const radar = this;
-
-  const arcGenerator = d3.arc()
-    .innerRadius(0)
-    .outerRadius(150)
-    .startAngle(0)
-    .endAngle(radar.wedgeSize * Math.PI / 180);
-
-  return radar.group
-    .append("path")
-    .attr("fill","url(#wedgeGradient)")
-    .attr("stroke","none")
-    .attr("d",arcGenerator);
-}
-
-RadarSketch.prototype.addScanLine = function() {
-  const radar = this;
-  return radar.group
+DragSnap.prototype.addConnectingLine = function() {
+  const snap = this;
+  return snap.sketch.svg
     .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",-150)
-    .attr("stroke-width",3)
-    .attr("stroke",radar.scanLineColor);
+    .attr("stroke",snap.connectingColor);
 }
 
-RadarSketch.prototype.addTranslateGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
+DragSnap.prototype.addDestination = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",300)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20")
+    .attr("stroke",snap.activeColor)
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = true;
+      snap.destination
+        .attr("stroke-dasharray","0")
+        .transition()
+        .duration(250)
+        .attr("fill",snap.activeColor);
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging == false) { return }
+      snap.canDrop = false;
+      snap.destination
+        .attr("stroke-dasharray","20,20")
+        .attr("fill",snap.backgroundColor)
+    })
+}
+
+DragSnap.prototype.addDragMe = function() {
+  const snap = this;
+
+  const group = snap.sketch.svg
     .append("g")
-    .attr("transform","translate(300,180)");
+    .attr("transform","translate(200,125)")
+    .attr("opacity",0);
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight",600)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",4)
+    .html("&larr; Drag!");
+
+  group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","18pt")
+    .attr("font-family","Oswald")
+    .attr("fill",snap.activeColor)
+    .attr("font-weight",600)
+    .attr("stroke","none")
+    .html("&larr; Drag!");
+
+  return group;
 }
 
-RadarSketch.prototype.addWedgeGradient = function() {
-  const radar = this;
-  const gradient = radar.defs
-    .append("linearGradient")
-    .attr("id","wedgeGradient")
-    .attr("x1","0%")
-    .attr("x2","100%")
-    .attr("y1","0%")
-    .attr("y2","0%")
-    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
+DragSnap.prototype.addFalseTargets = function() {
+  const snap = this;
 
-  gradient
-    .append("stop")
-    .attr("offset","0%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",0)
+  const first = snap.sketch.svg
+    .append("circle")
+    .attr("cx",500)
+    .attr("cy",125)
+    .attr("data-x",400)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
 
-  gradient
-    .append("stop")
-    .attr("offset","100%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",1);
+  const second = snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",300)
+    .attr("data-x",100)
+    .attr("r",50)
+    .attr("fill",snap.backgroundColor)
+    .attr("stroke",snap.falseTargetColor)
+    .attr("stroke-width",10)
+    .attr("stroke-dasharray","20,20");
+
+  first
+    .on("mouseover",() => {
+      if(snap.isDragging == false) { return };
+      const startX = 400;
+      const endX = startX + 20;
+      const backX = startX - 40;
+      first
+        .transition()
+        .duration(150)
+        .attr("cx",endX)
+        .transition()
+        .duration(225)
+        .attr("cx",backX)
+        .transition()
+        .duration(100)
+        .attr("cx",startX)
+    });
+
+
+    second
+      .on("mouseover",() => {
+        if(snap.isDragging == false) { return };
+        const startX = 400;
+        const endX = startX + 20;
+        const backX = startX - 40;
+        second
+          .transition()
+          .duration(150)
+          .attr("cy",endX)
+          .transition()
+          .duration(225)
+          .attr("cy",backX)
+          .transition()
+          .duration(100)
+          .attr("cy",startX)
+      });
 
 }
 
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
+DragSnap.prototype.addSource = function() {
+  const snap = this;
+  return snap.sketch.svg
+    .append("circle")
+    .attr("cx",100)
+    .attr("cy",125)
+    .attr("r",50)
+    .attr("fill",snap.activeColor)
+    .attr("stroke",snap.connectingColor)
+    .attr("stroke-width",5)
+    .on("mouseover",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .transition()
+        .duration(350)
+        .ease(d3.easeBackOut.overshoot(100))
+        .attr("r",50.1)
+    })
+    .on("mouseout",() => {
+      if(snap.isDragging) { return }
+      snap.source
+        .attr("r",50);
+    })
+    .call(
+      d3.drag()
+        .on("start",snap.dragStart())
+        .on("drag",snap.dragging())
+        .on("end",snap.dragEnd())
+    );
 }
 
 RadialGroup.prototype.addBackground = function() {
@@ -2936,366 +2535,428 @@ RadialGroup.prototype.reset = function() {
   }
 }
 
-IosAudioSlider.prototype.addBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
+RadarSketch.prototype.addBackground = function() {
+  const radar = this;
+  return radar.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill",d3.schemeCategory10[6]);
+    .attr("fill","black");
 }
 
-IosAudioSlider.prototype.addPhone = function() {
-  const slider = this;
-  return slider.sketch.svg
+RadarSketch.prototype.addBogeyGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addBogeys = function() {
+  const radar = this;
+  const bogeyCount = 10;
+
+  const bogeyPolarCoordinates = [];
+  d3.range(0,bogeyCount)
+    .forEach((index) => {
+      bogeyPolarCoordinates
+        .push({
+          "theta":d3.randomUniform(0,2*Math.PI)(),
+          "distance":d3.randomUniform(35,150)()
+        });
+    });
+
+  return radar.bogeyGroup
+    .selectAll("circle")
+    .data(bogeyPolarCoordinates)
+    .enter()
+    .append("circle")
+    .attr("r",5)
+    .attr("fill",radar.green)
+    .attr("stroke","none")
+    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
+    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
+    .attr("fill-opacity",0);
+}
+
+RadarSketch.prototype.addDefs = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("defs");
+}
+
+RadarSketch.prototype.addGroup = function() {
+  const radar = this;
+  return radar.rotateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addHotspot = function() {
+  const radar = this;
+  radar.sketch.svg
     .append("rect")
-    .attr("x",50)
-    .attr("y",-50)
     .attr("width",500)
-    .attr("height",600)
-    .attr("stroke-width",25)
+    .attr("height",500)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+RadarSketch.prototype.addPolarLines = function() {
+  const radar = this;
+  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
+  return radar.bogeyGroup
+    .selectAll(".polarLine")
+    .data(lineData)
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",(theta) => { return Math.cos(theta) * 150})
+    .attr("y1",0)
+    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","5,5")
+}
+
+RadarSketch.prototype.addRangeCircles = function() {
+  const radar = this;
+  const circleDistances = [50,100,150];
+  return radar.group
+    .selectAll(".rangeCircle")
+    .data(circleDistances)
+    .enter()
+    .append("circle")
     .attr("fill","none")
-    .attr("stroke","black");
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("r",(datum) =>{ return datum});
+
 }
 
-IosAudioSlider.prototype.addScreenBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","#ccc")
+RadarSketch.prototype.addReticle = function() {
+  const radar = this;
+  return radar.group
+    .append("circle")
+    .attr("fill",radar.green)
+    .attr("r",5);
 }
 
-IosAudioSlider.prototype.addScreenClip = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("width",50)
-    .attr("height",500)
-    .attr("fill","white");
+RadarSketch.prototype.addRotateGroup = function() {
+  const radar = this;
+  return radar.translateGroup
+    .append("g");
 }
 
-IosAudioSlider.prototype.addSliderGroup = function() {
-  const slider = this;
-  return slider.sketch.svg
+RadarSketch.prototype.addScanWedge = function() {
+  const radar = this;
+
+  const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(150)
+    .startAngle(0)
+    .endAngle(radar.wedgeSize * Math.PI / 180);
+
+  return radar.group
+    .append("path")
+    .attr("fill","url(#wedgeGradient)")
+    .attr("stroke","none")
+    .attr("d",arcGenerator);
+}
+
+RadarSketch.prototype.addScanLine = function() {
+  const radar = this;
+  return radar.group
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",-150)
+    .attr("stroke-width",3)
+    .attr("stroke",radar.scanLineColor);
+}
+
+RadarSketch.prototype.addTranslateGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
     .append("g")
-    .attr("transform","translate(-10,0)")
-    .attr("clip-path","url(#screenClip)");
+    .attr("transform","translate(300,180)");
 }
 
-IosAudioSlider.prototype.addSliderHorizontalScale = function() {
-  const slider = this;
-  return slider.verticalScale
-    .append("g")
-    .attr("transform","scale(1,1)");
+RadarSketch.prototype.addWedgeGradient = function() {
+  const radar = this;
+  const gradient = radar.defs
+    .append("linearGradient")
+    .attr("id","wedgeGradient")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%")
+    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
 
-}
+  gradient
+    .append("stop")
+    .attr("offset","0%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",0)
 
-IosAudioSlider.prototype.addSliderScale = function() {
-  const slider = this;
-  return slider.verticalOffset
-    .append("g")
-    .attr("transform","scale(1)");
-}
-
-IosAudioSlider.prototype.addSliderVerticalScale = function() {
-  const slider = this;
-  return slider.sliderScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addTrack = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.trackColor);
-}
-
-IosAudioSlider.prototype.addValue = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.valueColor);
+  gradient
+    .append("stop")
+    .attr("offset","100%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",1);
 
 }
 
-IosAudioSlider.prototype.addVerticalOffset = function() {
-  const slider = this;
-  return slider.sliderGroup
-    .append("g")
-    .attr("transform","translate(0,200)");
-}
-
-IosAudioSlider.prototype.addVolumeDownButton = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",210)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
-IosAudioSlider.prototype.addVolumeUpButton = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",100)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
-IosAudioSlider.prototype.lowerVolume = function(startTime) {
-  const slider = this;
-
-  slider.value
-    .transition()
-    .duration(2000)
-    .attr("height",0)
-    .attr("y",105);
-
-  return slider;
-}
-
-IosAudioSlider.prototype.pressVolumeDown = function(atTime) {
-  const slider = this;
-
-  slider.volumeDownButton
-    .transition()
-    .duration(250)
-    .delay(atTime)
-    .attr("fill",slider.buttonPressColor)
-    .attr("x",32);
-
-  return slider;
-}
-
-IosAudioSlider.prototype.pressVolumeUp = function(atTime) {
-  const slider = this;
-
-  slider.volumeUpButton
-    .transition()
-    .duration(250)
-    .delay(atTime)
-    .attr("fill",slider.buttonPressColor)
-    .attr("x",32);
-
-  return slider;
-}
-
-IosAudioSlider.prototype.raiseVolumeUp = function(atTime) {
-  const slider = this;
-
-  slider.value
-    .transition()
-    .delay(atTime)
-    .duration(2000)
-    .attr("height",210)
-    .attr("y",-105);
-
-
-  return slider;
-}
-
-IosAudioSlider.prototype.releaseVolumeDown = function(atTime) {
-  const slider = this;
-
-  slider.volumeDownButton
-    .transition()
-    .duration(250)
-    .delay(atTime)
-    .attr("fill","black")
-    .attr("x",27);
-
-  return slider;
-}
-
-IosAudioSlider.prototype.releaseVolumeUp = function(atTime) {
-  const slider = this;
-
-  slider.volumeUpButton
-    .transition()
-    .duration(250)
-    .delay(atTime)
-    .attr("fill","black")
-    .attr("x",27);
-
-
-  return slider;
-}
-
-IosAudioSlider.prototype.runAnimation = function() {
-  const slider = this;
-
+RadarSketch.prototype.click = function() {
+  const radar = this;
   return () => {
-    if(slider.isRunning == true) { return }
-    slider.isRunning = true;
-    const cues = {};
-    cues.pressVolumeDown = 0;
+  }
+}
 
-    slider
-      .pressVolumeDown(0)
-      .transitionIndicatorIn(0)
-      .squeezeIndicatorStart(500)
-      .lowerVolume(425)
-      .squeezeStretchIndicator(1200)
-      .releaseVolumeDown(2000)
-      .unsqueezeUnstretchIndicator(2000)
-      .pressVolumeUp(2325)
-      .raiseVolumeUp(2325)
-      .squeezeStretchIndicator(3600)
-      .releaseVolumeUp(4350)
-      .unsqueezeUnstretchIndicator(4350)
-      .transitionIndicatorOut(4750);
+RadarSketch.prototype.highlight = function() {
+  const radar = this;
+  return () => {
+    radar
+      .singleSweep();
+  }
+}
+
+RadarSketch.prototype.singleSweep = function() {
+  const radar = this;
+
+  radar.rotateGroup
+    .attr("transform","rotate(0)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(180)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(359.999)")
+    .ease(d3.easeLinear)
+    .on("end",() => { radar.singleSweep(); });
+
+  radar.bogeyGroup
+    .selectAll("circle")
+    .each(function(coordinates) {
+      const bogey = d3.select(this);
+      const xCoordinate = bogey.attr("cx");
+      const yCoordinate = bogey.attr("cy");
+      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
+      if(delay > 4000) {
+        delay -= 4000;
+      }
+
+      bogey
+        .transition()
+        .delay(delay)
+        .duration(0)
+        .attr("r",7)
+        .attr("fill-opacity",1)
+        .transition()
+        .ease(d3.easeQuadIn)
+        .duration(2000)
+        .attr("fill-opacity",0)
+        .attr("r",2)
+    });
+
+}
+
+RadarSketch.prototype.unhighlight = function() {
+  const radar = this;
+  return () => {
+    radar.rotateGroup
+      .interrupt();
+
+    radar.bogeyGroup
+      .selectAll("circle")
+      .remove();
+
+    radar.rotateGroup
+      .attr("transform","rotate(0)");
+
+    radar.bogeys = radar.addBogeys();
+  }
+}
+
+RandomWalk.prototype.addHistogram = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("path")
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("stroke","black")
+    .attr("stroke-width",2);
+}
+
+RandomWalk.prototype.defineBinnedValues = function() {
+  const randomWalk = this;
+  const binnedValues = {};
+  d3.range(-10,11)
+    .forEach((value) => {
+      binnedValues[value] = 0;
+    });
+  return binnedValues;
+}
+
+RandomWalk.prototype.defineWalkScales = function() {
+  const randomwWalk = this;
+  const scales = {};
+
+  scales.x = d3.scaleLinear()
+    .domain([0,100])
+    .range([25,500]);
+
+  scales.histogram = d3.scaleLinear()
+    .domain([0,1])
+    .range([515,550]);
+
+  scales.y = d3.scaleLinear()
+    .domain([-10,10])
+    .range([335,25]);
+
+  return scales;
+}
+
+RandomWalk.prototype.highlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = true;
+    randomWalk
+      .seedWalk();
+    return randomWalk;
+  }
+}
+
+RandomWalk.prototype.seedWalk = function() {
+  const randomWalk = this;
+
+  if(!randomWalk.isActive) { return }
+  const value = Math.random();
+  const stepChange = value < 0.5 ? 1 : - 1;
+  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
+
+  randomWalk.steps += 1;
+
+  if(newValue < randomWalk.minValue) {
+    randomWalk.minValue = newValue
   }
 
+  if(newValue > randomWalk.maxValue) {
+    randomWalk.maxValue = newValue;
+  }
 
-  return slider;
-}
+  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
 
-IosAudioSlider.prototype.squeezeIndicatorStart = function(startTime) {
-  const slider = this;
+  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
+    randomWalk.binnedValues[bound] = 0;
+    randomWalk.binnedValues[-bound] = 0;
+  }
 
-  slider.horizontalScale
-    .transition()
-    .duration(500)
-    .delay(startTime)
-    .ease(d3.easeQuadIn)
-    .attr("transform","scale(0.2,1)");
+  randomWalk.binnedValues[newValue] += 1;
 
-  return slider;
-}
+  randomWalk.walkScales.histogram
+    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
 
-IosAudioSlider.prototype.squeezeStretchIndicator = function(atTime) {
-  const slider = this;
-
-  slider.horizontalScale
-    .transition()
-    .delay(atTime)
-    .duration(350)
-    .ease(d3.easeQuadIn)
-    .attr("transform","scale(0.1,1)");
-
-  slider.verticalScale
-    .transition()
-    .delay(atTime)
-    .duration(350)
-    .ease(d3.easeQuadIn)
-    .attr("transform","scale(1,1.15)");
-
-  return slider;
-}
-
-IosAudioSlider.prototype.transitionIndicatorIn = function(atTime) {
-  const slider = this;
-
-  slider.sliderGroup
-    .attr("transform","translate(-10,0)")
-    .transition()
-    .delay(atTime)
-    .duration(375)
-    .ease(d3.easeQuadIn)
-    .attr("transform","translate(100,0)");
-
-  slider.sliderScale
-    .attr("transform","scale(0.8)")
-    .transition()
-    .delay(atTime)
-    .duration(375)
-    .ease(d3.easeQuadIn)
-    .attr("transform","scale(1)");
-
-  slider.verticalScale
-    .attr("transform","scale(1,0.25)")
-    .transition()
-    .delay(atTime)
-    .ease(d3.easeQuadOut)
-    .duration(375)
-    .attr("transform","scale(1,1)");
-
-  slider.horizontalScale
-    .attr("transform","scale(1,1)");
-
-  return slider;
-}
-
-IosAudioSlider.prototype.transitionIndicatorOut = function(atTime) {
-  const slider = this;
-
-  slider.sliderGroup
-    .transition()
-    .delay(atTime)
-    .duration(375)
-    .ease(d3.easeQuadOut)
-    .attr("transform","translate(-10,0)")
-
-  slider.sliderScale
-    .transition()
-    .delay(atTime)
-    .duration(375)
-    .ease(d3.easeQuadOut)
-    .attr("transform","scale(0.8)")
-
-  slider.verticalScale
-    .transition()
-    .delay(atTime)
-    .ease(d3.easeQuadOut)
-    .duration(375)
-    .attr("transform","scale(1,0.25)")
-    .on("end",() => {
-      slider.isRunning = false;
+  const histogramGenerator = d3.area()
+    .x0((datum) => {
+      return randomWalk.walkScales.histogram(0)
     })
+    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
+    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
 
-  return slider;
+  randomWalk.histogram
+    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
+
+  randomWalk.walkScales.y
+    .domain([-bound,bound]);
+
+
+  if(randomWalk.history.length == 100) {
+    randomWalk.history
+      .shift();
+  }
+
+  randomWalk.history
+    .push(newValue);
+
+  const lineGenerator = d3.line()
+    .x((datum,index) => { return randomWalk.walkScales.x(index)})
+    .y((datum) => { return randomWalk.walkScales.y(datum)});
+
+
+  randomWalk.line
+    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
+    .transition()
+    .duration(10)
+    .attr("d",lineGenerator(randomWalk.history))
+    .on("end",() => {
+      randomWalk.seedWalk();
+    });
+
+
 }
 
-IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
-  const slider = this;
+RandomWalk.prototype.unhighlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = false;
+    return randomWalk;
+  }
+}
 
-  slider.horizontalScale
-    .transition()
-    .delay(atTime)
-    .duration(350)
-    .ease(d3.easeQuadOut)
-    .attr("transform","scale(0.2,1)");
+RandomWalk.prototype.addBackground = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
 
-  slider.verticalScale
-    .transition()
-    .delay(atTime)
-    .duration(350)
-    .ease(d3.easeQuadOut)
-    .attr("transform","scale(1,1)");
+RandomWalk.prototype.addLine = function() {
+  const randomWalk = this;
+  return randomWalk.lineGroup
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("fill","none")
+    .attr("stroke-width",3);
+}
 
+RandomWalk.prototype.addLineGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g");
+}
 
-  return slider;
+RandomWalk.prototype.addXAxis = function() {
+  const randomWalk = this;
+  const axis = d3.axisBottom(randomWalk.walkScales.x);
+  randomWalk.xAxisGroup
+    .call(axis);
+  return axis;
+}
+
+RandomWalk.prototype.addXAxisGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g")
+    .attr("transform","translate(0,180)");
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
 }
 
 SnellsLaw.prototype.highlight = function() {
@@ -3536,6 +3197,368 @@ SnellsLaw.prototype.defineArcGenerator = function() {
     .outerRadius(75);
 }
 
+IosAudioSlider.prototype.lowerVolume = function(startTime) {
+  const slider = this;
+
+  slider.value
+    .transition()
+    .duration(2000)
+    .attr("height",0)
+    .attr("y",105);
+
+  return slider;
+}
+
+IosAudioSlider.prototype.pressVolumeDown = function(atTime) {
+  const slider = this;
+
+  slider.volumeDownButton
+    .transition()
+    .duration(250)
+    .delay(atTime)
+    .attr("fill",slider.buttonPressColor)
+    .attr("x",32);
+
+  return slider;
+}
+
+IosAudioSlider.prototype.pressVolumeUp = function(atTime) {
+  const slider = this;
+
+  slider.volumeUpButton
+    .transition()
+    .duration(250)
+    .delay(atTime)
+    .attr("fill",slider.buttonPressColor)
+    .attr("x",32);
+
+  return slider;
+}
+
+IosAudioSlider.prototype.raiseVolumeUp = function(atTime) {
+  const slider = this;
+
+  slider.value
+    .transition()
+    .delay(atTime)
+    .duration(2000)
+    .attr("height",210)
+    .attr("y",-105);
+
+
+  return slider;
+}
+
+IosAudioSlider.prototype.releaseVolumeDown = function(atTime) {
+  const slider = this;
+
+  slider.volumeDownButton
+    .transition()
+    .duration(250)
+    .delay(atTime)
+    .attr("fill","black")
+    .attr("x",27);
+
+  return slider;
+}
+
+IosAudioSlider.prototype.releaseVolumeUp = function(atTime) {
+  const slider = this;
+
+  slider.volumeUpButton
+    .transition()
+    .duration(250)
+    .delay(atTime)
+    .attr("fill","black")
+    .attr("x",27);
+
+
+  return slider;
+}
+
+IosAudioSlider.prototype.runAnimation = function() {
+  const slider = this;
+
+  return () => {
+    if(slider.isRunning == true) { return }
+    slider.isRunning = true;
+    const cues = {};
+    cues.pressVolumeDown = 0;
+
+    slider
+      .pressVolumeDown(0)
+      .transitionIndicatorIn(0)
+      .squeezeIndicatorStart(500)
+      .lowerVolume(425)
+      .squeezeStretchIndicator(1200)
+      .releaseVolumeDown(2000)
+      .unsqueezeUnstretchIndicator(2000)
+      .pressVolumeUp(2325)
+      .raiseVolumeUp(2325)
+      .squeezeStretchIndicator(3600)
+      .releaseVolumeUp(4350)
+      .unsqueezeUnstretchIndicator(4350)
+      .transitionIndicatorOut(4750);
+  }
+
+
+  return slider;
+}
+
+IosAudioSlider.prototype.squeezeIndicatorStart = function(startTime) {
+  const slider = this;
+
+  slider.horizontalScale
+    .transition()
+    .duration(500)
+    .delay(startTime)
+    .ease(d3.easeQuadIn)
+    .attr("transform","scale(0.2,1)");
+
+  return slider;
+}
+
+IosAudioSlider.prototype.squeezeStretchIndicator = function(atTime) {
+  const slider = this;
+
+  slider.horizontalScale
+    .transition()
+    .delay(atTime)
+    .duration(350)
+    .ease(d3.easeQuadIn)
+    .attr("transform","scale(0.1,1)");
+
+  slider.verticalScale
+    .transition()
+    .delay(atTime)
+    .duration(350)
+    .ease(d3.easeQuadIn)
+    .attr("transform","scale(1,1.15)");
+
+  return slider;
+}
+
+IosAudioSlider.prototype.transitionIndicatorIn = function(atTime) {
+  const slider = this;
+
+  slider.sliderGroup
+    .attr("transform","translate(-10,0)")
+    .transition()
+    .delay(atTime)
+    .duration(375)
+    .ease(d3.easeQuadIn)
+    .attr("transform","translate(100,0)");
+
+  slider.sliderScale
+    .attr("transform","scale(0.8)")
+    .transition()
+    .delay(atTime)
+    .duration(375)
+    .ease(d3.easeQuadIn)
+    .attr("transform","scale(1)");
+
+  slider.verticalScale
+    .attr("transform","scale(1,0.25)")
+    .transition()
+    .delay(atTime)
+    .ease(d3.easeQuadOut)
+    .duration(375)
+    .attr("transform","scale(1,1)");
+
+  slider.horizontalScale
+    .attr("transform","scale(1,1)");
+
+  return slider;
+}
+
+IosAudioSlider.prototype.transitionIndicatorOut = function(atTime) {
+  const slider = this;
+
+  slider.sliderGroup
+    .transition()
+    .delay(atTime)
+    .duration(375)
+    .ease(d3.easeQuadOut)
+    .attr("transform","translate(-10,0)")
+
+  slider.sliderScale
+    .transition()
+    .delay(atTime)
+    .duration(375)
+    .ease(d3.easeQuadOut)
+    .attr("transform","scale(0.8)")
+
+  slider.verticalScale
+    .transition()
+    .delay(atTime)
+    .ease(d3.easeQuadOut)
+    .duration(375)
+    .attr("transform","scale(1,0.25)")
+    .on("end",() => {
+      slider.isRunning = false;
+    })
+
+  return slider;
+}
+
+IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
+  const slider = this;
+
+  slider.horizontalScale
+    .transition()
+    .delay(atTime)
+    .duration(350)
+    .ease(d3.easeQuadOut)
+    .attr("transform","scale(0.2,1)");
+
+  slider.verticalScale
+    .transition()
+    .delay(atTime)
+    .duration(350)
+    .ease(d3.easeQuadOut)
+    .attr("transform","scale(1,1)");
+
+
+  return slider;
+}
+
+IosAudioSlider.prototype.addBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",d3.schemeCategory10[6]);
+}
+
+IosAudioSlider.prototype.addPhone = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("y",-50)
+    .attr("width",500)
+    .attr("height",600)
+    .attr("stroke-width",25)
+    .attr("fill","none")
+    .attr("stroke","black");
+}
+
+IosAudioSlider.prototype.addScreenBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","#ccc")
+}
+
+IosAudioSlider.prototype.addScreenClip = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("width",50)
+    .attr("height",500)
+    .attr("fill","white");
+}
+
+IosAudioSlider.prototype.addSliderGroup = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("g")
+    .attr("transform","translate(-10,0)")
+    .attr("clip-path","url(#screenClip)");
+}
+
+IosAudioSlider.prototype.addSliderHorizontalScale = function() {
+  const slider = this;
+  return slider.verticalScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addSliderScale = function() {
+  const slider = this;
+  return slider.verticalOffset
+    .append("g")
+    .attr("transform","scale(1)");
+}
+
+IosAudioSlider.prototype.addSliderVerticalScale = function() {
+  const slider = this;
+  return slider.sliderScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addTrack = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.trackColor);
+}
+
+IosAudioSlider.prototype.addValue = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.valueColor);
+
+}
+
+IosAudioSlider.prototype.addVerticalOffset = function() {
+  const slider = this;
+  return slider.sliderGroup
+    .append("g")
+    .attr("transform","translate(0,200)");
+}
+
+IosAudioSlider.prototype.addVolumeDownButton = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",210)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
+}
+
+IosAudioSlider.prototype.addVolumeUpButton = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",100)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
+}
+
 DragSnap.prototype.dragEnd = function() {
   const snap = this;
   return () => {
@@ -3676,6 +3699,18 @@ Sketch.prototype.UnhighlightEventIs = function(callback) {
   return sketch;
 }
 
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
+}
+
 Sketch.prototype.click = function() {
   const sketch = this;
   return () => {
@@ -3698,18 +3733,6 @@ Sketch.prototype.unhighlight = function() {
     sketch
       .mouseoutCallback();
   }
-}
-
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
-  return sketch;
 }
 
 // https://d3js.org v6.5.0 Copyright 2021 Mike Bostock

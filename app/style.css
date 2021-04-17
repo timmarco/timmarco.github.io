@@ -4,6 +4,13 @@ a {
   color:rgb(60,144,60);
 }
 
+.about-me-div {
+  width:90%;
+  margin:auto;
+  margin-bottom:2em;
+  margin-top:2em;
+}
+
 #back-button {
   font-weight:600;
   font-size:3em;

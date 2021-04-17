@@ -29,6 +29,18 @@ Portfolio.prototype.manifest = [
   //   "loadCallback":loadedFreeAgents
   // },
   {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
+  {
     "title":["STRANGER THINGS","TITLE RE-CREATION"],
     "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
     "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
