@@ -14,6 +14,7 @@ function PortfolioItem(parent,manifest) {
     item.textLayer = item.addTextLayer();
     item.textDiv = item.addTextDiv();
     item.title = item.addTitle();
+    item.heroOffset = item.addHeroOffset();
     item.hero = item.addHero();
     item.heroSource = item.addHeroSource();
 

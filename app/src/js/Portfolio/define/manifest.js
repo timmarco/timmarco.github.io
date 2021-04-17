@@ -6,7 +6,7 @@ Portfolio.prototype.manifest = [
   //   "circa":"Early 2021"
   // },
   // {
-  //   "title":["ABOUT ME",],
+  //   "title":["ABOUT","ME"],
   //   "subtitle":"bio",
   //   // "circa":"Early 2021"
   // },
@@ -20,10 +20,10 @@ Portfolio.prototype.manifest = [
   // },
   // {
   //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"assets/clips/freeAgents.mp4",
-  //   "screenshot":"assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing future performance",
-  //   "circa":"Early 2018",
+  //   "video":"app/assets/clips/freeAgents.mp4",
+  //   "screenshot":"app/assets/clips/freeAgents.png",
+  //   "subtitle":"A tool for assessing uncertain projections",
+  //   "circa":"Early 2019",
   //   "route":"free-agent-explorer",
   //   "callback":activateFreeAgents,
   //   "loadCallback":loadedFreeAgents
