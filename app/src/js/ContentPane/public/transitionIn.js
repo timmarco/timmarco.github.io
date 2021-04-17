@@ -8,7 +8,11 @@ ContentPane.prototype.transitionIn = function(item,instantaneous) {
 
   pane.containerDiv
     .style("display",'block')
-    .style("height",paneHeight + "px")
+    .style("height",paneHeight + "px");
+
+  pane.containerDiv.node().scrollTop = "0px";
+
+  pane.containerDiv
     .transition()
     .duration(() => { if(instantaneous === true) { return 0;} return 250})
     .ease(d3.easeQuadIn)
