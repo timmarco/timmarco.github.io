@@ -1,33 +1,4 @@
 Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT","ME"],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"app/assets/clips/freeAgents.mp4",
-  //   "screenshot":"app/assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing uncertain projections",
-  //   "circa":"Early 2019",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
   {
     "title":["ABOUT","ME"],
     "titleTag":"About Me | Tim Marco",
@@ -40,6 +11,27 @@ Portfolio.prototype.manifest = [
     "route":"about",
     "loadCallback":loadedAboutMe
   },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "screenshot":"app/assets/clips/sketchbook.jpg",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  // {
+  //   "title":["MLB FREE AGENT","EXPLORER"],
+  //   "titleTag":"MLB Free Agents Explorer",
+  //   "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+  //   "video":"app/assets/clips/freeAgents.mp4",
+  //   "screenshot":"app/assets/clips/freeAgents.jpg",
+  //   "subtitle":"A tool for assessing uncertain projections",
+  //   "circa":"Early 2019",
+  //   "route":"free-agent-explorer",
+  //   "callback":activateFreeAgents,
+  //   "loadCallback":loadedFreeAgents
+  // },
   {
     "title":["STRANGER THINGS","TITLE RE-CREATION"],
     "titleTag":"Stranger Things Titles in d3.js | Tim Marco",

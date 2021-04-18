@@ -212,6 +212,7 @@ h2 {
   padding-top:0.5em;
   padding-bottom:0.5em;
   cursor:pointer;
+  max-width:1000px;
 }
 
 .more-sketches-button:hover {

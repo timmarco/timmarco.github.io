@@ -1,14 +1,11 @@
-function DetailsBox(portfolio) {
-  const box = this;
+function ContentPane(portfolio) {
+  const pane = this;
   init(portfolio);
-  return box;
+  return pane;
 
   function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
+    pane.parent = portfolio;
+    pane.containerDiv = pane.addContainerDiv();
   }
 }
 
@@ -27,6 +24,20 @@ function HeroPlayer(where,vimeoId,previewSource) {
     hero.playerOverlay = hero.addPlayerOverlay();
     hero.messageDiv = hero.addMessageDiv();
 
+  }
+}
+
+function DetailsBox(portfolio) {
+  const box = this;
+  init(portfolio);
+  return box;
+
+  function init(portfolio) {
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
   }
 }
 
@@ -55,30 +66,6 @@ function Portfolio() {
   }
 }
 
-function ContentPane(portfolio) {
-  const pane = this;
-  init(portfolio);
-  return pane;
-
-  function init(portfolio) {
-    pane.parent = portfolio;
-    pane.containerDiv = pane.addContainerDiv();
-  }
-}
-
-function PortfolioItemContent(where) {
-  const content = this;
-  init(where);
-  return content;
-
-  function init(where) {
-    content.where = where;
-    content.containerDiv = content.addContainerDiv();
-    content.videoDiv = content.addVideoDiv();
-    content.descriptionDiv = content.addDescriptionDiv();
-  }
-}
-
 function PortfolioItem(parent,manifest) {
   const item = this;
   init(parent,manifest);
@@ -102,87 +89,75 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
+function PortfolioItemContent(where) {
+  const content = this;
+  init(where);
+  return content;
+
+  function init(where) {
+    content.where = where;
+    content.containerDiv = content.addContainerDiv();
+    content.videoDiv = content.addVideoDiv();
+    content.descriptionDiv = content.addDescriptionDiv();
+  }
+}
+
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
   return d3.select("body")
     .append("div")
-    .classed("details_box",true)
+    .classed("item-overlay",true);
+
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
-}
-
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
-}
-
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-DetailsBox.prototype.transitionIn = function(item,instantaneous) {
-  const box = this;
-
-  box
-    .updateContent(item);
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
+  const pane = this;
 
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
   const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
 
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px");
+
+  pane.containerDiv.node().scrollTop = "0px";
+
+  pane.containerDiv
     .transition()
-    .duration(() => { if(instantaneous === true) { return 0; } return 250})
-    .style("left",(window.innerWidth / 2) + "px");
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
 
 
-  return box;
+  if(item.manifest.callback) {
+    pane.activeItem = item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
 }
 
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
 
-  box.containerDiv
+  pane.containerDiv
     .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
+    .duration(500)
+    .style("top",window.innerHeight + "px")
     .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
+      pane.containerDiv
+        .style("display","none")
+        .html("");
     });
 
-  return box;
-}
-
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
-
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
-
-  box.dateDiv
-    .html(item.manifest.circa);
-
-  return box;
+  return pane;
 }
 
 HeroPlayer.prototype.addIframeHolder = function() {
@@ -326,15 +301,395 @@ HeroPlayer.prototype.pop = function() {
   return hero;
 }
 
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
+    .append("div")
+    .classed("details_box",true)
+}
+
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
+}
+
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
+
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
+
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
+}
+
+Portfolio.prototype.manifest = [
+  {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "screenshot":"app/assets/clips/sketchbook.jpg",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  {
+    "title":["MLB FREE AGENT","EXPLORER"],
+    "titleTag":"MLB Free Agents Explorer",
+    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+    "video":"app/assets/clips/freeAgents.mp4",
+    "screenshot":"app/assets/clips/freeAgents.jpg",
+    "subtitle":"A tool for assessing uncertain projections",
+    "circa":"Early 2019",
+    "route":"free-agent-explorer",
+    "callback":activateFreeAgents,
+    "loadCallback":loadedFreeAgents
+  },
+  {
+    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
+    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
+    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.jpg",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  }
+];
+
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
+
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
+
 function activateAboutMe(where) {
   const content = new PortfolioItemContent(where)
-    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[3]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
+    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
 
 
 }
 
 function loadedAboutMe() {
   console.log("~ Loaded About Me ~");
+}
+
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
+  const portfolio = this;
+
+  portfolio.isActive = true;
+  portfolio
+    .updateMetadata(selectedItem.manifest);
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
+    .style("transform","translate(0,"+yPosition+"px)");
+
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
+
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px");
+
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item,instantaneous);
+
+        portfolio.contentPane
+          .transitionIn(item,instantaneous);
+
+        item
+          .activate(instantaneous);
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+  portfolio.isActive = false;
+  portfolio
+    .resetMetadata();
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","-100vw")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerNavigation = function() {
+  const portfolio = this;
+
+  d3.select("#back-button")
+    .on("click",() => {
+      portfolio
+        .deactivate();
+    });
+
+  d3.select("#title")
+    .on("click",() => {
+      if(portfolio.isActive === true) {
+        portfolio
+          .deactivate();
+      }
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio
+        .activate(matchingRoute[0],true);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.resetMetadata = function() {
+  const portfolio = this;
+
+  portfolio
+    .updateMetadata({
+      "titleTag":"Tim Marco",
+      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.updateMetadata = function(manifest) {
+  const portfolio = this;
+
+  portfolio.titleTag
+    .html(manifest.titleTag);
+
+  portfolio.metaDescription
+    .attr("content",manifest.metaDescription);
+
+  return portfolio;
 }
 
 function activateFittsLaw(where) {
@@ -369,6 +724,22 @@ function activateFreeAgents(where) {
 
 function loadedFreeAgents() {
 
+}
+
+function activateStrangerThings(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
+    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
+    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
+    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
+
+
+}
+
+function loadedStrangerThings(parent) {
+  parent.contentPane.activeItem.hero
+    .load();
 }
 
 function activateSketchbook(where) {
@@ -666,539 +1037,6 @@ function loadedSketchbook(parent) {
 
 }
 
-function activateStrangerThings(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
-    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
-    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
-
-
-}
-
-function loadedStrangerThings(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
-}
-
-Portfolio.prototype.manifest = [
-  // {
-  //   "title":["FOREST FIRE","MODELS"],
-  //   "video":"assets/clips/forestFire.mp4",
-  //   "subtitle":"A video about agent-based models",
-  //   "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["ABOUT","ME"],
-  //   "subtitle":"bio",
-  //   // "circa":"Early 2021"
-  // },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "video":"app/assets/clips/freeAgents.mp4",
-  //   "screenshot":"app/assets/clips/freeAgents.png",
-  //   "subtitle":"A tool for assessing uncertain projections",
-  //   "circa":"Early 2019",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
-  {
-    "title":["ABOUT","ME"],
-    "titleTag":"About Me | Tim Marco",
-    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
-    "video":"app/assets/clips/aboutMe.mp4",
-    "screenshot":"app/assets/clips/aboutMe.jpg",
-    "subtitle":"Bio and Contact Info",
-    // "circa":"Mid-2017",
-    "callback":activateAboutMe,
-    "route":"about",
-    "loadCallback":loadedAboutMe
-  },
-  {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
-    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
-    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "titleTag":"My Sketchbook | Tim Marco",
-    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
-    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.jpg",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  }
-];
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-Portfolio.prototype.activate = function(selectedItem,instantaneous) {
-  const portfolio = this;
-
-  portfolio.isActive = true;
-  portfolio
-    .updateMetadata(selectedItem.manifest);
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 200})
-    .style("transform","translate(0,"+yPosition+"px)");
-
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 250})
-    .style("left","0vw");
-
-  d3.select("#back-button-span")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 300})
-    .style("padding-left",titleSize + "px");
-
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item,instantaneous);
-
-        portfolio.contentPane
-          .transitionIn(item,instantaneous);
-
-        item
-          .activate(instantaneous);
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-  portfolio.isActive = false;
-  portfolio
-    .resetMetadata();
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","-100vw")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
-    });
-
-
-  return portfolio;
-}
-
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
-}
-
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerNavigation = function() {
-  const portfolio = this;
-
-  d3.select("#back-button")
-    .on("click",() => {
-      portfolio
-        .deactivate();
-    });
-
-  d3.select("#title")
-    .on("click",() => {
-      if(portfolio.isActive === true) {
-        portfolio
-          .deactivate();
-      }
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio
-        .activate(matchingRoute[0],true);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.resetMetadata = function() {
-  const portfolio = this;
-
-  portfolio
-    .updateMetadata({
-      "titleTag":"Tim Marco",
-      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.updateMetadata = function(manifest) {
-  const portfolio = this;
-
-  portfolio.titleTag
-    .html(manifest.titleTag);
-
-  portfolio.metaDescription
-    .attr("content",manifest.metaDescription);
-
-  return portfolio;
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true);
-
-}
-
-ContentPane.prototype.transitionIn = function(item,instantaneous) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px");
-
-  pane.containerDiv.node().scrollTop = "0px";
-
-  pane.containerDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0;} return 250})
-    .ease(d3.easeQuadIn)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    pane.activeItem = item.manifest
-      .callback(pane.containerDiv);
-  }
-
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
-}
-
-PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
-  const content = this;
-
-  const itemContainer = content.descriptionDiv
-    .append("div")
-    .classed("sketchbook-item",true);
-
-  if(manifest.type === "video") {
-
-    const url = "https://player.vimeo.com/video/"+manifest.id+"?color=000000&title=0&byline=0&portrait=0"
-
-    const videoContainer = itemContainer
-      .append("div")
-      .style("width","640px")
-      .style("height","360px");
-
-    const iframe = videoContainer
-      .append("iframe")
-      .attr("src",url)
-      .attr("allow","autoplay; fullscreen; picture-in-picture")
-      .attr("allowfullscreen","true")
-      .attr("autoplay",true)
-      .style("width","640px")
-      .style("height","360px");
-
-    const itemText = itemContainer
-      .append("div")
-      .style("margin-left","2em")
-      .style("margin-right","2em")
-      .style("height","360px")
-      .style("overflow-y","scroll");
-
-    itemText
-      .append("h2")
-      .html(manifest.title)
-
-    itemText
-      .append("div")
-      .classed("sketchbook-item-text",true)
-      .html(manifest.notes);
-  }
-
-  if(manifest.type === "interactive") {
-
-    const svgDiv = itemContainer
-      .append("div")
-      .style("width","640px")
-      .style("height","360px");
-
-    new manifest
-      .callback(svgDiv);
-
-    const itemText = itemContainer
-      .append("div")
-      .style("margin-left","2em")
-      .style("margin-right","2em")
-      .style("height","360px")
-      .style("overflow-y","scroll");
-
-    itemText
-      .append("h2")
-      .html(manifest.title)
-
-    itemText
-      .append("div")
-      .classed("sketchbook-item-text",true)
-      .html(manifest.notes);
-
-  }
-
-  return content;
-}
-
-PortfolioItemContent.prototype.callDown = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .append("div")
-    .classed("callDown",true)
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.callUp = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .append("div")
-    .classed("callUp",true)
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.div = function(html) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("div")
-    .html(html);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.h1 = function(string) {
-  const content = this;
-
-  content.descriptionDiv
-    .append("h1")
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.p = function(string) {
-  const content = this;
-  content.descriptionDiv
-    .append("p")
-    .html(string);
-
-  return content;
-}
-
-PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
-  const content = this;
-
-  content.hero = new HeroPlayer(content.videoDiv,vimeoId,previewSource);
-
-  return content;
-}
-
 PortfolioItem.prototype.activate = function() {
   const item = this;
 
@@ -1414,6 +1252,160 @@ PortfolioItem.prototype.addTitle = function() {
     .html((datum) => { return datum});
 }
 
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
+PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
+  const content = this;
+
+  const itemContainer = content.descriptionDiv
+    .append("div")
+    .classed("sketchbook-item",true);
+
+  if(manifest.type === "video") {
+
+    const url = "https://player.vimeo.com/video/"+manifest.id+"?color=000000&title=0&byline=0&portrait=0"
+
+    const videoContainer = itemContainer
+      .append("div")
+      .style("width","640px")
+      .style("height","360px");
+
+    const iframe = videoContainer
+      .append("iframe")
+      .attr("src",url)
+      .attr("allow","autoplay; fullscreen; picture-in-picture")
+      .attr("allowfullscreen","true")
+      .attr("autoplay",true)
+      .style("width","640px")
+      .style("height","360px");
+
+    const itemText = itemContainer
+      .append("div")
+      .style("margin-left","2em")
+      .style("margin-right","2em")
+      .style("height","360px")
+      .style("overflow-y","scroll");
+
+    itemText
+      .append("h2")
+      .html(manifest.title)
+
+    itemText
+      .append("div")
+      .classed("sketchbook-item-text",true)
+      .html(manifest.notes);
+  }
+
+  if(manifest.type === "interactive") {
+
+    const svgDiv = itemContainer
+      .append("div")
+      .style("width","640px")
+      .style("height","360px");
+
+    new manifest
+      .callback(svgDiv);
+
+    const itemText = itemContainer
+      .append("div")
+      .style("margin-left","2em")
+      .style("margin-right","2em")
+      .style("height","360px")
+      .style("overflow-y","scroll");
+
+    itemText
+      .append("h2")
+      .html(manifest.title)
+
+    itemText
+      .append("div")
+      .classed("sketchbook-item-text",true)
+      .html(manifest.notes);
+
+  }
+
+  return content;
+}
+
+PortfolioItemContent.prototype.callDown = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .append("div")
+    .classed("callDown",true)
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.callUp = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .append("div")
+    .classed("callUp",true)
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.div = function(html) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("div")
+    .html(html);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.h1 = function(string) {
+  const content = this;
+
+  content.descriptionDiv
+    .append("h1")
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.p = function(string) {
+  const content = this;
+  content.descriptionDiv
+    .append("p")
+    .html(string);
+
+  return content;
+}
+
+PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
+  const content = this;
+
+  content.hero = new HeroPlayer(content.videoDiv,vimeoId,previewSource);
+
+  return content;
+}
+
 function BlurAttentionSketch(where) {
   const blur = this;
   init(where);
@@ -1510,34 +1502,6 @@ function DragSnap(where) {
   }
 }
 
-function RadialGroup(where) {
-  const radial = this;
-  init(where);
-  return radial;
-
-  function init(where) {
-
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
-
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
-
-  }
-}
-
 function RadarSketch(where) {
   const radar = this;
   init(where);
@@ -1576,6 +1540,34 @@ function RadarSketch(where) {
 
 }
 
+function RadialGroup(where) {
+  const radial = this;
+  init(where);
+  return radial;
+
+  function init(where) {
+
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
+
+    radial.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
+
+
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
+
+  }
+}
+
 function RandomWalk(where) {
   const randomWalk = this;
   init(where);
@@ -1605,23 +1597,6 @@ function RandomWalk(where) {
     randomWalk.histogram = randomWalk.addHistogram();
 
 
-  }
-}
-
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
   }
 }
 
@@ -1660,6 +1635,23 @@ function SnellsLaw(where) {
   }
 }
 
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
+  }
+}
+
 function IosAudioSlider(where) {
   const slider = this;
   init(where);
@@ -1693,6 +1685,28 @@ function IosAudioSlider(where) {
 
 
   }
+}
+
+ArcCountdown.prototype.defineArcGenerator = function() {
+  const countdown = this;
+  
+  return d3.arc()
+    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
+    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
+}
+
+ArcCountdown.prototype.defineArcScales = function() {
+  const countdown = this;
+
+  return {
+    "innerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
+    "outerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
+    }
+
 }
 
 BlurAttentionSketch.prototype.addBackgroundRect = function() {
@@ -1975,28 +1989,6 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   const blur = this;
   return () => {
   }
-}
-
-ArcCountdown.prototype.defineArcGenerator = function() {
-  const countdown = this;
-  
-  return d3.arc()
-    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
-    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
-}
-
-ArcCountdown.prototype.defineArcScales = function() {
-  const countdown = this;
-
-  return {
-    "innerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
-    "outerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
-    }
-
 }
 
 ArcCountdown.prototype.initialize = function() {
@@ -2348,193 +2340,6 @@ DragSnap.prototype.addSource = function() {
     );
 }
 
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
-    .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
-    });
-}
-
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
-
-
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
-      });
-
-
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
-
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-  }
-}
-
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
-
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
-  }
-}
-
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
-
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
-}
-
 RadarSketch.prototype.addBackground = function() {
   const radar = this;
   return radar.sketch.svg
@@ -2778,6 +2583,193 @@ RadarSketch.prototype.unhighlight = function() {
   }
 }
 
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","url(#background)");
+
+}
+
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
+    .append("circle")
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
+}
+
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("defs");
+}
+
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
+}
+
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,180)");
+}
+
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
+}
+
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
+
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
+    });
+}
+
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
+
+
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
+
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
+
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
+}
+
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
 RandomWalk.prototype.addHistogram = function() {
   const randomWalk = this;
   return randomWalk.sketch.svg
@@ -2814,6 +2806,45 @@ RandomWalk.prototype.defineWalkScales = function() {
     .range([335,25]);
 
   return scales;
+}
+
+RandomWalk.prototype.addBackground = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
+
+RandomWalk.prototype.addLine = function() {
+  const randomWalk = this;
+  return randomWalk.lineGroup
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("fill","none")
+    .attr("stroke-width",3);
+}
+
+RandomWalk.prototype.addLineGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g");
+}
+
+RandomWalk.prototype.addXAxis = function() {
+  const randomWalk = this;
+  const axis = d3.axisBottom(randomWalk.walkScales.x);
+  randomWalk.xAxisGroup
+    .call(axis);
+  return axis;
+}
+
+RandomWalk.prototype.addXAxisGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g")
+    .attr("transform","translate(0,180)");
 }
 
 RandomWalk.prototype.highlight = function() {
@@ -2901,167 +2932,6 @@ RandomWalk.prototype.unhighlight = function() {
     randomWalk.isActive = false;
     return randomWalk;
   }
-}
-
-RandomWalk.prototype.addBackground = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-RandomWalk.prototype.addLine = function() {
-  const randomWalk = this;
-  return randomWalk.lineGroup
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("fill","none")
-    .attr("stroke-width",3);
-}
-
-RandomWalk.prototype.addLineGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g");
-}
-
-RandomWalk.prototype.addXAxis = function() {
-  const randomWalk = this;
-  const axis = d3.axisBottom(randomWalk.walkScales.x);
-  randomWalk.xAxisGroup
-    .call(axis);
-  return axis;
-}
-
-RandomWalk.prototype.addXAxisGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g")
-    .attr("transform","translate(0,180)");
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
-}
-
-SnellsLaw.prototype.highlight = function() {
-  const snells = this;
-
-  return () => {
-    snells.source
-      .transition()
-      .duration(1000)
-      .ease(d3.easeBackOut.overshoot(6))
-      .attr("r",8);
-
-    const incidentLength = snells.incidentRay
-      .node()
-      .getTotalLength();
-
-    snells.incidentRay
-      .attr("stroke-dashoffset",incidentLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-    const refractedLength = snells.refractedRay
-      .node()
-      .getTotalLength();
-
-    snells.refractedRay
-      .attr("stroke-dashoffset",refractedLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-  }
-}
-
-SnellsLaw.prototype.mouseMove = function() {
-  const snells = this;
-
-  return () => {
-    const coordinates = {
-      "x":event.offsetX,
-      "y":event.offsetY
-    };
-
-    snells
-      .updateForMouseCoordinates(coordinates);
-
-  }
-}
-
-SnellsLaw.prototype.unhighlight = function() {
-  const snells = this;
-  return () => {
-    snells.source
-      .transition()
-      .duration(250)
-      .attr("r",0);
-
-    snells.incidentRay
-      .interrupt();
-
-    snells.refractedRay
-      .interrupt();
-  }
-}
-
-SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
-  const snells = this;
-
-  if(coordinates.y >= 250) { return }
-
-  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
-
-  let incidentStart,
-    incidentEnd;
-
-  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
-  incidentStart = 0;
-
-
-  snells.source
-    .attr("cx",coordinates.x)
-    .attr("cy",coordinates.y);
-
-  snells.incidentRay
-    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
-    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
-
-  snells.incidentArc
-    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
-
-  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
-  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
-  const refractionTheta = Math.asin(sinOfSecond);
-
-  snells.refractedArc
-    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
-
-  snells.refractedRay
-    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
-    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
-
-  return snells;
 }
 
 SnellsLaw.prototype.addBackground = function() {
@@ -3195,6 +3065,265 @@ SnellsLaw.prototype.defineArcGenerator = function() {
   return d3.arc()
     .innerRadius(72.5)
     .outerRadius(75);
+}
+
+SnellsLaw.prototype.highlight = function() {
+  const snells = this;
+
+  return () => {
+    snells.source
+      .transition()
+      .duration(1000)
+      .ease(d3.easeBackOut.overshoot(6))
+      .attr("r",8);
+
+    const incidentLength = snells.incidentRay
+      .node()
+      .getTotalLength();
+
+    snells.incidentRay
+      .attr("stroke-dashoffset",incidentLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+    const refractedLength = snells.refractedRay
+      .node()
+      .getTotalLength();
+
+    snells.refractedRay
+      .attr("stroke-dashoffset",refractedLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+  }
+}
+
+SnellsLaw.prototype.mouseMove = function() {
+  const snells = this;
+
+  return () => {
+    const coordinates = {
+      "x":event.offsetX,
+      "y":event.offsetY
+    };
+
+    snells
+      .updateForMouseCoordinates(coordinates);
+
+  }
+}
+
+SnellsLaw.prototype.unhighlight = function() {
+  const snells = this;
+  return () => {
+    snells.source
+      .transition()
+      .duration(250)
+      .attr("r",0);
+
+    snells.incidentRay
+      .interrupt();
+
+    snells.refractedRay
+      .interrupt();
+  }
+}
+
+SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
+  const snells = this;
+
+  if(coordinates.y >= 250) { return }
+
+  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
+
+  let incidentStart,
+    incidentEnd;
+
+  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
+  incidentStart = 0;
+
+
+  snells.source
+    .attr("cx",coordinates.x)
+    .attr("cy",coordinates.y);
+
+  snells.incidentRay
+    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
+    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
+
+  snells.incidentArc
+    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
+
+  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
+  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
+  const refractionTheta = Math.asin(sinOfSecond);
+
+  snells.refractedArc
+    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
+
+  snells.refractedRay
+    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
+    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
+
+  return snells;
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
+}
+
+IosAudioSlider.prototype.addBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",d3.schemeCategory10[6]);
+}
+
+IosAudioSlider.prototype.addPhone = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("y",-50)
+    .attr("width",500)
+    .attr("height",600)
+    .attr("stroke-width",25)
+    .attr("fill","none")
+    .attr("stroke","black");
+}
+
+IosAudioSlider.prototype.addScreenBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","#ccc")
+}
+
+IosAudioSlider.prototype.addScreenClip = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("width",50)
+    .attr("height",500)
+    .attr("fill","white");
+}
+
+IosAudioSlider.prototype.addSliderGroup = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("g")
+    .attr("transform","translate(-10,0)")
+    .attr("clip-path","url(#screenClip)");
+}
+
+IosAudioSlider.prototype.addSliderHorizontalScale = function() {
+  const slider = this;
+  return slider.verticalScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addSliderScale = function() {
+  const slider = this;
+  return slider.verticalOffset
+    .append("g")
+    .attr("transform","scale(1)");
+}
+
+IosAudioSlider.prototype.addSliderVerticalScale = function() {
+  const slider = this;
+  return slider.sliderScale
+    .append("g")
+    .attr("transform","scale(1,1)");
+
+}
+
+IosAudioSlider.prototype.addTrack = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.trackColor);
+}
+
+IosAudioSlider.prototype.addValue = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.valueColor);
+
+}
+
+IosAudioSlider.prototype.addVerticalOffset = function() {
+  const slider = this;
+  return slider.sliderGroup
+    .append("g")
+    .attr("transform","translate(0,200)");
+}
+
+IosAudioSlider.prototype.addVolumeDownButton = function() {
+  const slider = this;
+
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",210)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
+}
+
+IosAudioSlider.prototype.addVolumeUpButton = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",100)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
+
 }
 
 IosAudioSlider.prototype.lowerVolume = function(startTime) {
@@ -3420,143 +3549,6 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
 
 
   return slider;
-}
-
-IosAudioSlider.prototype.addBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",d3.schemeCategory10[6]);
-}
-
-IosAudioSlider.prototype.addPhone = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("y",-50)
-    .attr("width",500)
-    .attr("height",600)
-    .attr("stroke-width",25)
-    .attr("fill","none")
-    .attr("stroke","black");
-}
-
-IosAudioSlider.prototype.addScreenBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","#ccc")
-}
-
-IosAudioSlider.prototype.addScreenClip = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("width",50)
-    .attr("height",500)
-    .attr("fill","white");
-}
-
-IosAudioSlider.prototype.addSliderGroup = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("g")
-    .attr("transform","translate(-10,0)")
-    .attr("clip-path","url(#screenClip)");
-}
-
-IosAudioSlider.prototype.addSliderHorizontalScale = function() {
-  const slider = this;
-  return slider.verticalScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addSliderScale = function() {
-  const slider = this;
-  return slider.verticalOffset
-    .append("g")
-    .attr("transform","scale(1)");
-}
-
-IosAudioSlider.prototype.addSliderVerticalScale = function() {
-  const slider = this;
-  return slider.sliderScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addTrack = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.trackColor);
-}
-
-IosAudioSlider.prototype.addValue = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.valueColor);
-
-}
-
-IosAudioSlider.prototype.addVerticalOffset = function() {
-  const slider = this;
-  return slider.sliderGroup
-    .append("g")
-    .attr("transform","translate(0,200)");
-}
-
-IosAudioSlider.prototype.addVolumeDownButton = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",210)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
-IosAudioSlider.prototype.addVolumeUpButton = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",100)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
 }
 
 DragSnap.prototype.dragEnd = function() {
