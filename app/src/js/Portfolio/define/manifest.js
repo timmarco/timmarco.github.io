@@ -20,20 +20,20 @@ Portfolio.prototype.manifest = [
   //   "circa":"April 2021",
   //   "route":"data-driven-video"
   // },
-  // {
-  //   "title":["MLB FREE AGENT","EXPLORER"],
-  //   "titleTag":"MLB Free Agents Explorer",
-  //   "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
-  //   "video":"app/assets/clips/freeAgents.mp4",
-  //   "screenshot":"app/assets/clips/freeAgents.jpg",
-  //   "subtitle":"A tool for assessing uncertain projections",
-  //   "circa":"Early 2019",
-  //   "route":"free-agent-explorer",
-  //   "callback":activateFreeAgents,
-  //   "loadCallback":loadedFreeAgents
-  // },
   {
-    "title":["STRANGER THINGS","TITLE RE-CREATION"],
+    "title":["MLB FREE AGENT","EXPLORER"],
+    "titleTag":"MLB Free Agents Explorer",
+    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+    "video":"app/assets/clips/freeAgents.mp4",
+    "screenshot":"app/assets/clips/freeAgents.jpg",
+    "subtitle":"A tool for assessing uncertain projections",
+    "circa":"Early 2019",
+    "route":"free-agent-explorer",
+    "callback":activateFreeAgents,
+    "loadCallback":loadedFreeAgents
+  },
+  {
+    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
     "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
     "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
     "video":"app/assets/clips/strangerThings.mp4",
