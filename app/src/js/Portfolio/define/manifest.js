@@ -21,14 +21,14 @@ Portfolio.prototype.manifest = [
   //   "route":"data-driven-video"
   // },
   {
-    "title":["MLB FREE AGENT","EXPLORER"],
-    "titleTag":"MLB Free Agents Explorer",
+    "title":["MLB FREE AGENT","ANALYZER"],
+    "titleTag":"MLB Free Agents Analzyer",
     "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
     "video":"app/assets/clips/freeAgents.mp4",
     "screenshot":"app/assets/clips/freeAgents.jpg",
     "subtitle":"A tool for assessing uncertain projections",
     "circa":"Early 2019",
-    "route":"free-agent-explorer",
+    "route":"free-agent-analyzer",
     "callback":activateFreeAgents,
     "loadCallback":loadedFreeAgents
   },
