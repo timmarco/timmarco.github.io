@@ -1,42 +1,3 @@
-function Portfolio() {
-  const portfolio = this;
-  init();
-  return portfolio;
-
-
-  function init() {
-    portfolio.isMobile = ("ontouchstart" in window)
-    portfolio.titleTag = d3.select("title");
-    portfolio.metaDescription = d3.select("head").append("meta").attr("name","description");
-    portfolio.isActive = false;
-    portfolio.itemsDiv = portfolio.addItemsDiv();
-    portfolio.items = portfolio.addItems();
-    portfolio.detailsBox = portfolio.addDetailsBox();
-    portfolio.contentPane = portfolio.addContentPane();
-
-    portfolio
-      .registerRouter()
-      .registerHashChange()
-      .registerNavigation()
-      .resetMetadata();
-
-  }
-}
-
-function DetailsBox(portfolio) {
-  const box = this;
-  init(portfolio);
-  return box;
-
-  function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
-  }
-}
-
 function ContentPane(portfolio) {
   const pane = this;
   init(portfolio);
@@ -66,6 +27,20 @@ function HeroPlayer(where,vimeoId,previewSource) {
   }
 }
 
+function DetailsBox(portfolio) {
+  const box = this;
+  init(portfolio);
+  return box;
+
+  function init(portfolio) {
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
+  }
+}
+
 function PortfolioItem(parent,manifest) {
   const item = this;
   init(parent,manifest);
@@ -89,6 +64,31 @@ function PortfolioItem(parent,manifest) {
   }
 }
 
+function Portfolio() {
+  const portfolio = this;
+  init();
+  return portfolio;
+
+
+  function init() {
+    portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.titleTag = d3.select("title");
+    portfolio.metaDescription = d3.select("head").append("meta").attr("name","description");
+    portfolio.isActive = false;
+    portfolio.itemsDiv = portfolio.addItemsDiv();
+    portfolio.items = portfolio.addItems();
+    portfolio.detailsBox = portfolio.addDetailsBox();
+    portfolio.contentPane = portfolio.addContentPane();
+
+    portfolio
+      .registerRouter()
+      .registerHashChange()
+      .registerNavigation()
+      .resetMetadata();
+
+  }
+}
+
 function PortfolioItemContent(where) {
   const content = this;
   init(where);
@@ -100,6 +100,312 @@ function PortfolioItemContent(where) {
     content.videoDiv = content.addVideoDiv();
     content.descriptionDiv = content.addDescriptionDiv();
   }
+}
+
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px");
+
+  pane.containerDiv.node().scrollTop = "0px";
+
+  pane.containerDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    pane.activeItem = item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
+}
+
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
+}
+
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true);
+
+}
+
+HeroPlayer.prototype.beep = function() {
+  const hero = this;
+
+  cycle();
+
+  function cycle() {
+    // hero.playerOverlay
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(750)
+    //   .on("end",cycle);
+  }
+  return hero;
+}
+
+HeroPlayer.prototype.load = function(loadedCallback) {
+  const hero = this;
+
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = hero.iframeHolder
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const playerInstance = new Vimeo.Player(iframe.node());
+
+  playerInstance.on("play", () => {
+
+    hero.playerOverlay
+      .transition()
+      .duration(250)
+      .style("top","100%");
+
+    hero.videoLoad
+      .style("display","none");
+
+    player
+      .setCurrentTime(0);
+
+    hero.videoLoad
+      .style("display","none");
+
+  });
+
+  iframe.on("load",() => {
+    if(loadedCallback) {
+      loadedCallback();
+    }
+  });
+
+  hero.beep();
+
+  return hero;
+}
+
+HeroPlayer.prototype.play = function() {
+  const hero = this;
+
+  
+
+  return hero;
+}
+
+HeroPlayer.prototype.pop = function() {
+  const hero = this;
+
+  return hero;
+}
+
+HeroPlayer.prototype.addIframeHolder = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .attr("data-role","vimeoIframe")
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+}
+
+HeroPlayer.prototype.addMessageDiv = function() {
+  const hero = this;
+
+  return hero.playerOverlay
+    .append("img")
+    .style("left",0)
+    .style("top",0)
+    .style("width","100%")
+    .style("height","100%");
+}
+
+HeroPlayer.prototype.addPlayerOverlay = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .classed("video-overlay",true)
+    .style("pointer-events","none");
+}
+
+HeroPlayer.prototype.addVideoDiv = function(where) {
+  const hero = this;
+  return where
+    .append("div")
+    .classed("content-video-container",true);
+}
+
+HeroPlayer.prototype.addVideoLoad = function(previewSource) {
+  const hero = this;
+  return hero.videoDiv
+    .append("img")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
+    .attr("src",previewSource);
+
+}
+
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
+    .append("div")
+    .classed("details_box",true)
+}
+
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
+}
+
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
+
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
+
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
+}
+
+function activateAboutMe(where) {
+  const content = new PortfolioItemContent(where)
+    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
+
+
+}
+
+function loadedAboutMe() {
+}
+
+function activateFreeAgents(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>");
+
+}
+
+function loadedFreeAgents(parent) {
+  console.log("LOADED FREE AGENTS?");
+  parent.contentPane.activeItem.hero
+    .load();
 }
 
 function activateFittsLaw(where) {
@@ -121,20 +427,6 @@ function loadedFittsLaw(parent) {
 
   parent.contentPane.activeItem.hero
     .pop()
-    .load();
-}
-
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>");
-
-}
-
-function loadedFreeAgents(parent) {
-  console.log("LOADED FREE AGENTS?");
-  parent.contentPane.activeItem.hero
     .load();
 }
 
@@ -363,7 +655,7 @@ function loadedSketchbook(parent) {
       "notes":"A(n ironically-daytime) test of motion tracking like that used in HBO's <em>Watchmen</em>."
     },
     {
-      "title":"Motion Tracking Test",
+      "title":"Mirrored Monoliths",
       "id":"541413359",
       "type":"video",
       "notes":"A test of combining motion tracking with HDRI illumination."
@@ -466,41 +758,118 @@ function loadedStrangerThings(parent) {
     .load();
 }
 
-function activateAboutMe(where) {
-  const content = new PortfolioItemContent(where)
-    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
-
-
-}
-
-function loadedAboutMe() {
-}
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
     .append("div")
-    .attr("id","portfolio-items");
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
+}
+
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.heroOffset
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","contain")
+      .style("margin",0)
+      .style("padding",0);
+  }
+
+  return item.heroOffset
+    .append("video")
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("position","absolute")
+    .style("object-fit","cover")
+    .style("object-position","center center")
+    .style("margin",0)
+    .style("padding",0)
+    .style("width","100%")
+    .style("height","100%")
+    .attr("loop",true);
+}
+
+PortfolioItem.prototype.addHeroOffset = function() {
+  const item = this;
+
+  return item.substrate
+    .append("div")
+    .style("position","relative")
+    .style("width","100%")
+    .style("min-height","12.5vw")
+    .style("height","100%");
+
+}
+
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
 }
 
 Portfolio.prototype.manifest = [
@@ -577,6 +946,134 @@ Portfolio.prototype.manifest = [
     "loadCallback":loadedFittsLaw
   }
 ];
+
+PortfolioItem.prototype.activate = function() {
+  const item = this;
+
+  item.state = "active";
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .pause();
+  }
+
+
+  return item;
+}
+
+PortfolioItem.prototype.drawAttention = function() {
+  const item = this;
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .muted = true;
+
+    item.hero
+      .node()
+      .play();
+  }
+
+  item.title
+    .style("background-color",d3.schemeCategory10[2]);
+
+  item.textLayer
+    .style("transform","scale(1)")
+    .transition()
+    .ease(d3.easeQuadOut)
+    .duration(250)
+    .style("transform","scale(1.05)");
+
+  return item;
+}
+
+PortfolioItem.prototype.getActiveHeight = function() {
+  const item = this;
+  return item.textDiv.node().getBoundingClientRect().height * 1.2;
+}
+
+PortfolioItem.prototype.hide = function() {
+  const item = this;
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",0)
+
+  return item;
+}
+
+PortfolioItem.prototype.reduceFocus = function() {
+  const item = this;
+  item.containerDiv
+    // .style("filter",0.75);
+
+  item.title
+    .style("background-color","black");
+
+
+
+}
+
+PortfolioItem.prototype.reset = function() {
+  const item = this;
+
+  item.hero.node().pause();
+
+  item.title
+    .style("background-color","black");
+
+
+  item.textLayer
+    .transition()
+    .ease(d3.easeQuadIn)
+    .duration(125)
+    .style("transform","scale(1)");
+
+  return item;
+}
+
+PortfolioItem.prototype.show = function() {
+  const item = this;
+
+  item.state = "inactive";
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",1);
+
+  return item;
+
+}
+
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
+
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
 
 Portfolio.prototype.activate = function(selectedItem,instantaneous) {
   const portfolio = this;
@@ -773,523 +1270,6 @@ Portfolio.prototype.updateMetadata = function(manifest) {
   return portfolio;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
-    .append("div")
-    .classed("details_box",true)
-}
-
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
-}
-
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
-}
-
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true);
-
-}
-
-ContentPane.prototype.transitionIn = function(item,instantaneous) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px");
-
-  pane.containerDiv.node().scrollTop = "0px";
-
-  pane.containerDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0;} return 250})
-    .ease(d3.easeQuadIn)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    pane.activeItem = item.manifest
-      .callback(pane.containerDiv);
-  }
-
-
-  return pane;
-}
-
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
-
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
-}
-
-DetailsBox.prototype.transitionIn = function(item,instantaneous) {
-  const box = this;
-
-  box
-    .updateContent(item);
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0; } return 250})
-    .style("left",(window.innerWidth / 2) + "px");
-
-
-  return box;
-}
-
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
-
-  box.containerDiv
-    .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
-    .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
-    });
-
-  return box;
-}
-
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
-
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
-
-  box.dateDiv
-    .html(item.manifest.circa);
-
-  return box;
-}
-
-HeroPlayer.prototype.beep = function() {
-  const hero = this;
-
-  cycle();
-
-  function cycle() {
-    // hero.playerOverlay
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(750)
-    //   .on("end",cycle);
-  }
-  return hero;
-}
-
-HeroPlayer.prototype.load = function(loadedCallback) {
-  const hero = this;
-
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
-
-  const iframe = hero.iframeHolder
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-
-  const playerInstance = new Vimeo.Player(iframe.node());
-
-  playerInstance.on("play", () => {
-
-    hero.playerOverlay
-      .transition()
-      .duration(250)
-      .style("top","100%");
-
-    hero.videoLoad
-      .style("display","none");
-
-    player
-      .setCurrentTime(0);
-
-    hero.videoLoad
-      .style("display","none");
-
-  });
-
-  iframe.on("load",() => {
-    if(loadedCallback) {
-      loadedCallback();
-    }
-  });
-
-  hero.beep();
-
-  return hero;
-}
-
-HeroPlayer.prototype.play = function() {
-  const hero = this;
-
-  
-
-  return hero;
-}
-
-HeroPlayer.prototype.pop = function() {
-  const hero = this;
-
-  return hero;
-}
-
-HeroPlayer.prototype.addIframeHolder = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .attr("data-role","vimeoIframe")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-}
-
-HeroPlayer.prototype.addMessageDiv = function() {
-  const hero = this;
-
-  return hero.playerOverlay
-    .append("img")
-    .style("left",0)
-    .style("top",0)
-    .style("width","100%")
-    .style("height","100%");
-}
-
-HeroPlayer.prototype.addPlayerOverlay = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .classed("video-overlay",true)
-    .style("pointer-events","none");
-}
-
-HeroPlayer.prototype.addVideoDiv = function(where) {
-  const hero = this;
-  return where
-    .append("div")
-    .classed("content-video-container",true);
-}
-
-HeroPlayer.prototype.addVideoLoad = function(previewSource) {
-  const hero = this;
-  return hero.videoDiv
-    .append("img")
-    .classed("video-overlay-image",true)
-    .style("pointer-events","none")
-    .attr("src",previewSource);
-
-}
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
-    .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.heroOffset
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","contain")
-      .style("margin",0)
-      .style("padding",0);
-  }
-
-  return item.heroOffset
-    .append("video")
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("position","absolute")
-    .style("object-fit","cover")
-    .style("object-position","center center")
-    .style("margin",0)
-    .style("padding",0)
-    .style("width","100%")
-    .style("height","100%")
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroOffset = function() {
-  const item = this;
-
-  return item.substrate
-    .append("div")
-    .style("position","relative")
-    .style("width","100%")
-    .style("min-height","12.5vw")
-    .style("height","100%");
-
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
-      }
-    })
-    .html((datum) => { return datum});
-}
-
-PortfolioItem.prototype.activate = function() {
-  const item = this;
-
-  item.state = "active";
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .pause();
-  }
-
-
-  return item;
-}
-
-PortfolioItem.prototype.drawAttention = function() {
-  const item = this;
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .muted = true;
-
-    item.hero
-      .node()
-      .play();
-  }
-
-  item.title
-    .style("background-color",d3.schemeCategory10[2]);
-
-  item.textLayer
-    .style("transform","scale(1)")
-    .transition()
-    .ease(d3.easeQuadOut)
-    .duration(250)
-    .style("transform","scale(1.05)");
-
-  return item;
-}
-
-PortfolioItem.prototype.getActiveHeight = function() {
-  const item = this;
-  return item.textDiv.node().getBoundingClientRect().height * 1.2;
-}
-
-PortfolioItem.prototype.hide = function() {
-  const item = this;
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",0)
-
-  return item;
-}
-
-PortfolioItem.prototype.reduceFocus = function() {
-  const item = this;
-  item.containerDiv
-    // .style("filter",0.75);
-
-  item.title
-    .style("background-color","black");
-
-
-
-}
-
-PortfolioItem.prototype.reset = function() {
-  const item = this;
-
-  item.hero.node().pause();
-
-  item.title
-    .style("background-color","black");
-
-
-  item.textLayer
-    .transition()
-    .ease(d3.easeQuadIn)
-    .duration(125)
-    .style("transform","scale(1)");
-
-  return item;
-}
-
-PortfolioItem.prototype.show = function() {
-  const item = this;
-
-  item.state = "inactive";
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",1);
-
-  return item;
-
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
-}
-
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
   const content = this;
 
@@ -1424,6 +1404,26 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   return content;
 }
 
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
 function BlurAttentionSketch(where) {
   const blur = this;
   init(where);
@@ -1548,6 +1548,38 @@ function RadialGroup(where) {
   }
 }
 
+function RandomWalk(where) {
+  const randomWalk = this;
+  init(where);
+  return randomWalk;
+
+  function init(where) {
+    randomWalk.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(randomWalk.highlight())
+      .UnhighlightEventIs(randomWalk.unhighlight());
+
+    randomWalk.hasStarted = false;
+    randomWalk.isActive = false;
+    randomWalk.history = [0];
+    randomWalk.steps = 0;
+    randomWalk.minValue = -10;
+    randomWalk.maxValue = 10;
+    randomWalk.binnedValues = randomWalk.defineBinnedValues();
+    randomWalk.isWalking = false;
+    randomWalk.background = randomWalk.addBackground();
+    randomWalk.walkScales = randomWalk.defineWalkScales();
+    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
+    randomWalk.xAxis = randomWalk.addXAxis();
+    randomWalk.lineGroup = randomWalk.addLineGroup();
+    randomWalk.line = randomWalk.addLine();
+    randomWalk.xAxisGroup.selectAll("text").remove();
+    randomWalk.histogram = randomWalk.addHistogram();
+
+
+  }
+}
+
 function RadarSketch(where) {
   const radar = this;
   init(where);
@@ -1584,38 +1616,6 @@ function RadarSketch(where) {
 
   }
 
-}
-
-function RandomWalk(where) {
-  const randomWalk = this;
-  init(where);
-  return randomWalk;
-
-  function init(where) {
-    randomWalk.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(randomWalk.highlight())
-      .UnhighlightEventIs(randomWalk.unhighlight());
-
-    randomWalk.hasStarted = false;
-    randomWalk.isActive = false;
-    randomWalk.history = [0];
-    randomWalk.steps = 0;
-    randomWalk.minValue = -10;
-    randomWalk.maxValue = 10;
-    randomWalk.binnedValues = randomWalk.defineBinnedValues();
-    randomWalk.isWalking = false;
-    randomWalk.background = randomWalk.addBackground();
-    randomWalk.walkScales = randomWalk.defineWalkScales();
-    randomWalk.xAxisGroup = randomWalk.addXAxisGroup();
-    randomWalk.xAxis = randomWalk.addXAxis();
-    randomWalk.lineGroup = randomWalk.addLineGroup();
-    randomWalk.line = randomWalk.addLine();
-    randomWalk.xAxisGroup.selectAll("text").remove();
-    randomWalk.histogram = randomWalk.addHistogram();
-
-
-  }
 }
 
 function Sketch(where) {
@@ -2007,6 +2007,93 @@ ArcCountdown.prototype.defineArcScales = function() {
       .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
     }
 
+}
+
+ArcCountdown.prototype.initialize = function() {
+  const countdown = this;
+
+  countdown.arcGenerator
+    .startAngle(0)
+    .endAngle(Math.PI);
+
+
+  [countdown.arc,countdown.arcOutline]
+    .forEach((arc) => {
+      arc
+        .attr("d",
+          countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(0))
+            .outerRadius(countdown.arcScales.outerRadius(0))
+        );
+    });
+
+  [countdown.textOutline,countdown.text]
+    .forEach((textElement) => {
+      textElement
+        .html(countdown.maxValue);
+    });
+}
+
+ArcCountdown.prototype.pauseCountdown = function() {
+  const countdown = this;
+
+  return () => {
+    [countdown.arc,countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .interrupt();
+      });
+
+    countdown
+      .initialize();
+  }
+}
+
+ArcCountdown.prototype.runCountdown = function() {
+  const countdown = this;
+
+  return () => {
+
+    const startValue = +countdown.text.html();
+
+    [countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .transition()
+          .duration(countdown.fullDuration)
+          .ease(countdown.easeType)
+          .textTween(numberTween())
+      });
+
+    countdown.arc
+      .transition()
+      .duration(countdown.fullDuration)
+      .ease(countdown.easeType)
+      .attrTween("d",arcTween(0));
+
+    function numberTween() {
+      return function() {
+        const interpolate = d3.interpolate(countdown.maxValue,0)
+        return function(time) {
+          return Math.floor(interpolate(time));
+        }
+      }
+    }
+
+
+    function arcTween(newAngle) {
+      return function() {
+        const interpolateValue = d3.interpolate(Math.PI,newAngle);
+        return function(time) {
+          return countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(time))
+            .outerRadius(countdown.arcScales.outerRadius(time))
+            .endAngle(interpolateValue(time))();
+        }
+      }
+    }
+
+  }
 }
 
 ArcCountdown.prototype.addArc = function() {
@@ -2458,93 +2545,6 @@ RadialGroup.prototype.addWedges = function() {
     });
 }
 
-ArcCountdown.prototype.initialize = function() {
-  const countdown = this;
-
-  countdown.arcGenerator
-    .startAngle(0)
-    .endAngle(Math.PI);
-
-
-  [countdown.arc,countdown.arcOutline]
-    .forEach((arc) => {
-      arc
-        .attr("d",
-          countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(0))
-            .outerRadius(countdown.arcScales.outerRadius(0))
-        );
-    });
-
-  [countdown.textOutline,countdown.text]
-    .forEach((textElement) => {
-      textElement
-        .html(countdown.maxValue);
-    });
-}
-
-ArcCountdown.prototype.pauseCountdown = function() {
-  const countdown = this;
-
-  return () => {
-    [countdown.arc,countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .interrupt();
-      });
-
-    countdown
-      .initialize();
-  }
-}
-
-ArcCountdown.prototype.runCountdown = function() {
-  const countdown = this;
-
-  return () => {
-
-    const startValue = +countdown.text.html();
-
-    [countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .transition()
-          .duration(countdown.fullDuration)
-          .ease(countdown.easeType)
-          .textTween(numberTween())
-      });
-
-    countdown.arc
-      .transition()
-      .duration(countdown.fullDuration)
-      .ease(countdown.easeType)
-      .attrTween("d",arcTween(0));
-
-    function numberTween() {
-      return function() {
-        const interpolate = d3.interpolate(countdown.maxValue,0)
-        return function(time) {
-          return Math.floor(interpolate(time));
-        }
-      }
-    }
-
-
-    function arcTween(newAngle) {
-      return function() {
-        const interpolateValue = d3.interpolate(Math.PI,newAngle);
-        return function(time) {
-          return countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(time))
-            .outerRadius(countdown.arcScales.outerRadius(time))
-            .endAngle(interpolateValue(time))();
-        }
-      }
-    }
-
-  }
-}
-
 RandomWalk.prototype.addHistogram = function() {
   const randomWalk = this;
   return randomWalk.sketch.svg
@@ -2620,6 +2620,93 @@ RandomWalk.prototype.addXAxisGroup = function() {
   return randomWalk.sketch.svg
     .append("g")
     .attr("transform","translate(0,180)");
+}
+
+RandomWalk.prototype.highlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = true;
+    randomWalk
+      .seedWalk();
+    return randomWalk;
+  }
+}
+
+RandomWalk.prototype.seedWalk = function() {
+  const randomWalk = this;
+
+  if(!randomWalk.isActive) { return }
+  const value = Math.random();
+  const stepChange = value < 0.5 ? 1 : - 1;
+  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
+
+  randomWalk.steps += 1;
+
+  if(newValue < randomWalk.minValue) {
+    randomWalk.minValue = newValue
+  }
+
+  if(newValue > randomWalk.maxValue) {
+    randomWalk.maxValue = newValue;
+  }
+
+  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
+
+  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
+    randomWalk.binnedValues[bound] = 0;
+    randomWalk.binnedValues[-bound] = 0;
+  }
+
+  randomWalk.binnedValues[newValue] += 1;
+
+  randomWalk.walkScales.histogram
+    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
+
+  const histogramGenerator = d3.area()
+    .x0((datum) => {
+      return randomWalk.walkScales.histogram(0)
+    })
+    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
+    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
+
+  randomWalk.histogram
+    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
+
+  randomWalk.walkScales.y
+    .domain([-bound,bound]);
+
+
+  if(randomWalk.history.length == 100) {
+    randomWalk.history
+      .shift();
+  }
+
+  randomWalk.history
+    .push(newValue);
+
+  const lineGenerator = d3.line()
+    .x((datum,index) => { return randomWalk.walkScales.x(index)})
+    .y((datum) => { return randomWalk.walkScales.y(datum)});
+
+
+  randomWalk.line
+    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
+    .transition()
+    .duration(10)
+    .attr("d",lineGenerator(randomWalk.history))
+    .on("end",() => {
+      randomWalk.seedWalk();
+    });
+
+
+}
+
+RandomWalk.prototype.unhighlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = false;
+    return randomWalk;
+  }
 }
 
 RadarSketch.prototype.addBackground = function() {
@@ -2862,93 +2949,6 @@ RadarSketch.prototype.unhighlight = function() {
       .attr("transform","rotate(0)");
 
     radar.bogeys = radar.addBogeys();
-  }
-}
-
-RandomWalk.prototype.highlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = true;
-    randomWalk
-      .seedWalk();
-    return randomWalk;
-  }
-}
-
-RandomWalk.prototype.seedWalk = function() {
-  const randomWalk = this;
-
-  if(!randomWalk.isActive) { return }
-  const value = Math.random();
-  const stepChange = value < 0.5 ? 1 : - 1;
-  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
-
-  randomWalk.steps += 1;
-
-  if(newValue < randomWalk.minValue) {
-    randomWalk.minValue = newValue
-  }
-
-  if(newValue > randomWalk.maxValue) {
-    randomWalk.maxValue = newValue;
-  }
-
-  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
-
-  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
-    randomWalk.binnedValues[bound] = 0;
-    randomWalk.binnedValues[-bound] = 0;
-  }
-
-  randomWalk.binnedValues[newValue] += 1;
-
-  randomWalk.walkScales.histogram
-    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
-
-  const histogramGenerator = d3.area()
-    .x0((datum) => {
-      return randomWalk.walkScales.histogram(0)
-    })
-    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
-    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
-
-  randomWalk.histogram
-    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
-
-  randomWalk.walkScales.y
-    .domain([-bound,bound]);
-
-
-  if(randomWalk.history.length == 100) {
-    randomWalk.history
-      .shift();
-  }
-
-  randomWalk.history
-    .push(newValue);
-
-  const lineGenerator = d3.line()
-    .x((datum,index) => { return randomWalk.walkScales.x(index)})
-    .y((datum) => { return randomWalk.walkScales.y(datum)});
-
-
-  randomWalk.line
-    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
-    .transition()
-    .duration(10)
-    .attr("d",lineGenerator(randomWalk.history))
-    .on("end",() => {
-      randomWalk.seedWalk();
-    });
-
-
-}
-
-RandomWalk.prototype.unhighlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = false;
-    return randomWalk;
   }
 }
 
@@ -3691,6 +3691,18 @@ DragSnap.prototype.dragging = function() {
   }
 }
 
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
+}
+
 Sketch.prototype.ClickEventIs = function(callback) {
   const sketch = this;
   sketch.clickCallback = callback;
@@ -3706,18 +3718,6 @@ Sketch.prototype.HighlightEventIs = function(callback) {
 Sketch.prototype.UnhighlightEventIs = function(callback) {
   const sketch = this;
   sketch.mouseoutCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
   return sketch;
 }
 

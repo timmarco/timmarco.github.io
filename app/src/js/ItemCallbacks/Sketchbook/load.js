@@ -141,7 +141,7 @@ function loadedSketchbook(parent) {
       "notes":"A(n ironically-daytime) test of motion tracking like that used in HBO's <em>Watchmen</em>."
     },
     {
-      "title":"Motion Tracking Test",
+      "title":"Mirrored Monoliths",
       "id":"541413359",
       "type":"video",
       "notes":"A test of combining motion tracking with HDRI illumination."
