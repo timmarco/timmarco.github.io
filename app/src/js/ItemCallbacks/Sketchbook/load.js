@@ -139,7 +139,18 @@ function loadedSketchbook(parent) {
       "id":"541165202",
       "type":"video",
       "notes":"A(n ironically-daytime) test of motion tracking like that used in HBO's <em>Watchmen</em>."
+    },
+    {
+      "title":"Motion Tracking Test",
+      "id":"541413359",
+      "type":"video",
+      "notes":"A test of combining motion tracking with HDRI illumination."
     }
+
+
+
+
+
   ];
 
   // HIDE NON-MOBILE FRIENDLY ONES
