@@ -133,6 +133,12 @@ function loadedSketchbook(parent) {
       "id":"528371381",
       "type":"video",
       "notes":"A fully-rendered fluid simulation using Radeon Pro Render"
+    },
+    {
+      "title":"Motion Tracking Test",
+      "id":"541165202",
+      "type":"video",
+      "notes":"A(n ironically-daytime) test of motion tracking like that used in HBO's <em>Watchmen</em>."
     }
   ];
 

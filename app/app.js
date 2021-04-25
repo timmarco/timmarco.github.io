@@ -1,11 +1,14 @@
-function ContentPane(portfolio) {
-  const pane = this;
+function DetailsBox(portfolio) {
+  const box = this;
   init(portfolio);
-  return pane;
+  return box;
 
   function init(portfolio) {
-    pane.parent = portfolio;
-    pane.containerDiv = pane.addContainerDiv();
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
   }
 }
 
@@ -27,28 +30,14 @@ function HeroPlayer(where,vimeoId,previewSource) {
   }
 }
 
-function Portfolio() {
-  const portfolio = this;
-  init();
-  return portfolio;
+function ContentPane(portfolio) {
+  const pane = this;
+  init(portfolio);
+  return pane;
 
-
-  function init() {
-    portfolio.isMobile = ("ontouchstart" in window)
-    portfolio.titleTag = d3.select("title");
-    portfolio.metaDescription = d3.select("head").append("meta").attr("name","description");
-    portfolio.isActive = false;
-    portfolio.itemsDiv = portfolio.addItemsDiv();
-    portfolio.items = portfolio.addItems();
-    portfolio.detailsBox = portfolio.addDetailsBox();
-    portfolio.contentPane = portfolio.addContentPane();
-
-    portfolio
-      .registerRouter()
-      .registerHashChange()
-      .registerNavigation()
-      .resetMetadata();
-
+  function init(portfolio) {
+    pane.parent = portfolio;
+    pane.containerDiv = pane.addContainerDiv();
   }
 }
 
@@ -88,76 +77,57 @@ function PortfolioItemContent(where) {
   }
 }
 
-function DetailsBox(portfolio) {
-  const box = this;
-  init(portfolio);
-  return box;
+function Portfolio() {
+  const portfolio = this;
+  init();
+  return portfolio;
 
-  function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
+
+  function init() {
+    portfolio.isMobile = ("ontouchstart" in window)
+    portfolio.titleTag = d3.select("title");
+    portfolio.metaDescription = d3.select("head").append("meta").attr("name","description");
+    portfolio.isActive = false;
+    portfolio.itemsDiv = portfolio.addItemsDiv();
+    portfolio.items = portfolio.addItems();
+    portfolio.detailsBox = portfolio.addDetailsBox();
+    portfolio.contentPane = portfolio.addContentPane();
+
+    portfolio
+      .registerRouter()
+      .registerHashChange()
+      .registerNavigation()
+      .resetMetadata();
+
   }
 }
 
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
   return d3.select("body")
     .append("div")
-    .classed("item-overlay",true);
-
+    .classed("details_box",true)
 }
 
-ContentPane.prototype.transitionIn = function(item,instantaneous) {
-  const pane = this;
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-  const paneTop = navbarHeight + itemHeight;
-  const paneHeight = window.innerHeight - paneTop;
-
-  pane.containerDiv
-    .style("display",'block')
-    .style("height",paneHeight + "px");
-
-  pane.containerDiv.node().scrollTop = "0px";
-
-  pane.containerDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0;} return 250})
-    .ease(d3.easeQuadIn)
-    .style("top",paneTop + "px")
-    .on("end",() => { item.manifest.loadCallback(pane.parent) })
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
-
-
-  if(item.manifest.callback) {
-    pane.activeItem = item.manifest
-      .callback(pane.containerDiv);
-  }
-
-
-  return pane;
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
+    .append("div")
+    .classed("details_content_div",true);
 }
 
-ContentPane.prototype.transitionOut = function() {
-  const pane = this;
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_date",true);
+}
 
-  pane.containerDiv
-    .transition()
-    .duration(500)
-    .style("top",window.innerHeight + "px")
-    .on("end",() => {
-      pane.containerDiv
-        .style("display","none")
-        .html("");
-    });
-
-  return pane;
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
 }
 
 HeroPlayer.prototype.addIframeHolder = function() {
@@ -211,606 +181,69 @@ HeroPlayer.prototype.addVideoLoad = function(previewSource) {
 
 }
 
-HeroPlayer.prototype.beep = function() {
-  const hero = this;
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
 
-  cycle();
+  box
+    .updateContent(item);
 
-  function cycle() {
-    // hero.playerOverlay
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(375)
-    //   .style("transform","scale(1.025)")
-    //   .transition()
-    //   .duration(250)
-    //   .style("transform","scale(1)")
-    //   .transition()
-    //   .duration(750)
-    //   .on("end",cycle);
-  }
-  return hero;
-}
-
-HeroPlayer.prototype.load = function(loadedCallback) {
-  const hero = this;
-
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
-
-  const iframe = hero.iframeHolder
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-
-  const playerInstance = new Vimeo.Player(iframe.node());
-
-  playerInstance.on("play", () => {
-
-    hero.playerOverlay
-      .transition()
-      .duration(250)
-      .style("top","100%");
-
-    hero.videoLoad
-      .style("display","none");
-
-    player
-      .setCurrentTime(0);
-
-    hero.videoLoad
-      .style("display","none");
-
-  });
-
-  iframe.on("load",() => {
-    if(loadedCallback) {
-      loadedCallback();
-    }
-  });
-
-  hero.beep();
-
-  return hero;
-}
-
-HeroPlayer.prototype.play = function() {
-  const hero = this;
-
-  
-
-  return hero;
-}
-
-HeroPlayer.prototype.pop = function() {
-  const hero = this;
-
-  return hero;
-}
-
-Portfolio.prototype.manifest = [
-  {
-    "title":["ABOUT","ME"],
-    "titleTag":"About Me | Tim Marco",
-    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
-    "video":"app/assets/clips/aboutMe.mp4",
-    "screenshot":"app/assets/clips/aboutMe.jpg",
-    "subtitle":"Bio and Contact Info",
-    // "circa":"Mid-2017",
-    "callback":activateAboutMe,
-    "route":"about",
-    "loadCallback":loadedAboutMe
-  },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "screenshot":"app/assets/clips/sketchbook.jpg",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
-  {
-    "title":["MLB FREE AGENT","EXPLORER"],
-    "titleTag":"MLB Free Agents Explorer",
-    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
-    "video":"app/assets/clips/freeAgents.mp4",
-    "screenshot":"app/assets/clips/freeAgents.jpg",
-    "subtitle":"A tool for assessing uncertain projections",
-    "circa":"Early 2019",
-    "route":"free-agent-explorer",
-    "callback":activateFreeAgents,
-    "loadCallback":loadedFreeAgents
-  },
-  {
-    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
-    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
-    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "titleTag":"My Sketchbook | Tim Marco",
-    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
-    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.jpg",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  }
-];
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
-    .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.heroOffset
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","contain")
-      .style("margin",0)
-      .style("padding",0);
-  }
-
-  return item.heroOffset
-    .append("video")
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("position","absolute")
-    .style("object-fit","cover")
-    .style("object-position","center center")
-    .style("margin",0)
-    .style("padding",0)
-    .style("width","100%")
-    .style("height","100%")
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroOffset = function() {
-  const item = this;
-
-  return item.substrate
-    .append("div")
-    .style("position","relative")
-    .style("width","100%")
-    .style("min-height","12.5vw")
-    .style("height","100%");
-
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
-      }
-    })
-    .html((datum) => { return datum});
-}
-
-Portfolio.prototype.activate = function(selectedItem,instantaneous) {
-  const portfolio = this;
-
-  portfolio.isActive = true;
-  portfolio
-    .updateMetadata(selectedItem.manifest);
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
 
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
     .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 200})
-    .style("transform","translate(0,"+yPosition+"px)");
-
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 250})
-    .style("left","0vw");
-
-  d3.select("#back-button-span")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 300})
-    .style("padding-left",titleSize + "px");
-
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item,instantaneous);
-
-        portfolio.contentPane
-          .transitionIn(item,instantaneous);
-
-        item
-          .activate(instantaneous);
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
 
 
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
+  return box;
 }
 
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
 
-  portfolio.isActive = false;
-  portfolio
-    .resetMetadata();
-
-  d3.select("#back-button")
+  box.containerDiv
     .transition()
     .duration(250)
-    .style("left","-100vw")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
+    .style("left",window.innerWidth + "px")
     .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
     });
 
-
-  return portfolio;
+  return box;
 }
 
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
 }
 
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerNavigation = function() {
-  const portfolio = this;
-
-  d3.select("#back-button")
-    .on("click",() => {
-      portfolio
-        .deactivate();
-    });
-
-  d3.select("#title")
-    .on("click",() => {
-      if(portfolio.isActive === true) {
-        portfolio
-          .deactivate();
-      }
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio
-        .activate(matchingRoute[0],true);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.resetMetadata = function() {
-  const portfolio = this;
-
-  portfolio
-    .updateMetadata({
-      "titleTag":"Tim Marco",
-      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.updateMetadata = function(manifest) {
-  const portfolio = this;
-
-  portfolio.titleTag
-    .html(manifest.titleTag);
-
-  portfolio.metaDescription
-    .attr("content",manifest.metaDescription);
-
-  return portfolio;
-}
-
-PortfolioItem.prototype.activate = function() {
-  const item = this;
-
-  item.state = "active";
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .pause();
-  }
-
-
-  return item;
-}
-
-PortfolioItem.prototype.drawAttention = function() {
-  const item = this;
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .muted = true;
-
-    item.hero
-      .node()
-      .play();
-  }
-
-  item.title
-    .style("background-color",d3.schemeCategory10[2]);
-
-  item.textLayer
-    .style("transform","scale(1)")
-    .transition()
-    .ease(d3.easeQuadOut)
-    .duration(250)
-    .style("transform","scale(1.05)");
-
-  return item;
-}
-
-PortfolioItem.prototype.getActiveHeight = function() {
-  const item = this;
-  return item.textDiv.node().getBoundingClientRect().height * 1.2;
-}
-
-PortfolioItem.prototype.hide = function() {
-  const item = this;
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",0)
-
-  return item;
-}
-
-PortfolioItem.prototype.reduceFocus = function() {
-  const item = this;
-  item.containerDiv
-    // .style("filter",0.75);
-
-  item.title
-    .style("background-color","black");
-
+function activateAboutMe(where) {
+  const content = new PortfolioItemContent(where)
+    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
 
 
 }
 
-PortfolioItem.prototype.reset = function() {
-  const item = this;
-
-  item.hero.node().pause();
-
-  item.title
-    .style("background-color","black");
-
-
-  item.textLayer
-    .transition()
-    .ease(d3.easeQuadIn)
-    .duration(125)
-    .style("transform","scale(1)");
-
-  return item;
-}
-
-PortfolioItem.prototype.show = function() {
-  const item = this;
-
-  item.state = "inactive";
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",1);
-
-  return item;
-
+function loadedAboutMe() {
 }
 
 function activateFittsLaw(where) {
@@ -833,16 +266,6 @@ function loadedFittsLaw(parent) {
   parent.contentPane.activeItem.hero
     .pop()
     .load();
-}
-
-function activateAboutMe(where) {
-  const content = new PortfolioItemContent(where)
-    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complicated universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
-
-
-}
-
-function loadedAboutMe() {
 }
 
 function activateFreeAgents(where) {
@@ -1076,6 +499,12 @@ function loadedSketchbook(parent) {
       "id":"528371381",
       "type":"video",
       "notes":"A fully-rendered fluid simulation using Radeon Pro Render"
+    },
+    {
+      "title":"Motion Tracking Test",
+      "id":"541165202",
+      "type":"video",
+      "notes":"A(n ironically-daytime) test of motion tracking like that used in HBO's <em>Watchmen</em>."
     }
   ];
 
@@ -1170,24 +599,367 @@ function loadedStrangerThings(parent) {
     .load();
 }
 
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
+HeroPlayer.prototype.beep = function() {
+  const hero = this;
+
+  cycle();
+
+  function cycle() {
+    // hero.playerOverlay
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(375)
+    //   .style("transform","scale(1.025)")
+    //   .transition()
+    //   .duration(250)
+    //   .style("transform","scale(1)")
+    //   .transition()
+    //   .duration(750)
+    //   .on("end",cycle);
+  }
+  return hero;
 }
 
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
+HeroPlayer.prototype.load = function(loadedCallback) {
+  const hero = this;
+
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+
+  const iframe = hero.iframeHolder
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const playerInstance = new Vimeo.Player(iframe.node());
+
+  playerInstance.on("play", () => {
+
+    hero.playerOverlay
+      .transition()
+      .duration(250)
+      .style("top","100%");
+
+    hero.videoLoad
+      .style("display","none");
+
+    player
+      .setCurrentTime(0);
+
+    hero.videoLoad
+      .style("display","none");
+
+  });
+
+  iframe.on("load",() => {
+    if(loadedCallback) {
+      loadedCallback();
+    }
+  });
+
+  hero.beep();
+
+  return hero;
 }
 
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
+HeroPlayer.prototype.play = function() {
+  const hero = this;
+
+  
+
+  return hero;
+}
+
+HeroPlayer.prototype.pop = function() {
+  const hero = this;
+
+  return hero;
+}
+
+ContentPane.prototype.transitionIn = function(item,instantaneous) {
+  const pane = this;
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+  const paneTop = navbarHeight + itemHeight;
+  const paneHeight = window.innerHeight - paneTop;
+
+  pane.containerDiv
+    .style("display",'block')
+    .style("height",paneHeight + "px");
+
+  pane.containerDiv.node().scrollTop = "0px";
+
+  pane.containerDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0;} return 250})
+    .ease(d3.easeQuadIn)
+    .style("top",paneTop + "px")
+    .on("end",() => { item.manifest.loadCallback(pane.parent) })
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.replace(/#(.*)$/, '') + '#' + item.manifest.route;
+
+
+  if(item.manifest.callback) {
+    pane.activeItem = item.manifest
+      .callback(pane.containerDiv);
+  }
+
+
+  return pane;
+}
+
+ContentPane.prototype.transitionOut = function() {
+  const pane = this;
+
+  pane.containerDiv
+    .transition()
+    .duration(500)
+    .style("top",window.innerHeight + "px")
+    .on("end",() => {
+      pane.containerDiv
+        .style("display","none")
+        .html("");
+    });
+
+  return pane;
+}
+
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true);
+
+}
+
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
+    .append("div")
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
+}
+
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.heroOffset
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","contain")
+      .style("margin",0)
+      .style("padding",0);
+  }
+
+  return item.heroOffset
+    .append("video")
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("position","absolute")
+    .style("object-fit","cover")
+    .style("object-position","center center")
+    .style("margin",0)
+    .style("padding",0)
+    .style("width","100%")
+    .style("height","100%")
+    .attr("loop",true);
+}
+
+PortfolioItem.prototype.addHeroOffset = function() {
+  const item = this;
+
+  return item.substrate
+    .append("div")
+    .style("position","relative")
+    .style("width","100%")
+    .style("min-height","12.5vw")
+    .style("height","100%");
+
+}
+
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
+}
+
+PortfolioItem.prototype.activate = function() {
+  const item = this;
+
+  item.state = "active";
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .pause();
+  }
+
+
+  return item;
+}
+
+PortfolioItem.prototype.drawAttention = function() {
+  const item = this;
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .muted = true;
+
+    item.hero
+      .node()
+      .play();
+  }
+
+  item.title
+    .style("background-color",d3.schemeCategory10[2]);
+
+  item.textLayer
+    .style("transform","scale(1)")
+    .transition()
+    .ease(d3.easeQuadOut)
+    .duration(250)
+    .style("transform","scale(1.05)");
+
+  return item;
+}
+
+PortfolioItem.prototype.getActiveHeight = function() {
+  const item = this;
+  return item.textDiv.node().getBoundingClientRect().height * 1.2;
+}
+
+PortfolioItem.prototype.hide = function() {
+  const item = this;
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",0)
+
+  return item;
+}
+
+PortfolioItem.prototype.reduceFocus = function() {
+  const item = this;
+  item.containerDiv
+    // .style("filter",0.75);
+
+  item.title
+    .style("background-color","black");
+
+
+
+}
+
+PortfolioItem.prototype.reset = function() {
+  const item = this;
+
+  item.hero.node().pause();
+
+  item.title
+    .style("background-color","black");
+
+
+  item.textLayer
+    .transition()
+    .ease(d3.easeQuadIn)
+    .duration(125)
+    .style("transform","scale(1)");
+
+  return item;
+}
+
+PortfolioItem.prototype.show = function() {
+  const item = this;
+
+  item.state = "inactive";
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",1);
+
+  return item;
+
 }
 
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
@@ -1324,87 +1096,345 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   return content;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
-    .append("div")
-    .classed("details_box",true)
+Portfolio.prototype.manifest = [
+  {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
+  // {
+  //   "title":["DATA-DRIVEN","VIDEO"],
+  //   "video":"assets/clips/videoDataViz.mp4",
+  //   "screenshot":"assets/clips/videoDataViz.png",
+  //   "subtitle":"Data binding with Python and Blender",
+  //   "screenshot":"app/assets/clips/sketchbook.jpg",
+  //   "circa":"April 2021",
+  //   "route":"data-driven-video"
+  // },
+  {
+    "title":["MLB FREE AGENT","EXPLORER"],
+    "titleTag":"MLB Free Agents Explorer",
+    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+    "video":"app/assets/clips/freeAgents.mp4",
+    "screenshot":"app/assets/clips/freeAgents.jpg",
+    "subtitle":"A tool for assessing uncertain projections",
+    "circa":"Early 2019",
+    "route":"free-agent-explorer",
+    "callback":activateFreeAgents,
+    "loadCallback":loadedFreeAgents
+  },
+  {
+    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
+    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
+    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
+    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.jpg",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  }
+];
+
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
 }
 
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
 }
 
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
 }
 
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
     .append("div")
-    .classed("details_subtitle",true);
+    .attr("id","portfolio-items");
 }
 
-DetailsBox.prototype.transitionIn = function(item,instantaneous) {
-  const box = this;
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
+  const portfolio = this;
 
-  box
-    .updateContent(item);
+  portfolio.isActive = true;
+  portfolio
+    .updateMetadata(selectedItem.manifest);
 
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
   const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
 
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
     .transition()
-    .duration(() => { if(instantaneous === true) { return 0; } return 250})
-    .style("left",(window.innerWidth / 2) + "px");
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
+    .style("transform","translate(0,"+yPosition+"px)");
 
+  d3.select("body")
+    .style("overflow","hidden");
 
-  return box;
-}
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
 
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
-
-  box.containerDiv
+  d3.select("#back-button")
     .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
-    .on("end",() => {
-      box.containerDiv
-        .style("display","none");
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
 
-      box.subtitleDiv
-        .html();
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px");
 
-      box.dateDiv
-        .html();
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item,instantaneous);
+
+        portfolio.contentPane
+          .transitionIn(item,instantaneous);
+
+        item
+          .activate(instantaneous);
+
+
+
+        return
+      }
+
+      item
+        .hide();
     });
 
-  return box;
+  return portfolio;
 }
 
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
 
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
+  portfolio.isActive = false;
+  portfolio
+    .resetMetadata();
 
-  box.dateDiv
-    .html(item.manifest.circa);
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","-100vw")
 
-  return box;
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerNavigation = function() {
+  const portfolio = this;
+
+  d3.select("#back-button")
+    .on("click",() => {
+      portfolio
+        .deactivate();
+    });
+
+  d3.select("#title")
+    .on("click",() => {
+      if(portfolio.isActive === true) {
+        portfolio
+          .deactivate();
+      }
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio
+        .activate(matchingRoute[0],true);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.resetMetadata = function() {
+  const portfolio = this;
+
+  portfolio
+    .updateMetadata({
+      "titleTag":"Tim Marco",
+      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.updateMetadata = function(manifest) {
+  const portfolio = this;
+
+  portfolio.titleTag
+    .html(manifest.titleTag);
+
+  portfolio.metaDescription
+    .attr("content",manifest.metaDescription);
+
+  return portfolio;
+}
+
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
+
+function BlurAttentionSketch(where) {
+  const blur = this;
+  init(where);
+  return blur;
+
+  function init(where) {
+
+    blur.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(blur.highlight())
+      .UnhighlightEventIs(blur.unhighlight())
+      .ClickEventIs(blur.click());
+
+    blur.backgroundRect = blur.addBackgroundRect();
+    blur.defs = blur.addDefs();
+    blur.filter = blur.addFilter();
+    blur.gaussian = blur.addGaussian();
+    blur.grid = blur.addGrid();
+    blur.buttonGroup = blur.addButtonGroup();
+    blur.buttons = blur.addButtons();
+
+  }
 }
 
 function ArcCountdown(where) {
@@ -1442,64 +1472,6 @@ function ArcCountdown(where) {
     countdown.hotspot = countdown.addHotspot();
 
     countdown.initialize();
-  }
-}
-
-function BlurAttentionSketch(where) {
-  const blur = this;
-  init(where);
-  return blur;
-
-  function init(where) {
-
-    blur.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(blur.highlight())
-      .UnhighlightEventIs(blur.unhighlight())
-      .ClickEventIs(blur.click());
-
-    blur.backgroundRect = blur.addBackgroundRect();
-    blur.defs = blur.addDefs();
-    blur.filter = blur.addFilter();
-    blur.gaussian = blur.addGaussian();
-    blur.grid = blur.addGrid();
-    blur.buttonGroup = blur.addButtonGroup();
-    blur.buttons = blur.addButtons();
-
-  }
-}
-
-function DragSnap(where) {
-  const snap = this;
-  init(where);
-  return snap;
-
-  function init(where) {
-    snap.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(() => {
-        if(snap.isDragging == true ) { return }
-        if(snap.isDone == true) { return }
-        snap.dragMe.transition().duration(250).attr("opacity",1);
-      });
-
-    snap.isDragging = false;
-    snap.canDrop = false;
-
-    snap.activeColor = d3.schemeCategory10[0];
-    snap.antColor= d3.schemeCategory10[1];
-    snap.connectingColor = "#fafafa";
-    snap.backgroundColor = "#eee";
-    snap.falseTargetColor = "#999";
-
-    snap.background = snap.addBackground();
-    snap.connectingLine = snap.addConnectingLine();
-    snap.antsMarching = snap.addAntsMarching();
-    snap.source = snap.addSource();
-    snap.destination = snap.addDestination();
-    snap.falseTargets = snap.addFalseTargets();
-    snap.dragMe = snap.addDragMe();
-
   }
 }
 
@@ -1541,6 +1513,40 @@ function RadarSketch(where) {
 
 }
 
+function DragSnap(where) {
+  const snap = this;
+  init(where);
+  return snap;
+
+  function init(where) {
+    snap.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(() => {
+        if(snap.isDragging == true ) { return }
+        if(snap.isDone == true) { return }
+        snap.dragMe.transition().duration(250).attr("opacity",1);
+      });
+
+    snap.isDragging = false;
+    snap.canDrop = false;
+
+    snap.activeColor = d3.schemeCategory10[0];
+    snap.antColor= d3.schemeCategory10[1];
+    snap.connectingColor = "#fafafa";
+    snap.backgroundColor = "#eee";
+    snap.falseTargetColor = "#999";
+
+    snap.background = snap.addBackground();
+    snap.connectingLine = snap.addConnectingLine();
+    snap.antsMarching = snap.addAntsMarching();
+    snap.source = snap.addSource();
+    snap.destination = snap.addDestination();
+    snap.falseTargets = snap.addFalseTargets();
+    snap.dragMe = snap.addDragMe();
+
+  }
+}
+
 function RadialGroup(where) {
   const radial = this;
   init(where);
@@ -1566,6 +1572,23 @@ function RadialGroup(where) {
     radial.circle = radial.addCircle();
     radial.hotspot = radial.addHotspot();
 
+  }
+}
+
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
   }
 }
 
@@ -1598,23 +1621,6 @@ function RandomWalk(where) {
     randomWalk.histogram = randomWalk.addHistogram();
 
 
-  }
-}
-
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
   }
 }
 
@@ -1684,196 +1690,6 @@ function IosAudioSlider(where) {
     slider.volumeDownButton = slider.addVolumeDownButton();
     slider.phone = slider.addPhone();
 
-
-  }
-}
-
-ArcCountdown.prototype.defineArcGenerator = function() {
-  const countdown = this;
-  
-  return d3.arc()
-    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
-    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
-}
-
-ArcCountdown.prototype.defineArcScales = function() {
-  const countdown = this;
-
-  return {
-    "innerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
-    "outerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
-    }
-
-}
-
-ArcCountdown.prototype.addArc = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill",countdown.foregroundColor)
-    .attr("stroke","none");
-}
-
-ArcCountdown.prototype.addArcGroup = function() {
-  const countdown = this;
-  return countdown.group
-    .append("g")
-    .attr("transform","rotate(-90)");
-}
-
-ArcCountdown.prototype.addArcOutline = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill","none")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",2);
-
-}
-
-ArcCountdown.prototype.addBackground = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",countdown.backgroundColor);
-}
-
-ArcCountdown.prototype.addGroup = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,225)");
-}
-
-ArcCountdown.prototype.addHotspot = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-ArcCountdown.prototype.addText = function() {
-  const countdown = this;
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("fill",countdown.foregroundColor)
-    .attr("y",25)
-    .html("0");
-}
-
-ArcCountdown.prototype.addTextOutline = function() {
-  const countdown = this;
-
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",countdown.textOutlineWidth)
-    .attr("y",25)
-    .html("0");
-
-}
-
-ArcCountdown.prototype.initialize = function() {
-  const countdown = this;
-
-  countdown.arcGenerator
-    .startAngle(0)
-    .endAngle(Math.PI);
-
-
-  [countdown.arc,countdown.arcOutline]
-    .forEach((arc) => {
-      arc
-        .attr("d",
-          countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(0))
-            .outerRadius(countdown.arcScales.outerRadius(0))
-        );
-    });
-
-  [countdown.textOutline,countdown.text]
-    .forEach((textElement) => {
-      textElement
-        .html(countdown.maxValue);
-    });
-}
-
-ArcCountdown.prototype.pauseCountdown = function() {
-  const countdown = this;
-
-  return () => {
-    [countdown.arc,countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .interrupt();
-      });
-
-    countdown
-      .initialize();
-  }
-}
-
-ArcCountdown.prototype.runCountdown = function() {
-  const countdown = this;
-
-  return () => {
-
-    const startValue = +countdown.text.html();
-
-    [countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .transition()
-          .duration(countdown.fullDuration)
-          .ease(countdown.easeType)
-          .textTween(numberTween())
-      });
-
-    countdown.arc
-      .transition()
-      .duration(countdown.fullDuration)
-      .ease(countdown.easeType)
-      .attrTween("d",arcTween(0));
-
-    function numberTween() {
-      return function() {
-        const interpolate = d3.interpolate(countdown.maxValue,0)
-        return function(time) {
-          return Math.floor(interpolate(time));
-        }
-      }
-    }
-
-
-    function arcTween(newAngle) {
-      return function() {
-        const interpolateValue = d3.interpolate(Math.PI,newAngle);
-        return function(time) {
-          return countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(time))
-            .outerRadius(countdown.arcScales.outerRadius(time))
-            .endAngle(interpolateValue(time))();
-        }
-      }
-    }
 
   }
 }
@@ -2160,6 +1976,439 @@ BlurAttentionSketch.prototype.unhighlight = function() {
   }
 }
 
+ArcCountdown.prototype.addArc = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill",countdown.foregroundColor)
+    .attr("stroke","none");
+}
+
+ArcCountdown.prototype.addArcGroup = function() {
+  const countdown = this;
+  return countdown.group
+    .append("g")
+    .attr("transform","rotate(-90)");
+}
+
+ArcCountdown.prototype.addArcOutline = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill","none")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",2);
+
+}
+
+ArcCountdown.prototype.addBackground = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",countdown.backgroundColor);
+}
+
+ArcCountdown.prototype.addGroup = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,225)");
+}
+
+ArcCountdown.prototype.addHotspot = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+ArcCountdown.prototype.addText = function() {
+  const countdown = this;
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("fill",countdown.foregroundColor)
+    .attr("y",25)
+    .html("0");
+}
+
+ArcCountdown.prototype.addTextOutline = function() {
+  const countdown = this;
+
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",countdown.textOutlineWidth)
+    .attr("y",25)
+    .html("0");
+
+}
+
+ArcCountdown.prototype.initialize = function() {
+  const countdown = this;
+
+  countdown.arcGenerator
+    .startAngle(0)
+    .endAngle(Math.PI);
+
+
+  [countdown.arc,countdown.arcOutline]
+    .forEach((arc) => {
+      arc
+        .attr("d",
+          countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(0))
+            .outerRadius(countdown.arcScales.outerRadius(0))
+        );
+    });
+
+  [countdown.textOutline,countdown.text]
+    .forEach((textElement) => {
+      textElement
+        .html(countdown.maxValue);
+    });
+}
+
+ArcCountdown.prototype.pauseCountdown = function() {
+  const countdown = this;
+
+  return () => {
+    [countdown.arc,countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .interrupt();
+      });
+
+    countdown
+      .initialize();
+  }
+}
+
+ArcCountdown.prototype.runCountdown = function() {
+  const countdown = this;
+
+  return () => {
+
+    const startValue = +countdown.text.html();
+
+    [countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .transition()
+          .duration(countdown.fullDuration)
+          .ease(countdown.easeType)
+          .textTween(numberTween())
+      });
+
+    countdown.arc
+      .transition()
+      .duration(countdown.fullDuration)
+      .ease(countdown.easeType)
+      .attrTween("d",arcTween(0));
+
+    function numberTween() {
+      return function() {
+        const interpolate = d3.interpolate(countdown.maxValue,0)
+        return function(time) {
+          return Math.floor(interpolate(time));
+        }
+      }
+    }
+
+
+    function arcTween(newAngle) {
+      return function() {
+        const interpolateValue = d3.interpolate(Math.PI,newAngle);
+        return function(time) {
+          return countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(time))
+            .outerRadius(countdown.arcScales.outerRadius(time))
+            .endAngle(interpolateValue(time))();
+        }
+      }
+    }
+
+  }
+}
+
+ArcCountdown.prototype.defineArcGenerator = function() {
+  const countdown = this;
+  
+  return d3.arc()
+    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
+    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
+}
+
+ArcCountdown.prototype.defineArcScales = function() {
+  const countdown = this;
+
+  return {
+    "innerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
+    "outerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
+    }
+
+}
+
+RadarSketch.prototype.addBackground = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","black");
+}
+
+RadarSketch.prototype.addBogeyGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addBogeys = function() {
+  const radar = this;
+  const bogeyCount = 10;
+
+  const bogeyPolarCoordinates = [];
+  d3.range(0,bogeyCount)
+    .forEach((index) => {
+      bogeyPolarCoordinates
+        .push({
+          "theta":d3.randomUniform(0,2*Math.PI)(),
+          "distance":d3.randomUniform(35,150)()
+        });
+    });
+
+  return radar.bogeyGroup
+    .selectAll("circle")
+    .data(bogeyPolarCoordinates)
+    .enter()
+    .append("circle")
+    .attr("r",5)
+    .attr("fill",radar.green)
+    .attr("stroke","none")
+    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
+    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
+    .attr("fill-opacity",0);
+}
+
+RadarSketch.prototype.addDefs = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("defs");
+}
+
+RadarSketch.prototype.addGroup = function() {
+  const radar = this;
+  return radar.rotateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addHotspot = function() {
+  const radar = this;
+  radar.sketch.svg
+    .append("rect")
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+RadarSketch.prototype.addPolarLines = function() {
+  const radar = this;
+  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
+  return radar.bogeyGroup
+    .selectAll(".polarLine")
+    .data(lineData)
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",(theta) => { return Math.cos(theta) * 150})
+    .attr("y1",0)
+    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","5,5")
+}
+
+RadarSketch.prototype.addRangeCircles = function() {
+  const radar = this;
+  const circleDistances = [50,100,150];
+  return radar.group
+    .selectAll(".rangeCircle")
+    .data(circleDistances)
+    .enter()
+    .append("circle")
+    .attr("fill","none")
+    .attr("stroke",radar.green)
+    .attr("stroke-width",1)
+    .attr("r",(datum) =>{ return datum});
+
+}
+
+RadarSketch.prototype.addReticle = function() {
+  const radar = this;
+  return radar.group
+    .append("circle")
+    .attr("fill",radar.green)
+    .attr("r",5);
+}
+
+RadarSketch.prototype.addRotateGroup = function() {
+  const radar = this;
+  return radar.translateGroup
+    .append("g");
+}
+
+RadarSketch.prototype.addScanWedge = function() {
+  const radar = this;
+
+  const arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(150)
+    .startAngle(0)
+    .endAngle(radar.wedgeSize * Math.PI / 180);
+
+  return radar.group
+    .append("path")
+    .attr("fill","url(#wedgeGradient)")
+    .attr("stroke","none")
+    .attr("d",arcGenerator);
+}
+
+RadarSketch.prototype.addScanLine = function() {
+  const radar = this;
+  return radar.group
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",0)
+    .attr("y1",0)
+    .attr("y2",-150)
+    .attr("stroke-width",3)
+    .attr("stroke",radar.scanLineColor);
+}
+
+RadarSketch.prototype.addTranslateGroup = function() {
+  const radar = this;
+  return radar.sketch.svg
+    .append("g")
+    .attr("transform","translate(300,180)");
+}
+
+RadarSketch.prototype.addWedgeGradient = function() {
+  const radar = this;
+  const gradient = radar.defs
+    .append("linearGradient")
+    .attr("id","wedgeGradient")
+    .attr("x1","0%")
+    .attr("x2","100%")
+    .attr("y1","0%")
+    .attr("y2","0%")
+    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
+
+  gradient
+    .append("stop")
+    .attr("offset","0%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",0)
+
+  gradient
+    .append("stop")
+    .attr("offset","100%")
+    .style("stop-color",radar.green)
+    .style("stop-opacity",1);
+
+}
+
+RadarSketch.prototype.click = function() {
+  const radar = this;
+  return () => {
+  }
+}
+
+RadarSketch.prototype.highlight = function() {
+  const radar = this;
+  return () => {
+    radar
+      .singleSweep();
+  }
+}
+
+RadarSketch.prototype.singleSweep = function() {
+  const radar = this;
+
+  radar.rotateGroup
+    .attr("transform","rotate(0)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(180)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(359.999)")
+    .ease(d3.easeLinear)
+    .on("end",() => { radar.singleSweep(); });
+
+  radar.bogeyGroup
+    .selectAll("circle")
+    .each(function(coordinates) {
+      const bogey = d3.select(this);
+      const xCoordinate = bogey.attr("cx");
+      const yCoordinate = bogey.attr("cy");
+      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
+      if(delay > 4000) {
+        delay -= 4000;
+      }
+
+      bogey
+        .transition()
+        .delay(delay)
+        .duration(0)
+        .attr("r",7)
+        .attr("fill-opacity",1)
+        .transition()
+        .ease(d3.easeQuadIn)
+        .duration(2000)
+        .attr("fill-opacity",0)
+        .attr("r",2)
+    });
+
+}
+
+RadarSketch.prototype.unhighlight = function() {
+  const radar = this;
+  return () => {
+    radar.rotateGroup
+      .interrupt();
+
+    radar.bogeyGroup
+      .selectAll("circle")
+      .remove();
+
+    radar.rotateGroup
+      .attr("transform","rotate(0)");
+
+    radar.bogeys = radar.addBogeys();
+  }
+}
+
 DragSnap.prototype.addAntsMarching = function() {
   const snap = this;
   return snap.sketch.svg
@@ -2339,249 +2588,6 @@ DragSnap.prototype.addSource = function() {
         .on("drag",snap.dragging())
         .on("end",snap.dragEnd())
     );
-}
-
-RadarSketch.prototype.click = function() {
-  const radar = this;
-  return () => {
-  }
-}
-
-RadarSketch.prototype.highlight = function() {
-  const radar = this;
-  return () => {
-    radar
-      .singleSweep();
-  }
-}
-
-RadarSketch.prototype.singleSweep = function() {
-  const radar = this;
-
-  radar.rotateGroup
-    .attr("transform","rotate(0)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(180)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(359.999)")
-    .ease(d3.easeLinear)
-    .on("end",() => { radar.singleSweep(); });
-
-  radar.bogeyGroup
-    .selectAll("circle")
-    .each(function(coordinates) {
-      const bogey = d3.select(this);
-      const xCoordinate = bogey.attr("cx");
-      const yCoordinate = bogey.attr("cy");
-      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
-      if(delay > 4000) {
-        delay -= 4000;
-      }
-
-      bogey
-        .transition()
-        .delay(delay)
-        .duration(0)
-        .attr("r",7)
-        .attr("fill-opacity",1)
-        .transition()
-        .ease(d3.easeQuadIn)
-        .duration(2000)
-        .attr("fill-opacity",0)
-        .attr("r",2)
-    });
-
-}
-
-RadarSketch.prototype.unhighlight = function() {
-  const radar = this;
-  return () => {
-    radar.rotateGroup
-      .interrupt();
-
-    radar.bogeyGroup
-      .selectAll("circle")
-      .remove();
-
-    radar.rotateGroup
-      .attr("transform","rotate(0)");
-
-    radar.bogeys = radar.addBogeys();
-  }
-}
-
-RadarSketch.prototype.addBackground = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","black");
-}
-
-RadarSketch.prototype.addBogeyGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addBogeys = function() {
-  const radar = this;
-  const bogeyCount = 10;
-
-  const bogeyPolarCoordinates = [];
-  d3.range(0,bogeyCount)
-    .forEach((index) => {
-      bogeyPolarCoordinates
-        .push({
-          "theta":d3.randomUniform(0,2*Math.PI)(),
-          "distance":d3.randomUniform(35,150)()
-        });
-    });
-
-  return radar.bogeyGroup
-    .selectAll("circle")
-    .data(bogeyPolarCoordinates)
-    .enter()
-    .append("circle")
-    .attr("r",5)
-    .attr("fill",radar.green)
-    .attr("stroke","none")
-    .attr("cx",(coordinates) => { return Math.cos(coordinates.theta) * coordinates.distance})
-    .attr("cy",(coordinates) => { return Math.sin(coordinates.theta) * coordinates.distance})
-    .attr("fill-opacity",0);
-}
-
-RadarSketch.prototype.addDefs = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("defs");
-}
-
-RadarSketch.prototype.addGroup = function() {
-  const radar = this;
-  return radar.rotateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addHotspot = function() {
-  const radar = this;
-  radar.sketch.svg
-    .append("rect")
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-RadarSketch.prototype.addPolarLines = function() {
-  const radar = this;
-  const lineData = d3.range(0,Math.PI * 2,Math.PI / 4);
-  return radar.bogeyGroup
-    .selectAll(".polarLine")
-    .data(lineData)
-    .enter()
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",(theta) => { return Math.cos(theta) * 150})
-    .attr("y1",0)
-    .attr("y2",(theta) => { return Math.sin(theta) * 150 })
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","5,5")
-}
-
-RadarSketch.prototype.addRangeCircles = function() {
-  const radar = this;
-  const circleDistances = [50,100,150];
-  return radar.group
-    .selectAll(".rangeCircle")
-    .data(circleDistances)
-    .enter()
-    .append("circle")
-    .attr("fill","none")
-    .attr("stroke",radar.green)
-    .attr("stroke-width",1)
-    .attr("r",(datum) =>{ return datum});
-
-}
-
-RadarSketch.prototype.addReticle = function() {
-  const radar = this;
-  return radar.group
-    .append("circle")
-    .attr("fill",radar.green)
-    .attr("r",5);
-}
-
-RadarSketch.prototype.addRotateGroup = function() {
-  const radar = this;
-  return radar.translateGroup
-    .append("g");
-}
-
-RadarSketch.prototype.addScanWedge = function() {
-  const radar = this;
-
-  const arcGenerator = d3.arc()
-    .innerRadius(0)
-    .outerRadius(150)
-    .startAngle(0)
-    .endAngle(radar.wedgeSize * Math.PI / 180);
-
-  return radar.group
-    .append("path")
-    .attr("fill","url(#wedgeGradient)")
-    .attr("stroke","none")
-    .attr("d",arcGenerator);
-}
-
-RadarSketch.prototype.addScanLine = function() {
-  const radar = this;
-  return radar.group
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",0)
-    .attr("y1",0)
-    .attr("y2",-150)
-    .attr("stroke-width",3)
-    .attr("stroke",radar.scanLineColor);
-}
-
-RadarSketch.prototype.addTranslateGroup = function() {
-  const radar = this;
-  return radar.sketch.svg
-    .append("g")
-    .attr("transform","translate(300,180)");
-}
-
-RadarSketch.prototype.addWedgeGradient = function() {
-  const radar = this;
-  const gradient = radar.defs
-    .append("linearGradient")
-    .attr("id","wedgeGradient")
-    .attr("x1","0%")
-    .attr("x2","100%")
-    .attr("y1","0%")
-    .attr("y2","0%")
-    .attr("gradientTransform","rotate("+radar.wedgeSize+")")
-
-  gradient
-    .append("stop")
-    .attr("offset","0%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",0)
-
-  gradient
-    .append("stop")
-    .attr("offset","100%")
-    .style("stop-color",radar.green)
-    .style("stop-opacity",1);
-
 }
 
 RadialGroup.prototype.addBackground = function() {
@@ -2771,6 +2777,23 @@ RadialGroup.prototype.reset = function() {
   }
 }
 
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
+}
+
 RandomWalk.prototype.addHistogram = function() {
   const randomWalk = this;
   return randomWalk.sketch.svg
@@ -2933,23 +2956,6 @@ RandomWalk.prototype.unhighlight = function() {
     randomWalk.isActive = false;
     return randomWalk;
   }
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
 }
 
 SnellsLaw.prototype.highlight = function() {
@@ -3674,6 +3680,18 @@ DragSnap.prototype.dragging = function() {
   }
 }
 
+Sketch.prototype.AddSvg = function() {
+  const sketch = this;
+  sketch.svg = sketch.div
+    .append("svg")
+    .classed("svgSketch",true)
+    .attr("width",640)
+    .attr("height",360)
+    .style("user-select","none");
+
+  return sketch;
+}
+
 Sketch.prototype.ClickEventIs = function(callback) {
   const sketch = this;
   sketch.clickCallback = callback;
@@ -3689,18 +3707,6 @@ Sketch.prototype.HighlightEventIs = function(callback) {
 Sketch.prototype.UnhighlightEventIs = function(callback) {
   const sketch = this;
   sketch.mouseoutCallback = callback;
-  return sketch;
-}
-
-Sketch.prototype.AddSvg = function() {
-  const sketch = this;
-  sketch.svg = sketch.div
-    .append("svg")
-    .classed("svgSketch",true)
-    .attr("width",640)
-    .attr("height",360)
-    .style("user-select","none");
-
   return sketch;
 }
 
