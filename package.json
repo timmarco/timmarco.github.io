@@ -1,7 +1,7 @@
 {
   "name": "portfolio",
   "version": "1.0.0",
-  "description": "",
+  "description": "Github Pages Repo",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,17 @@
   "license": "ISC",
   "dependencies": {
     "@vimeo/player": "^2.15.0",
-    "d3": "^6.5.0",
+    "d3": "^6.7.0",
+    "express": "^4.17.1",
     "gulp-minify": "^3.1.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timmarco/timmarco.github.io.git"
+  },
+  "bugs": {
+    "url": "https://github.com/timmarco/timmarco.github.io/issues"
+  },
+  "homepage": "https://github.com/timmarco/timmarco.github.io#readme"
 }

@@ -81,10 +81,22 @@ function loadedSketchbook(parent) {
       "notes":"ARKit provides developers with the ability to scan physical objects for object recognition. Here, I'm using a (slightly modified) app from Apple to scan Lego architecture models for later recognition."
     },
     {
-      "title":"FOREST FIRE TEST",
+      "title":"Forest Fire Test",
       "id":"523537584",
       "type":"video",
       "notes":"In computer science and computational social science, Forest Fire models describe the diffusion of information and behavior in connected systems. This is an illustration of how these models work, using the literal example of a burning forest."
+    },
+    {
+      "title":"US Population Growth",
+      "id":"629545203",
+      "type":"video",
+      "notes":"An early test of creating animated chloropeth maps. Chart shows relative population of counties in the US between 1790-2010. Data pulled from US Census."
+    },
+    {
+      "title":"Crosshairs Study",
+      "id":"631569384",
+      "type":"video",
+      "notes":"A study on how different parameters affect the perception of an activation animation for video projects."
     },
     {
       "title":"AR Kit Blendshapes",
