@@ -157,6 +157,12 @@ function loadedSketchbook(parent) {
       "id":"541413359",
       "type":"video",
       "notes":"A test of combining motion tracking with HDRI illumination."
+    },
+    {
+      "title":"SIR/D Visualization",
+      "id":"643241001",
+      "type":"video",
+      "notes":"An animated visualization of an SIR/D model of epidemic spread. The visual structure was inspired by a Systems Dynamics perspective"
     }
 
 
