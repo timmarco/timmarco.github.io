@@ -4,6 +4,7 @@ HeroPlayer.prototype.addVideoLoad = function(previewSource) {
     .append("img")
     .classed("video-overlay-image",true)
     .style("pointer-events","none")
-    .attr("src",previewSource);
+    .attr("src",previewSource)
+    .style("display","none")
 
 }
