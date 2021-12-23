@@ -11,15 +11,31 @@ Portfolio.prototype.manifest = [
     "route":"about",
     "loadCallback":loadedAboutMe
   },
-  // {
-  //   "title":["DATA-DRIVEN","VIDEO"],
-  //   "video":"assets/clips/videoDataViz.mp4",
-  //   "screenshot":"assets/clips/videoDataViz.png",
-  //   "subtitle":"Data binding with Python and Blender",
-  //   "screenshot":"app/assets/clips/sketchbook.jpg",
-  //   "circa":"April 2021",
-  //   "route":"data-driven-video"
-  // },
+  {
+    "title":["VIDEO","DATA VISUALIZATION"],
+    "video":"assets/clips/videoDataViz.mp4",
+    "screenshot":"assets/clips/videoDataViz.png",
+    "subtitle":"Data-driven animations",
+    "screenshot":"app/assets/clips/videoDataViz.jpg",
+    "video":"app/assets/clips/videoDataViz.mp4",
+    "circa":"Late 2021",
+    "route":"data-driven-video",
+    "callback":activateDataViz,
+    "loadCallback":loadedDataViz
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
   {
     "title":["MLB FREE AGENT","ANALYZER"],
     "titleTag":"MLB Free Agents Analzyer",
@@ -44,19 +60,6 @@ Portfolio.prototype.manifest = [
     "callback":activateStrangerThings,
     "route":"stranger-things",
     "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "titleTag":"My Sketchbook | Tim Marco",
-    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
   },
   {
     "title":["DIVING DEEP","INTO FITTS' LAW"],

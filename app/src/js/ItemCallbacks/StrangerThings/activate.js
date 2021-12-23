@@ -1,5 +1,6 @@
 function activateStrangerThings(where) {
 
+
   return new PortfolioItemContent(where)
     .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
     .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
