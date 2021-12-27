@@ -3,9 +3,9 @@ function activateDataViz(where) {
 
   return new PortfolioItemContent(where)
     .vimeo("659760952","app/assets/previews/videoDataViz.jpg")
-    // .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    // .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>")
-    // .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
-
+    .div("<div class='explanation-div'><h1>ANIMATIONS CREATED WITH CODE</h1></div>")
+    .div("<p style='width:90%; margin:auto'>Over time, I've come to appreciate the value and importance of data visualization as a <em>storytelling</em> and <em>persuasion</em> tool (as opposed to a purely technical or informational one).</p> ")
+    .div("<p style='width:90%; margin:auto'>Data Visualization can be used to engage and even entertain in service of communicating complex subject matter, and that's especially true when it's deployed in animated media.</p> ")
+    .div("<p style='width:90%; margin:auto'>Here, I'm showcasing some of my work and techniques for creating high-quality animations via code.</p> ")
 
 }

@@ -1,7 +1,9 @@
 function activateSketchbook(where) {
 
   const item = new PortfolioItemContent(where)
-    .vimeo("524922093","app/assets/previews/sketchbookPreview.jpeg");
+    .vimeo("524922093","app/assets/previews/sketchbookPreview.jpeg")
+    .div("<p style='width:90%; margin:auto'>I often play around with ideas for videos, visualizations, interactions, and other ideas that may or may not develop into something more fleshed out (like the other demos on this site). Some of the examples here are one-off sketches &mdash; digital doodles that don't really amount to anything directly. Others started as ideas that eventually led to something more substantial.</p> ")
+
 
   const loadingSvg = item.descriptionDiv
     .append("svg")

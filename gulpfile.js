@@ -16,6 +16,7 @@ gulp.task('css',() => {
     .pipe(gulp.dest('app'));
 });
 
+
 gulp.task('watch',() => {
   gulp.watch('app/src/js/**/*.js',gulp.series('js'));
   gulp.watch('app/src/css/**/*.css',gulp.series('css'));
