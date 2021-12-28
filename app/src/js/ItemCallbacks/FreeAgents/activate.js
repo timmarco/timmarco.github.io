@@ -2,7 +2,7 @@ function activateFreeAgents(where) {
 
   return new PortfolioItemContent(where)
     .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
-    .div("<p style='width:90%; margin:auto; font-size:0.7em'><em>Scroll to the bottom to see the live demo</em></p>")
+    .div("<p class='videoCaption'><em>Scroll to the bottom to see the live demo</em></p>")
     .div("<div class='explanation-div'><h1>AN EXPLORTAORY DAYA ANALYSIS DEMO</h1></div>")
     .div("<p style='width:90%; margin:auto'>Analyzing data can be as much an art as a science. The measure of a tool's effectiveness in Exploratory Data Analysis is the degree to which it helps users <em>discover new insights</em> and <em>contextualize information</em>.</p> ")
     .div("<p style='width:90%; margin:auto'>Here, I've created a demo of an EDA tool with a <em>very</em> specific audience in mind: Major League Baseball General Managers and front office staffs. The concept behind the tool is to help them evaluate hypothetical contracts for free agent players, by condensing simple projections of future performance with assumptions about the market rate of that performance.</p> ")

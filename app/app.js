@@ -9,20 +9,6 @@ function ContentPane(portfolio) {
   }
 }
 
-function DetailsBox(portfolio) {
-  const box = this;
-  init(portfolio);
-  return box;
-
-  function init(portfolio) {
-    box.parent = portfolio;
-    box.containerDiv = box.addContainerDiv();
-    box.contentDiv = box.addContentDiv();
-    box.subtitleDiv = box.addSubtitleDiv();
-    box.dateDiv = box.addDateDiv();
-  }
-}
-
 function Portfolio() {
   const portfolio = this;
   init();
@@ -63,6 +49,20 @@ function HeroPlayer(where,vimeoId,previewSource) {
     hero.playerOverlay = hero.addPlayerOverlay();
     hero.messageDiv = hero.addMessageDiv();
 
+  }
+}
+
+function DetailsBox(portfolio) {
+  const box = this;
+  init(portfolio);
+  return box;
+
+  function init(portfolio) {
+    box.parent = portfolio;
+    box.containerDiv = box.addContainerDiv();
+    box.contentDiv = box.addContentDiv();
+    box.subtitleDiv = box.addSubtitleDiv();
+    box.dateDiv = box.addDateDiv();
   }
 }
 
@@ -160,88 +160,83 @@ ContentPane.prototype.transitionOut = function() {
   return pane;
 }
 
-DetailsBox.prototype.addContainerDiv = function() {
-  const box = this;
-  return d3.select("body")
-    .append("div")
-    .classed("details_box",true)
-}
-
-DetailsBox.prototype.addContentDiv = function() {
-  const box = this;
-  return box.containerDiv
-    .append("div")
-    .classed("details_content_div",true);
-}
-
-DetailsBox.prototype.addDateDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_date",true);
-}
-
-DetailsBox.prototype.addSubtitleDiv = function() {
-  const box = this;
-  return box.contentDiv
-    .append("div")
-    .classed("details_subtitle",true);
-}
-
-DetailsBox.prototype.transitionIn = function(item,instantaneous) {
-  const box = this;
-
-  box
-    .updateContent(item);
-
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-  const itemHeight = item.getActiveHeight();
-
-  box.containerDiv
-    .style("display","block")
-    .style("top",navbarHeight + "px")
-    .style("left",window.innerWidth + "px")
-    .style("height",itemHeight + "px")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0; } return 250})
-    .style("left",(window.innerWidth / 2) + "px");
-
-
-  return box;
-}
-
-DetailsBox.prototype.transitionOut = function() {
-  const box = this;
-
-  box.containerDiv
-    .transition()
-    .duration(250)
-    .style("left",window.innerWidth + "px")
-    .on("end",() => {
-      box.containerDiv
-        .style("display","none");
-
-      box.subtitleDiv
-        .html();
-
-      box.dateDiv
-        .html();
-    });
-
-  return box;
-}
-
-DetailsBox.prototype.updateContent = function(item) {
-  const box = this;
-
-  box.subtitleDiv
-    .html(item.manifest.subtitle);
-
-  box.dateDiv
-    .html(item.manifest.circa);
-
-  return box;
-}
+Portfolio.prototype.manifest = [
+  {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
+  {
+    "title":["VIDEO","DATA VISUALIZATION"],
+    "video":"assets/clips/videoDataViz.mp4",
+    "screenshot":"assets/clips/videoDataViz.png",
+    "subtitle":"Data-driven animations",
+    "screenshot":"app/assets/clips/videoDataViz.jpg",
+    "video":"app/assets/clips/videoDataViz.mp4",
+    "circa":"Late 2021",
+    "route":"data-driven-video",
+    "callback":activateDataViz,
+    "loadCallback":loadedDataViz
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["MLB FREE AGENT","ANALYZER"],
+    "titleTag":"MLB Free Agents Analzyer",
+    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+    "video":"app/assets/clips/freeAgents.mp4",
+    "screenshot":"app/assets/clips/freeAgents.jpg",
+    "subtitle":"A tool for assessing uncertain projections",
+    "circa":"Early 2019",
+    "route":"free-agent-analyzer",
+    "callback":activateFreeAgents,
+    "loadCallback":loadedFreeAgents
+  },
+  {
+    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
+    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
+    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
+    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.jpg",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  }
+];
 
 Portfolio.prototype.addContentPane = function() {
   const portfolio = this;
@@ -465,83 +460,57 @@ Portfolio.prototype.updateMetadata = function(manifest) {
   return portfolio;
 }
 
-Portfolio.prototype.manifest = [
-  {
-    "title":["ABOUT","ME"],
-    "titleTag":"About Me | Tim Marco",
-    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
-    "video":"app/assets/clips/aboutMe.mp4",
-    "screenshot":"app/assets/clips/aboutMe.jpg",
-    "subtitle":"Bio and Contact Info",
-    // "circa":"Mid-2017",
-    "callback":activateAboutMe,
-    "route":"about",
-    "loadCallback":loadedAboutMe
-  },
-  {
-    "title":["VIDEO","DATA VISUALIZATION"],
-    "video":"assets/clips/videoDataViz.mp4",
-    "screenshot":"assets/clips/videoDataViz.png",
-    "subtitle":"Data-driven animations",
-    "screenshot":"app/assets/clips/videoDataViz.jpg",
-    "video":"app/assets/clips/videoDataViz.mp4",
-    "circa":"Late 2021",
-    "route":"data-driven-video",
-    "callback":activateDataViz,
-    "loadCallback":loadedDataViz
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "titleTag":"My Sketchbook | Tim Marco",
-    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["MLB FREE AGENT","ANALYZER"],
-    "titleTag":"MLB Free Agents Analzyer",
-    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
-    "video":"app/assets/clips/freeAgents.mp4",
-    "screenshot":"app/assets/clips/freeAgents.jpg",
-    "subtitle":"A tool for assessing uncertain projections",
-    "circa":"Early 2019",
-    "route":"free-agent-analyzer",
-    "callback":activateFreeAgents,
-    "loadCallback":loadedFreeAgents
-  },
-  {
-    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
-    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
-    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
-    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.jpg",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  }
-];
+HeroPlayer.prototype.addIframeHolder = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .attr("data-role","vimeoIframe")
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+}
+
+HeroPlayer.prototype.addMessageDiv = function() {
+  const hero = this;
+
+  return hero.playerOverlay
+    .append("img")
+    .style("left",0)
+    .style("top",0)
+    .style("width","100%")
+    .style("height","100%");
+}
+
+HeroPlayer.prototype.addPlayerOverlay = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .classed("video-overlay",true)
+    .style("pointer-events","none");
+}
+
+HeroPlayer.prototype.addVideoDiv = function(where) {
+  const hero = this;
+  return where
+    .append("div")
+    .classed("content-video-container",true);
+}
+
+HeroPlayer.prototype.addVideoLoad = function(previewSource) {
+  const hero = this;
+  return hero.videoDiv
+    .append("img")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
+    .attr("src",previewSource)
+    .style("display","none")
+
+}
 
 HeroPlayer.prototype.beep = function() {
   const hero = this;
@@ -633,56 +602,87 @@ HeroPlayer.prototype.pop = function() {
   return hero;
 }
 
-HeroPlayer.prototype.addIframeHolder = function() {
-  const hero = this;
-
-  return hero.videoDiv
+DetailsBox.prototype.addContainerDiv = function() {
+  const box = this;
+  return d3.select("body")
     .append("div")
-    .attr("data-role","vimeoIframe")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
+    .classed("details_box",true)
 }
 
-HeroPlayer.prototype.addMessageDiv = function() {
-  const hero = this;
-
-  return hero.playerOverlay
-    .append("img")
-    .style("left",0)
-    .style("top",0)
-    .style("width","100%")
-    .style("height","100%");
-}
-
-HeroPlayer.prototype.addPlayerOverlay = function() {
-  const hero = this;
-
-  return hero.videoDiv
+DetailsBox.prototype.addContentDiv = function() {
+  const box = this;
+  return box.containerDiv
     .append("div")
-    .classed("video-overlay",true)
-    .style("pointer-events","none");
+    .classed("details_content_div",true);
 }
 
-HeroPlayer.prototype.addVideoDiv = function(where) {
-  const hero = this;
-  return where
+DetailsBox.prototype.addDateDiv = function() {
+  const box = this;
+  return box.contentDiv
     .append("div")
-    .classed("content-video-container",true);
+    .classed("details_date",true);
 }
 
-HeroPlayer.prototype.addVideoLoad = function(previewSource) {
-  const hero = this;
-  return hero.videoDiv
-    .append("img")
-    .classed("video-overlay-image",true)
-    .style("pointer-events","none")
-    .attr("src",previewSource)
-    .style("display","none")
+DetailsBox.prototype.addSubtitleDiv = function() {
+  const box = this;
+  return box.contentDiv
+    .append("div")
+    .classed("details_subtitle",true);
+}
 
+DetailsBox.prototype.transitionIn = function(item,instantaneous) {
+  const box = this;
+
+  box
+    .updateContent(item);
+
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+  const itemHeight = item.getActiveHeight();
+
+  box.containerDiv
+    .style("display","block")
+    .style("top",navbarHeight + "px")
+    .style("left",window.innerWidth + "px")
+    .style("height",itemHeight + "px")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0; } return 250})
+    .style("left",(window.innerWidth / 2) + "px");
+
+
+  return box;
+}
+
+DetailsBox.prototype.transitionOut = function() {
+  const box = this;
+
+  box.containerDiv
+    .transition()
+    .duration(250)
+    .style("left",window.innerWidth + "px")
+    .on("end",() => {
+      box.containerDiv
+        .style("display","none");
+
+      box.subtitleDiv
+        .html();
+
+      box.dateDiv
+        .html();
+    });
+
+  return box;
+}
+
+DetailsBox.prototype.updateContent = function(item) {
+  const box = this;
+
+  box.subtitleDiv
+    .html(item.manifest.subtitle);
+
+  box.dateDiv
+    .html(item.manifest.circa);
+
+  return box;
 }
 
 PortfolioItem.prototype.addContainerDiv = function() {
@@ -799,16 +799,6 @@ PortfolioItem.prototype.addTitle = function() {
     .html((datum) => { return datum});
 }
 
-function activateAboutMe(where) {
-  const content = new PortfolioItemContent(where)
-    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complex universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
-
-
-}
-
-function loadedAboutMe() {
-}
-
 PortfolioItem.prototype.activate = function() {
   const item = this;
 
@@ -910,11 +900,39 @@ PortfolioItem.prototype.show = function() {
 
 }
 
+function activateAboutMe(where) {
+  const content = new PortfolioItemContent(where)
+    .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complex universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
+
+
+}
+
+function loadedAboutMe() {
+}
+
+function activateFreeAgents(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
+    .div("<p class='videoCaption'><em>Scroll to the bottom to see the live demo</em></p>")
+    .div("<div class='explanation-div'><h1>AN EXPLORTAORY DAYA ANALYSIS DEMO</h1></div>")
+    .div("<p style='width:90%; margin:auto'>Analyzing data can be as much an art as a science. The measure of a tool's effectiveness in Exploratory Data Analysis is the degree to which it helps users <em>discover new insights</em> and <em>contextualize information</em>.</p> ")
+    .div("<p style='width:90%; margin:auto'>Here, I've created a demo of an EDA tool with a <em>very</em> specific audience in mind: Major League Baseball General Managers and front office staffs. The concept behind the tool is to help them evaluate hypothetical contracts for free agent players, by condensing simple projections of future performance with assumptions about the market rate of that performance.</p> ")
+    .div("<p style='width:90%; margin:auto'>The tool is intended to be more of an illustration of EDA design principles (especially <a href='http://www.ifp.illinois.edu/nabhcs/abstracts/shneiderman.html' target='_new'>Ben Schneiderman's mantra</a> of <em>Overview First, aoom-and-filter, then details-on-Demand</em>) than a fully realized application.</p> ")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>")
+
+}
+
+function loadedFreeAgents(parent) {
+  parent.contentPane.activeItem.hero
+    .load();
+}
+
 function activateFittsLaw(where) {
 
   const content = new PortfolioItemContent(where)
     .vimeo("523023575","app/assets/previews/fittsPreview.jpeg")
-    .div("<p style='width:90%; margin:auto; font-size:0.7em'><em>Scroll to the bottom to see the full explorable</em></p>")
+    .div("<p class='videoCaption'><em>Scroll to the bottom to see the full explorable</em></p>")
     .div("<div class='explanation-div'><h1>AN EXPLORABLE EXPLANATION</h1><p>I've long been inspired by Bret Victor's concept of <a href=\"http://worrydream.com/ExplorableExplanations/\" target=\"_blank\">Explorable Explanations</a>, which are interactive documents to encourage active reading. I wanted to try my hand at creating one of these documents in part as an exercise in anticipating and responding to how readers think about complex topics.</p></div>")
     .div("<img src='app/assets/media/fittsNotes.jpeg' style='width:100%'  />")
     .div("<p style='width:90%; margin:auto'>Creating an Explorable Explanation has as much in common with typical user interface design as it does with essay or textbook writing. While planning this project, I spent as much time designing and coding interactions as I did researching and writing about Fitts' Law.</p> ")
@@ -929,6 +947,25 @@ function loadedFittsLaw(parent) {
 
   parent.contentPane.activeItem.hero
     .pop()
+    .load();
+}
+
+function activateStrangerThings(where) {
+
+
+  return new PortfolioItemContent(where)
+    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
+    .div("<p class='videoCaption'><em>Scroll to the bottom to see the live animation</em></p>")
+    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
+    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
+    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>");
+
+
+
+}
+
+function loadedStrangerThings(parent) {
+  parent.contentPane.activeItem.hero
     .load();
 }
 
@@ -1264,43 +1301,6 @@ function loadedSketchbook(parent) {
 
 }
 
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
-    .div("<p style='width:90%; margin:auto; font-size:0.7em'><em>Scroll to the bottom to see the live demo</em></p>")
-    .div("<div class='explanation-div'><h1>AN EXPLORTAORY DAYA ANALYSIS DEMO</h1></div>")
-    .div("<p style='width:90%; margin:auto'>Analyzing data can be as much an art as a science. The measure of a tool's effectiveness in Exploratory Data Analysis is the degree to which it helps users <em>discover new insights</em> and <em>contextualize information</em>.</p> ")
-    .div("<p style='width:90%; margin:auto'>Here, I've created a demo of an EDA tool with a <em>very</em> specific audience in mind: Major League Baseball General Managers and front office staffs. The concept behind the tool is to help them evaluate hypothetical contracts for free agent players, by condensing simple projections of future performance with assumptions about the market rate of that performance.</p> ")
-    .div("<p style='width:90%; margin:auto'>The tool is intended to be more of an illustration of EDA design principles (especially <a href='http://www.ifp.illinois.edu/nabhcs/abstracts/shneiderman.html' target='_new'>Ben Schneiderman's mantra</a> of <em>Overview First, aoom-and-filter, then details-on-Demand</em>) than a fully realized application.</p> ")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>")
-
-}
-
-function loadedFreeAgents(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
-}
-
-function activateStrangerThings(where) {
-
-
-  return new PortfolioItemContent(where)
-    .vimeo("522909563","app/assets/previews/strangerThings.jpeg")
-    .div("<p style='width:90%; margin:auto; font-size:0.7em'><em>Scroll to the bottom to see the live animation</em></p>")
-    .div("<div class='explanation-div'><h1>(MIS) USING A POWERFUL LIBRARY</h1><p>d3.js gets its name from the phrase &quot;<u><em>d</em></u>ata <u><em>d</em></u>riven <u><em>d</em></u>ocuments&quot;. Usually, the 'data' there refers to some set of numbers that go into an interactive chart or table.</p><p>But it doesn't <em>have to</em>. At its heart, d3 is a powerful library for transforming <em>any</em> data into <em>any</em> representation: developers can create pretty much any arbitrary rules, as long as browsers will support them.<p>Which means that I could use d3 to create&mdash;or in this case, <em>re-</em>create&mdash;some fairly complex visual and animation effects. In this demo, the data primarily controls the timing, appearance, and nature of animations.</p></div>")
-    .div("<div style='text-align:right'><div style='margin-top:2em' class='callDown'>WATCH THE RE-CREATION</div></div>")
-    .div("<div style='text-align:right'><iframe src='app/strangerThings.html' style='border:none; width:960px; height:540px' border='0' /> </div>");
-
-
-
-}
-
-function loadedStrangerThings(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
-}
-
 function activateDataViz(where) {
 
 
@@ -1316,6 +1316,26 @@ function activateDataViz(where) {
 function loadedDataViz(parent) {
   parent.contentPane.activeItem.hero
     .load();
+}
+
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
+
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
+
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
 }
 
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
@@ -1452,64 +1472,6 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   return content;
 }
 
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
-}
-
-function ArcCountdown(where) {
-  const countdown = this;
-  init(where);
-  return countdown;
-
-  function init(where) {
-    countdown.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(countdown.runCountdown())
-      .UnhighlightEventIs(countdown.pauseCountdown());
-
-
-    countdown.maxValue = 100;
-    countdown.fullDuration = 2000;
-    countdown.easeType = d3.easeQuadOut;
-    countdown.arcCentralRadius = 115;
-    countdown.arcRadiusWidth = 30;
-    countdown.backgroundColor = d3.schemeCategory10[0];
-    countdown.foregroundColor = d3.schemeCategory10[1];
-    countdown.frameColor = "#444";
-    countdown.textOutlineWidth = 5;
-
-    countdown.arcGenerator = countdown.defineArcGenerator();
-    countdown.arcScales = countdown.defineArcScales();
-    countdown.background = countdown.addBackground();
-    countdown.group = countdown.addGroup();
-    countdown.arcGroup = countdown.addArcGroup();
-    countdown.textOutline = countdown.addTextOutline();
-    countdown.text = countdown.addText();
-    countdown.arcOutline = countdown.addArcOutline();
-    countdown.arc = countdown.addArc();
-
-    countdown.hotspot = countdown.addHotspot();
-
-    countdown.initialize();
-  }
-}
-
 function BlurAttentionSketch(where) {
   const blur = this;
   init(where);
@@ -1568,6 +1530,72 @@ function DragSnap(where) {
   }
 }
 
+function ArcCountdown(where) {
+  const countdown = this;
+  init(where);
+  return countdown;
+
+  function init(where) {
+    countdown.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(countdown.runCountdown())
+      .UnhighlightEventIs(countdown.pauseCountdown());
+
+
+    countdown.maxValue = 100;
+    countdown.fullDuration = 2000;
+    countdown.easeType = d3.easeQuadOut;
+    countdown.arcCentralRadius = 115;
+    countdown.arcRadiusWidth = 30;
+    countdown.backgroundColor = d3.schemeCategory10[0];
+    countdown.foregroundColor = d3.schemeCategory10[1];
+    countdown.frameColor = "#444";
+    countdown.textOutlineWidth = 5;
+
+    countdown.arcGenerator = countdown.defineArcGenerator();
+    countdown.arcScales = countdown.defineArcScales();
+    countdown.background = countdown.addBackground();
+    countdown.group = countdown.addGroup();
+    countdown.arcGroup = countdown.addArcGroup();
+    countdown.textOutline = countdown.addTextOutline();
+    countdown.text = countdown.addText();
+    countdown.arcOutline = countdown.addArcOutline();
+    countdown.arc = countdown.addArc();
+
+    countdown.hotspot = countdown.addHotspot();
+
+    countdown.initialize();
+  }
+}
+
+function RadialGroup(where) {
+  const radial = this;
+  init(where);
+  return radial;
+
+  function init(where) {
+
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
+
+    radial.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
+
+
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
+
+  }
+}
+
 function RadarSketch(where) {
   const radar = this;
   init(where);
@@ -1604,34 +1632,6 @@ function RadarSketch(where) {
 
   }
 
-}
-
-function RadialGroup(where) {
-  const radial = this;
-  init(where);
-  return radial;
-
-  function init(where) {
-
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
-
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
-
-  }
 }
 
 function RandomWalk(where) {
@@ -1683,41 +1683,6 @@ function Sketch(where) {
   }
 }
 
-function IosAudioSlider(where) {
-  const slider = this;
-  init(where);
-  return slider;
-
-  function init() {
-    slider.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(slider.runAnimation());
-
-    slider.buttonPressColor = d3.schemeCategory10[3];
-    slider.trackColor = "rgb(96,76,76)";
-    slider.valueColor = "#eee";
-
-    slider.background = slider.addBackground();
-    
-    slider.screenBackground = slider.addScreenBackground();
-
-    slider.sliderGroup = slider.addSliderGroup();
-    slider.verticalOffset = slider.addVerticalOffset();
-    slider.sliderScale = slider.addSliderScale();
-    slider.verticalScale = slider.addSliderVerticalScale();
-    slider.horizontalScale = slider.addSliderHorizontalScale();
-    slider.track = slider.addTrack();
-    slider.value = slider.addValue();
-    slider.screenClip = slider.addScreenClip();
-
-    slider.volumeUpButton = slider.addVolumeUpButton();
-    slider.volumeDownButton = slider.addVolumeDownButton();
-    slider.phone = slider.addPhone();
-
-
-  }
-}
-
 function SnellsLaw(where) {
   const snells = this;
   init(where);
@@ -1753,192 +1718,37 @@ function SnellsLaw(where) {
   }
 }
 
-ArcCountdown.prototype.defineArcGenerator = function() {
-  const countdown = this;
-  
-  return d3.arc()
-    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
-    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
-}
+function IosAudioSlider(where) {
+  const slider = this;
+  init(where);
+  return slider;
 
-ArcCountdown.prototype.defineArcScales = function() {
-  const countdown = this;
+  function init() {
+    slider.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(slider.runAnimation());
 
-  return {
-    "innerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
-    "outerRadius":d3.scaleLinear()
-      .domain([0,1])
-      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
-    }
+    slider.buttonPressColor = d3.schemeCategory10[3];
+    slider.trackColor = "rgb(96,76,76)";
+    slider.valueColor = "#eee";
 
-}
+    slider.background = slider.addBackground();
+    
+    slider.screenBackground = slider.addScreenBackground();
 
-ArcCountdown.prototype.addArc = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill",countdown.foregroundColor)
-    .attr("stroke","none");
-}
+    slider.sliderGroup = slider.addSliderGroup();
+    slider.verticalOffset = slider.addVerticalOffset();
+    slider.sliderScale = slider.addSliderScale();
+    slider.verticalScale = slider.addSliderVerticalScale();
+    slider.horizontalScale = slider.addSliderHorizontalScale();
+    slider.track = slider.addTrack();
+    slider.value = slider.addValue();
+    slider.screenClip = slider.addScreenClip();
 
-ArcCountdown.prototype.addArcGroup = function() {
-  const countdown = this;
-  return countdown.group
-    .append("g")
-    .attr("transform","rotate(-90)");
-}
+    slider.volumeUpButton = slider.addVolumeUpButton();
+    slider.volumeDownButton = slider.addVolumeDownButton();
+    slider.phone = slider.addPhone();
 
-ArcCountdown.prototype.addArcOutline = function() {
-  const countdown = this;
-  return countdown.arcGroup
-    .append("path")
-    .attr("fill","none")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",2);
-
-}
-
-ArcCountdown.prototype.addBackground = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill",countdown.backgroundColor);
-}
-
-ArcCountdown.prototype.addGroup = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,225)");
-}
-
-ArcCountdown.prototype.addHotspot = function() {
-  const countdown = this;
-  return countdown.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)");
-}
-
-ArcCountdown.prototype.addText = function() {
-  const countdown = this;
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("fill",countdown.foregroundColor)
-    .attr("y",25)
-    .html("0");
-}
-
-ArcCountdown.prototype.addTextOutline = function() {
-  const countdown = this;
-
-  return countdown.group
-    .append("text")
-    .attr("text-anchor","middle")
-    .attr("dominant-baseline","middle")
-    .attr("font-size","72pt")
-    .attr("font-family","Oswald")
-    .attr("font-weight","bold")
-    .attr("stroke",countdown.frameColor)
-    .attr("stroke-width",countdown.textOutlineWidth)
-    .attr("y",25)
-    .html("0");
-
-}
-
-ArcCountdown.prototype.initialize = function() {
-  const countdown = this;
-
-  countdown.arcGenerator
-    .startAngle(0)
-    .endAngle(Math.PI);
-
-
-  [countdown.arc,countdown.arcOutline]
-    .forEach((arc) => {
-      arc
-        .attr("d",
-          countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(0))
-            .outerRadius(countdown.arcScales.outerRadius(0))
-        );
-    });
-
-  [countdown.textOutline,countdown.text]
-    .forEach((textElement) => {
-      textElement
-        .html(countdown.maxValue);
-    });
-}
-
-ArcCountdown.prototype.pauseCountdown = function() {
-  const countdown = this;
-
-  return () => {
-    [countdown.arc,countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .interrupt();
-      });
-
-    countdown
-      .initialize();
-  }
-}
-
-ArcCountdown.prototype.runCountdown = function() {
-  const countdown = this;
-
-  return () => {
-
-    const startValue = +countdown.text.html();
-
-    [countdown.text,countdown.textOutline]
-      .forEach((element) => {
-        element
-          .transition()
-          .duration(countdown.fullDuration)
-          .ease(countdown.easeType)
-          .textTween(numberTween())
-      });
-
-    countdown.arc
-      .transition()
-      .duration(countdown.fullDuration)
-      .ease(countdown.easeType)
-      .attrTween("d",arcTween(0));
-
-    function numberTween() {
-      return function() {
-        const interpolate = d3.interpolate(countdown.maxValue,0)
-        return function(time) {
-          return Math.floor(interpolate(time));
-        }
-      }
-    }
-
-
-    function arcTween(newAngle) {
-      return function() {
-        const interpolateValue = d3.interpolate(Math.PI,newAngle);
-        return function(time) {
-          return countdown.arcGenerator
-            .innerRadius(countdown.arcScales.innerRadius(time))
-            .outerRadius(countdown.arcScales.outerRadius(time))
-            .endAngle(interpolateValue(time))();
-        }
-      }
-    }
 
   }
 }
@@ -2406,6 +2216,456 @@ DragSnap.prototype.addSource = function() {
     );
 }
 
+ArcCountdown.prototype.defineArcGenerator = function() {
+  const countdown = this;
+  
+  return d3.arc()
+    .innerRadius(countdown.arcCentralRadius - countdown.arcRadiusWidth)
+    .outerRadius(countdown.arcCentralRadius + countdown.arcRadiusWidth);
+}
+
+ArcCountdown.prototype.defineArcScales = function() {
+  const countdown = this;
+
+  return {
+    "innerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius - countdown.arcRadiusWidth,countdown.arcCentralRadius]),
+    "outerRadius":d3.scaleLinear()
+      .domain([0,1])
+      .range([countdown.arcCentralRadius+ countdown.arcRadiusWidth,countdown.arcCentralRadius])
+    }
+
+}
+
+ArcCountdown.prototype.addArc = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill",countdown.foregroundColor)
+    .attr("stroke","none");
+}
+
+ArcCountdown.prototype.addArcGroup = function() {
+  const countdown = this;
+  return countdown.group
+    .append("g")
+    .attr("transform","rotate(-90)");
+}
+
+ArcCountdown.prototype.addArcOutline = function() {
+  const countdown = this;
+  return countdown.arcGroup
+    .append("path")
+    .attr("fill","none")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",2);
+
+}
+
+ArcCountdown.prototype.addBackground = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill",countdown.backgroundColor);
+}
+
+ArcCountdown.prototype.addGroup = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,225)");
+}
+
+ArcCountdown.prototype.addHotspot = function() {
+  const countdown = this;
+  return countdown.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)");
+}
+
+ArcCountdown.prototype.addText = function() {
+  const countdown = this;
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("fill",countdown.foregroundColor)
+    .attr("y",25)
+    .html("0");
+}
+
+ArcCountdown.prototype.addTextOutline = function() {
+  const countdown = this;
+
+  return countdown.group
+    .append("text")
+    .attr("text-anchor","middle")
+    .attr("dominant-baseline","middle")
+    .attr("font-size","72pt")
+    .attr("font-family","Oswald")
+    .attr("font-weight","bold")
+    .attr("stroke",countdown.frameColor)
+    .attr("stroke-width",countdown.textOutlineWidth)
+    .attr("y",25)
+    .html("0");
+
+}
+
+ArcCountdown.prototype.initialize = function() {
+  const countdown = this;
+
+  countdown.arcGenerator
+    .startAngle(0)
+    .endAngle(Math.PI);
+
+
+  [countdown.arc,countdown.arcOutline]
+    .forEach((arc) => {
+      arc
+        .attr("d",
+          countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(0))
+            .outerRadius(countdown.arcScales.outerRadius(0))
+        );
+    });
+
+  [countdown.textOutline,countdown.text]
+    .forEach((textElement) => {
+      textElement
+        .html(countdown.maxValue);
+    });
+}
+
+ArcCountdown.prototype.pauseCountdown = function() {
+  const countdown = this;
+
+  return () => {
+    [countdown.arc,countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .interrupt();
+      });
+
+    countdown
+      .initialize();
+  }
+}
+
+ArcCountdown.prototype.runCountdown = function() {
+  const countdown = this;
+
+  return () => {
+
+    const startValue = +countdown.text.html();
+
+    [countdown.text,countdown.textOutline]
+      .forEach((element) => {
+        element
+          .transition()
+          .duration(countdown.fullDuration)
+          .ease(countdown.easeType)
+          .textTween(numberTween())
+      });
+
+    countdown.arc
+      .transition()
+      .duration(countdown.fullDuration)
+      .ease(countdown.easeType)
+      .attrTween("d",arcTween(0));
+
+    function numberTween() {
+      return function() {
+        const interpolate = d3.interpolate(countdown.maxValue,0)
+        return function(time) {
+          return Math.floor(interpolate(time));
+        }
+      }
+    }
+
+
+    function arcTween(newAngle) {
+      return function() {
+        const interpolateValue = d3.interpolate(Math.PI,newAngle);
+        return function(time) {
+          return countdown.arcGenerator
+            .innerRadius(countdown.arcScales.innerRadius(time))
+            .outerRadius(countdown.arcScales.outerRadius(time))
+            .endAngle(interpolateValue(time))();
+        }
+      }
+    }
+
+  }
+}
+
+RadialGroup.prototype.backgroundMouseMove = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
+    const wedgeCentroids = [];
+
+
+    radial.wedges
+      .each(function(index) {
+        const wedgePosition = d3.select(this)
+          .node()
+          .getBBox();
+
+        const centroid = {
+          "x":wedgePosition.x + wedgePosition.width / 2,
+          "y":wedgePosition.y + wedgePosition.height / 2,
+        }
+
+        centroid.distance = Math.pow(
+          Math.pow(centroid.x - cursorPosition.x,2) +
+          Math.pow(cursorPosition.y - centroid.y,2),
+          0.5
+        );
+
+        centroid.index = index;
+
+        wedgeCentroids
+          .push(centroid)
+      });
+
+
+    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
+
+    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
+    const opacityScale = d3.scaleLinear()
+      .domain(distances)
+      .range([1,0]);
+
+    const outerRadiusScale = d3.scaleLinear()
+      .domain(distances)
+      .range([radial.outerRadius + 10,radial.radius]);
+
+    radial.wedges
+      .attr("opacity",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        return opacityScale(distance);
+      })
+      .attr("d",(index) => {
+        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(outerRadiusScale(distance))
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+  }
+}
+
+RadialGroup.prototype.growPreview = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "inactive") { return }
+    radial.state = "activating";
+
+    radial.wedges
+      .transition()
+      .duration(500)
+      .delay((index) => { return 50 * index})
+      .ease(d3.easeBackOut.overshoot(10))
+      .attr("d",(index) => {
+        const startAngle = index * Math.PI / 5;
+        const endAngle = startAngle + Math.PI / 5;
+        return d3.arc()
+          .innerRadius(radial.radius)
+          .outerRadius(radial.outerRadius)
+          .startAngle(startAngle)
+          .endAngle(endAngle)();
+      })
+      .on("end",(index) => {
+        if(index == 9) {
+          radial.state = "active";
+        }
+      });
+  }
+}
+
+RadialGroup.prototype.reset = function() {
+  const radial = this;
+  return () => {
+    if(radial.state !== "active") { return }
+    radial.state = "transitionOut";
+
+    radial.wedges
+      .transition()
+      .duration(250)
+      .attr("opacity",0)
+      .on("end",() => {
+        radial.state = "active";
+      });
+  }
+}
+
+RadialGroup.prototype.addBackground = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","url(#background)");
+
+}
+
+RadialGroup.prototype.addCircle = function() {
+  const radial = this;
+  return radial.group
+    .append("circle")
+    .attr("r",radial.radius)
+    .attr("fill",d3.schemeCategory10[9])
+}
+
+RadialGroup.prototype.addDefs = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("defs");
+}
+
+RadialGroup.prototype.addGradient = function() {
+  const radial = this;
+  const gradient = radial.defs
+    .append("radialGradient")
+    .attr("id","background");
+
+  gradient
+    .append("stop")
+    .attr("stop-color",d3.schemeCategory10[0])
+    .attr("offset","30%");
+
+  gradient
+    .append("stop")
+    .attr("stop-color","rgba(31, 119, 180,0.75)")
+    .attr("offset","100%");
+
+  return gradient;
+}
+
+RadialGroup.prototype.addGroup = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("g")
+    .attr("transform","translate(320,180)");
+}
+
+RadialGroup.prototype.addHotspot = function() {
+  const radial = this;
+  return radial.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",radial.backgroundMouseMove());
+}
+
+RadialGroup.prototype.addWedges = function() {
+  const radial = this;
+
+  return radial.group
+    .selectAll("path")
+    .data(d3.range(0,10))
+    .enter()
+    .append("path")
+    .attr("fill",d3.schemeCategory10[6])
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("stroke-width",2)
+    .attr("d",(index) => {
+      const startAngle = index * Math.PI / 5;
+      const endAngle = startAngle + Math.PI / 5;
+      return d3.arc()
+        .innerRadius(radial.radius - 2)
+        .outerRadius(radial.radius-1)
+        .startAngle(startAngle)
+        .endAngle(endAngle)()
+    });
+}
+
+RadarSketch.prototype.click = function() {
+  const radar = this;
+  return () => {
+  }
+}
+
+RadarSketch.prototype.highlight = function() {
+  const radar = this;
+  return () => {
+    radar
+      .singleSweep();
+  }
+}
+
+RadarSketch.prototype.singleSweep = function() {
+  const radar = this;
+
+  radar.rotateGroup
+    .attr("transform","rotate(0)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(180)")
+    .transition()
+    .duration(2000)
+    .ease(d3.easeLinear)
+    .attr("transform","rotate(359.999)")
+    .ease(d3.easeLinear)
+    .on("end",() => { radar.singleSweep(); });
+
+  radar.bogeyGroup
+    .selectAll("circle")
+    .each(function(coordinates) {
+      const bogey = d3.select(this);
+      const xCoordinate = bogey.attr("cx");
+      const yCoordinate = bogey.attr("cy");
+      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
+      if(delay > 4000) {
+        delay -= 4000;
+      }
+
+      bogey
+        .transition()
+        .delay(delay)
+        .duration(0)
+        .attr("r",7)
+        .attr("fill-opacity",1)
+        .transition()
+        .ease(d3.easeQuadIn)
+        .duration(2000)
+        .attr("fill-opacity",0)
+        .attr("r",2)
+    });
+
+}
+
+RadarSketch.prototype.unhighlight = function() {
+  const radar = this;
+  return () => {
+    radar.rotateGroup
+      .interrupt();
+
+    radar.bogeyGroup
+      .selectAll("circle")
+      .remove();
+
+    radar.rotateGroup
+      .attr("transform","rotate(0)");
+
+    radar.bogeys = radar.addBogeys();
+  }
+}
+
 RadarSketch.prototype.addBackground = function() {
   const radar = this;
   return radar.sketch.svg
@@ -2574,266 +2834,6 @@ RadarSketch.prototype.addWedgeGradient = function() {
     .style("stop-color",radar.green)
     .style("stop-opacity",1);
 
-}
-
-RadarSketch.prototype.click = function() {
-  const radar = this;
-  return () => {
-  }
-}
-
-RadarSketch.prototype.highlight = function() {
-  const radar = this;
-  return () => {
-    radar
-      .singleSweep();
-  }
-}
-
-RadarSketch.prototype.singleSweep = function() {
-  const radar = this;
-
-  radar.rotateGroup
-    .attr("transform","rotate(0)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(180)")
-    .transition()
-    .duration(2000)
-    .ease(d3.easeLinear)
-    .attr("transform","rotate(359.999)")
-    .ease(d3.easeLinear)
-    .on("end",() => { radar.singleSweep(); });
-
-  radar.bogeyGroup
-    .selectAll("circle")
-    .each(function(coordinates) {
-      const bogey = d3.select(this);
-      const xCoordinate = bogey.attr("cx");
-      const yCoordinate = bogey.attr("cy");
-      let delay = ((coordinates.theta) / (Math.PI * 2) + 0.25) * 4000;
-      if(delay > 4000) {
-        delay -= 4000;
-      }
-
-      bogey
-        .transition()
-        .delay(delay)
-        .duration(0)
-        .attr("r",7)
-        .attr("fill-opacity",1)
-        .transition()
-        .ease(d3.easeQuadIn)
-        .duration(2000)
-        .attr("fill-opacity",0)
-        .attr("r",2)
-    });
-
-}
-
-RadarSketch.prototype.unhighlight = function() {
-  const radar = this;
-  return () => {
-    radar.rotateGroup
-      .interrupt();
-
-    radar.bogeyGroup
-      .selectAll("circle")
-      .remove();
-
-    radar.rotateGroup
-      .attr("transform","rotate(0)");
-
-    radar.bogeys = radar.addBogeys();
-  }
-}
-
-RadialGroup.prototype.addBackground = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","url(#background)");
-
-}
-
-RadialGroup.prototype.addCircle = function() {
-  const radial = this;
-  return radial.group
-    .append("circle")
-    .attr("r",radial.radius)
-    .attr("fill",d3.schemeCategory10[9])
-}
-
-RadialGroup.prototype.addDefs = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("defs");
-}
-
-RadialGroup.prototype.addGradient = function() {
-  const radial = this;
-  const gradient = radial.defs
-    .append("radialGradient")
-    .attr("id","background");
-
-  gradient
-    .append("stop")
-    .attr("stop-color",d3.schemeCategory10[0])
-    .attr("offset","30%");
-
-  gradient
-    .append("stop")
-    .attr("stop-color","rgba(31, 119, 180,0.75)")
-    .attr("offset","100%");
-
-  return gradient;
-}
-
-RadialGroup.prototype.addGroup = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("g")
-    .attr("transform","translate(320,180)");
-}
-
-RadialGroup.prototype.addHotspot = function() {
-  const radial = this;
-  return radial.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",radial.backgroundMouseMove());
-}
-
-RadialGroup.prototype.addWedges = function() {
-  const radial = this;
-
-  return radial.group
-    .selectAll("path")
-    .data(d3.range(0,10))
-    .enter()
-    .append("path")
-    .attr("fill",d3.schemeCategory10[6])
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("stroke-width",2)
-    .attr("d",(index) => {
-      const startAngle = index * Math.PI / 5;
-      const endAngle = startAngle + Math.PI / 5;
-      return d3.arc()
-        .innerRadius(radial.radius - 2)
-        .outerRadius(radial.radius-1)
-        .startAngle(startAngle)
-        .endAngle(endAngle)()
-    });
-}
-
-RadialGroup.prototype.backgroundMouseMove = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    const cursorPosition = {"x":event.offsetX - 250,"y":event.offsetY - 250};
-    const wedgeCentroids = [];
-
-
-    radial.wedges
-      .each(function(index) {
-        const wedgePosition = d3.select(this)
-          .node()
-          .getBBox();
-
-        const centroid = {
-          "x":wedgePosition.x + wedgePosition.width / 2,
-          "y":wedgePosition.y + wedgePosition.height / 2,
-        }
-
-        centroid.distance = Math.pow(
-          Math.pow(centroid.x - cursorPosition.x,2) +
-          Math.pow(cursorPosition.y - centroid.y,2),
-          0.5
-        );
-
-        centroid.index = index;
-
-        wedgeCentroids
-          .push(centroid)
-      });
-
-
-    wedgeCentroids.sort((a,b) => { return a.distance - b.distance });
-
-    const distances = d3.extent(wedgeCentroids.map((wedge) => { return wedge.distance; }));
-    const opacityScale = d3.scaleLinear()
-      .domain(distances)
-      .range([1,0]);
-
-    const outerRadiusScale = d3.scaleLinear()
-      .domain(distances)
-      .range([radial.outerRadius + 10,radial.radius]);
-
-    radial.wedges
-      .attr("opacity",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        return opacityScale(distance);
-      })
-      .attr("d",(index) => {
-        const distance = wedgeCentroids.filter((wedge) => { return wedge.index == index; })[0].distance;
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(outerRadiusScale(distance))
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-  }
-}
-
-RadialGroup.prototype.growPreview = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "inactive") { return }
-    radial.state = "activating";
-
-    radial.wedges
-      .transition()
-      .duration(500)
-      .delay((index) => { return 50 * index})
-      .ease(d3.easeBackOut.overshoot(10))
-      .attr("d",(index) => {
-        const startAngle = index * Math.PI / 5;
-        const endAngle = startAngle + Math.PI / 5;
-        return d3.arc()
-          .innerRadius(radial.radius)
-          .outerRadius(radial.outerRadius)
-          .startAngle(startAngle)
-          .endAngle(endAngle)();
-      })
-      .on("end",(index) => {
-        if(index == 9) {
-          radial.state = "active";
-        }
-      });
-  }
-}
-
-RadialGroup.prototype.reset = function() {
-  const radial = this;
-  return () => {
-    if(radial.state !== "active") { return }
-    radial.state = "transitionOut";
-
-    radial.wedges
-      .transition()
-      .duration(250)
-      .attr("opacity",0)
-      .on("end",() => {
-        radial.state = "active";
-      });
-  }
 }
 
 RandomWalk.prototype.addHistogram = function() {
@@ -3017,141 +3017,242 @@ Sketch.prototype.addImage = function() {
     .classed("sketchImage",true);
 }
 
-IosAudioSlider.prototype.addBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
+SnellsLaw.prototype.highlight = function() {
+  const snells = this;
+
+  return () => {
+    snells.source
+      .transition()
+      .duration(1000)
+      .ease(d3.easeBackOut.overshoot(6))
+      .attr("r",8);
+
+    const incidentLength = snells.incidentRay
+      .node()
+      .getTotalLength();
+
+    snells.incidentRay
+      .attr("stroke-dashoffset",incidentLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+    const refractedLength = snells.refractedRay
+      .node()
+      .getTotalLength();
+
+    snells.refractedRay
+      .attr("stroke-dashoffset",refractedLength)
+      .transition()
+      .duration(50000)
+      .ease(d3.easeLinear)
+      .attr("stroke-dashoffset",0);
+
+  }
+}
+
+SnellsLaw.prototype.mouseMove = function() {
+  const snells = this;
+
+  return () => {
+    const coordinates = {
+      "x":event.offsetX,
+      "y":event.offsetY
+    };
+
+    snells
+      .updateForMouseCoordinates(coordinates);
+
+  }
+}
+
+SnellsLaw.prototype.unhighlight = function() {
+  const snells = this;
+  return () => {
+    snells.source
+      .transition()
+      .duration(250)
+      .attr("r",0);
+
+    snells.incidentRay
+      .interrupt();
+
+    snells.refractedRay
+      .interrupt();
+  }
+}
+
+SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
+  const snells = this;
+
+  if(coordinates.y >= 250) { return }
+
+  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
+
+  let incidentStart,
+    incidentEnd;
+
+  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
+  incidentStart = 0;
+
+
+  snells.source
+    .attr("cx",coordinates.x)
+    .attr("cy",coordinates.y);
+
+  snells.incidentRay
+    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
+    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
+
+  snells.incidentArc
+    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
+
+  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
+  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
+  const refractionTheta = Math.asin(sinOfSecond);
+
+  snells.refractedArc
+    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
+
+  snells.refractedRay
+    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
+    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
+
+  return snells;
+}
+
+SnellsLaw.prototype.addBackground = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
+
+SnellsLaw.prototype.addHotspot = function() {
+  const snells = this;
+
+  return snells.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill",d3.schemeCategory10[6]);
+    .attr("fill","rgba(0,0,0,0)")
+    .on("mousemove",snells.mouseMove());
 }
 
-IosAudioSlider.prototype.addPhone = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("y",-50)
-    .attr("width",500)
-    .attr("height",600)
-    .attr("stroke-width",25)
+SnellsLaw.prototype.addIncidentArc = function() {
+  const snells = this;
+
+  const group = snells.sketch.svg
+    .append("g")
+    .attr("transform","translate(250,250)");
+
+  return group
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[3])
     .attr("fill","none")
-    .attr("stroke","black");
+    .attr("stroke-width",5)
+    .attr("d",snells.arcGenerator.startAngle(-Math.PI / 2).endAngle(0));
 }
 
-IosAudioSlider.prototype.addScreenBackground = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",50)
-    .attr("width",500)
-    .attr("height",500)
-    .attr("fill","#ccc")
+SnellsLaw.prototype.addIncidentRay = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",40)
+    .attr("y1",50)
+    .attr("x2",250)
+    .attr("y2",250)
+    .attr("stroke",d3.schemeCategory10[3])
+    .attr("stroke-width",5)
+    .attr("stroke-dasharray","15,15");
 }
 
-IosAudioSlider.prototype.addScreenClip = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",0)
-    .attr("width",50)
-    .attr("height",500)
-    .attr("fill","white");
+SnellsLaw.prototype.addNormal = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",250)
+    .attr("x2",250)
+    .attr("y1",0)
+    .attr("y2",500)
+    .attr("stroke","#999")
+    .attr("stroke-width",2)
+    .attr("stroke-dasharray","10,10");
 }
 
-IosAudioSlider.prototype.addSliderGroup = function() {
-  const slider = this;
-  return slider.sketch.svg
+SnellsLaw.prototype.addRefractedArc = function() {
+  const snells = this;
+
+  const group = snells.sketch.svg
     .append("g")
-    .attr("transform","translate(-10,0)")
-    .attr("clip-path","url(#screenClip)");
-}
+    .attr("transform","translate(250,250) rotate(90)");
 
-IosAudioSlider.prototype.addSliderHorizontalScale = function() {
-  const slider = this;
-  return slider.verticalScale
-    .append("g")
-    .attr("transform","scale(1,1)");
-
-}
-
-IosAudioSlider.prototype.addSliderScale = function() {
-  const slider = this;
-  return slider.verticalOffset
-    .append("g")
-    .attr("transform","scale(1)");
-}
-
-IosAudioSlider.prototype.addSliderVerticalScale = function() {
-  const slider = this;
-  return slider.sliderScale
-    .append("g")
-    .attr("transform","scale(1,1)");
+  return group
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[1])
+    .attr("fill","none")
+    .attr("stroke-width",5)
+    .attr("d",snells.arcGenerator.startAngle(Math.PI / 4).endAngle(Math.PI / 2));
 
 }
 
-IosAudioSlider.prototype.addTrack = function() {
-  const slider = this;
-  return slider.horizontalScale
+SnellsLaw.prototype.addRefractedImage = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("circle")
+    .attr("r",10)
+    .attr("fill",d3.schemeCategory10[5])
+    .attr("cx",40)
+    .attr("cy",50)
+    .attr("r",0);
+}
+
+SnellsLaw.prototype.addRefractedRay = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("line")
+    .attr("x1",250)
+    .attr("x2",460)
+    .attr("y1",250)
+    .attr("y2",450)
+    .attr("stroke",d3.schemeCategory10[1])
+    .attr("stroke-width",5)
+    .attr("stroke-dasharray","15,15");
+}
+
+SnellsLaw.prototype.addSource = function() {
+  const snells = this;
+  return snells.sketch.svg
+    .append("circle")
+    .attr("r",10)
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("cx",40)
+    .attr("cy",50)
+    .attr("r",0);
+}
+
+SnellsLaw.prototype.addWater = function() {
+  const snells = this;
+  return snells.sketch.svg
     .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.trackColor);
+    .attr("width",640)
+    .attr("height",360)
+    .attr("x",-5)
+    .attr("y",250)
+    .attr("fill",d3.schemeCategory10[0])
+    .attr("stroke",d3.schemeCategory10[5])
+    .attr("stroke-width",3)
+    .attr("stroke-dasharray","5,20");
 }
 
-IosAudioSlider.prototype.addValue = function() {
-  const slider = this;
-  return slider.horizontalScale
-    .append("rect")
-    .attr("width",65)
-    .attr("height",210)
-    .attr("rx",20)
-    .attr("ry",25)
-    .attr("y",-210/2)
-    .attr("x",-32.5)
-    .attr("fill",slider.valueColor);
-
-}
-
-IosAudioSlider.prototype.addVerticalOffset = function() {
-  const slider = this;
-  return slider.sliderGroup
-    .append("g")
-    .attr("transform","translate(0,200)");
-}
-
-IosAudioSlider.prototype.addVolumeDownButton = function() {
-  const slider = this;
-
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",210)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
-}
-
-IosAudioSlider.prototype.addVolumeUpButton = function() {
-  const slider = this;
-  return slider.sketch.svg
-    .append("rect")
-    .attr("x",27)
-    .attr("y",100)
-    .attr("width",30)
-    .attr("height",100)
-    .attr("rx",10)
-    .attr("ry",10)
-    .attr("fill","black");
-
+SnellsLaw.prototype.defineArcGenerator = function() {
+  const snells = this;
+  return d3.arc()
+    .innerRadius(72.5)
+    .outerRadius(75);
 }
 
 IosAudioSlider.prototype.lowerVolume = function(startTime) {
@@ -3379,242 +3480,141 @@ IosAudioSlider.prototype.unsqueezeUnstretchIndicator = function(atTime) {
   return slider;
 }
 
-SnellsLaw.prototype.addBackground = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-SnellsLaw.prototype.addHotspot = function() {
-  const snells = this;
-
-  return snells.sketch.svg
+IosAudioSlider.prototype.addBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
     .append("rect")
     .attr("width",640)
     .attr("height",360)
-    .attr("fill","rgba(0,0,0,0)")
-    .on("mousemove",snells.mouseMove());
+    .attr("fill",d3.schemeCategory10[6]);
 }
 
-SnellsLaw.prototype.addIncidentArc = function() {
-  const snells = this;
-
-  const group = snells.sketch.svg
-    .append("g")
-    .attr("transform","translate(250,250)");
-
-  return group
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[3])
-    .attr("fill","none")
-    .attr("stroke-width",5)
-    .attr("d",snells.arcGenerator.startAngle(-Math.PI / 2).endAngle(0));
-}
-
-SnellsLaw.prototype.addIncidentRay = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",40)
-    .attr("y1",50)
-    .attr("x2",250)
-    .attr("y2",250)
-    .attr("stroke",d3.schemeCategory10[3])
-    .attr("stroke-width",5)
-    .attr("stroke-dasharray","15,15");
-}
-
-SnellsLaw.prototype.addNormal = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",250)
-    .attr("x2",250)
-    .attr("y1",0)
-    .attr("y2",500)
-    .attr("stroke","#999")
-    .attr("stroke-width",2)
-    .attr("stroke-dasharray","10,10");
-}
-
-SnellsLaw.prototype.addRefractedArc = function() {
-  const snells = this;
-
-  const group = snells.sketch.svg
-    .append("g")
-    .attr("transform","translate(250,250) rotate(90)");
-
-  return group
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[1])
-    .attr("fill","none")
-    .attr("stroke-width",5)
-    .attr("d",snells.arcGenerator.startAngle(Math.PI / 4).endAngle(Math.PI / 2));
-
-}
-
-SnellsLaw.prototype.addRefractedImage = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("circle")
-    .attr("r",10)
-    .attr("fill",d3.schemeCategory10[5])
-    .attr("cx",40)
-    .attr("cy",50)
-    .attr("r",0);
-}
-
-SnellsLaw.prototype.addRefractedRay = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("line")
-    .attr("x1",250)
-    .attr("x2",460)
-    .attr("y1",250)
-    .attr("y2",450)
-    .attr("stroke",d3.schemeCategory10[1])
-    .attr("stroke-width",5)
-    .attr("stroke-dasharray","15,15");
-}
-
-SnellsLaw.prototype.addSource = function() {
-  const snells = this;
-  return snells.sketch.svg
-    .append("circle")
-    .attr("r",10)
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("cx",40)
-    .attr("cy",50)
-    .attr("r",0);
-}
-
-SnellsLaw.prototype.addWater = function() {
-  const snells = this;
-  return snells.sketch.svg
+IosAudioSlider.prototype.addPhone = function() {
+  const slider = this;
+  return slider.sketch.svg
     .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("x",-5)
-    .attr("y",250)
-    .attr("fill",d3.schemeCategory10[0])
-    .attr("stroke",d3.schemeCategory10[5])
-    .attr("stroke-width",3)
-    .attr("stroke-dasharray","5,20");
+    .attr("x",50)
+    .attr("y",-50)
+    .attr("width",500)
+    .attr("height",600)
+    .attr("stroke-width",25)
+    .attr("fill","none")
+    .attr("stroke","black");
 }
 
-SnellsLaw.prototype.defineArcGenerator = function() {
-  const snells = this;
-  return d3.arc()
-    .innerRadius(72.5)
-    .outerRadius(75);
+IosAudioSlider.prototype.addScreenBackground = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",50)
+    .attr("width",500)
+    .attr("height",500)
+    .attr("fill","#ccc")
 }
 
-SnellsLaw.prototype.highlight = function() {
-  const snells = this;
+IosAudioSlider.prototype.addScreenClip = function() {
+  const slider = this;
 
-  return () => {
-    snells.source
-      .transition()
-      .duration(1000)
-      .ease(d3.easeBackOut.overshoot(6))
-      .attr("r",8);
-
-    const incidentLength = snells.incidentRay
-      .node()
-      .getTotalLength();
-
-    snells.incidentRay
-      .attr("stroke-dashoffset",incidentLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-    const refractedLength = snells.refractedRay
-      .node()
-      .getTotalLength();
-
-    snells.refractedRay
-      .attr("stroke-dashoffset",refractedLength)
-      .transition()
-      .duration(50000)
-      .ease(d3.easeLinear)
-      .attr("stroke-dashoffset",0);
-
-  }
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",0)
+    .attr("width",50)
+    .attr("height",500)
+    .attr("fill","white");
 }
 
-SnellsLaw.prototype.mouseMove = function() {
-  const snells = this;
-
-  return () => {
-    const coordinates = {
-      "x":event.offsetX,
-      "y":event.offsetY
-    };
-
-    snells
-      .updateForMouseCoordinates(coordinates);
-
-  }
+IosAudioSlider.prototype.addSliderGroup = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("g")
+    .attr("transform","translate(-10,0)")
+    .attr("clip-path","url(#screenClip)");
 }
 
-SnellsLaw.prototype.unhighlight = function() {
-  const snells = this;
-  return () => {
-    snells.source
-      .transition()
-      .duration(250)
-      .attr("r",0);
+IosAudioSlider.prototype.addSliderHorizontalScale = function() {
+  const slider = this;
+  return slider.verticalScale
+    .append("g")
+    .attr("transform","scale(1,1)");
 
-    snells.incidentRay
-      .interrupt();
-
-    snells.refractedRay
-      .interrupt();
-  }
 }
 
-SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
-  const snells = this;
+IosAudioSlider.prototype.addSliderScale = function() {
+  const slider = this;
+  return slider.verticalOffset
+    .append("g")
+    .attr("transform","scale(1)");
+}
 
-  if(coordinates.y >= 250) { return }
+IosAudioSlider.prototype.addSliderVerticalScale = function() {
+  const slider = this;
+  return slider.sliderScale
+    .append("g")
+    .attr("transform","scale(1,1)");
 
-  const distance = Math.pow(Math.pow(coordinates.x - 250,2) + Math.pow(coordinates.y - 250,2),0.05);
+}
 
-  let incidentStart,
-    incidentEnd;
+IosAudioSlider.prototype.addTrack = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.trackColor);
+}
 
-  incidentEnd =  Math.atan2(coordinates.y - 250,coordinates.x - 250) + Math.PI / 2;
-  incidentStart = 0;
+IosAudioSlider.prototype.addValue = function() {
+  const slider = this;
+  return slider.horizontalScale
+    .append("rect")
+    .attr("width",65)
+    .attr("height",210)
+    .attr("rx",20)
+    .attr("ry",25)
+    .attr("y",-210/2)
+    .attr("x",-32.5)
+    .attr("fill",slider.valueColor);
 
+}
 
-  snells.source
-    .attr("cx",coordinates.x)
-    .attr("cy",coordinates.y);
+IosAudioSlider.prototype.addVerticalOffset = function() {
+  const slider = this;
+  return slider.sliderGroup
+    .append("g")
+    .attr("transform","translate(0,200)");
+}
 
-  snells.incidentRay
-    .attr("x1",Math.cos(incidentEnd - Math.PI / 2) * 5000 + 250)
-    .attr("y1",Math.sin(incidentEnd - Math.PI / 2) * 5000 + 250);
+IosAudioSlider.prototype.addVolumeDownButton = function() {
+  const slider = this;
 
-  snells.incidentArc
-    .attr("d",snells.arcGenerator.endAngle(incidentEnd).startAngle(incidentStart));
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",210)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
 
-  const indexRatio = snells.firstIndexOfRefraction / snells.secondIndexOfRefraction;
-  const sinOfSecond = indexRatio * Math.sin(incidentEnd);
-  const refractionTheta = Math.asin(sinOfSecond);
+}
 
-  snells.refractedArc
-    .attr("d",snells.arcGenerator.startAngle(refractionTheta + Math.PI / 2).endAngle(Math.PI / 2));
+IosAudioSlider.prototype.addVolumeUpButton = function() {
+  const slider = this;
+  return slider.sketch.svg
+    .append("rect")
+    .attr("x",27)
+    .attr("y",100)
+    .attr("width",30)
+    .attr("height",100)
+    .attr("rx",10)
+    .attr("ry",10)
+    .attr("fill","black");
 
-  snells.refractedRay
-    .attr("x2",5000 * Math.cos(refractionTheta + Math.PI / 2) + 250)
-    .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
-
-  return snells;
 }
 
 DragSnap.prototype.dragEnd = function() {
