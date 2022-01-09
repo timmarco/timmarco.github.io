@@ -3,12 +3,6 @@ PortfolioItem.prototype.activate = function() {
 
   item.state = "active";
 
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .pause();
-  }
-
 
   return item;
 }

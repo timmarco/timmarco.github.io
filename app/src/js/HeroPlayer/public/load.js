@@ -1,7 +1,7 @@
 HeroPlayer.prototype.load = function(loadedCallback) {
   const hero = this;
 
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0"
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0";
 
   const iframe = hero.iframeHolder
     .append("iframe")
@@ -25,24 +25,17 @@ HeroPlayer.prototype.load = function(loadedCallback) {
       .duration(250)
       .style("top","100%");
 
-    hero.videoLoad
-      .style("display","none");
-
     player
       .setCurrentTime(0);
-
-    hero.videoLoad
-      .style("display","none");
 
   });
 
   iframe.on("load",() => {
+
     if(loadedCallback) {
       loadedCallback();
     }
   });
-
-  hero.beep();
 
   return hero;
 }

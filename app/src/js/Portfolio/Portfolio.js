@@ -1,5 +1,6 @@
 function Portfolio() {
   const portfolio = this;
+
   init();
   return portfolio;
 
