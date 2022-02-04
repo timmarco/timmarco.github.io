@@ -1,7 +1,7 @@
 HeroPlayer.prototype.load = function(loadedCallback) {
   const hero = this;
 
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0";
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0&texttrack=en.captions";
 
   const iframe = hero.iframeHolder
     .append("iframe")

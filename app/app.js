@@ -23,47 +23,6 @@ function DetailsBox(portfolio) {
   }
 }
 
-function HeroPlayer(where,vimeoId,previewSource) {
-  const hero = this;
-  init(where,vimeoId,previewSource);
-  return hero;
-
-  function init(where,vimeoId,previewSource) {
-
-    hero.vimeoId = vimeoId;
-
-    hero.videoDiv = hero.addVideoDiv(where);
-    hero.iframeHolder = hero.addIframeHolder();
-    hero.videoLoad = hero.addVideoLoad(previewSource);
-    hero.playerOverlay = hero.addPlayerOverlay();
-    hero.messageDiv = hero.addMessageDiv();
-
-  }
-}
-
-function PortfolioItem(parent,manifest) {
-  const item = this;
-  init(parent,manifest);
-  return item;
-
-  function init(parent,manifest) {
-    item.state = "inactive";
-
-    item.parent = parent;
-    item.manifest = manifest;
-
-    item.containerDiv = item.addContainerDiv();
-    item.substrate = item.addSubstrate();
-    item.textLayer = item.addTextLayer();
-    item.textDiv = item.addTextDiv();
-    item.title = item.addTitle();
-    item.heroOffset = item.addHeroOffset();
-    item.hero = item.addHero();
-    item.heroSource = item.addHeroSource();
-
-  }
-}
-
 function Portfolio() {
   const portfolio = this;
 
@@ -90,6 +49,24 @@ function Portfolio() {
   }
 }
 
+function HeroPlayer(where,vimeoId,previewSource) {
+  const hero = this;
+  init(where,vimeoId,previewSource);
+  return hero;
+
+  function init(where,vimeoId,previewSource) {
+
+    hero.vimeoId = vimeoId;
+
+    hero.videoDiv = hero.addVideoDiv(where);
+    hero.iframeHolder = hero.addIframeHolder();
+    hero.videoLoad = hero.addVideoLoad(previewSource);
+    hero.playerOverlay = hero.addPlayerOverlay();
+    hero.messageDiv = hero.addMessageDiv();
+
+  }
+}
+
 function PortfolioItemContent(where) {
   const content = this;
   init(where);
@@ -101,6 +78,37 @@ function PortfolioItemContent(where) {
     content.videoDiv = content.addVideoDiv();
     content.descriptionDiv = content.addDescriptionDiv();
   }
+}
+
+function PortfolioItem(parent,manifest) {
+  const item = this;
+  init(parent,manifest);
+  return item;
+
+  function init(parent,manifest) {
+    item.state = "inactive";
+
+    item.parent = parent;
+    item.manifest = manifest;
+
+    item.containerDiv = item.addContainerDiv();
+    item.substrate = item.addSubstrate();
+    item.textLayer = item.addTextLayer();
+    item.textDiv = item.addTextDiv();
+    item.title = item.addTitle();
+    item.heroOffset = item.addHeroOffset();
+    item.hero = item.addHero();
+    item.heroSource = item.addHeroSource();
+
+  }
+}
+
+ContentPane.prototype.addContainerDiv = function() {
+  const pane = this;
+  return d3.select("body")
+    .append("div")
+    .classed("item-overlay",true);
+
 }
 
 ContentPane.prototype.transitionIn = function(item,instantaneous) {
@@ -153,14 +161,6 @@ ContentPane.prototype.transitionOut = function() {
   return pane;
 }
 
-ContentPane.prototype.addContainerDiv = function() {
-  const pane = this;
-  return d3.select("body")
-    .append("div")
-    .classed("item-overlay",true);
-
-}
-
 DetailsBox.prototype.addContainerDiv = function() {
   const box = this;
   return d3.select("body")
@@ -188,6 +188,84 @@ DetailsBox.prototype.addSubtitleDiv = function() {
     .append("div")
     .classed("details_subtitle",true);
 }
+
+Portfolio.prototype.manifest = [
+  {
+    "title":["ABOUT","ME"],
+    "titleTag":"About Me | Tim Marco",
+    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
+    "video":"app/assets/clips/aboutMe.mp4",
+    "screenshot":"app/assets/clips/aboutMe.jpg",
+    "subtitle":"Bio and Contact Info",
+    // "circa":"Mid-2017",
+    "callback":activateAboutMe,
+    "route":"about",
+    "loadCallback":loadedAboutMe
+  },
+  {
+    "title":["VIDEO","DATA VISUALIZATION"],
+    "video":"assets/clips/videoDataViz.mp4",
+    "screenshot":"assets/clips/videoDataViz.png",
+    "subtitle":"Data-driven animations",
+    "screenshot":"app/assets/clips/videoDataViz.jpg",
+    "video":"app/assets/clips/videoDataViz.mp4",
+    "circa":"Late 2021",
+    "route":"data-driven-video",
+    "callback":activateDataViz,
+    "loadCallback":loadedDataViz
+  },
+  {
+    "title":["MY","SKETCHBOOK"],
+    "titleTag":"My Sketchbook | Tim Marco",
+    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
+    "video":"app/assets/clips/sketchbook.mp4",
+    "screenshot":"app/assets/clips/sketchbook.jpg",
+    "preview":"app/assets/previews/sketchbookPreview.png",
+    "subtitle":"A collection of design and interaction experiments",
+    "circa":"2017-Ongoing",
+    "callback":activateSketchbook,
+    "route":"sketchbook",
+    "loadCallback":loadedSketchbook
+  },
+  {
+    "title":["MLB FREE AGENT","ANALYZER"],
+    "titleTag":"MLB Free Agents Analzyer",
+    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
+    "video":"app/assets/clips/freeAgents.mp4",
+    "screenshot":"app/assets/clips/freeAgents.jpg",
+    "subtitle":"A tool for assessing uncertain projections",
+    "circa":"Early 2019",
+    "route":"free-agent-analyzer",
+    "callback":activateFreeAgents,
+    "loadCallback":loadedFreeAgents
+  },
+  {
+    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
+    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
+    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
+    "video":"app/assets/clips/strangerThings.mp4",
+    "screenshot":"app/assets/clips/strangerThings.png",
+    "preview":"app/assets/previews/strangerThingsPreview.png",
+    "subtitle":"An experiment in SVG Animation",
+    "circa":"Mid-2017",
+    "callback":activateStrangerThings,
+    "route":"stranger-things",
+    "loadCallback":loadedStrangerThings
+  },
+  {
+    "title":["DIVING DEEP","INTO FITTS' LAW"],
+    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
+    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
+    "video":"app/assets/clips/fitts.mp4",
+    "screenshot":"app/assets/clips/fitts.jpg",
+    "preview":"app/assets/previews/fittsPreview.png",
+    "subtitle":"An Explorable Explanation about human-computer interaction",
+    "circa":"November 2018",
+    "callback":activateFittsLaw,
+    "route":"fitts-law",
+    "loadCallback":loadedFittsLaw
+  }
+];
 
 DetailsBox.prototype.transitionIn = function(item,instantaneous) {
   const box = this;
@@ -244,6 +322,324 @@ DetailsBox.prototype.updateContent = function(item) {
   return box;
 }
 
+Portfolio.prototype.addContentPane = function() {
+  const portfolio = this;
+  return new ContentPane(portfolio);
+}
+
+Portfolio.prototype.addDetailsBox = function() {
+  const portfolio = this;
+  return new DetailsBox(portfolio);
+}
+
+Portfolio.prototype.addItems = function() {
+  const portfolio = this;
+  let items = [];
+  portfolio.manifest
+    .forEach((item) => {
+      items.push(new PortfolioItem(portfolio,item));
+    });
+  return items;
+}
+
+Portfolio.prototype.addItemsDiv = function() {
+  const portfolio = this;
+  return d3.select("#body-content")
+    .append("div")
+    .attr("id","portfolio-items");
+}
+
+Portfolio.prototype.activate = function(selectedItem,instantaneous) {
+  const portfolio = this;
+
+  portfolio.isActive = true;
+  portfolio
+    .updateMetadata(selectedItem.manifest);
+
+  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
+  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
+
+  const yPosition = -yTop + navbarHeight + 15;
+  portfolio.itemsDiv
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 200})
+    .style("transform","translate(0,"+yPosition+"px)");
+
+  d3.select("body")
+    .style("overflow","hidden");
+
+  const titleSize = d3.select("#title")
+    .node()
+    .getBoundingClientRect()
+    .width + 50;
+
+  d3.select("#back-button")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 250})
+    .style("left","0vw");
+
+  d3.select("#back-button-span")
+    .transition()
+    .duration(() => { if(instantaneous === true) { return 0 } return 300})
+    .style("padding-left",titleSize + "px");
+
+  portfolio.items
+    .forEach((item) => {
+      if(item === selectedItem) {
+
+        portfolio.detailsBox
+          .transitionIn(item,instantaneous);
+
+        portfolio.contentPane
+          .transitionIn(item,instantaneous);
+
+        item
+          .activate(instantaneous);
+
+
+
+        return
+      }
+
+      item
+        .hide();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.deactivate = function() {
+  const portfolio = this;
+
+  portfolio.isActive = false;
+  portfolio
+    .resetMetadata();
+
+  d3.select("#back-button")
+    .transition()
+    .duration(250)
+    .style("left","-100vw")
+
+
+  const baseUrl =  window.location.href;
+  window.location.href = baseUrl.split("#")[0] + "#"
+
+  portfolio.detailsBox.transitionOut();
+  portfolio.contentPane.transitionOut();
+
+  portfolio.items.forEach((item) => {
+    item.title
+      .style("background-color","black");
+    item.show();
+  });
+
+  portfolio.itemsDiv
+    .transition()
+    .duration(200)
+    .style("transform","translate(0,0px)")
+    .on("end",() => {
+      d3.select("body")
+        .style("overflow","auto");
+    });
+
+
+  return portfolio;
+}
+
+Portfolio.prototype.focusOnItem = function(whichItem) {
+  const portfolio = this;
+  portfolio.items
+    .forEach((item) => {
+      if(item === whichItem) {
+        item
+          .drawAttention();
+      } else {
+        item
+          .reduceFocus();
+      }
+    })
+}
+
+Portfolio.prototype.registerHashChange = function() {
+  const portfolio = this;
+
+  window.onhashchange = () => {
+    const location = window.location.href.split("#");
+    if(location.length == 1 || location[1] == "") {
+      portfolio.deactivate();
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerNavigation = function() {
+  const portfolio = this;
+
+  d3.select("#back-button")
+    .on("click",() => {
+      portfolio
+        .deactivate();
+    });
+
+  d3.select("#title")
+    .on("click",() => {
+      if(portfolio.isActive === true) {
+        portfolio
+          .deactivate();
+      }
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.registerRouter = function() {
+  const portfolio = this;
+
+  const route = window.location.href.split("#")[1];
+  if(route) {
+    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
+    if(matchingRoute.length == 1) {
+      portfolio
+        .activate(matchingRoute[0],true);
+    }
+  }
+
+  return portfolio;
+}
+
+Portfolio.prototype.reset = function() {
+  const portfolio = this;
+
+  portfolio.items
+    .forEach((item) => {
+      item
+        .reset();
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.resetMetadata = function() {
+  const portfolio = this;
+
+  portfolio
+    .updateMetadata({
+      "titleTag":"Tim Marco",
+      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
+    });
+
+  return portfolio;
+}
+
+Portfolio.prototype.updateMetadata = function(manifest) {
+  const portfolio = this;
+
+  portfolio.titleTag
+    .html(manifest.titleTag);
+
+  portfolio.metaDescription
+    .attr("content",manifest.metaDescription);
+
+  return portfolio;
+}
+
+HeroPlayer.prototype.addIframeHolder = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .attr("data-role","vimeoIframe")
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+}
+
+HeroPlayer.prototype.addMessageDiv = function() {
+  const hero = this;
+
+  return hero.playerOverlay
+    .append("img")
+    .style("left",0)
+    .style("top",0)
+    .style("width","100%")
+    .style("height","100%");
+}
+
+HeroPlayer.prototype.addPlayerOverlay = function() {
+  const hero = this;
+
+  return hero.videoDiv
+    .append("div")
+    .classed("video-overlay",true)
+    .style("pointer-events","none");
+}
+
+HeroPlayer.prototype.addVideoDiv = function(where) {
+  const hero = this;
+  return where
+    .append("div")
+    .classed("content-video-container",true);
+}
+
+HeroPlayer.prototype.addVideoLoad = function(previewSource) {
+  const hero = this;
+  return hero.videoDiv
+    .append("img")
+    .classed("video-overlay-image",true)
+    .style("pointer-events","none")
+    .attr("src",previewSource)
+    .style("display","none")
+
+}
+
+HeroPlayer.prototype.load = function(loadedCallback) {
+  const hero = this;
+
+  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0&texttrack=en.captions";
+
+  console.log("SHOWING TEXT TRACK IS SET EN DOT CAPTIONS?")
+
+  const iframe = hero.iframeHolder
+    .append("iframe")
+    .attr("src",url)
+    .attr("allow","autoplay; fullscreen; picture-in-picture")
+    .attr("allowfullscreen","true")
+    .attr("autoplay",true)
+    .style("background-size","cover")
+    .style("width","100%")
+    .style("height","100%")
+    .style("top",0)
+    .style("left",0)
+    .style("position","absolute");
+
+  const playerInstance = new Vimeo.Player(iframe.node());
+
+  playerInstance.on("play", () => {
+
+    hero.playerOverlay
+      .transition()
+      .duration(250)
+      .style("top","100%");
+
+    player
+      .setCurrentTime(0);
+
+  });
+
+  iframe.on("load",() => {
+
+    if(loadedCallback) {
+      loadedCallback();
+    }
+  });
+
+  return hero;
+}
+
 function activateAboutMe(where) {
   const content = new PortfolioItemContent(where)
     .div("<div class='about-me-div'><h1>ABOUT ME</h1><p>I'm a jack of all trades (and I hope, master of at least some). Between my work life and my hobbies, I've been lucky to have a chance to create things across a wide range of media, using a lot of digital, physical and other tools.</p><p>If there's a common thread among the different projects I've done and the roles I've filled, it's that my driving passion is to <strong style='color:"+d3.schemeCategory10[0]+"'>help humans make sense of the complexity of our world</strong>.</p><p>We live in an infinitely complex universe, and I believe that well-designed experiences and artifacts can help us try to make at least some sense of it all.</p><p>I put this site together to document and showcase my personal projects and hobbies. If you're interested in any of this, the best way to reach me is <a href='mailto:tim@timmarco.com'>via email</a>.<p>For work-related stuff, you can find me on <a href='https://www.linkedin.com/in/timothymarco' target='_blank'>LinkedIn</a>.</p></div>")
@@ -252,6 +648,24 @@ function activateAboutMe(where) {
 }
 
 function loadedAboutMe() {
+}
+
+function activateFreeAgents(where) {
+
+  return new PortfolioItemContent(where)
+    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
+    .div("<p class='videoCaption'><em>Scroll to the bottom to see the live demo</em></p>")
+    .div("<div class='explanation-div'><h1>AN EXPLORTAORY DAYA ANALYSIS DEMO</h1></div>")
+    .div("<p style='width:90%; margin:auto'>Analyzing data can be as much an art as a science. The measure of a tool's effectiveness in Exploratory Data Analysis is the degree to which it helps users <em>discover new insights</em> and <em>contextualize information</em>.</p> ")
+    .div("<p style='width:90%; margin:auto'>Here, I've created a demo of an EDA tool with a <em>very</em> specific audience in mind: Major League Baseball General Managers and front office staffs. The concept behind the tool is to help them evaluate hypothetical contracts for free agent players, by condensing simple projections of future performance with assumptions about the market rate of that performance.</p> ")
+    .div("<p style='width:90%; margin:auto'>The tool is intended to be more of an illustration of EDA design principles (especially <a href='http://www.ifp.illinois.edu/nabhcs/abstracts/shneiderman.html' target='_new'>Ben Schneiderman's mantra</a> of <em>Overview First, aoom-and-filter, then details-on-Demand</em>) than a fully realized application.</p> ")
+    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>")
+
+}
+
+function loadedFreeAgents(parent) {
+  parent.contentPane.activeItem.hero
+    .load();
 }
 
 function activateFittsLaw(where) {
@@ -270,24 +684,6 @@ function activateFittsLaw(where) {
 }
 
 function loadedFittsLaw(parent) {
-  parent.contentPane.activeItem.hero
-    .load();
-}
-
-function activateFreeAgents(where) {
-
-  return new PortfolioItemContent(where)
-    .vimeo("539927920","app/assets/previews/freeAgents.jpeg")
-    .div("<p class='videoCaption'><em>Scroll to the bottom to see the live demo</em></p>")
-    .div("<div class='explanation-div'><h1>AN EXPLORTAORY DAYA ANALYSIS DEMO</h1></div>")
-    .div("<p style='width:90%; margin:auto'>Analyzing data can be as much an art as a science. The measure of a tool's effectiveness in Exploratory Data Analysis is the degree to which it helps users <em>discover new insights</em> and <em>contextualize information</em>.</p> ")
-    .div("<p style='width:90%; margin:auto'>Here, I've created a demo of an EDA tool with a <em>very</em> specific audience in mind: Major League Baseball General Managers and front office staffs. The concept behind the tool is to help them evaluate hypothetical contracts for free agent players, by condensing simple projections of future performance with assumptions about the market rate of that performance.</p> ")
-    .div("<p style='width:90%; margin:auto'>The tool is intended to be more of an illustration of EDA design principles (especially <a href='http://www.ifp.illinois.edu/nabhcs/abstracts/shneiderman.html' target='_new'>Ben Schneiderman's mantra</a> of <em>Overview First, aoom-and-filter, then details-on-Demand</em>) than a fully realized application.</p> ")
-    .div("<div style='text-align:right; margin-top:2em'><a href='https://timmarco.com/FreeAgents' target='_blank'><div class='callDown'>VIEW THE DEMO (OPENS A NEW TAB)</div><img src='app/assets/media/freeAgents.png' class='link-screenshot-image' ></a></div>")
-
-}
-
-function loadedFreeAgents(parent) {
   parent.contentPane.activeItem.hero
     .load();
 }
@@ -659,629 +1055,6 @@ function loadedDataViz(parent) {
     .load();
 }
 
-HeroPlayer.prototype.addIframeHolder = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .attr("data-role","vimeoIframe")
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-}
-
-HeroPlayer.prototype.addMessageDiv = function() {
-  const hero = this;
-
-  return hero.playerOverlay
-    .append("img")
-    .style("left",0)
-    .style("top",0)
-    .style("width","100%")
-    .style("height","100%");
-}
-
-HeroPlayer.prototype.addPlayerOverlay = function() {
-  const hero = this;
-
-  return hero.videoDiv
-    .append("div")
-    .classed("video-overlay",true)
-    .style("pointer-events","none");
-}
-
-HeroPlayer.prototype.addVideoDiv = function(where) {
-  const hero = this;
-  return where
-    .append("div")
-    .classed("content-video-container",true);
-}
-
-HeroPlayer.prototype.addVideoLoad = function(previewSource) {
-  const hero = this;
-  return hero.videoDiv
-    .append("img")
-    .classed("video-overlay-image",true)
-    .style("pointer-events","none")
-    .attr("src",previewSource)
-    .style("display","none")
-
-}
-
-HeroPlayer.prototype.load = function(loadedCallback) {
-  const hero = this;
-
-  const url = "https://player.vimeo.com/video/"+hero.vimeoId+"?color=000000&title=0&byline=0&portrait=0&playsinline=0";
-
-  const iframe = hero.iframeHolder
-    .append("iframe")
-    .attr("src",url)
-    .attr("allow","autoplay; fullscreen; picture-in-picture")
-    .attr("allowfullscreen","true")
-    .attr("autoplay",true)
-    .style("background-size","cover")
-    .style("width","100%")
-    .style("height","100%")
-    .style("top",0)
-    .style("left",0)
-    .style("position","absolute");
-
-  const playerInstance = new Vimeo.Player(iframe.node());
-
-  playerInstance.on("play", () => {
-
-    hero.playerOverlay
-      .transition()
-      .duration(250)
-      .style("top","100%");
-
-    player
-      .setCurrentTime(0);
-
-  });
-
-  iframe.on("load",() => {
-
-    if(loadedCallback) {
-      loadedCallback();
-    }
-  });
-
-  return hero;
-}
-
-PortfolioItem.prototype.activate = function() {
-  const item = this;
-
-  item.state = "active";
-
-
-  return item;
-}
-
-PortfolioItem.prototype.drawAttention = function() {
-  const item = this;
-
-  if(item.parent.isMobile == false) {
-    item.hero
-      .node()
-      .muted = true;
-
-    item.hero
-      .node()
-      .play();
-  }
-
-  item.title
-    .style("background-color",d3.schemeCategory10[2]);
-
-  item.textLayer
-    .style("transform","scale(1)")
-    .transition()
-    .ease(d3.easeQuadOut)
-    .duration(250)
-    .style("transform","scale(1.05)");
-
-  return item;
-}
-
-PortfolioItem.prototype.getActiveHeight = function() {
-  const item = this;
-  return item.textDiv.node().getBoundingClientRect().height * 1.2;
-}
-
-PortfolioItem.prototype.hide = function() {
-  const item = this;
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",0)
-
-  return item;
-}
-
-PortfolioItem.prototype.reduceFocus = function() {
-  const item = this;
-  item.containerDiv
-    // .style("filter",0.75);
-
-  item.title
-    .style("background-color","black");
-
-
-
-}
-
-PortfolioItem.prototype.reset = function() {
-  const item = this;
-
-  item.hero.node().pause();
-
-  item.title
-    .style("background-color","black");
-
-
-  item.textLayer
-    .transition()
-    .ease(d3.easeQuadIn)
-    .duration(125)
-    .style("transform","scale(1)");
-
-  return item;
-}
-
-PortfolioItem.prototype.show = function() {
-  const item = this;
-
-  item.state = "inactive";
-
-  item.containerDiv
-    .transition()
-    .duration(250)
-    .style("opacity",1);
-
-  return item;
-
-}
-
-PortfolioItem.prototype.addContainerDiv = function() {
-  const item = this;
-  return item.parent.itemsDiv
-    .append("div")
-    .classed("portfolio-item",true)
-    .on("mouseover",() => {
-      if(item.state === "active") { return }
-      item
-        .drawAttention()
-    })
-    .on("mouseout",() => {
-      if(item.state === "active") { return }
-      item
-        .reset();
-    })
-    .on("click",() => {
-      if(item.state === "active") { return }
-      item.parent
-        .activate(item);
-    })
-}
-
-PortfolioItem.prototype.addHero = function() {
-  const item = this;
-
-  if(item.parent.isMobile == true) {
-    return item.heroOffset
-      .append("img")
-      .attr("width","100%")
-      .attr("height",'100%')
-      .style("object-fit","contain")
-      .style("margin",0)
-      .style("padding",0);
-  }
-
-  return item.heroOffset
-    .append("video")
-    .attr("muted","muted")
-    .attr("playsinline",true)
-    .style("position","absolute")
-    .style("object-fit","cover")
-    .style("object-position","center center")
-    .style("margin",0)
-    .style("padding",0)
-    .style("width","100%")
-    .style("height","100%")
-    .attr("loop",true);
-}
-
-PortfolioItem.prototype.addHeroOffset = function() {
-  const item = this;
-
-  return item.substrate
-    .append("div")
-    .style("position","relative")
-    .style("width","100%")
-    .style("min-height","12.5vw")
-    .style("height","100%");
-
-}
-
-PortfolioItem.prototype.addHeroSource = function() {
-  const item = this;
-  if(!item.manifest.video) { return }
-
-  if(item.parent.isMobile == true) {
-    item.hero
-      .attr("src",item.manifest.screenshot);
-  }
-
-  return item.hero
-    .append("source")
-    .attr("src",item.manifest.video);
-}
-
-PortfolioItem.prototype.addTextDiv = function() {
-  const item = this;
-  return item.textLayer
-    .append("div")
-    .classed("portfolio-item-text",true);
-}
-
-PortfolioItem.prototype.addSubstrate = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-substrate",true);
-}
-
-PortfolioItem.prototype.addTextLayer = function() {
-  const item = this;
-  return item.containerDiv
-    .append("div")
-    .classed("portfolio-item-text-layer",true);
-}
-
-PortfolioItem.prototype.addTitle = function() {
-  const item = this;
-  return item.textDiv
-    .selectAll(".portfolio-item-title")
-    .data(item.manifest.title)
-    .enter()
-    .append("div")
-    .classed("portfolio-item-line",true)
-    .append("div")
-    .classed("portfolio-item-title",true)
-    .style("transform",(datum,index) => {
-      if(index > 0) {
-        return "translate(0,-0.25em)"
-      }
-    })
-    .html((datum) => { return datum});
-}
-
-Portfolio.prototype.manifest = [
-  {
-    "title":["ABOUT","ME"],
-    "titleTag":"About Me | Tim Marco",
-    "metaDescription":"Bio for Tim Marco, a Creative Technologist from Chicago, Illinois.",
-    "video":"app/assets/clips/aboutMe.mp4",
-    "screenshot":"app/assets/clips/aboutMe.jpg",
-    "subtitle":"Bio and Contact Info",
-    // "circa":"Mid-2017",
-    "callback":activateAboutMe,
-    "route":"about",
-    "loadCallback":loadedAboutMe
-  },
-  {
-    "title":["VIDEO","DATA VISUALIZATION"],
-    "video":"assets/clips/videoDataViz.mp4",
-    "screenshot":"assets/clips/videoDataViz.png",
-    "subtitle":"Data-driven animations",
-    "screenshot":"app/assets/clips/videoDataViz.jpg",
-    "video":"app/assets/clips/videoDataViz.mp4",
-    "circa":"Late 2021",
-    "route":"data-driven-video",
-    "callback":activateDataViz,
-    "loadCallback":loadedDataViz
-  },
-  {
-    "title":["MY","SKETCHBOOK"],
-    "titleTag":"My Sketchbook | Tim Marco",
-    "metaDescription":"A collection of interaction, design, and simulation experiments by Tim Marco",
-    "video":"app/assets/clips/sketchbook.mp4",
-    "screenshot":"app/assets/clips/sketchbook.jpg",
-    "preview":"app/assets/previews/sketchbookPreview.png",
-    "subtitle":"A collection of design and interaction experiments",
-    "circa":"2017-Ongoing",
-    "callback":activateSketchbook,
-    "route":"sketchbook",
-    "loadCallback":loadedSketchbook
-  },
-  {
-    "title":["MLB FREE AGENT","ANALYZER"],
-    "titleTag":"MLB Free Agents Analzyer",
-    "metaDescription":"A tool for assessing uncertain projections, using MLB player data as an example.",
-    "video":"app/assets/clips/freeAgents.mp4",
-    "screenshot":"app/assets/clips/freeAgents.jpg",
-    "subtitle":"A tool for assessing uncertain projections",
-    "circa":"Early 2019",
-    "route":"free-agent-analyzer",
-    "callback":activateFreeAgents,
-    "loadCallback":loadedFreeAgents
-  },
-  {
-    "title":["STRANGER THINGS","MAIN TITLE RE-CREATION"],
-    "titleTag":"Stranger Things Titles in d3.js | Tim Marco",
-    "metaDescription":"An experiment in re-creating the main titles of the Netflix Show 'Stranger Things' in the browser.",
-    "video":"app/assets/clips/strangerThings.mp4",
-    "screenshot":"app/assets/clips/strangerThings.png",
-    "preview":"app/assets/previews/strangerThingsPreview.png",
-    "subtitle":"An experiment in SVG Animation",
-    "circa":"Mid-2017",
-    "callback":activateStrangerThings,
-    "route":"stranger-things",
-    "loadCallback":loadedStrangerThings
-  },
-  {
-    "title":["DIVING DEEP","INTO FITTS' LAW"],
-    "titleTag":"Diving Deep into Fitts' Law | Tim Marco",
-    "metaDescription":"An Explorable Explanation of Fitts' Law, a fundmental concept in Human-Computer Interaction and ergonomics.",
-    "video":"app/assets/clips/fitts.mp4",
-    "screenshot":"app/assets/clips/fitts.jpg",
-    "preview":"app/assets/previews/fittsPreview.png",
-    "subtitle":"An Explorable Explanation about human-computer interaction",
-    "circa":"November 2018",
-    "callback":activateFittsLaw,
-    "route":"fitts-law",
-    "loadCallback":loadedFittsLaw
-  }
-];
-
-Portfolio.prototype.activate = function(selectedItem,instantaneous) {
-  const portfolio = this;
-
-  portfolio.isActive = true;
-  portfolio
-    .updateMetadata(selectedItem.manifest);
-
-  const yTop = selectedItem.textDiv.node().getBoundingClientRect().y;
-  const navbarHeight = d3.select("#navbar").node().getBoundingClientRect().height;
-
-  const yPosition = -yTop + navbarHeight + 15;
-  portfolio.itemsDiv
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 200})
-    .style("transform","translate(0,"+yPosition+"px)");
-
-  d3.select("body")
-    .style("overflow","hidden");
-
-  const titleSize = d3.select("#title")
-    .node()
-    .getBoundingClientRect()
-    .width + 50;
-
-  d3.select("#back-button")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 250})
-    .style("left","0vw");
-
-  d3.select("#back-button-span")
-    .transition()
-    .duration(() => { if(instantaneous === true) { return 0 } return 300})
-    .style("padding-left",titleSize + "px");
-
-  portfolio.items
-    .forEach((item) => {
-      if(item === selectedItem) {
-
-        portfolio.detailsBox
-          .transitionIn(item,instantaneous);
-
-        portfolio.contentPane
-          .transitionIn(item,instantaneous);
-
-        item
-          .activate(instantaneous);
-
-
-
-        return
-      }
-
-      item
-        .hide();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.deactivate = function() {
-  const portfolio = this;
-
-  portfolio.isActive = false;
-  portfolio
-    .resetMetadata();
-
-  d3.select("#back-button")
-    .transition()
-    .duration(250)
-    .style("left","-100vw")
-
-
-  const baseUrl =  window.location.href;
-  window.location.href = baseUrl.split("#")[0] + "#"
-
-  portfolio.detailsBox.transitionOut();
-  portfolio.contentPane.transitionOut();
-
-  portfolio.items.forEach((item) => {
-    item.title
-      .style("background-color","black");
-    item.show();
-  });
-
-  portfolio.itemsDiv
-    .transition()
-    .duration(200)
-    .style("transform","translate(0,0px)")
-    .on("end",() => {
-      d3.select("body")
-        .style("overflow","auto");
-    });
-
-
-  return portfolio;
-}
-
-Portfolio.prototype.focusOnItem = function(whichItem) {
-  const portfolio = this;
-  portfolio.items
-    .forEach((item) => {
-      if(item === whichItem) {
-        item
-          .drawAttention();
-      } else {
-        item
-          .reduceFocus();
-      }
-    })
-}
-
-Portfolio.prototype.registerHashChange = function() {
-  const portfolio = this;
-
-  window.onhashchange = () => {
-    const location = window.location.href.split("#");
-    if(location.length == 1 || location[1] == "") {
-      portfolio.deactivate();
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerNavigation = function() {
-  const portfolio = this;
-
-  d3.select("#back-button")
-    .on("click",() => {
-      portfolio
-        .deactivate();
-    });
-
-  d3.select("#title")
-    .on("click",() => {
-      if(portfolio.isActive === true) {
-        portfolio
-          .deactivate();
-      }
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.registerRouter = function() {
-  const portfolio = this;
-
-  const route = window.location.href.split("#")[1];
-  if(route) {
-    const matchingRoute = portfolio.items.filter((item) => { return item.manifest.route == route});
-    if(matchingRoute.length == 1) {
-      portfolio
-        .activate(matchingRoute[0],true);
-    }
-  }
-
-  return portfolio;
-}
-
-Portfolio.prototype.reset = function() {
-  const portfolio = this;
-
-  portfolio.items
-    .forEach((item) => {
-      item
-        .reset();
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.resetMetadata = function() {
-  const portfolio = this;
-
-  portfolio
-    .updateMetadata({
-      "titleTag":"Tim Marco",
-      "metaDescription":"Portfolio of Tim Marco, a Creative Technologist from Chicago, Illinois"
-    });
-
-  return portfolio;
-}
-
-Portfolio.prototype.updateMetadata = function(manifest) {
-  const portfolio = this;
-
-  portfolio.titleTag
-    .html(manifest.titleTag);
-
-  portfolio.metaDescription
-    .attr("content",manifest.metaDescription);
-
-  return portfolio;
-}
-
-Portfolio.prototype.addContentPane = function() {
-  const portfolio = this;
-  return new ContentPane(portfolio);
-}
-
-Portfolio.prototype.addDetailsBox = function() {
-  const portfolio = this;
-  return new DetailsBox(portfolio);
-}
-
-Portfolio.prototype.addItems = function() {
-  const portfolio = this;
-  let items = [];
-  portfolio.manifest
-    .forEach((item) => {
-      items.push(new PortfolioItem(portfolio,item));
-    });
-  return items;
-}
-
-Portfolio.prototype.addItemsDiv = function() {
-  const portfolio = this;
-  return d3.select("#body-content")
-    .append("div")
-    .attr("id","portfolio-items");
-}
-
-PortfolioItemContent.prototype.addContainerDiv = function() {
-  const content = this;
-  return content.where
-    .append("div")
-    .classed("content-main-container",true)
-}
-
-PortfolioItemContent.prototype.addDescriptionDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div")
-    .classed("content-description-container",true);
-}
-
-PortfolioItemContent.prototype.addVideoDiv = function() {
-  const content = this;
-  return content.containerDiv
-    .append("div");
-}
-
 PortfolioItemContent.prototype.SketchbookItem = function(manifest) {
   const content = this;
 
@@ -1416,28 +1189,233 @@ PortfolioItemContent.prototype.vimeo = function(vimeoId,previewSource) {
   return content;
 }
 
-function BlurAttentionSketch(where) {
-  const blur = this;
-  init(where);
-  return blur;
+PortfolioItemContent.prototype.addContainerDiv = function() {
+  const content = this;
+  return content.where
+    .append("div")
+    .classed("content-main-container",true)
+}
 
-  function init(where) {
+PortfolioItemContent.prototype.addDescriptionDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div")
+    .classed("content-description-container",true);
+}
 
-    blur.sketch = new Sketch(where)
-      .AddSvg()
-      .HighlightEventIs(blur.highlight())
-      .UnhighlightEventIs(blur.unhighlight())
-      .ClickEventIs(blur.click());
+PortfolioItemContent.prototype.addVideoDiv = function() {
+  const content = this;
+  return content.containerDiv
+    .append("div");
+}
 
-    blur.backgroundRect = blur.addBackgroundRect();
-    blur.defs = blur.addDefs();
-    blur.filter = blur.addFilter();
-    blur.gaussian = blur.addGaussian();
-    blur.grid = blur.addGrid();
-    blur.buttonGroup = blur.addButtonGroup();
-    blur.buttons = blur.addButtons();
+PortfolioItem.prototype.addContainerDiv = function() {
+  const item = this;
+  return item.parent.itemsDiv
+    .append("div")
+    .classed("portfolio-item",true)
+    .on("mouseover",() => {
+      if(item.state === "active") { return }
+      item
+        .drawAttention()
+    })
+    .on("mouseout",() => {
+      if(item.state === "active") { return }
+      item
+        .reset();
+    })
+    .on("click",() => {
+      if(item.state === "active") { return }
+      item.parent
+        .activate(item);
+    })
+}
 
+PortfolioItem.prototype.addHero = function() {
+  const item = this;
+
+  if(item.parent.isMobile == true) {
+    return item.heroOffset
+      .append("img")
+      .attr("width","100%")
+      .attr("height",'100%')
+      .style("object-fit","contain")
+      .style("margin",0)
+      .style("padding",0);
   }
+
+  return item.heroOffset
+    .append("video")
+    .attr("muted","muted")
+    .attr("playsinline",true)
+    .style("position","absolute")
+    .style("object-fit","cover")
+    .style("object-position","center center")
+    .style("margin",0)
+    .style("padding",0)
+    .style("width","100%")
+    .style("height","100%")
+    .attr("loop",true);
+}
+
+PortfolioItem.prototype.addHeroOffset = function() {
+  const item = this;
+
+  return item.substrate
+    .append("div")
+    .style("position","relative")
+    .style("width","100%")
+    .style("min-height","12.5vw")
+    .style("height","100%");
+
+}
+
+PortfolioItem.prototype.addHeroSource = function() {
+  const item = this;
+  if(!item.manifest.video) { return }
+
+  if(item.parent.isMobile == true) {
+    item.hero
+      .attr("src",item.manifest.screenshot);
+  }
+
+  return item.hero
+    .append("source")
+    .attr("src",item.manifest.video);
+}
+
+PortfolioItem.prototype.addTextDiv = function() {
+  const item = this;
+  return item.textLayer
+    .append("div")
+    .classed("portfolio-item-text",true);
+}
+
+PortfolioItem.prototype.addSubstrate = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-substrate",true);
+}
+
+PortfolioItem.prototype.addTextLayer = function() {
+  const item = this;
+  return item.containerDiv
+    .append("div")
+    .classed("portfolio-item-text-layer",true);
+}
+
+PortfolioItem.prototype.addTitle = function() {
+  const item = this;
+  return item.textDiv
+    .selectAll(".portfolio-item-title")
+    .data(item.manifest.title)
+    .enter()
+    .append("div")
+    .classed("portfolio-item-line",true)
+    .append("div")
+    .classed("portfolio-item-title",true)
+    .style("transform",(datum,index) => {
+      if(index > 0) {
+        return "translate(0,-0.25em)"
+      }
+    })
+    .html((datum) => { return datum});
+}
+
+PortfolioItem.prototype.activate = function() {
+  const item = this;
+
+  item.state = "active";
+
+
+  return item;
+}
+
+PortfolioItem.prototype.drawAttention = function() {
+  const item = this;
+
+  if(item.parent.isMobile == false) {
+    item.hero
+      .node()
+      .muted = true;
+
+    item.hero
+      .node()
+      .play();
+  }
+
+  item.title
+    .style("background-color",d3.schemeCategory10[2]);
+
+  item.textLayer
+    .style("transform","scale(1)")
+    .transition()
+    .ease(d3.easeQuadOut)
+    .duration(250)
+    .style("transform","scale(1.05)");
+
+  return item;
+}
+
+PortfolioItem.prototype.getActiveHeight = function() {
+  const item = this;
+  return item.textDiv.node().getBoundingClientRect().height * 1.2;
+}
+
+PortfolioItem.prototype.hide = function() {
+  const item = this;
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",0)
+
+  return item;
+}
+
+PortfolioItem.prototype.reduceFocus = function() {
+  const item = this;
+  item.containerDiv
+    // .style("filter",0.75);
+
+  item.title
+    .style("background-color","black");
+
+
+
+}
+
+PortfolioItem.prototype.reset = function() {
+  const item = this;
+
+  item.hero.node().pause();
+
+  item.title
+    .style("background-color","black");
+
+
+  item.textLayer
+    .transition()
+    .ease(d3.easeQuadIn)
+    .duration(125)
+    .style("transform","scale(1)");
+
+  return item;
+}
+
+PortfolioItem.prototype.show = function() {
+  const item = this;
+
+  item.state = "inactive";
+
+  item.containerDiv
+    .transition()
+    .duration(250)
+    .style("opacity",1);
+
+  return item;
+
 }
 
 function ArcCountdown(where) {
@@ -1550,30 +1528,26 @@ function RadarSketch(where) {
 
 }
 
-function RadialGroup(where) {
-  const radial = this;
+function BlurAttentionSketch(where) {
+  const blur = this;
   init(where);
-  return radial;
+  return blur;
 
   function init(where) {
 
-    radial.radius = 100;
-    radial.outerRadius = 150;
-    radial.state = "inactive";
-
-    radial.sketch = new Sketch(where)
+    blur.sketch = new Sketch(where)
       .AddSvg()
-      .HighlightEventIs(radial.growPreview())
-      .UnhighlightEventIs(radial.reset());
+      .HighlightEventIs(blur.highlight())
+      .UnhighlightEventIs(blur.unhighlight())
+      .ClickEventIs(blur.click());
 
-
-    radial.defs = radial.addDefs();
-    radial.gradient = radial.addGradient();
-    radial.background = radial.addBackground();
-    radial.group = radial.addGroup();
-    radial.wedges = radial.addWedges();
-    radial.circle = radial.addCircle();
-    radial.hotspot = radial.addHotspot();
+    blur.backgroundRect = blur.addBackgroundRect();
+    blur.defs = blur.addDefs();
+    blur.filter = blur.addFilter();
+    blur.gaussian = blur.addGaussian();
+    blur.grid = blur.addGrid();
+    blur.buttonGroup = blur.addButtonGroup();
+    blur.buttons = blur.addButtons();
 
   }
 }
@@ -1606,6 +1580,51 @@ function RandomWalk(where) {
     randomWalk.xAxisGroup.selectAll("text").remove();
     randomWalk.histogram = randomWalk.addHistogram();
 
+
+  }
+}
+
+function Sketch(where) {
+  const sketch = this;
+  init(where);
+  return sketch;
+
+  function init(where) {
+    sketch.where = where;
+
+    sketch.mouseoverCallback = () => {};
+    sketch.mouseoutCallback = () => {};
+    sketch.clickCallback = () => {};
+
+    sketch.div = sketch.addDiv();
+    sketch.image = sketch.addImage();
+  }
+}
+
+function RadialGroup(where) {
+  const radial = this;
+  init(where);
+  return radial;
+
+  function init(where) {
+
+    radial.radius = 100;
+    radial.outerRadius = 150;
+    radial.state = "inactive";
+
+    radial.sketch = new Sketch(where)
+      .AddSvg()
+      .HighlightEventIs(radial.growPreview())
+      .UnhighlightEventIs(radial.reset());
+
+
+    radial.defs = radial.addDefs();
+    radial.gradient = radial.addGradient();
+    radial.background = radial.addBackground();
+    radial.group = radial.addGroup();
+    radial.wedges = radial.addWedges();
+    radial.circle = radial.addCircle();
+    radial.hotspot = radial.addHotspot();
 
   }
 }
@@ -1645,23 +1664,6 @@ function SnellsLaw(where) {
   }
 }
 
-function Sketch(where) {
-  const sketch = this;
-  init(where);
-  return sketch;
-
-  function init(where) {
-    sketch.where = where;
-
-    sketch.mouseoverCallback = () => {};
-    sketch.mouseoutCallback = () => {};
-    sketch.clickCallback = () => {};
-
-    sketch.div = sketch.addDiv();
-    sketch.image = sketch.addImage();
-  }
-}
-
 function IosAudioSlider(where) {
   const slider = this;
   init(where);
@@ -1694,288 +1696,6 @@ function IosAudioSlider(where) {
     slider.phone = slider.addPhone();
 
 
-  }
-}
-
-BlurAttentionSketch.prototype.addBackgroundRect = function() {
-  const blur = this;
-  return blur.sketch.svg
-    .append("rect")
-    .attr("width",640)
-    .attr("height",360)
-    .attr("fill","#ccc");
-}
-
-BlurAttentionSketch.prototype.addButtonGroup = function() {
-  const blur = this;
-  return blur.sketch.svg
-    .append("g")
-    .attr("transform","translate(115,90)");
-}
-
-BlurAttentionSketch.prototype.addButtons = function() {
-  const blur = this;
-
-  const forwardDuration = 150;
-  const backwardDuration = 200;
-
-  return [
-    new BlurButton().move(0,0).fill(d3.schemeCategory10[0]).label("A"),
-    new BlurButton().move(200,0).fill(d3.schemeCategory10[1]).label("B"),
-    new BlurButton().move(400,0).fill(d3.schemeCategory10[2]).label("C"),
-    new BlurButton().move(0,175).fill(d3.schemeCategory10[3]).label("D"),
-    new BlurButton().move(200,175).fill(d3.schemeCategory10[4]).label("E"),
-    new BlurButton().move(400,175).fill(d3.schemeCategory10[5]).label("F")
-  ];
-
-  function BlurButton() {
-    const button = this;
-    init(button);
-    return button;
-
-    function init() {
-      button.translate = blur.buttonGroup
-        .append("g")
-        .on("mouseover",() => {
-          blur
-            .drawAttention(button);
-        })
-        .on("mouseout",() => {
-          blur
-            .reset();
-        })
-
-      button.scale = button.translate
-        .append("g")
-        .attr("transform","scale(1)");
-
-      button.filtered = button.scale
-        .append("g");
-
-      button.rect = button.filtered
-        .append("rect")
-        .attr("x",-75)
-        .attr("y",-75)
-        .attr("width",150)
-        .attr("height",150)
-        .attr("rx",25)
-        .attr("ry",25);
-
-      button.textOutline = button.filtered
-        .append("text")
-        .attr("fill","none")
-        .attr("stroke","#222")
-        .attr("stroke-width",7)
-        .attr("font-weight","bold")
-        .attr("font-size","48pt")
-        .attr("font-family","Oswald")
-        .attr("dominant-baseline","middle")
-        .attr("text-anchor","middle")
-        .attr("y",5)
-        .attr("cursor","default");
-
-      button.text = button.filtered
-        .append("text")
-        .attr("fill","white")
-        .attr("font-weight","bold")
-        .attr("font-size","48pt")
-        .attr("font-family","Oswald")
-        .attr("dominant-baseline","middle")
-        .attr("text-anchor","middle")
-        .attr("y",5)
-        .attr("cursor","default");
-
-
-      button.move = function(x,y) {
-        button.translate
-          .attr("transform","translate("+x+","+y+")");
-        return button;
-      }
-
-      button.label = function(string) {
-        button.text.html(string);
-        button.textOutline.html(string);
-        return button;
-      }
-
-      button.fill = function(color) {
-        button.rect
-          .attr("fill",color);
-        return button;
-      }
-
-      button.bringForward = function() {
-        button.scale
-          .transition()
-          .duration(forwardDuration)
-          .attr("transform","scale(1.15)");
-
-        button.text
-          .transition()
-          .duration(forwardDuration + 75)
-          .attr("transform","scale(1.75)");
-
-        button.textOutline
-          .transition()
-          .duration(forwardDuration + 75)
-          .attr("transform","scale(1.75)");
-
-
-        button.filtered
-          .attr("filter","none")
-
-        return button;
-      }
-
-      button.sendBack = function() {
-        button.scale
-          .transition()
-          .duration(backwardDuration)
-          .attr("transform","scale(0.75)");
-
-        button.filtered
-          .attr("filter","url(#blur)");
-
-        return button;
-      }
-
-      button.reset = function() {
-        button.scale
-          .transition()
-          .duration(backwardDuration)
-          .attr("transform","scale(1)");
-
-        button.text
-          .transition()
-          .duration(backwardDuration)
-          .attr("transform","scale(1)");
-
-        button.textOutline
-          .transition()
-          .duration(backwardDuration)
-          .attr("transform","scale(1)");
-
-        button.filtered
-          .attr("filter","none");
-
-        return button;
-      }
-    }
-  }
-
-}
-
-BlurAttentionSketch.prototype.addDefs = function() {
-  const blur = this;
-  return blur.sketch.svg
-    .append("defs");
-}
-
-BlurAttentionSketch.prototype.addFilter = function() {
-  const blur = this;
-  return blur.defs
-    .append("filter")
-    .attr("id","blur");
-}
-
-BlurAttentionSketch.prototype.addGaussian = function() {
-  const blur = this;
-  return blur.filter
-    .append("feGaussianBlur")
-    .attr("in","sourceGraphic")
-    .attr("stdDeviation",0);
-}
-
-BlurAttentionSketch.prototype.addGrid = function() {
-  const blur = this;
-
-  const group = blur.sketch.svg
-    .append("g")
-    .attr("filter","url(#blur)");
-
-  group
-    .selectAll(".xLine")
-    .data(d3.range(1,20))
-    .enter()
-    .append("line")
-    .attr("x1",0)
-    .attr("x2",640)
-    .attr("y1",(datum) => { return datum * 50})
-    .attr("y2",(datum) => { return datum * 50})
-    .attr("stroke","#333")
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","10,5");
-
-  group
-    .selectAll(".yLine")
-    .data(d3.range(1,20))
-    .enter()
-    .append("line")
-    .attr("x1",(datum) => { return datum * 50})
-    .attr("x2",(datum) => { return datum * 50})
-    .attr("y1",0)
-    .attr("y2",640)
-    .attr("stroke","#333")
-    .attr("stroke-width",1)
-    .attr("stroke-dasharray","10,5");
-
-
-  return group;
-}
-
-BlurAttentionSketch.prototype.click = function() {
-  const blurAttention = this;
-  return () => {
-  }
-}
-
-BlurAttentionSketch.prototype.drawAttention = function(button) {
-  const blur = this;
-
-  blur.buttons
-    .forEach((iteratedButton) => {
-      blur.gaussian
-        .transition()
-        .duration(250)
-        .ease(d3.easeLinear)
-        .attr("stdDeviation",5);
-
-      if(button == iteratedButton) {
-        iteratedButton
-          .bringForward();
-      } else {
-        iteratedButton
-          .sendBack();
-      }
-    });
-
-}
-
-BlurAttentionSketch.prototype.highlight = function() {
-  const blur = this;
-  return () => {
-  }
-}
-
-BlurAttentionSketch.prototype.reset = function() {
-  const blur = this;
-
-  blur.buttons
-    .forEach((button) => {
-      button
-        .reset();
-
-      blur.gaussian
-        .transition()
-        .duration(200)
-        .ease(d3.easeLinear)
-        .attr("stdDeviation",0);
-    });
-}
-
-BlurAttentionSketch.prototype.unhighlight = function() {
-  const blur = this;
-  return () => {
   }
 }
 
@@ -2593,6 +2313,469 @@ RadarSketch.prototype.addWedgeGradient = function() {
 
 }
 
+BlurAttentionSketch.prototype.addBackgroundRect = function() {
+  const blur = this;
+  return blur.sketch.svg
+    .append("rect")
+    .attr("width",640)
+    .attr("height",360)
+    .attr("fill","#ccc");
+}
+
+BlurAttentionSketch.prototype.addButtonGroup = function() {
+  const blur = this;
+  return blur.sketch.svg
+    .append("g")
+    .attr("transform","translate(115,90)");
+}
+
+BlurAttentionSketch.prototype.addButtons = function() {
+  const blur = this;
+
+  const forwardDuration = 150;
+  const backwardDuration = 200;
+
+  return [
+    new BlurButton().move(0,0).fill(d3.schemeCategory10[0]).label("A"),
+    new BlurButton().move(200,0).fill(d3.schemeCategory10[1]).label("B"),
+    new BlurButton().move(400,0).fill(d3.schemeCategory10[2]).label("C"),
+    new BlurButton().move(0,175).fill(d3.schemeCategory10[3]).label("D"),
+    new BlurButton().move(200,175).fill(d3.schemeCategory10[4]).label("E"),
+    new BlurButton().move(400,175).fill(d3.schemeCategory10[5]).label("F")
+  ];
+
+  function BlurButton() {
+    const button = this;
+    init(button);
+    return button;
+
+    function init() {
+      button.translate = blur.buttonGroup
+        .append("g")
+        .on("mouseover",() => {
+          blur
+            .drawAttention(button);
+        })
+        .on("mouseout",() => {
+          blur
+            .reset();
+        })
+
+      button.scale = button.translate
+        .append("g")
+        .attr("transform","scale(1)");
+
+      button.filtered = button.scale
+        .append("g");
+
+      button.rect = button.filtered
+        .append("rect")
+        .attr("x",-75)
+        .attr("y",-75)
+        .attr("width",150)
+        .attr("height",150)
+        .attr("rx",25)
+        .attr("ry",25);
+
+      button.textOutline = button.filtered
+        .append("text")
+        .attr("fill","none")
+        .attr("stroke","#222")
+        .attr("stroke-width",7)
+        .attr("font-weight","bold")
+        .attr("font-size","48pt")
+        .attr("font-family","Oswald")
+        .attr("dominant-baseline","middle")
+        .attr("text-anchor","middle")
+        .attr("y",5)
+        .attr("cursor","default");
+
+      button.text = button.filtered
+        .append("text")
+        .attr("fill","white")
+        .attr("font-weight","bold")
+        .attr("font-size","48pt")
+        .attr("font-family","Oswald")
+        .attr("dominant-baseline","middle")
+        .attr("text-anchor","middle")
+        .attr("y",5)
+        .attr("cursor","default");
+
+
+      button.move = function(x,y) {
+        button.translate
+          .attr("transform","translate("+x+","+y+")");
+        return button;
+      }
+
+      button.label = function(string) {
+        button.text.html(string);
+        button.textOutline.html(string);
+        return button;
+      }
+
+      button.fill = function(color) {
+        button.rect
+          .attr("fill",color);
+        return button;
+      }
+
+      button.bringForward = function() {
+        button.scale
+          .transition()
+          .duration(forwardDuration)
+          .attr("transform","scale(1.15)");
+
+        button.text
+          .transition()
+          .duration(forwardDuration + 75)
+          .attr("transform","scale(1.75)");
+
+        button.textOutline
+          .transition()
+          .duration(forwardDuration + 75)
+          .attr("transform","scale(1.75)");
+
+
+        button.filtered
+          .attr("filter","none")
+
+        return button;
+      }
+
+      button.sendBack = function() {
+        button.scale
+          .transition()
+          .duration(backwardDuration)
+          .attr("transform","scale(0.75)");
+
+        button.filtered
+          .attr("filter","url(#blur)");
+
+        return button;
+      }
+
+      button.reset = function() {
+        button.scale
+          .transition()
+          .duration(backwardDuration)
+          .attr("transform","scale(1)");
+
+        button.text
+          .transition()
+          .duration(backwardDuration)
+          .attr("transform","scale(1)");
+
+        button.textOutline
+          .transition()
+          .duration(backwardDuration)
+          .attr("transform","scale(1)");
+
+        button.filtered
+          .attr("filter","none");
+
+        return button;
+      }
+    }
+  }
+
+}
+
+BlurAttentionSketch.prototype.addDefs = function() {
+  const blur = this;
+  return blur.sketch.svg
+    .append("defs");
+}
+
+BlurAttentionSketch.prototype.addFilter = function() {
+  const blur = this;
+  return blur.defs
+    .append("filter")
+    .attr("id","blur");
+}
+
+BlurAttentionSketch.prototype.addGaussian = function() {
+  const blur = this;
+  return blur.filter
+    .append("feGaussianBlur")
+    .attr("in","sourceGraphic")
+    .attr("stdDeviation",0);
+}
+
+BlurAttentionSketch.prototype.addGrid = function() {
+  const blur = this;
+
+  const group = blur.sketch.svg
+    .append("g")
+    .attr("filter","url(#blur)");
+
+  group
+    .selectAll(".xLine")
+    .data(d3.range(1,20))
+    .enter()
+    .append("line")
+    .attr("x1",0)
+    .attr("x2",640)
+    .attr("y1",(datum) => { return datum * 50})
+    .attr("y2",(datum) => { return datum * 50})
+    .attr("stroke","#333")
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","10,5");
+
+  group
+    .selectAll(".yLine")
+    .data(d3.range(1,20))
+    .enter()
+    .append("line")
+    .attr("x1",(datum) => { return datum * 50})
+    .attr("x2",(datum) => { return datum * 50})
+    .attr("y1",0)
+    .attr("y2",640)
+    .attr("stroke","#333")
+    .attr("stroke-width",1)
+    .attr("stroke-dasharray","10,5");
+
+
+  return group;
+}
+
+BlurAttentionSketch.prototype.click = function() {
+  const blurAttention = this;
+  return () => {
+  }
+}
+
+BlurAttentionSketch.prototype.drawAttention = function(button) {
+  const blur = this;
+
+  blur.buttons
+    .forEach((iteratedButton) => {
+      blur.gaussian
+        .transition()
+        .duration(250)
+        .ease(d3.easeLinear)
+        .attr("stdDeviation",5);
+
+      if(button == iteratedButton) {
+        iteratedButton
+          .bringForward();
+      } else {
+        iteratedButton
+          .sendBack();
+      }
+    });
+
+}
+
+BlurAttentionSketch.prototype.highlight = function() {
+  const blur = this;
+  return () => {
+  }
+}
+
+BlurAttentionSketch.prototype.reset = function() {
+  const blur = this;
+
+  blur.buttons
+    .forEach((button) => {
+      button
+        .reset();
+
+      blur.gaussian
+        .transition()
+        .duration(200)
+        .ease(d3.easeLinear)
+        .attr("stdDeviation",0);
+    });
+}
+
+BlurAttentionSketch.prototype.unhighlight = function() {
+  const blur = this;
+  return () => {
+  }
+}
+
+RandomWalk.prototype.addHistogram = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("path")
+    .attr("fill",d3.schemeCategory10[3])
+    .attr("stroke","black")
+    .attr("stroke-width",2);
+}
+
+RandomWalk.prototype.defineBinnedValues = function() {
+  const randomWalk = this;
+  const binnedValues = {};
+  d3.range(-10,11)
+    .forEach((value) => {
+      binnedValues[value] = 0;
+    });
+  return binnedValues;
+}
+
+RandomWalk.prototype.defineWalkScales = function() {
+  const randomwWalk = this;
+  const scales = {};
+
+  scales.x = d3.scaleLinear()
+    .domain([0,100])
+    .range([25,500]);
+
+  scales.histogram = d3.scaleLinear()
+    .domain([0,1])
+    .range([515,550]);
+
+  scales.y = d3.scaleLinear()
+    .domain([-10,10])
+    .range([335,25]);
+
+  return scales;
+}
+
+RandomWalk.prototype.addBackground = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("rect")
+    .attr("fill","#eee")
+    .attr("width",640)
+    .attr("height",360);
+}
+
+RandomWalk.prototype.addLine = function() {
+  const randomWalk = this;
+  return randomWalk.lineGroup
+    .append("path")
+    .attr("stroke",d3.schemeCategory10[0])
+    .attr("fill","none")
+    .attr("stroke-width",3);
+}
+
+RandomWalk.prototype.addLineGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g");
+}
+
+RandomWalk.prototype.addXAxis = function() {
+  const randomWalk = this;
+  const axis = d3.axisBottom(randomWalk.walkScales.x);
+  randomWalk.xAxisGroup
+    .call(axis);
+  return axis;
+}
+
+RandomWalk.prototype.addXAxisGroup = function() {
+  const randomWalk = this;
+  return randomWalk.sketch.svg
+    .append("g")
+    .attr("transform","translate(0,180)");
+}
+
+RandomWalk.prototype.highlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = true;
+    randomWalk
+      .seedWalk();
+    return randomWalk;
+  }
+}
+
+RandomWalk.prototype.seedWalk = function() {
+  const randomWalk = this;
+
+  if(!randomWalk.isActive) { return }
+  const value = Math.random();
+  const stepChange = value < 0.5 ? 1 : - 1;
+  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
+
+  randomWalk.steps += 1;
+
+  if(newValue < randomWalk.minValue) {
+    randomWalk.minValue = newValue
+  }
+
+  if(newValue > randomWalk.maxValue) {
+    randomWalk.maxValue = newValue;
+  }
+
+  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
+
+  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
+    randomWalk.binnedValues[bound] = 0;
+    randomWalk.binnedValues[-bound] = 0;
+  }
+
+  randomWalk.binnedValues[newValue] += 1;
+
+  randomWalk.walkScales.histogram
+    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
+
+  const histogramGenerator = d3.area()
+    .x0((datum) => {
+      return randomWalk.walkScales.histogram(0)
+    })
+    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
+    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
+
+  randomWalk.histogram
+    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
+
+  randomWalk.walkScales.y
+    .domain([-bound,bound]);
+
+
+  if(randomWalk.history.length == 100) {
+    randomWalk.history
+      .shift();
+  }
+
+  randomWalk.history
+    .push(newValue);
+
+  const lineGenerator = d3.line()
+    .x((datum,index) => { return randomWalk.walkScales.x(index)})
+    .y((datum) => { return randomWalk.walkScales.y(datum)});
+
+
+  randomWalk.line
+    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
+    .transition()
+    .duration(10)
+    .attr("d",lineGenerator(randomWalk.history))
+    .on("end",() => {
+      randomWalk.seedWalk();
+    });
+
+
+}
+
+RandomWalk.prototype.unhighlight = function() {
+  const randomWalk = this;
+  return () => {
+    randomWalk.isActive = false;
+    return randomWalk;
+  }
+}
+
+Sketch.prototype.addDiv = function() {
+  const sketch = this;
+  return sketch.where
+    .append("div")
+    .classed("singleSketchDiv",true)
+    .on("mouseover",sketch.highlight())
+    .on("mouseout",sketch.unhighlight())
+    .on("click",sketch.click())
+}
+
+Sketch.prototype.addImage = function() {
+  const sketch = this;
+  return sketch.div
+    .append("img")
+    .classed("sketchImage",true);
+}
+
 RadialGroup.prototype.addBackground = function() {
   const radial = this;
   return radial.sketch.svg
@@ -2777,170 +2960,6 @@ RadialGroup.prototype.reset = function() {
       .on("end",() => {
         radial.state = "active";
       });
-  }
-}
-
-RandomWalk.prototype.addHistogram = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("path")
-    .attr("fill",d3.schemeCategory10[3])
-    .attr("stroke","black")
-    .attr("stroke-width",2);
-}
-
-RandomWalk.prototype.defineBinnedValues = function() {
-  const randomWalk = this;
-  const binnedValues = {};
-  d3.range(-10,11)
-    .forEach((value) => {
-      binnedValues[value] = 0;
-    });
-  return binnedValues;
-}
-
-RandomWalk.prototype.defineWalkScales = function() {
-  const randomwWalk = this;
-  const scales = {};
-
-  scales.x = d3.scaleLinear()
-    .domain([0,100])
-    .range([25,500]);
-
-  scales.histogram = d3.scaleLinear()
-    .domain([0,1])
-    .range([515,550]);
-
-  scales.y = d3.scaleLinear()
-    .domain([-10,10])
-    .range([335,25]);
-
-  return scales;
-}
-
-RandomWalk.prototype.addBackground = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("rect")
-    .attr("fill","#eee")
-    .attr("width",640)
-    .attr("height",360);
-}
-
-RandomWalk.prototype.addLine = function() {
-  const randomWalk = this;
-  return randomWalk.lineGroup
-    .append("path")
-    .attr("stroke",d3.schemeCategory10[0])
-    .attr("fill","none")
-    .attr("stroke-width",3);
-}
-
-RandomWalk.prototype.addLineGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g");
-}
-
-RandomWalk.prototype.addXAxis = function() {
-  const randomWalk = this;
-  const axis = d3.axisBottom(randomWalk.walkScales.x);
-  randomWalk.xAxisGroup
-    .call(axis);
-  return axis;
-}
-
-RandomWalk.prototype.addXAxisGroup = function() {
-  const randomWalk = this;
-  return randomWalk.sketch.svg
-    .append("g")
-    .attr("transform","translate(0,180)");
-}
-
-RandomWalk.prototype.highlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = true;
-    randomWalk
-      .seedWalk();
-    return randomWalk;
-  }
-}
-
-RandomWalk.prototype.seedWalk = function() {
-  const randomWalk = this;
-
-  if(!randomWalk.isActive) { return }
-  const value = Math.random();
-  const stepChange = value < 0.5 ? 1 : - 1;
-  const newValue = randomWalk.history[randomWalk.history.length - 1] + stepChange;
-
-  randomWalk.steps += 1;
-
-  if(newValue < randomWalk.minValue) {
-    randomWalk.minValue = newValue
-  }
-
-  if(newValue > randomWalk.maxValue) {
-    randomWalk.maxValue = newValue;
-  }
-
-  const bound = d3.max([Math.abs(randomWalk.minValue),Math.abs(randomWalk.maxValue)]);
-
-  if(2 * bound + 1 != Object.keys(randomWalk.binnedValues).length) {
-    randomWalk.binnedValues[bound] = 0;
-    randomWalk.binnedValues[-bound] = 0;
-  }
-
-  randomWalk.binnedValues[newValue] += 1;
-
-  randomWalk.walkScales.histogram
-    .domain([0,d3.max(Object.values(randomWalk.binnedValues))]);
-
-  const histogramGenerator = d3.area()
-    .x0((datum) => {
-      return randomWalk.walkScales.histogram(0)
-    })
-    .x1((datum) => { return randomWalk.walkScales.histogram(randomWalk.binnedValues[datum]) })
-    .y((datum,index) => { return randomWalk.walkScales.y(datum) });
-
-  randomWalk.histogram
-    .attr("d",histogramGenerator(Object.keys(randomWalk.binnedValues).sort((a,b) => { return b-a})));
-
-  randomWalk.walkScales.y
-    .domain([-bound,bound]);
-
-
-  if(randomWalk.history.length == 100) {
-    randomWalk.history
-      .shift();
-  }
-
-  randomWalk.history
-    .push(newValue);
-
-  const lineGenerator = d3.line()
-    .x((datum,index) => { return randomWalk.walkScales.x(index)})
-    .y((datum) => { return randomWalk.walkScales.y(datum)});
-
-
-  randomWalk.line
-    .attr("d",lineGenerator(randomWalk.history.slice(0,randomWalk.history.length - 1)))
-    .transition()
-    .duration(10)
-    .attr("d",lineGenerator(randomWalk.history))
-    .on("end",() => {
-      randomWalk.seedWalk();
-    });
-
-
-}
-
-RandomWalk.prototype.unhighlight = function() {
-  const randomWalk = this;
-  return () => {
-    randomWalk.isActive = false;
-    return randomWalk;
   }
 }
 
@@ -3180,23 +3199,6 @@ SnellsLaw.prototype.updateForMouseCoordinates = function(coordinates) {
     .attr("y2",5000 * Math.sin(refractionTheta + Math.PI / 2) + 250);
 
   return snells;
-}
-
-Sketch.prototype.addDiv = function() {
-  const sketch = this;
-  return sketch.where
-    .append("div")
-    .classed("singleSketchDiv",true)
-    .on("mouseover",sketch.highlight())
-    .on("mouseout",sketch.unhighlight())
-    .on("click",sketch.click())
-}
-
-Sketch.prototype.addImage = function() {
-  const sketch = this;
-  return sketch.div
-    .append("img")
-    .classed("sketchImage",true);
 }
 
 IosAudioSlider.prototype.addBackground = function() {
